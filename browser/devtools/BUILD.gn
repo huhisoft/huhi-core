@@ -1,0 +1,16 @@
+source_set("devtools") {
+  if (!is_android) {
+    sources = [
+      "huhi_devtools_ui_bindings.cc",
+      "huhi_devtools_ui_bindings.h",
+    ]
+
+    deps = [
+      "//base",
+      "//huhi/browser/themes",
+      "//chrome/browser/devtools",
+      "//chrome/common",
+      "//components/prefs",
+    ]
+  }
+}

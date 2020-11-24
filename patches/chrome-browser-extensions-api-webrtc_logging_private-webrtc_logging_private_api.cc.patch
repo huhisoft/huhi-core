@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/extensions/api/webrtc_logging_private/webrtc_logging_private_api.cc b/chrome/browser/extensions/api/webrtc_logging_private/webrtc_logging_private_api.cc
+index 55e8f2c763532d0484fde44d056d94a4866ab84a..e373341bbedc3671265ab86650598738208217be 100644
+--- a/chrome/browser/extensions/api/webrtc_logging_private/webrtc_logging_private_api.cc
++++ b/chrome/browser/extensions/api/webrtc_logging_private/webrtc_logging_private_api.cc
+@@ -89,6 +89,7 @@ content::RenderProcessHost* WebrtcLoggingPrivateFunction::RphFromRequest(
+     const api::webrtc_logging_private::RequestInfo& request,
+     const std::string& security_origin,
+     std::string* error) {
++  HUHI_DISABLE_RPH_FROM_REQUEST //feature disabled in Huhi
+   // There are 2 ways these API functions can get called.
+   //
+   //  1. From a whitelisted component extension on behalf of a page with the

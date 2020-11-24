@@ -1,0 +1,5 @@
+group("chromium_deps") {
+  deps = [
+    "//huhi/ui/webui/resources",
+  ]
+}

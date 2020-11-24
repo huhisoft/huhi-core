@@ -1,0 +1,9 @@
+import("//huhi/components/common/typescript.gni")
+
+transpile_web_ui("internals") {
+  entry_points = [
+    ["huhi_rewards_internals", rebase_path("huhi_rewards_internals.tsx")]
+  ]
+
+  resource_name = "huhi_rewards_internals"
+}

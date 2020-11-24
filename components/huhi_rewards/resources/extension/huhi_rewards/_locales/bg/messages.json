@@ -1,0 +1,626 @@
+{
+  "huhiRewards": {
+    "message": "Huhi награди",
+    "description": "Title in welcome screen for the panel"
+  },
+  "welcomeButtonTextOne": {
+    "message": "Започнете да печелите сега!",
+    "description": "CTA on welcome screen in the panel, existing users"
+  },
+  "welcomeButtonTextTwo": {
+    "message": "Присъедини се към награди",
+    "description": "CTA on welcome screen in the panel, new users"
+  },
+  "welcomeDescOne": {
+    "message": "Получавайте пари, за да гледате реклами, и ги използвайте, за да плащате с цел подкрепа на любимите Ви създатели.",
+    "description": "Entry text for welcome screen in the panel, existing user"
+  },
+  "welcomeDescTwo": {
+    "message": "Можете да печелите жетони чрез гледане на спазващите поверителността реклами.",
+    "description": "Entry text for welcome screen in the panel, new user"
+  },
+  "welcomeDescPoints": {
+    "message": "Вече можете да печелите точки за гледане на реклами, зачитащи поверителността.",
+    "description": "Entry text for welcome screen in the panel, points"
+  },
+  "welcomeFooterTextOne": {
+    "message": "Вижте какво е подобрено",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, existing user"
+  },
+  "welcomeFooterTextTwo": {
+    "message": "Научете повече",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, new user"
+  },
+  "welcomeHeaderOne": {
+    "message": "Направихме голяма актуализация на Huhi наградите.",
+    "description": "Main header title for welcome screen in the panel, existing user"
+  },
+  "welcomeHeaderTwo": {
+    "message": "Пригответе се да се насладите на следващия интернет.",
+    "description": "Main header title for welcome screen in the panel, new user"
+  },
+  "yourWallet": {
+    "message": "Вашето портмоне",
+    "description": "Title of wallet section where we display data about wallet"
+  },
+  "grants": {
+    "message": "Дарения",
+    "description": "Title for grant section in wallet summary"
+  },
+  "details": {
+    "message": "Подробности",
+    "description": "Title for grant section in wallet panel summary"
+  },
+  "yourBalance": {
+    "message": "Вашият баланс",
+    "description": "Wallet panel title for anon wallets"
+  },
+  "batPoints": {
+    "message": "BAT точки",
+    "description": "BAT Points text"
+  },
+  "batPointsMessage": {
+    "message": "може да се използва в Huhi награди, за да допринесе на любимите ви създатели на съдържание. ВАТ точки не могат да бъдат разменени за ВАТ.",
+    "description": "Text for BAT Point helper message"
+  },
+  "on": {
+    "message": "на",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "verifiedPublisher": {
+    "message": "Потвърден Създател за Huhi",
+    "description": "Tells user that this particular publisher is a Huhi Verified Creator"
+  },
+  "rewardsContributeAttentionScore": {
+    "message": "Внимание",
+    "description": "Label for auto contribute table attention for the publisher"
+  },
+  "donateMonthly": {
+    "message": "Месечен принос",
+    "description": "Label for drop down menu where user select amount for monthly contribution for particular publisher"
+  },
+  "includeInAuto": {
+    "message": "Включено в автоматичния принос",
+    "description": "Label for checkbox that allows user to exclude publishers from auto contribute"
+  },
+  "donateNow": {
+    "message": "Изпратете дарение...",
+    "description": "CTA for sending tip form site banner"
+  },
+  "enableTips": {
+    "message": "Активиране на съветите",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "for": {
+    "message": "за",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "rewardsSummary": {
+    "message": "Резюме на наградите",
+    "description": "Section title in wallet panel, which contains monthly rewards summary"
+  },
+  "monthApr": {
+    "message": "Април",
+    "description": "Month"
+  },
+  "monthAug": {
+    "message": "Август",
+    "description": "Month"
+  },
+  "monthDec": {
+    "message": "Декември",
+    "description": "Month"
+  },
+  "monthFeb": {
+    "message": "Февруари",
+    "description": "Month"
+  },
+  "monthJan": {
+    "message": "Януари",
+    "description": "Month"
+  },
+  "monthJul": {
+    "message": "Юли",
+    "description": "Month"
+  },
+  "monthJun": {
+    "message": "Юни",
+    "description": "Month"
+  },
+  "monthMar": {
+    "message": "Март",
+    "description": "Month"
+  },
+  "monthMay": {
+    "message": "Май",
+    "description": "Month"
+  },
+  "monthNov": {
+    "message": "Ноември",
+    "description": "Month"
+  },
+  "monthOct": {
+    "message": "Октомври",
+    "description": "Month"
+  },
+  "monthSep": {
+    "message": "Септември",
+    "description": "Month"
+  },
+  "tokenGrant": {
+    "message": "Безвъзмездни средства в $currency$",
+    "description": "Title for grant notification",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "Token"
+      }
+    }
+  },
+  "tokenGrantClaimed": {
+    "message": "Изискани субсидии на жетони",
+    "description": "Title for grant section in wallet summary"
+  },
+  "pointGrantClaimed": {
+    "message": "Поискани безвъзмездни средства в точки",
+    "description": "Title for point grant section in wallet summary"
+  },
+  "earningsAds": {
+    "message": "Приходи от реклами",
+    "description": "Title for ads section in wallet summary"
+  },
+  "rewardsContribute": {
+    "message": "Автоматичен принос",
+    "description": "Title for auto contribute section in wallet summary"
+  },
+  "oneTimeDonation": {
+    "message": "Еднократни дарения",
+    "description": "Title for one time tips section in wallet summary"
+  },
+  "expiresOn": {
+    "message": "изтича на",
+    "description": "Used for grant representation. Whole string is '30.0 BAT expires on 08/05/2022'"
+  },
+  "recurringDonations": {
+    "message": "Месечни приноси ",
+    "description": "Title for monthly contributions section in wallet summary"
+  },
+  "off": {
+    "message": "Изключено",
+    "description": "Label used in toggle indicating that toggle is off"
+  },
+  "ok": {
+    "message": "ok",
+    "description": "Used in notification to dismiss notification"
+  },
+  "huhiAdsLaunchMsg": {
+    "message": "Сега може да печелите, като разглеждате реклами.",
+    "description": "Message for ads launch notification"
+  },
+  "huhiAdsLaunchTitle": {
+    "message": "Huhi рекламите са тук!",
+    "description": "Message used in notification to let users know Ads is available"
+  },
+  "huhiAdsTitle": {
+    "message": "Реклами в Huhi",
+    "description": "Notification title when we display info about ads"
+  },
+  "huhiContributeTitle": {
+    "message": "Автоматично даряване",
+    "description": "Notification title when we display info about auto contribution"
+  },
+  "contributeNotificationSuccess": {
+    "message": "Допринесохте $amount$ $currency$",
+    "description": "We show this string in the notification when contribution is successful",
+    "placeholders": {
+      "amount": {
+        "content": "$1",
+        "example": "10.0"
+      },
+      "currency": {
+        "content": "$2",
+        "example": "BAT"
+      }
+    }
+  },
+  "grantNotification": {
+    "message": "Очаква Ви дарение.",
+    "description": "Description for new grant notification"
+  },
+  "backupNow": {
+    "message": "Актуализиране сега",
+    "description": "Notification button text when we ask user to backup wallet"
+  },
+  "backupWalletTitle": {
+    "message": "Архивен портфейл",
+    "description": "Notification title when we ask user to backup wallet"
+  },
+  "backupWalletNotification": {
+    "message": "Моля, направете архивно копие на вашия Huhi портфейл.",
+    "description": "Description for backup wallet notification"
+  },
+  "insufficientFundsNotification": {
+    "message": "Вашият акаунт за Huhi награди очаква депозит.",
+    "description": "Description for new insufficient funds notification"
+  },
+  "insufficientFunds": {
+    "message": "Недостатъчно средства",
+    "description": "Title for insufficient funds notification"
+  },
+  "huhiRewardsCreatingText": {
+    "message": "Създаване на портфейл",
+    "description": "Used in a button displaying wallet creation process"
+  },
+  "contributeNotificationError": {
+    "message": "Възникна проблем при обработката на дарението Ви.",
+    "description": "We show this string in notification when contribution fails"
+  },
+  "contributeNotificationNotEnoughFunds": {
+    "message": "Планираното ви месечно плащане за Auto-Contribute и месечните приноси не може да бъде извършено поради недостатъчни средства. Ще опитаме отново след 30 дни.",
+    "description": "We show this string in the notification when you don't have enough funds for contribution"
+  },
+  "contributeNotificationTipError": {
+    "message": "Не успяхме да изпратим вашия бакшиш. Моля, опитайте отново по-късно.",
+    "description": "We show this string in notification when tip fails"
+  },
+  "noActivity": {
+    "message": "Все още няма активност…",
+    "description": "Allows the user to see that there have been no transactions or other activity in their wallet"
+  },
+  "captchaDrag": {
+    "message": "Провлачете BAT иконата върху",
+    "description": "Directs the user to drag the BAT icon"
+  },
+  "captchaProveHuman": {
+    "message": "Докажете, че не сте робот!",
+    "description": "Cosmetic text for captcha prompt"
+  },
+  "captchaTarget": {
+    "message": "цел.",
+    "description": "Captcha Target"
+  },
+  "captchaMissedTarget": {
+    "message": "Хммм....Не съвсем. Опитайте отново.",
+    "description": "Message upon failing captcha"
+  },
+  "claim": {
+    "message": "Поискай",
+    "description": "Claim text"
+  },
+  "newTokenGrant": {
+    "message": "Безплатна субсидия жетон",
+    "description": "Token grant label"
+  },
+  "grantExpire": {
+    "message": "Дата на изтичане на субсидията",
+    "description": "Grant expiry label"
+  },
+  "grantGeneralErrorButton": {
+    "message": "OK",
+    "description": "Button text for clearing the error."
+  },
+  "grantGeneralErrorText": {
+    "message": "Huhi Rewards има проблеми. Моля, опитайте отново по-късно.",
+    "description": "Error text when user is having problems claiming a grant."
+  },
+  "grantGeneralErrorTitle": {
+    "message": "Упс, нещо се обърка. Моля, опитайте отново по-късно.",
+    "description": "Error title when user is having problems claiming a grant."
+  },
+  "unVerifiedCheck": {
+    "message": "Обновяване на състоянието",
+    "description": "Text of link that allows to check verified status of unverified publisher"
+  },
+  "unVerifiedPublisher": {
+    "message": "Все още не е потвърдено",
+    "description": "Status of the publisher shown in the panel"
+  },
+  "unVerifiedText": {
+    "message": "Този създател все още не се е регистрирал да получава вноски от Huhi потребители. Всеки бакшиш който изпратите ще остава във вашия портфейл докато той потвърди.",
+    "description": "Notice about unverified publisher."
+  },
+  "unVerifiedTextMore": {
+    "message": "Научете повече.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "reservedAmountText": {
+    "message": "Определили сте {{reservedAmount}} {{currency}} за създатели, които все още не са се регистрирали да получават вноски. Вашият браузър ще продължава да се опитва да даде своя принос, докато те не потвърдят или изминат 90 дни.",
+    "description": "Notification about how much BAT do you have reserved"
+  },
+  "reservedMoreLink": {
+    "message": "Научете повече.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "disabledPanelOff": {
+    "message": "Изкл",
+    "description": "Off state text for Panel's disabled state"
+  },
+  "disabledPanelSettings": {
+    "message": "Настройки.",
+    "description": "Settings Link for Panel's disabled state"
+  },
+  "disabledPanelText": {
+    "message": "В момента не получавате никакви Награди от браузването. Включете отново Награди",
+    "description": "Text for Panel's disabled state"
+  },
+  "disabledPanelTitle": {
+    "message": "Huhi Rewards е",
+    "description": "Title for Panel's disabled state"
+  },
+  "walletFailedTitle": {
+    "message": "Създаването на портфейл не беше успешно",
+    "description": "Failure title for wallet creation"
+  },
+  "walletFailedButton": {
+    "message": "Нов опит",
+    "description": "Button for re-try after wallet creation failed"
+  },
+  "addFunds": {
+    "message": "Добави средства",
+    "description": "Button for adding funds"
+  },
+  "rewardsSettings": {
+    "message": "Настройки на наградите",
+    "description": "Button for opening settings page"
+  },
+  "earningsClaimDefault": {
+    "message": "Вашите награди от рекламите са тук!",
+    "description": "Panel notification text for Ads grant"
+  },
+  "and": {
+    "message": "и",
+    "description": "The word 'and'"
+  },
+  "huhiRewardsSubTitle": {
+    "message": "Получавайте възнаграждения за сърфиране!",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "disabledPanelTextTwo": {
+    "message": "Печелете чрез преглеждане на уважаващи поверителността реклами и поддържайте любими автори на съдържание",
+    "description": "Text block for wallet disabled panel"
+  },
+  "enableRewards": {
+    "message": "Активирайте Huhi награди",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "privacyPolicy": {
+    "message": "Политика за поверителност",
+    "description": "Privacy Policy"
+  },
+  "serviceText": {
+    "message": "Чрез щракване върху \"Разреши Huhi награди\" посочвате, че сте прочели и разбрали",
+    "description": "Terms of service main text"
+  },
+  "termsOfService": {
+    "message": "Условия на услугата",
+    "description": "Terms of Service"
+  },
+  "welcomeBack": {
+    "message": "Добре дошли отново!",
+    "description": "Title message for wallet disabled panel"
+  },
+  "tipsProcessedNotification": {
+    "message": "Вашите месечни приноси са обработени!",
+    "description": "Message for monthly contributions processed notification"
+  },
+  "contributionTips": {
+    "message": "Вноски и бакшиши",
+    "description": "Title for monthly contributions processed notification"
+  },
+  "serviceTextPanelWelcome": {
+    "message": "Чрез щракване върху \"Присъединяване към награди\" показвате, че сте прочели и се съгласявате с",
+    "description": "Terms of service panel opt-in text"
+  },
+  "bat": {
+    "message": "BAT",
+    "description": "BAT text for displaying converted tip amount."
+  },
+  "bap": {
+    "message": "BAP",
+    "description": "BAT Points abbreviation text"
+  },
+  "turnOnAds": {
+    "message": "Включване на реклами",
+    "description": "Prompt to turn on Ads via notification"
+  },
+  "adsEarnings": {
+    "message": "спечелено от реклами",
+    "description": "Description text for ad grants in grant details"
+  },
+  "twitterTipsHoverText": {
+    "message": "Дайте бакшиш за този туит",
+    "description": "Hover text for Twitter tips action"
+  },
+  "twitterTipsIconLabel": {
+    "message": "Бакшиш",
+    "description": "Icon label for Twitter tips"
+  },
+  "redditTipsHoverText": {
+    "message": "Дайте бакшиш за тази публикация",
+    "description": "Hover text for Reddit tips action"
+  },
+  "redditTipsIconLabel": {
+    "message": "Бакшиш",
+    "description": "Icon label for Reddit tips"
+  },
+  "githubTipsHoverText": {
+    "message": "Изпратете бакшиш",
+    "description": "Hover text for GitHub tips action"
+  },
+  "githubTipsIconLabel": {
+    "message": "Бакшиш",
+    "description": "Icon label for GitHub tips"
+  },
+  "verifiedPublisherNotification": {
+    "message": "Създателят $name$ беше потвърден наскоро",
+    "description": "Notification text that tells user which publisher just verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "huhisoft.com"
+      }
+    }
+  },
+  "pendingNotEnoughFundsNotification": {
+    "message": "Имате чакащи бакшиши поради недостатъчно средства",
+    "description": "Notification text that tells user his wallet is under funded for pending contribution to complete"
+  },
+  "pendingContributionTitle": {
+    "message": "Предстоящ принос",
+    "description": "Notification title for pending contribution type"
+  },
+  "grantFinishTitleUGP": {
+    "message": "Днес имате късмет!",
+    "description": "Cosmetic text upon captcha success"
+  },
+  "grantFinishTextUGP": {
+    "message": "Вашите безвъзмездни средства в $currency$ са на път към вас.",
+    "description": "Cosmetic text indicating grant funds are on the way",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "token"
+      }
+    }
+  },
+  "grantFinishTokenTitleUGP": {
+    "message": "Безплатна субсидия жетон",
+    "description": "Token title on success screen"
+  },
+  "grantFinishPointTitleUGP": {
+    "message": "Безвъзмездни средства като точка",
+    "description": "Point title on success screen"
+  },
+  "grantFinishTitleAds": {
+    "message": "Спечелихте награда за реклама!",
+    "description": "Cosmetic text upon captcha success for ads"
+  },
+  "grantFinishTextAds": {
+    "message": "Вашата награда е на път към портфейла ви Huhi.",
+    "description": "Cosmetic text indicating ads funds are on the way"
+  },
+  "grantFinishTokenTitleAds": {
+    "message": "Вашата Сума За Възнаграждение",
+    "description": "Token title on success screen for ads"
+  },
+  "rewardsPanelTextVerify":  {
+    "message": "потвърди",
+    "description": "CTA in the footer to verify"
+  },
+  "walletButtonDisconnected":  {
+    "message": "Разкачен",
+    "description": "CTA status button"
+  },
+  "walletButtonUnverified":  {
+    "message": "Потвърди портфейла",
+    "description": "CTA to verify wallet in the wallet "
+  },
+  "walletButtonVerified":  {
+    "message": "Портфейлът е проверен",
+    "description": "Displayed in wallet that tells users that he is verified"
+  },
+  "walletGoToUphold":  {
+    "message": "Отидете на вашия Uphold акаунт",
+    "description": "CTA to open uphold account"
+  },
+  "walletDisconnect":  {
+    "message": "Разкачане от Huhi награди",
+    "description": "CTA to disconnect user wallet from rewards"
+  },
+  "walletVerified":  {
+    "message": "Потвърдено",
+    "description": "Status button that tells user that he is verified"
+  },
+  "walletVerifiedNotification":  {
+    "message": "Вашият портфейл е потвърден!",
+    "description": "Title for notification when wallet becomes verified"
+  },
+  "walletVerifiedTextNotification":  {
+    "message": "Поздравления! Вашият $name$ портфейл беше потвърден успешно и е готов за внасяне и теглене на пари.",
+    "description": "Title for notification when wallet becomes verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Uphold"
+      }
+    }
+  },
+  "walletDisconnectedNotification":  {
+    "message": "Упс. Вашият портфейл е недостъпен.",
+    "description": "Title for notification when wallet is disconnected."
+  },
+  "walletDisconnectedTextNotification":  {
+    "message": "Няма проблем. Това може да се случи поради различни причини за сигурност. Повторното свързване на портфейла ви ще реши този проблем.",
+    "description": "Title for notification when wallet is disconnected"
+  },
+  "connectedText":  {
+    "message": "Този проверен създател на Huhi все още не е конфигурирал акаунта си, за да получава приноси от Huhi потребители. Всички бакшиши, които изпращате, ще останат в портфейла ви, докато той не завърши този процес.",
+    "description": "Text shown for connected publishers that are not fully verified in the panel"
+  },
+  "walletGoToVerifyPage":  {
+    "message": "Завършете проверката на портфейла",
+    "description": "CTA for completing wallet verification"
+  },
+  "set": {
+    "message": "Настройване...",
+    "description": "Button text for setting monthly contribution"
+  },
+  "tokens":  {
+    "message": "жетони",
+    "description": "Standard tokens text"
+  },
+  "point":  {
+    "message": "Точка",
+    "description": "BAT Point text"
+  },
+  "token":  {
+    "message": "Жетон",
+    "description": "BAT Token text"
+  },
+  "points":  {
+    "message": "точки",
+    "description": "BAT Points text"
+  },
+  "tokenGrants":  {
+    "message": "Субсидии за жетони",
+    "description": "BAT Tokens Grant Text"
+  },
+  "pointGrants":  {
+    "message": "Безвъзмездни средства в точки",
+    "description": "BAT Points Grant Text"
+  },
+  "greetingsVerified":  {
+    "message": "Здравейте, $name$!",
+    "description": "Greetings for external wallet popup",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "John"
+      }
+    }
+  },
+  "cancel":  {
+    "message": "Отказ",
+    "description": "Text for cancel button"
+  },
+  "login":  {
+    "message": "Вход",
+    "description": "Text for login button"
+  },
+  "loginMessageTitle":  {
+    "message": "Потвърждаването на портфейла ви позволява да управлявате средствата си по-ефективно.",
+    "description": "Text for login button"
+  },
+  "loginMessageText":  {
+    "message": "Трябва да имате минимум 25 BAT, за да създадете акаунт в Uphold. Моля, опитайте отново по-късно. <br/> Ако вече имате потвърден акаунт в Uphold, продължете с влизането.",
+    "description": "Text for login button"
+  },
+  "walletConnected":  {
+    "message": "Установена е връзка",
+    "description": "Status button that tells user that he is connected"
+  },
+  "walletPending":  {
+    "message": "Предстоящо",
+    "description": "Status button that tells user that he is currently pending"
+  }
+}

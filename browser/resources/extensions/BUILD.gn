@@ -1,0 +1,70 @@
+import("//chrome/browser/resources/optimize_webui.gni")
+import("//chrome/common/features.gni")
+import("//tools/grit/grit_rule.gni")
+import("//tools/polymer/polymer.gni")
+
+grit("resources") {
+  source = "extensions_resources.grd"
+
+  # The .grd contains references to generated files.
+  enable_input_discovery_for_gn_analyze = true
+  grit_flags = [
+    "-E",
+    "root_gen_dir=" + rebase_path(root_gen_dir, root_build_dir),
+  ]
+
+  deps = [ ":polymer3_elements" ]
+
+  outputs = [
+    "grit/huhi_extensions_resources.h",
+    "grit/huhi_extensions_resources_map.cc",
+    "grit/huhi_extensions_resources_map.h",
+    "huhi_extensions_resources.pak",
+  ]
+
+  output_dir = "$root_gen_dir/huhi/browser/resources/extensions"
+  resource_ids = "//huhi/browser/resources/resource_ids"
+}
+
+group("unpak") {
+  deps = [
+    ":unpak_huhi_extensions_resources",
+  ]
+}
+
+action("unpak_huhi_extensions_resources") {
+  script = "//chrome/browser/resources/unpack_pak.py"
+
+  pak_file = "huhi_extensions_resources.pak"
+  out_folder = "$root_gen_dir/chrome/browser/resources/extensions/extensions_resources.unpak"
+
+  inputs = [
+    "$target_gen_dir/huhi_extensions_resources.pak",
+  ]
+
+  outputs = [
+    "${out_folder}/huhi_unpack.stamp",
+  ]
+
+  deps = [
+    ":resources",
+  ]
+
+  args = [
+    "--out_folder",
+    rebase_path(out_folder, root_build_dir),
+    "--pak_file",
+    rebase_path("$target_gen_dir/${pak_file}", root_build_dir),
+  ]
+}
+
+group("polymer3_elements") {
+  deps = [ ":huhi_item_list_more_items_module" ]
+}
+
+polymer_modulizer("huhi_item_list_more_items") {
+  js_file = "huhi_item_list_more_items.js"
+  html_file = "huhi_item_list_more_items.html"
+  html_type = "v3-ready"
+}
+

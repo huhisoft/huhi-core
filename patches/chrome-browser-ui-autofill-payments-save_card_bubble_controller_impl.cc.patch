@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc b/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
+index 1a7e0c10e8873de616f50e309dc3ba4bc4544149..51bfbfa91987fa0f17560c37d5b71b08e9110753 100644
+--- a/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
++++ b/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
+@@ -331,6 +331,7 @@ bool SaveCardBubbleControllerImpl::ShouldRequestExpirationDateFromUser() const {
+ }
+ 
+ bool SaveCardBubbleControllerImpl::ShouldShowSignInPromo() const {
++  HUHI_SHOULD_SHOW_SIGNIN_PROMO_SHORT_CIRCUIT_TO_FALSE;
+   if (is_upload_save_)
+     return false;
+ 

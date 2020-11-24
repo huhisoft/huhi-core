@@ -1,0 +1,17 @@
+diff --git a/chrome/browser/ui/views/outdated_upgrade_bubble_view.cc b/chrome/browser/ui/views/outdated_upgrade_bubble_view.cc
+index 287148a84b29aa6173c63a599a3d27f65f2e9049..d4360a1c7d2a310a7d89450536091082bd3bdc87 100644
+--- a/chrome/browser/ui/views/outdated_upgrade_bubble_view.cc
++++ b/chrome/browser/ui/views/outdated_upgrade_bubble_view.cc
+@@ -37,8 +37,12 @@ namespace {
+ 
+ // The URL to be used to re-install Chrome when auto-update failed for too long.
+ constexpr char kDownloadChromeUrl[] =
++#if defined(HUHI_CHROMIUM_BUILD)
++    kDownloadHuhiUrl;
++#else
+     "https://www.google.com/chrome/?&brand=CHWL"
+     "&utm_campaign=en&utm_source=en-et-na-us-chrome-bubble&utm_medium=et";
++#endif
+ 
+ // The maximum number of ignored bubble we track in the NumLaterPerReinstall
+ // histogram.

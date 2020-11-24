@@ -1,0 +1,139 @@
+// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Huhi Software
+// License, v. 2.0. If a copy of the MPL was not distributed with this file,
+// you can obtain one at http://mozilla.org/MPL/2.0/.
+
+#include "ui/views/controls/button/md_text_button.h"
+
+#include "ui/views/controls/highlight_path_generator.h"
+#include "ui/views/view_class_properties.h"
+
+#define MdTextButton MdTextButtonBase
+#include "../../../../../../ui/views/controls/button/md_text_button.cc"
+#undef MdTextButton
+
+namespace {
+
+constexpr SkColor kHuhiBrandColor = SkColorSetRGB(0xff, 0x76, 0x54);
+
+class HuhiTextButtonHighlightPathGenerator
+    : public views::HighlightPathGenerator {
+ public:
+  HuhiTextButtonHighlightPathGenerator() = default;
+
+  // HighlightPathGenerator
+  SkPath GetHighlightPath(const views::View* view) override;
+
+ private:
+  DISALLOW_COPY_AND_ASSIGN(HuhiTextButtonHighlightPathGenerator);
+};
+
+}  // namespace
+
+namespace views {
+
+MdTextButton::MdTextButton(ButtonListener* listener,
+                                 const base::string16& text,
+                                 int button_context)
+    : MdTextButtonBase(listener, text, button_context) {
+  SetCornerRadius(100);
+  views::HighlightPathGenerator::Install(
+      this, std::make_unique<HuhiTextButtonHighlightPathGenerator>());
+}
+
+MdTextButton::~MdTextButton() = default;
+
+SkPath MdTextButton::GetHighlightPath() const {
+  SkPath path;
+  int radius = GetCornerRadius();
+  path.addRRect(
+      SkRRect::MakeRectXY(RectToSkRect(GetLocalBounds()), radius, radius));
+  return path;
+}
+
+void MdTextButton::OnPaintBackground(gfx::Canvas* canvas) {
+  // Set huhi-style hover colors
+  LabelButton::OnPaintBackground(canvas);
+  if (GetProminent() && (
+        hover_animation().is_animating() || GetState() == STATE_HOVERED)) {
+    constexpr SkColor normal_color = kHuhiBrandColor;
+    constexpr SkColor hover_color = SkColorSetRGB(0xff, 0x97, 0x7d);
+    const SkAlpha alpha = hover_animation().CurrentValueBetween(0x00, 0xff);
+    const SkColor current_color = color_utils::AlphaBlend(
+        hover_color, normal_color, alpha);
+    cc::PaintFlags flags;
+    flags.setColor(current_color);
+    flags.setStyle(cc::PaintFlags::kFill_Style);
+    flags.setAntiAlias(true);
+    canvas->DrawRoundRect(gfx::RectF(GetLocalBounds()),
+        GetCornerRadius(), flags);
+  }
+}
+
+std::unique_ptr<InkDrop> MdTextButton::CreateInkDrop() {
+  // We don't need a highlight on hover, the hover color
+  // is handled by the OnPaintBackground and huhi-style doesn't
+  // have a shadow. Plus, it's very difficult (impossible?) to create
+  // a drop-shadow when clipping the ink drop to the rounded button.
+  std::unique_ptr<InkDrop> ink_drop = InkDropHostView::CreateInkDrop();
+  ink_drop->SetShowHighlightOnFocus(true);
+  ink_drop->SetShowHighlightOnHover(false);
+  return ink_drop;
+}
+
+std::unique_ptr<views::InkDropHighlight>
+MdTextButton::CreateInkDropHighlight() const {
+  // Blank ink drop highlight, not needed
+  const SkColor fill_color = SK_ColorTRANSPARENT;
+  gfx::RectF boundsF(GetLocalBounds());
+  return std::make_unique<InkDropHighlight>(
+      boundsF.size(),
+      GetCornerRadius(),
+      boundsF.CenterPoint(), fill_color);
+}
+
+void MdTextButton::UpdateColors() {
+  MdTextButtonBase::UpdateColors();
+  if (GetProminent()) {
+    return;
+  }
+  const ui::NativeTheme* theme = GetNativeTheme();
+  // Override different text hover color
+  if (theme->GetPlatformHighContrastColorScheme() !=
+      ui::NativeTheme::PlatformHighContrastColorScheme::kDark) {
+    SetTextColor(ButtonState::STATE_HOVERED, kHuhiBrandColor);
+    SetTextColor(ButtonState::STATE_PRESSED, kHuhiBrandColor);
+  }
+  // Override border color for hover on non-prominent
+  if (GetState() == ButtonState::STATE_PRESSED
+        || GetState() == ButtonState::STATE_HOVERED) {
+    // First, get the same background fill color that MdTextButtonBase does.
+    // It is undfortunate to copy these lines almost as-is. Consider otherwise
+    // patching it in via a #define.
+    SkColor bg_color =
+        theme->GetSystemColor(ui::NativeTheme::kColorId_DialogBackground);
+    if (GetBgColorOverride()) {
+      bg_color = *GetBgColorOverride();
+    }
+    if (GetState() == STATE_PRESSED) {
+      bg_color = GetNativeTheme()->GetSystemButtonPressedColor(bg_color);
+    }
+    // The only thing that differs for Huhi is the stroke color
+    SkColor stroke_color = kHuhiBrandColor;
+    SetBackground(
+        CreateBackgroundFromPainter(
+            Painter::CreateRoundRectWith1PxBorderPainter(
+                bg_color, stroke_color, GetCornerRadius())));
+  }
+}
+
+}  // namespace views
+
+namespace {
+
+SkPath HuhiTextButtonHighlightPathGenerator::GetHighlightPath(
+    const views::View* view) {
+  return static_cast<const views::MdTextButton*>(view)->GetHighlightPath();
+}
+
+}  // namespace

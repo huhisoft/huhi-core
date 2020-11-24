@@ -1,0 +1,81 @@
+/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "huhi/browser/greaselion/greaselion_service_factory.h"
+
+#include <memory>
+#include <string>
+
+#include "base/memory/singleton.h"
+#include "huhi/browser/huhi_browser_process_impl.h"
+#include "huhi/components/greaselion/browser/greaselion_service.h"
+#include "huhi/components/greaselion/browser/greaselion_service_impl.h"
+#include "chrome/browser/extensions/extension_service.h"
+#include "components/keyed_service/content/browser_context_dependency_manager.h"
+#include "components/keyed_service/core/keyed_service.h"
+#include "extensions/browser/extension_file_task_runner.h"
+#include "extensions/browser/extension_registry.h"
+#include "extensions/browser/extension_registry_factory.h"
+#include "extensions/browser/extension_system.h"
+#include "extensions/browser/extension_system_provider.h"
+#include "extensions/browser/extensions_browser_client.h"
+
+namespace greaselion {
+
+// static
+GreaselionServiceFactory* GreaselionServiceFactory::GetInstance() {
+  return base::Singleton<GreaselionServiceFactory>::get();
+}
+
+GreaselionService* GreaselionServiceFactory::GetForBrowserContext(
+    content::BrowserContext* context) {
+  return static_cast<GreaselionService*>(
+      GetInstance()->GetServiceForBrowserContext(context, true));
+}
+
+GreaselionServiceFactory::GreaselionServiceFactory()
+    : BrowserContextKeyedServiceFactory(
+          "GreaselionService",
+          BrowserContextDependencyManager::GetInstance()) {
+  DependsOn(extensions::ExtensionRegistryFactory::GetInstance());
+  DependsOn(
+      extensions::ExtensionsBrowserClient::Get()->GetExtensionSystemFactory());
+}
+
+GreaselionServiceFactory::~GreaselionServiceFactory() = default;
+
+KeyedService* GreaselionServiceFactory::BuildServiceInstanceFor(
+    content::BrowserContext* context) const {
+  extensions::ExtensionSystem* extension_system =
+      extensions::ExtensionSystem::Get(context);
+  extension_system->InitForRegularProfile(true /* extensions_enabled */);
+  extensions::ExtensionService* extension_service =
+      extension_system->extension_service();
+  extensions::ExtensionRegistry* extension_registry =
+      extensions::ExtensionRegistry::Get(context);
+  base::FilePath install_directory;
+  // Extension service may be null even after calling InitForRegularProfile if
+  // we are being created within a unit test.
+  if (extension_service)
+    install_directory = extension_service->install_directory();
+  scoped_refptr<base::SequencedTaskRunner> task_runner =
+      extensions::GetExtensionFileTaskRunner();
+  greaselion::GreaselionDownloadService* download_service = nullptr;
+  // Huhi browser process may be null if we are being created within a unit
+  // test.
+  if (g_huhi_browser_process)
+    download_service = g_huhi_browser_process->greaselion_download_service();
+  std::unique_ptr<GreaselionServiceImpl> greaselion_service(
+      new GreaselionServiceImpl(download_service, install_directory,
+                                extension_system, extension_registry,
+                                task_runner));
+  return greaselion_service.release();
+}
+
+bool GreaselionServiceFactory::ServiceIsNULLWhileTesting() const {
+  return false;
+}
+
+}  // namespace greaselion

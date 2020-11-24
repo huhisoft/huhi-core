@@ -1,0 +1,21 @@
+# Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Huhi Software
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+source_set("content_settings") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10662 is resolved
+  check_includes = false
+  sources = [
+    "huhi_content_settings_manager_delegate.cc",
+    "huhi_content_settings_manager_delegate.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/components/huhi_shields/browser",
+    # "//chrome/browser" # dep cycle
+    "//components/content_settings/common:mojom",
+    "//content/public/browser",
+  ]
+}

@@ -1,0 +1,527 @@
+/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "huhi/browser/huhi_content_browser_client.h"
+
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "base/bind.h"
+#include "base/feature_list.h"
+#include "base/json/json_reader.h"
+#include "base/rand_util.h"
+#include "base/task/post_task.h"
+#include "huhi/browser/huhi_browser_main_extra_parts.h"
+#include "huhi/browser/huhi_browser_process_impl.h"
+#include "huhi/browser/extensions/huhi_tor_client_updater.h"
+#include "huhi/browser/net/huhi_proxying_url_loader_factory.h"
+#include "huhi/browser/net/huhi_proxying_web_socket.h"
+#include "huhi/browser/tor/buildflags.h"
+#include "huhi/common/pref_names.h"
+#include "huhi/common/webui_url_constants.h"
+#include "huhi/components/binance/browser/buildflags/buildflags.h"
+#include "huhi/components/gemini/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_ads/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_rewards/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_shields/browser/huhi_shields_util.h"
+#include "huhi/components/huhi_shields/browser/huhi_shields_web_contents_observer.h"
+#include "huhi/components/huhi_shields/browser/tracking_protection_service.h"
+#include "huhi/components/huhi_shields/common/huhi_shield_constants.h"
+#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_webtorrent/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/browser/features.h"
+#include "huhi/components/services/huhi_content_browser_overlay_manifest.h"
+#include "huhi/components/speedreader/buildflags.h"
+#include "huhi/grit/huhi_generated_resources.h"
+#include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+#include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/profiles/profile_io_data.h"
+#include "chrome/common/url_constants.h"
+#include "components/content_settings/browser/page_specific_content_settings.h"
+#include "components/prefs/pref_service.h"
+#include "components/services/heap_profiling/public/mojom/heap_profiling_client.mojom.h"
+#include "content/browser/frame_host/render_frame_host_impl.h"
+#include "content/public/browser/browser_context.h"
+#include "content/public/browser/browser_task_traits.h"
+#include "content/public/browser/browser_thread.h"
+#include "content/public/browser/browser_url_handler.h"
+#include "content/public/browser/navigation_handle.h"
+#include "content/public/common/content_switches.h"
+#include "content/public/common/service_names.mojom.h"
+#include "extensions/buildflags/buildflags.h"
+#include "net/base/registry_controlled_domains/registry_controlled_domain.h"
+#include "net/cookies/site_for_cookies.h"
+#include "services/service_manager/public/cpp/manifest_builder.h"
+#include "third_party/blink/public/common/loader/url_loader_throttle.h"
+#include "ui/base/l10n/l10n_util.h"
+
+using huhi_shields::HuhiShieldsWebContentsObserver;
+using content::BrowserThread;
+using content::ContentBrowserClient;
+using content::RenderFrameHost;
+using content::WebContents;
+
+#if BUILDFLAG(HUHI_ADS_ENABLED)
+#include "huhi/components/services/bat_ads/public/cpp/manifest.h"
+#include "huhi/components/services/bat_ads/public/interfaces/bat_ads.mojom.h"
+#endif
+
+#if BUILDFLAG(HUHI_REWARDS_ENABLED)
+#include "huhi/components/services/bat_ledger/public/cpp/manifest.h"
+#include "huhi/components/services/bat_ledger/public/interfaces/bat_ledger.mojom.h"
+#endif
+
+#if BUILDFLAG(ENABLE_EXTENSIONS)
+#include "chrome/browser/extensions/chrome_content_browser_client_extensions_part.h"
+#include "extensions/browser/extension_registry.h"
+using extensions::ChromeContentBrowserClientExtensionsPart;
+#endif
+
+#if BUILDFLAG(ENABLE_HUHI_WEBTORRENT)
+#include "huhi/components/huhi_webtorrent/browser/content_browser_client_helper.h"
+#include "huhi/browser/extensions/huhi_webtorrent_navigation_throttle.h"
+#endif
+
+#if BUILDFLAG(IPFS_ENABLED)
+#include "huhi/browser/ipfs/content_browser_client_helper.h"
+#include "huhi/browser/ipfs/ipfs_navigation_throttle.h"
+#endif
+
+#if BUILDFLAG(HUHI_REWARDS_ENABLED)
+#include "huhi/components/huhi_rewards/browser/rewards_protocol_handler.h"
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/browser/tor/tor_navigation_throttle.h"
+#include "huhi/browser/tor/tor_profile_service_factory.h"
+#include "huhi/common/tor/switches.h"
+#include "huhi/components/services/tor/public/cpp/manifest.h"
+#include "huhi/components/services/tor/public/interfaces/tor.mojom.h"
+#include "huhi/components/services/tor/tor_launcher_service.h"
+#endif
+
+#if BUILDFLAG(ENABLE_SPEEDREADER)
+#include "huhi/browser/speedreader/speedreader_tab_helper.h"
+#include "huhi/components/speedreader/speedreader_throttle.h"
+#include "third_party/blink/public/mojom/loader/resource_load_info.mojom-shared.h"
+#endif
+
+#if BUILDFLAG(BINANCE_ENABLED)
+#include "huhi/browser/binance/binance_protocol_handler.h"
+#endif
+
+#if BUILDFLAG(GEMINI_ENABLED)
+#include "huhi/browser/gemini/gemini_protocol_handler.h"
+#endif
+
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
+#include "huhi/browser/huhi_wallet/huhi_wallet_service_factory.h"
+#include "huhi/components/huhi_wallet/browser/huhi_wallet_service.h"
+#endif
+
+namespace {
+
+bool HandleURLReverseOverrideRewrite(GURL* url,
+                                     content::BrowserContext* browser_context) {
+  if (HuhiContentBrowserClient::HandleURLOverrideRewrite(url, browser_context))
+    return true;
+
+  return false;
+}
+
+bool HandleURLRewrite(GURL* url, content::BrowserContext* browser_context) {
+  if (HuhiContentBrowserClient::HandleURLOverrideRewrite(url, browser_context))
+    return true;
+
+  return false;
+}
+
+}  // namespace
+
+HuhiContentBrowserClient::HuhiContentBrowserClient(StartupData* startup_data)
+    : ChromeContentBrowserClient(startup_data),
+      session_token_(base::RandUint64()),
+      incognito_session_token_(base::RandUint64()) {}
+
+HuhiContentBrowserClient::~HuhiContentBrowserClient() {}
+
+std::unique_ptr<content::BrowserMainParts>
+HuhiContentBrowserClient::CreateBrowserMainParts(
+    const content::MainFunctionParams& parameters) {
+  std::unique_ptr<content::BrowserMainParts> main_parts =
+      ChromeContentBrowserClient::CreateBrowserMainParts(parameters);
+  ChromeBrowserMainParts* chrome_main_parts =
+      static_cast<ChromeBrowserMainParts*>(main_parts.get());
+  chrome_main_parts->AddParts(std::make_unique<HuhiBrowserMainExtraParts>());
+  return main_parts;
+}
+
+void HuhiContentBrowserClient::BrowserURLHandlerCreated(
+    content::BrowserURLHandler* handler) {
+#if BUILDFLAG(ENABLE_HUHI_WEBTORRENT)
+  handler->AddHandlerPair(&webtorrent::HandleMagnetURLRewrite,
+                          content::BrowserURLHandler::null_handler());
+  handler->AddHandlerPair(&webtorrent::HandleTorrentURLRewrite,
+                          &webtorrent::HandleTorrentURLReverseRewrite);
+#endif
+#if BUILDFLAG(IPFS_ENABLED)
+  if (base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature)) {
+    handler->AddHandlerPair(
+        &ipfs::ContentBrowserClientHelper::HandleIPFSURLRewrite,
+        content::BrowserURLHandler::null_handler());
+    handler->AddHandlerPair(
+        &ipfs::ContentBrowserClientHelper::HandleIPFSURLRewrite,
+        &ipfs::ContentBrowserClientHelper::HandleIPFSURLReverseRewrite);
+  }
+#endif
+  handler->AddHandlerPair(&HandleURLRewrite, &HandleURLReverseOverrideRewrite);
+  ChromeContentBrowserClient::BrowserURLHandlerCreated(handler);
+}
+
+content::ContentBrowserClient::AllowWebBluetoothResult
+HuhiContentBrowserClient::AllowWebBluetooth(
+    content::BrowserContext* browser_context,
+    const url::Origin& requesting_origin,
+    const url::Origin& embedding_origin) {
+  return ContentBrowserClient::AllowWebBluetoothResult::BLOCK_GLOBALLY_DISABLED;
+}
+
+bool HuhiContentBrowserClient::HandleExternalProtocol(
+    const GURL& url,
+    content::WebContents::OnceGetter web_contents_getter,
+    int child_id,
+    content::NavigationUIData* navigation_data,
+    bool is_main_frame,
+    ui::PageTransition page_transition,
+    bool has_user_gesture,
+    const base::Optional<url::Origin>& initiating_origin,
+    mojo::PendingRemote<network::mojom::URLLoaderFactory>* out_factory) {
+#if BUILDFLAG(ENABLE_HUHI_WEBTORRENT)
+  if (webtorrent::IsMagnetProtocol(url)) {
+    webtorrent::HandleMagnetProtocol(url, std::move(web_contents_getter),
+                                     page_transition, has_user_gesture,
+                                     initiating_origin);
+    return true;
+  }
+#endif
+#if BUILDFLAG(IPFS_ENABLED)
+  if (base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature) &&
+      ipfs::ContentBrowserClientHelper::IsIPFSProtocol(url)) {
+    ipfs::ContentBrowserClientHelper::HandleIPFSProtocol(url,
+        std::move(web_contents_getter),
+        page_transition, has_user_gesture,
+        initiating_origin);
+    return true;
+  }
+#endif
+
+#if BUILDFLAG(HUHI_REWARDS_ENABLED)
+  if (huhi_rewards::IsRewardsProtocol(url)) {
+    huhi_rewards::HandleRewardsProtocol(url, std::move(web_contents_getter),
+                                         page_transition, has_user_gesture);
+    return true;
+  }
+#endif
+
+#if BUILDFLAG(BINANCE_ENABLED)
+  if (binance::IsBinanceProtocol(url)) {
+    binance::HandleBinanceProtocol(url, std::move(web_contents_getter),
+                                   page_transition, has_user_gesture,
+                                   initiating_origin);
+    return true;
+  }
+#endif
+
+#if BUILDFLAG(GEMINI_ENABLED)
+  if (gemini::IsGeminiProtocol(url)) {
+    gemini::HandleGeminiProtocol(url, std::move(web_contents_getter),
+                                 page_transition, has_user_gesture,
+                                 initiating_origin);
+    return true;
+  }
+#endif
+
+  return ChromeContentBrowserClient::HandleExternalProtocol(
+      url, std::move(web_contents_getter), child_id, navigation_data,
+      is_main_frame, page_transition, has_user_gesture, initiating_origin,
+      out_factory);
+}
+
+base::Optional<service_manager::Manifest>
+HuhiContentBrowserClient::GetServiceManifestOverlay(base::StringPiece name) {
+  if (name == content::mojom::kBrowserServiceName)
+    return GetHuhiContentBrowserOverlayManifest();
+  return base::nullopt;
+}
+
+std::vector<service_manager::Manifest>
+HuhiContentBrowserClient::GetExtraServiceManifests() {
+  auto manifests = ChromeContentBrowserClient::GetExtraServiceManifests();
+
+#if BUILDFLAG(ENABLE_TOR)
+  manifests.push_back(tor::GetTorLauncherManifest());
+#endif
+#if BUILDFLAG(HUHI_ADS_ENABLED)
+  manifests.push_back(bat_ads::GetManifest());
+#endif
+#if BUILDFLAG(HUHI_REWARDS_ENABLED)
+  manifests.push_back(bat_ledger::GetManifest());
+#endif
+
+  return manifests;
+}
+
+void HuhiContentBrowserClient::AppendExtraCommandLineSwitches(
+    base::CommandLine* command_line,
+    int child_process_id) {
+  ChromeContentBrowserClient::AppendExtraCommandLineSwitches(command_line,
+                                                             child_process_id);
+  std::string process_type =
+      command_line->GetSwitchValueASCII(switches::kProcessType);
+  if (process_type == switches::kRendererProcess) {
+    uint64_t session_token =
+        12345;  // the kinda thing an idiot would have on his luggage
+    if (!command_line->HasSwitch(switches::kTestType)) {
+      content::RenderProcessHost* process =
+          content::RenderProcessHost::FromID(child_process_id);
+      Profile* profile =
+          process ? Profile::FromBrowserContext(process->GetBrowserContext())
+                  : nullptr;
+      if (profile && !profile->IsOffTheRecord()) {
+        session_token = session_token_;
+      } else {
+        session_token = incognito_session_token_;
+      }
+    }
+    command_line->AppendSwitchASCII("huhi_session_token",
+                                    base::NumberToString(session_token));
+  }
+
+  if (process_type == switches::kUtilityProcess) {
+#if BUILDFLAG(ENABLE_TOR)
+      // This is not ideal because it adds the tor executable as a switch
+      // for every utility process, but it should be ok until we land a
+      // permanent fix
+      base::FilePath path =
+          g_huhi_browser_process->tor_client_updater()->GetExecutablePath();
+      if (!path.empty()) {
+        command_line->AppendSwitchPath(tor::switches::kTorExecutablePath,
+                                       path.BaseName());
+      }
+#endif
+  }
+}
+
+std::vector<std::unique_ptr<blink::URLLoaderThrottle>>
+HuhiContentBrowserClient::CreateURLLoaderThrottles(
+    const network::ResourceRequest& request,
+    content::BrowserContext* browser_context,
+    const base::RepeatingCallback<content::WebContents*()>& wc_getter,
+    content::NavigationUIData* navigation_ui_data,
+    int frame_tree_node_id) {
+  auto result = ChromeContentBrowserClient::CreateURLLoaderThrottles(
+        request, browser_context, wc_getter, navigation_ui_data,
+        frame_tree_node_id);
+#if BUILDFLAG(ENABLE_SPEEDREADER)
+  content::WebContents* contents = wc_getter.Run();
+  if (!contents) {
+    return result;
+  }
+  auto* tab_helper =
+      speedreader::SpeedreaderTabHelper::FromWebContents(contents);
+  if (tab_helper && tab_helper->IsActiveForMainFrame()
+      && request.resource_type
+          == static_cast<int>(blink::mojom::ResourceType::kMainFrame)) {
+    result.push_back(std::make_unique<speedreader::SpeedReaderThrottle>(
+        g_huhi_browser_process->speedreader_rewriter_service(),
+        base::ThreadTaskRunnerHandle::Get()));
+  }
+#endif  // ENABLE_SPEEDREADER
+  return result;
+}
+
+bool HuhiContentBrowserClient::WillCreateURLLoaderFactory(
+    content::BrowserContext* browser_context,
+    content::RenderFrameHost* frame,
+    int render_process_id,
+    URLLoaderFactoryType type,
+    const url::Origin& request_initiator,
+    base::Optional<int64_t> navigation_id,
+    mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
+    mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
+        header_client,
+    bool* bypass_redirect_checks,
+    bool* disable_secure_dns,
+    network::mojom::URLLoaderFactoryOverridePtr* factory_override) {
+  bool use_proxy = false;
+  // TODO(iefremov): Skip proxying for certain requests?
+  use_proxy = HuhiProxyingURLLoaderFactory::MaybeProxyRequest(
+      browser_context, frame,
+      type == URLLoaderFactoryType::kNavigation ? -1 : render_process_id,
+      factory_receiver);
+
+  use_proxy |= ChromeContentBrowserClient::WillCreateURLLoaderFactory(
+      browser_context, frame, render_process_id, type, request_initiator,
+      std::move(navigation_id), factory_receiver, header_client,
+      bypass_redirect_checks, disable_secure_dns, factory_override);
+
+  return use_proxy;
+}
+
+bool HuhiContentBrowserClient::WillInterceptWebSocket(
+    content::RenderFrameHost* frame) {
+  return (frame != nullptr);
+}
+
+void HuhiContentBrowserClient::CreateWebSocket(
+    content::RenderFrameHost* frame,
+    content::ContentBrowserClient::WebSocketFactory factory,
+    const GURL& url,
+    const net::SiteForCookies& site_for_cookies,
+    const base::Optional<std::string>& user_agent,
+    mojo::PendingRemote<network::mojom::WebSocketHandshakeClient>
+        handshake_client) {
+  auto* proxy = HuhiProxyingWebSocket::ProxyWebSocket(
+      frame,
+      std::move(factory),
+      url,
+      site_for_cookies,
+      user_agent,
+      std::move(handshake_client));
+
+  if (ChromeContentBrowserClient::WillInterceptWebSocket(frame)) {
+    ChromeContentBrowserClient::CreateWebSocket(
+        frame,
+        proxy->web_socket_factory(),
+        url,
+        site_for_cookies,
+        user_agent,
+        proxy->handshake_client().Unbind());
+  } else {
+    proxy->Start();
+  }
+}
+
+void HuhiContentBrowserClient::MaybeHideReferrer(
+    content::BrowserContext* browser_context,
+    const GURL& request_url,
+    const GURL& document_url,
+    bool is_main_frame,
+    const std::string& method,
+    blink::mojom::ReferrerPtr* referrer) {
+  DCHECK(referrer && !referrer->is_null());
+#if BUILDFLAG(ENABLE_EXTENSIONS)
+  if (document_url.SchemeIs(kChromeExtensionScheme)) {
+    return;
+  }
+#endif
+
+  Profile* profile = Profile::FromBrowserContext(browser_context);
+  const bool allow_referrers = huhi_shields::AllowReferrers(
+      HostContentSettingsMapFactory::GetForProfile(profile),
+      document_url);
+  const bool shields_up = huhi_shields::GetHuhiShieldsEnabled(
+      HostContentSettingsMapFactory::GetForProfile(profile),
+      document_url);
+  // Some top-level navigations get empty referrers (huhi/huhi-browser#3422).
+  network::mojom::ReferrerPolicy policy = (*referrer)->policy;
+  if (is_main_frame) {
+    if ((method == "GET" || method == "HEAD") &&
+        !net::registry_controlled_domains::SameDomainOrHost(
+            (*referrer)->url, request_url,
+            net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES)) {
+      policy = network::mojom::ReferrerPolicy::kNever;
+    }
+  }
+
+  content::Referrer new_referrer;
+  if (huhi_shields::MaybeChangeReferrer(
+      allow_referrers, shields_up, (*referrer)->url, document_url, request_url,
+      policy,
+      &new_referrer)) {
+    (*referrer)->url = new_referrer.url;
+    (*referrer)->policy = new_referrer.policy;
+  }
+}
+
+GURL HuhiContentBrowserClient::GetEffectiveURL(
+    content::BrowserContext* browser_context,
+    const GURL& url) {
+  Profile* profile = Profile::FromBrowserContext(browser_context);
+  if (!profile)
+    return url;
+
+#if BUILDFLAG(ENABLE_EXTENSIONS)
+  return ChromeContentBrowserClientExtensionsPart::GetEffectiveURL(profile,
+                                                                   url);
+#else
+  return url;
+#endif
+}
+
+// [static]
+bool HuhiContentBrowserClient::HandleURLOverrideRewrite(GURL* url,
+    content::BrowserContext* browser_context) {
+
+  if (url->host() == chrome::kChromeUISyncHost) {
+    GURL::Replacements replacements;
+    replacements.SetHostStr(chrome::kChromeUISettingsHost);
+    replacements.SetPathStr(kHuhiSyncPath);
+    *url = url->ReplaceComponents(replacements);
+    return true;
+  }
+
+  // no special win10 welcome page
+  if (url->host() == chrome::kChromeUIWelcomeHost) {
+    *url = GURL(chrome::kChromeUIWelcomeURL);
+    return true;
+  }
+
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
+  // If the Crypto Wallets extension is loaded, then it replaces the WebUI
+  Profile* profile = Profile::FromBrowserContext(browser_context);
+  auto* service = HuhiWalletServiceFactory::GetForProfile(profile);
+  if (service->IsCryptoWalletsReady() &&
+      url->SchemeIs(content::kChromeUIScheme) &&
+      url->host() == ethereum_remote_client_host) {
+    auto* registry = extensions::ExtensionRegistry::Get(browser_context);
+    if (registry->ready_extensions().GetByID(
+        ethereum_remote_client_extension_id)) {
+      *url = GURL(ethereum_remote_client_base_url);
+      return true;
+    }
+  }
+#endif
+
+  return false;
+}
+
+std::vector<std::unique_ptr<content::NavigationThrottle>>
+HuhiContentBrowserClient::CreateThrottlesForNavigation(
+    content::NavigationHandle* handle) {
+  std::vector<std::unique_ptr<content::NavigationThrottle>> throttles =
+      ChromeContentBrowserClient::CreateThrottlesForNavigation(handle);
+
+#if BUILDFLAG(ENABLE_HUHI_WEBTORRENT)
+  throttles.push_back(
+      std::make_unique<extensions::HuhiWebTorrentNavigationThrottle>(handle));
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+  std::unique_ptr<content::NavigationThrottle> tor_navigation_throttle =
+    tor::TorNavigationThrottle::MaybeCreateThrottleFor(handle);
+  if (tor_navigation_throttle)
+    throttles.push_back(std::move(tor_navigation_throttle));
+#endif
+
+#if BUILDFLAG(IPFS_ENABLED)
+  throttles.push_back(
+      std::make_unique<ipfs::IpfsNavigationThrottle>(handle));
+#endif
+
+  return throttles;
+}

@@ -1,0 +1,12 @@
+import("//tools/grit/repack.gni")
+
+repack("resources") {
+  output = "$root_gen_dir/huhi/components/huhi_ads/resources/huhi_ads_resources.pak"
+  sources = [
+    "$root_gen_dir/bat/ads/resources/bat_ads_resources.pak",
+  ]
+
+  deps = [
+    "//huhi/vendor/bat-native-ads/data/resources",
+  ]
+}

@@ -1,0 +1,5 @@
+-keep class com.google.android.material.bottomsheet.BottomSheetBehavior { *; }
+
+-keep class org.chromium.chrome.browser.HuhiSyncWorker { *; }
+
+-keep class org.chromium.chrome.browser.HuhiSyncInformers { *; }

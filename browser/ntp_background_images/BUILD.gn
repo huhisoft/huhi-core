@@ -1,0 +1,34 @@
+source_set("ntp_background_images") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10658 is resolved
+  check_includes = false
+  sources = [
+    "view_counter_service_factory.cc",
+    "view_counter_service_factory.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/components/ntp_background_images/browser",
+    "//huhi/components/ntp_background_images/common",
+    "//huhi/common",
+    "//huhi/components/huhi_ads/browser",
+    "//chrome/common",
+    "//content/public/browser",
+    "//components/keyed_service/content",
+    "//components/prefs",
+    "//components/pref_registry",
+  ]
+
+  if (is_android) {
+    sources += [
+      "android/ntp_background_images_bridge.cc",
+      "android/ntp_background_images_bridge.h",
+    ]
+
+    deps += [
+      "//components/keyed_service/content",
+      "//components/keyed_service/core",
+      "//huhi/build/android:jni_headers",
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/resources_util.cc b/chrome/browser/resources_util.cc
+index a57015672e9fbedfb1a25e880a4adb21ad114011..7126ecd7023dbcf08d341b94846e46a842427b41 100644
+--- a/chrome/browser/resources_util.cc
++++ b/chrome/browser/resources_util.cc
+@@ -19,6 +19,10 @@
+ #include "ui/chromeos/resources/grit/ui_chromeos_resources_map.h"
+ #endif
+ 
++#if defined(HUHI_CHROMIUM_BUILD)
++#include "huhi/grit/huhi_theme_resources_map.h"
++#endif
++
+ namespace {
+ 
+ // A wrapper class that holds a map between resource strings and resource
+@@ -49,6 +53,12 @@ class ThemeMap {
+     for (size_t i = 0; i < kUiResourcesSize; ++i) {
+       storage.emplace_back(kUiResources[i].name, kUiResources[i].value);
+     }
++#if defined(HUHI_CHROMIUM_BUILD)
++    for (size_t i = 0; i < kHuhiThemeResourcesSize; ++i) {
++      storage.emplace_back(kHuhiThemeResources[i].name,
++                           kHuhiThemeResources[i].value);
++    }
++#endif
+ #if defined(OS_CHROMEOS)
+     for (size_t i = 0; i < kUiChromeosResourcesSize; ++i) {
+       storage.emplace_back(kUiChromeosResources[i].name,

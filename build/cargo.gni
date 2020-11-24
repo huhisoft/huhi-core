@@ -1,0 +1,92 @@
+# This Source Code Form is subject to the terms of the Huhi Software
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+import("//huhi/build/rust/config.gni")
+import("//build/config/clang/clang.gni")
+import("//build/config/sysroot.gni")
+
+if (is_mac) {
+  import("//build/config/mac/mac_sdk.gni")
+}
+
+declare_args() {
+  rustup_path = rebase_path("//huhi/build/rustup/", root_build_dir)
+}
+
+# Runs a script to compile a local Cargo package and all of its dependencies
+template("cargo_build") {
+  group_target = target_name
+  cargo_build_target = target_name + "_cargo_build"
+
+  action(cargo_build_target) {
+    script = "//huhi/script/cargo.py"
+
+    # make sure rebuilds when files change
+    forward_variables_from(invoker, "*")
+
+    outputs = [output]
+
+    if (!defined(target)) {
+      target = rustc_target  # defined by //huhi/build/rust/config.gni,
+    }
+
+    args = [
+      "--rustup_path=" + rustup_path,
+      "--cargo_path=" + rustup_path,
+      "--manifest_path=" + rebase_path(manifest_path, root_build_dir),
+      "--build_path=" + rebase_path(build_path, root_build_dir),
+      "--target=" + target,
+      "--toolchain=" + rustc_toolchain, # defined by //huhi/build/rust/config.gni,
+      "--is_debug=$is_debug",
+    ]
+
+    if (is_mac) {
+      args += [ "--mac_deployment_target=" + mac_deployment_target ]
+    }
+
+    if (defined(rust_flags)) {
+      args += [ "--rust_flags=$rust_flags" ]
+    }
+  }
+
+  config_target = target_name + "_staticlib_config"
+
+  config(config_target) {
+    libs = [ invoker.output ]
+    visibility = [ ":$group_target" ]
+  }
+
+  group(group_target) {
+    public_configs = [ ":$config_target" ]
+    public_deps = [
+      ":$cargo_build_target",
+    ]
+  }
+}
+
+# Runs a script to generate C bindings for rust library
+template("cargo_cbindgen") {
+  action(target_name) {
+    script = "//huhi/script/cargo_cbindgen.py"
+
+    forward_variables_from(invoker, ["config", "sources", "output", "visibility"])
+
+    assert(defined(config), "Must specify cbindgen.toml config to use")
+    assert(defined(sources), "Must specify sources to generate bindings for")
+    assert(defined(output), "Must specify output header file")
+
+    sources += [
+      config,
+    ]
+    outputs = [ output ]
+
+    args = [
+      "--rustup_path=" + rustup_path,
+      "--cargo_path=" + rustup_path,
+      "--config=" + rebase_path(config, root_build_dir),
+      "--path=" + rebase_path(get_path_info(config, "dir"), root_build_dir),
+      "--output=" + rebase_path(output, root_build_dir),
+    ]
+  }
+}

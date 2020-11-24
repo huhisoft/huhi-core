@@ -1,0 +1,10 @@
+import("//build/buildflag_header.gni")
+import("//huhi/browser/translate/buildflags/buildflags.gni")
+
+buildflag_header("buildflags") {
+  header = "buildflags.h"
+  flags = [
+    "ENABLE_HUHI_TRANSLATE_GO=$enable_huhi_translate_go",
+    "ENABLE_HUHI_TRANSLATE_EXTENSION=$enable_huhi_translate_extension",
+  ]
+}

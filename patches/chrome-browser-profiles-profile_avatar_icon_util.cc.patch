@@ -1,0 +1,29 @@
+diff --git a/chrome/browser/profiles/profile_avatar_icon_util.cc b/chrome/browser/profiles/profile_avatar_icon_util.cc
+index 57cfedd8459f8fa80164b666c6d8b9be0bb044b1..85241ab48618f1a246c158ab06b4d7f024117b03 100644
+--- a/chrome/browser/profiles/profile_avatar_icon_util.cc
++++ b/chrome/browser/profiles/profile_avatar_icon_util.cc
+@@ -340,7 +340,7 @@ constexpr size_t kDefaultAvatarIconsCount = 1;
+ #elif defined(OS_CHROMEOS)
+ constexpr size_t kDefaultAvatarIconsCount = 27;
+ #else
+-constexpr size_t kDefaultAvatarIconsCount = 56;
++constexpr size_t kDefaultAvatarIconsCount = 56 + kHuhiDefaultAvatarIconsCount;
+ #endif
+ 
+ #if !defined(OS_ANDROID)
+@@ -470,6 +470,7 @@ size_t GetPlaceholderAvatarIndex() {
+ 
+ size_t GetModernAvatarIconStartIndex() {
+ #if !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++  HUHI_GET_MODERN_AVATAR_ICON_START_INDEX
+   return GetPlaceholderAvatarIndex() + 1;
+ #else
+   // Only use the placeholder avatar on ChromeOS and Android.
+@@ -503,6 +504,7 @@ std::string GetPlaceholderAvatarIconUrl() {
+ 
+ const IconResourceInfo* GetDefaultAvatarIconResourceInfo(size_t index) {
+   CHECK_LT(index, kDefaultAvatarIconsCount);
++  HUHI_GET_DEFAULT_AVATAR_ICON_RESOURCE_INFO
+   static const IconResourceInfo resource_info[kDefaultAvatarIconsCount] = {
+   // Old avatar icons:
+ #if !defined(OS_ANDROID)

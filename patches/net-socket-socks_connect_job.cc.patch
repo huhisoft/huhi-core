@@ -1,0 +1,19 @@
+diff --git a/net/socket/socks_connect_job.cc b/net/socket/socks_connect_job.cc
+index 6d0e68890a97f769e179d45a4cff752e286142d8..dc50305a14b241ddd61f70e0227988d826a9b551 100644
+--- a/net/socket/socks_connect_job.cc
++++ b/net/socket/socks_connect_job.cc
+@@ -166,9 +166,11 @@ int SOCKSConnectJob::DoSOCKSConnect() {
+ 
+   // Add a SOCKS connection on top of the tcp socket.
+   if (socks_params_->is_socks_v5()) {
+-    socket_.reset(new SOCKS5ClientSocket(transport_connect_job_->PassSocket(),
+-                                         socks_params_->destination(),
+-                                         socks_params_->traffic_annotation()));
++    socket_.reset(new SOCKS5ClientSocketAuth(
++        transport_connect_job_->PassSocket(),
++        socks_params_->destination(),
++        socks_params_->traffic_annotation(),
++        socks_params_->transport_params()->destination()));
+   } else {
+     socks_socket_ptr_ = new SOCKSClientSocket(
+         transport_connect_job_->PassSocket(), socks_params_->destination(),

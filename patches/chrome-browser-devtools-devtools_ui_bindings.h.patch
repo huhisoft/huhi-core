@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/devtools/devtools_ui_bindings.h b/chrome/browser/devtools/devtools_ui_bindings.h
+index d7d4361d89aa64da8b5a762a67065ede58f0cfcc..d6d567f1a2ddd81c1b61798b5b7e21ed26d0dff7 100644
+--- a/chrome/browser/devtools/devtools_ui_bindings.h
++++ b/chrome/browser/devtools/devtools_ui_bindings.h
+@@ -93,6 +93,9 @@ class DevToolsUIBindings : public DevToolsEmbedderMessageDispatcher::Delegate,
+   bool IsAttachedTo(content::DevToolsAgentHost* agent_host);
+ 
+  private:
++  friend class HuhiDevToolsUIBindings;
++  FRIEND_TEST_ALL_PREFIXES(HuhiDevToolsUIBindingsBrowserTest, ThemeTest);
++
+   void HandleMessageFromDevToolsFrontend(const std::string& message);
+ 
+   // content::DevToolsAgentHostClient implementation.

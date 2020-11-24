@@ -1,0 +1,23 @@
+# common includes which can help minimize patches for
+# src/third_party/blink/renderer/core/BUILD.gn
+huhi_blink_renderer_core_visibility = [
+  "//huhi/third_party/blink/renderer/*"
+]
+
+huhi_blink_renderer_core_public_deps = [
+  "//huhi/third_party/blink/renderer"
+]
+
+# common includes which can help minimize patches for
+# src/third_party/blink/renderer/modules/BUILD.gn
+huhi_blink_renderer_modules_visibility = [
+  "//huhi/third_party/blink/renderer/*"
+]
+
+huhi_blink_sub_modules = [
+  "//huhi/third_party/blink/renderer/modules/huhi"
+]
+
+# common includes which can help minimize patches for
+# src/third_party/blink/renderer/modules/modules_idl_files.gni
+huhi_idl_imports = [ "//huhi/third_party/blink/renderer/modules/huhi/idls.gni" ]

@@ -1,0 +1,15 @@
+diff --git a/components/os_crypt/key_storage_kwallet_unittest.cc b/components/os_crypt/key_storage_kwallet_unittest.cc
+index d7866d9457943f04c84f4d68313ce12396980409..2ad6d81e2271b8471ae5a6a255916f76737b8aea 100644
+--- a/components/os_crypt/key_storage_kwallet_unittest.cc
++++ b/components/os_crypt/key_storage_kwallet_unittest.cc
+@@ -34,8 +34,8 @@ constexpr KWalletDBus::Error CANNOT_CONTACT =
+ const char kExpectedFolderName[] = "Chrome Keys";
+ const char kExpectedEntryName[] = "Chrome Safe Storage";
+ #else
+-const char kExpectedFolderName[] = "Chromium Keys";
+-const char kExpectedEntryName[] = "Chromium Safe Storage";
++const char kExpectedFolderName[] = "Huhi Keys";
++const char kExpectedEntryName[] = "Huhi Safe Storage";
+ #endif
+ 
+ // Environment-specific behavior is handled and tested with KWalletDBus, not

@@ -1,0 +1,66 @@
+import("//huhi/build/config.gni")
+
+action("generate_breakpad_symbols") {
+  symbols_dir = "$huhi_dist_dir/$huhi_project_name.breakpad.syms"
+  outputs = [
+    symbols_dir
+  ]
+
+  start = [ huhi_project_name ]
+
+  script = "//huhi/tools/posix/generate_breakpad_symbols.py"
+  args = [
+    "--symbols-dir=" + rebase_path(symbols_dir),
+    "--jobs=16",
+    "--build-dir=" + rebase_path(root_out_dir),
+    "--binary=$start",
+    "--libchromiumcontent-dir=" + rebase_path("//"),
+    "--clear",
+  ]
+
+  deps = [
+    "//chrome", # To be sure huhi executable is ready now
+    "//third_party/breakpad:dump_syms",
+  ]
+}
+
+group("symbol_dist_resources") {
+  public_deps = [
+    ":generate_breakpad_symbols",
+    ":strip_and_dump_symbols",
+  ]
+}
+
+group("dist_resources") {}
+
+action("strip_and_dump_symbols") {
+  script = "//build/linux/dump_app_syms.py"
+
+  dump_syms_label = "//third_party/breakpad:dump_syms($host_toolchain)"
+  dump_syms_binary =
+          get_label_info(dump_syms_label, "root_out_dir") + "/" + "dump_syms"
+
+  deps = [
+    "//huhi:huhi_dist_resources",
+    # TODO(bridiver) - resolve duplicate symbol generation
+    ":generate_breakpad_symbols",
+    dump_syms_label,
+  ]
+  huhi_binary = "$huhi_dist_dir/huhi"
+  if (current_cpu == "x86") {
+  # Use "ia32" instead of "x86" for GYP compat.
+    huhi_symbol_file = "$root_out_dir/huhi.breakpad.ia32"
+  } else {
+    huhi_symbol_file = "$root_out_dir/huhi.breakpad.$current_cpu"
+  }
+
+  inputs = [ huhi_binary, dump_syms_binary ]
+  outputs = [ huhi_symbol_file ]
+
+  args = [
+    "./" + rebase_path(dump_syms_binary, root_build_dir),
+    "1",  # strip_binary = true
+    rebase_path(huhi_binary, root_build_dir),
+    rebase_path(huhi_symbol_file, root_build_dir),
+  ]
+}

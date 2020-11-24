@@ -1,0 +1,12 @@
+diff --git a/chrome/test/BUILD.gn b/chrome/test/BUILD.gn
+index b5bec594d29a5fded3284ec41830cc6c88604b15..8b785fef73c68fba01c5df4dba7403fd7bca99bd 100644
+--- a/chrome/test/BUILD.gn
++++ b/chrome/test/BUILD.gn
+@@ -761,6 +761,7 @@ if (!is_android) {
+       "//v8",
+     ]
+ 
++    deps += [ "//huhi/test:huhi_browser_tests_deps", ]
+     # Runtime dependencies
+     data_deps = [
+       "//chrome:browser_tests_pak",

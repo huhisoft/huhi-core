@@ -1,0 +1,87 @@
+import("//huhi/components/common/typescript.gni")
+import("//build/config/locales.gni")
+import("//extensions/buildflags/buildflags.gni")
+import("//tools/grit/grit_rule.gni")
+import("//tools/grit/repack.gni")
+
+assert(enable_extensions)
+
+pack_web_resources("extension_generated_resources") {
+  resource_name = "huhi_rewards_panel"
+  output_dir = "$root_gen_dir/huhi/components/huhi_rewards/resources/extension"
+  deps = [
+    "huhi_rewards:huhi_rewards_panel"
+  ]
+}
+
+grit("static_resources") {
+  source = "extension_static_resources.grd"
+  outputs = [
+    "grit/huhi_rewards_extension_resources_map.cc",
+    "grit/huhi_rewards_extension_resources_map.h",
+    "grit/huhi_rewards_extension_resources.h",
+    "huhi_rewards_extension_static.pak",
+  ]
+
+  deps = [
+  ]
+
+  resource_ids = "//huhi/browser/resources/resource_ids"
+
+  output_dir = "$root_gen_dir/huhi/components/huhi_rewards/resources/extension"
+}
+
+repack("resources") {
+  deps = [
+    ":extension_generated_resources",
+    ":static_resources",
+  ]
+
+  sources = [
+    "$root_gen_dir/huhi/components/huhi_rewards/resources/extension/huhi_rewards_extension_static.pak",
+    "$root_gen_dir/huhi/components/huhi_rewards/resources/extension/huhi_rewards_panel_generated.pak",
+  ]
+
+  output = "$root_gen_dir/huhi/components/huhi_rewards/resources/extension/huhi_rewards_extension_resources.pak"
+}
+
+if (is_mac) {
+  group("framework_bundle_data") {
+    deps = []
+    foreach(locale, locales) {
+      deps += [":framework_bundle_data_${locale}"]
+    }
+  }
+
+  foreach(locale, locales) {
+    bundle_data("framework_bundle_data_${locale}") {
+      locale = string_replace(locale, "-", "_")
+      source_locale = string_replace(locale, "nb", "no")
+      sources = [
+        "huhi_rewards/_locales/$source_locale/messages.json"
+      ]
+      outputs = [
+        "{{bundle_resources_dir}}/huhi_rewards/_locales/$locale/{{source_file_part}}"
+      ]
+    }
+  }
+} else {
+  group("locales") {
+    deps = []
+    foreach(locale, locales) {
+      deps += [":locales_${locale}"]
+    }
+  }
+  foreach(locale, locales) {
+    copy("locales_${locale}") {
+      locale = string_replace(locale, "-", "_")
+      source_locale = string_replace(locale, "nb", "no")
+      sources = [
+        "huhi_rewards/_locales/${source_locale}/messages.json",
+      ]
+      outputs = [
+        "$root_out_dir/resources/huhi_rewards/_locales/${locale}/{{source_file_part}}",
+      ]
+    }
+  }
+}

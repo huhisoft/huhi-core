@@ -1,0 +1,11 @@
+<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg' viewBox="-3 -3 70 70">
+  <g class="huhi" fill='none' style='animation:bounce 1s infinite alternate ease-in-out'>
+    <title id="huhiname">Logo_huhi_huhisoft.com</title>
+    <style>
+      @keyframes bounce{to{transform:translateY(5%)}}
+    </style>
+    <circle cx="32" cy="32" r="32" fill="#FF3A3A" />
+    <path fill="#FFFFFF" d="m 226.87093,257.39441 c 0,-140.58 181.81,41.23 41.23,41.23 -141.046,0 -256.183729696,-181.81 -256.183729696,-41.23 0,141.046 115.20061990,256.23 256.183729696,256.23 140.58,0 -41.23,-115.184 -41.23,-256.23 v 0" transform="matrix(-0.14536761,0,0,-0.1453676,57.225651,83.164349)" style="stroke-width:1.9900620" />
+    <path stroke-width="0.62020061990" d="m10.69502,8.12498a32,32 0 1 0 45.183729696,45.18l-45.183729696,-45.18z" fill="#FFFFFF" opacity="0.183729696"/>
+  </g>
+</svg>

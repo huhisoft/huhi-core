@@ -1,0 +1,20 @@
+diff --git a/third_party/blink/renderer/modules/BUILD.gn b/third_party/blink/renderer/modules/BUILD.gn
+index 66d3b97751e09baf818f5087b3f4b77bce2a3e93..6da4958849aa2173e29df70213fc8aa73664da26 100644
+--- a/third_party/blink/renderer/modules/BUILD.gn
++++ b/third_party/blink/renderer/modules/BUILD.gn
+@@ -16,6 +16,7 @@ if (is_android) {
+ }
+ 
+ visibility = [ "//third_party/blink/renderer/*" ]
++visibility += huhi_blink_renderer_modules_visibility
+ 
+ config("modules_implementation") {
+   defines = [ "BLINK_MODULES_IMPLEMENTATION=1" ]
+@@ -165,6 +166,7 @@ component("modules") {
+     "//third_party/blink/renderer/modules/xr",
+   ]
+ 
++  sub_modules += huhi_blink_sub_modules
+   if (is_android) {
+     sub_modules += [ "//third_party/blink/renderer/modules/remote_objects" ]
+   }

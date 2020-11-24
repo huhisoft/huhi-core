@@ -1,0 +1,13 @@
+diff --git a/chrome/installer/mac/BUILD.gn b/chrome/installer/mac/BUILD.gn
+index 108dd95d86750ead5ec49ec16835e0330b9575fa..268e82d54f7ad7e5eb3e56f4961f537f03f5308c 100644
+--- a/chrome/installer/mac/BUILD.gn
++++ b/chrome/installer/mac/BUILD.gn
+@@ -13,7 +13,7 @@ group("mac") {
+   public_deps = [ ":copies" ]
+ }
+ 
+-_packaging_dir = "$root_out_dir/$chrome_product_full_name Packaging"
++_packaging_dir = "$root_out_dir/" + string_replace("$chrome_product_full_name Packaging", " ", "_")
+ 
+ process_version_rc_template("sign_config") {
+   visibility = [ ":copy_signing" ]

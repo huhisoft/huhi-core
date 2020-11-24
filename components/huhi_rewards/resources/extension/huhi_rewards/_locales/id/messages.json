@@ -1,0 +1,626 @@
+{
+  "huhiRewards": {
+    "message": "Huhi Rewards",
+    "description": "Title in welcome screen for the panel"
+  },
+  "welcomeButtonTextOne": {
+    "message": "Mulai Menghasilkan Sekarang!",
+    "description": "CTA on welcome screen in the panel, existing users"
+  },
+  "welcomeButtonTextTwo": {
+    "message": "Bergabung dengan Rewards",
+    "description": "CTA on welcome screen in the panel, new users"
+  },
+  "welcomeDescOne": {
+    "message": "Dapatkan bayaran untuk melihat iklan dan menggunakannya untuk mendukung pembuat konten favorit Anda.",
+    "description": "Entry text for welcome screen in the panel, existing user"
+  },
+  "welcomeDescTwo": {
+    "message": "Sekarang Anda bisa mendapatkan token dengan melihat iklan yang menghargai privasi.",
+    "description": "Entry text for welcome screen in the panel, new user"
+  },
+  "welcomeDescPoints": {
+    "message": "Anda sekarang bisa mendapat poin untuk menonton iklan yang menghormati privasi.",
+    "description": "Entry text for welcome screen in the panel, points"
+  },
+  "welcomeFooterTextOne": {
+    "message": "Lihat apa saja yang telah ditingkatkan",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, existing user"
+  },
+  "welcomeFooterTextTwo": {
+    "message": "Pelajari Lebih Lanjut",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, new user"
+  },
+  "welcomeHeaderOne": {
+    "message": "Kami memberikan Huhi Rewards peningkatan besar.",
+    "description": "Main header title for welcome screen in the panel, existing user"
+  },
+  "welcomeHeaderTwo": {
+    "message": "Bersiap untuk merasakan Internet generasi berikutnya.",
+    "description": "Main header title for welcome screen in the panel, new user"
+  },
+  "yourWallet": {
+    "message": "Dompet Anda",
+    "description": "Title of wallet section where we display data about wallet"
+  },
+  "grants": {
+    "message": "Hibah",
+    "description": "Title for grant section in wallet summary"
+  },
+  "details": {
+    "message": "Detail",
+    "description": "Title for grant section in wallet panel summary"
+  },
+  "yourBalance": {
+    "message": "Saldo Anda",
+    "description": "Wallet panel title for anon wallets"
+  },
+  "batPoints": {
+    "message": "BAT Points",
+    "description": "BAT Points text"
+  },
+  "batPointsMessage": {
+    "message": "dapat digunakan di Huhi Rewards untuk memberi kontribusi kepada kreator konten favorit Anda. BAT Points tidak dapat ditukarkan dengan BAT.",
+    "description": "Text for BAT Point helper message"
+  },
+  "on": {
+    "message": "di",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "verifiedPublisher": {
+    "message": "Kreator Terverifikasi Huhi",
+    "description": "Tells user that this particular publisher is a Huhi Verified Creator"
+  },
+  "rewardsContributeAttentionScore": {
+    "message": "Atensi",
+    "description": "Label for auto contribute table attention for the publisher"
+  },
+  "donateMonthly": {
+    "message": "Kontribusi Bulanan",
+    "description": "Label for drop down menu where user select amount for monthly contribution for particular publisher"
+  },
+  "includeInAuto": {
+    "message": "Sertakan di Konribusi Otomatis",
+    "description": "Label for checkbox that allows user to exclude publishers from auto contribute"
+  },
+  "donateNow": {
+    "message": "Kirim Tip...",
+    "description": "CTA for sending tip form site banner"
+  },
+  "enableTips": {
+    "message": "Aktifkan Tip",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "for": {
+    "message": "untuk",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "rewardsSummary": {
+    "message": "Ringkasan Rewards",
+    "description": "Section title in wallet panel, which contains monthly rewards summary"
+  },
+  "monthApr": {
+    "message": "April",
+    "description": "Month"
+  },
+  "monthAug": {
+    "message": "Agustus",
+    "description": "Month"
+  },
+  "monthDec": {
+    "message": "Desember",
+    "description": "Month"
+  },
+  "monthFeb": {
+    "message": "Februari",
+    "description": "Month"
+  },
+  "monthJan": {
+    "message": "Januari",
+    "description": "Month"
+  },
+  "monthJul": {
+    "message": "Juli",
+    "description": "Month"
+  },
+  "monthJun": {
+    "message": "Juni",
+    "description": "Month"
+  },
+  "monthMar": {
+    "message": "Maret",
+    "description": "Month"
+  },
+  "monthMay": {
+    "message": "Mei",
+    "description": "Month"
+  },
+  "monthNov": {
+    "message": "November",
+    "description": "Month"
+  },
+  "monthOct": {
+    "message": "Oktober",
+    "description": "Month"
+  },
+  "monthSep": {
+    "message": "September",
+    "description": "Month"
+  },
+  "tokenGrant": {
+    "message": "Hibah $currency$",
+    "description": "Title for grant notification",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "Token"
+      }
+    }
+  },
+  "tokenGrantClaimed": {
+    "message": "Hibah Token Diklaim\n",
+    "description": "Title for grant section in wallet summary"
+  },
+  "pointGrantClaimed": {
+    "message": "Hibah Poin Telah Diambil",
+    "description": "Title for point grant section in wallet summary"
+  },
+  "earningsAds": {
+    "message": "Pendapatan dari Iklan",
+    "description": "Title for ads section in wallet summary"
+  },
+  "rewardsContribute": {
+    "message": "Kontribusi Otomatis",
+    "description": "Title for auto contribute section in wallet summary"
+  },
+  "oneTimeDonation": {
+    "message": "Tip Satu Kali",
+    "description": "Title for one time tips section in wallet summary"
+  },
+  "expiresOn": {
+    "message": "kedaluwarsa pada",
+    "description": "Used for grant representation. Whole string is '30.0 BAT expires on 08/05/2022'"
+  },
+  "recurringDonations": {
+    "message": "Kontribusi Bulanan",
+    "description": "Title for monthly contributions section in wallet summary"
+  },
+  "off": {
+    "message": "Mati",
+    "description": "Label used in toggle indicating that toggle is off"
+  },
+  "ok": {
+    "message": "oke",
+    "description": "Used in notification to dismiss notification"
+  },
+  "huhiAdsLaunchMsg": {
+    "message": "Sekarang Anda bisa mendapatkan penghasilan dari melihat iklan.",
+    "description": "Message for ads launch notification"
+  },
+  "huhiAdsLaunchTitle": {
+    "message": "Huhi Ads telah tiba!",
+    "description": "Message used in notification to let users know Ads is available"
+  },
+  "huhiAdsTitle": {
+    "message": "Huhi Ads",
+    "description": "Notification title when we display info about ads"
+  },
+  "huhiContributeTitle": {
+    "message": "Kontribusi Otomatis",
+    "description": "Notification title when we display info about auto contribution"
+  },
+  "contributeNotificationSuccess": {
+    "message": "Anda telah berkontribusi $amount$ $currency$",
+    "description": "We show this string in the notification when contribution is successful",
+    "placeholders": {
+      "amount": {
+        "content": "$1",
+        "example": "10.0"
+      },
+      "currency": {
+        "content": "$2",
+        "example": "BAT"
+      }
+    }
+  },
+  "grantNotification": {
+    "message": "Ada hibah yang menanti Anda.",
+    "description": "Description for new grant notification"
+  },
+  "backupNow": {
+    "message": "Cadangkan",
+    "description": "Notification button text when we ask user to backup wallet"
+  },
+  "backupWalletTitle": {
+    "message": "Cadangkan Dompet\n",
+    "description": "Notification title when we ask user to backup wallet"
+  },
+  "backupWalletNotification": {
+    "message": "Harap buat cadangan dompet Huhi Anda.",
+    "description": "Description for backup wallet notification"
+  },
+  "insufficientFundsNotification": {
+    "message": "Akun Huhi Rewards Anda menunggu deposit.",
+    "description": "Description for new insufficient funds notification"
+  },
+  "insufficientFunds": {
+    "message": "Saldo Tak Mencukupi",
+    "description": "Title for insufficient funds notification"
+  },
+  "huhiRewardsCreatingText": {
+    "message": "Membuat wallet",
+    "description": "Used in a button displaying wallet creation process"
+  },
+  "contributeNotificationError": {
+    "message": "Terdapat masalah dalam memproses kontribusi Anda.",
+    "description": "We show this string in notification when contribution fails"
+  },
+  "contributeNotificationNotEnoughFunds": {
+    "message": "Pembayaran bulanan berjadwal Anda untuk Kontribusi Otomatis dan kontribusi bulanan tidak dapat diselesaikan karena dana tidak mencukupi. Kami akan mencoba lagi dalam 30 hari.",
+    "description": "We show this string in the notification when you don't have enough funds for contribution"
+  },
+  "contributeNotificationTipError": {
+    "message": "Tidak dapat mengirim tip Anda. Coba lagi nanti.",
+    "description": "We show this string in notification when tip fails"
+  },
+  "noActivity": {
+    "message": "Belum ada aktivitas…",
+    "description": "Allows the user to see that there have been no transactions or other activity in their wallet"
+  },
+  "captchaDrag": {
+    "message": "Seret ikon BAT ke",
+    "description": "Directs the user to drag the BAT icon"
+  },
+  "captchaProveHuman": {
+    "message": "Buktikan bahwa Anda adalah manusia!",
+    "description": "Cosmetic text for captcha prompt"
+  },
+  "captchaTarget": {
+    "message": "sasaran.",
+    "description": "Captcha Target"
+  },
+  "captchaMissedTarget": {
+    "message": "Hmm... Kurang Pas. Coba Lagi.",
+    "description": "Message upon failing captcha"
+  },
+  "claim": {
+    "message": "Klaim",
+    "description": "Claim text"
+  },
+  "newTokenGrant": {
+    "message": "Hibah Token Gratis",
+    "description": "Token grant label"
+  },
+  "grantExpire": {
+    "message": "Tanggal Kedaluwarsa Hibah",
+    "description": "Grant expiry label"
+  },
+  "grantGeneralErrorButton": {
+    "message": "Oke",
+    "description": "Button text for clearing the error."
+  },
+  "grantGeneralErrorText": {
+    "message": "Huhi Rewards mengalami masalah. Silakan coba lagi nanti.",
+    "description": "Error text when user is having problems claiming a grant."
+  },
+  "grantGeneralErrorTitle": {
+    "message": "Ups, ada yang keliru. Silakan coba lagi nanti.",
+    "description": "Error title when user is having problems claiming a grant."
+  },
+  "unVerifiedCheck": {
+    "message": "Segarkan Status",
+    "description": "Text of link that allows to check verified status of unverified publisher"
+  },
+  "unVerifiedPublisher": {
+    "message": "Belum diverifikasi",
+    "description": "Status of the publisher shown in the panel"
+  },
+  "unVerifiedText": {
+    "message": "Pembuat konten ini belum mendaftar untuk menerima kontribusi dari pengguna Huhi. Setiap tips yang Anda kirim akan tetap disimpan di dompet Anda sampai mereka memverifikasi.",
+    "description": "Notice about unverified publisher."
+  },
+  "unVerifiedTextMore": {
+    "message": "Pelajari lebih lanjut.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "reservedAmountText": {
+    "message": "Anda menetapkan {{reservedAmount}} {{currency}} untuk kreator yang belum mendaftarkan diri untuk menerima kontribusi. Peramban akan tetap mencoba memberi kontribusi sampai mereka memverifikasi, atau hingga 90 hari berlalu.",
+    "description": "Notification about how much BAT do you have reserved"
+  },
+  "reservedMoreLink": {
+    "message": "Pelajari lebih lanjut.\n",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "disabledPanelOff": {
+    "message": "Mati",
+    "description": "Off state text for Panel's disabled state"
+  },
+  "disabledPanelSettings": {
+    "message": "Setelan",
+    "description": "Settings Link for Panel's disabled state"
+  },
+  "disabledPanelText": {
+    "message": "Saat ini Anda tidak mendapatkan Rewards saat menjelajah web. Aktifkan kembali Rewards",
+    "description": "Text for Panel's disabled state"
+  },
+  "disabledPanelTitle": {
+    "message": "Huhi Rewards adalah",
+    "description": "Title for Panel's disabled state"
+  },
+  "walletFailedTitle": {
+    "message": "Pembuatan dompet gagal",
+    "description": "Failure title for wallet creation"
+  },
+  "walletFailedButton": {
+    "message": "Coba lagi",
+    "description": "Button for re-try after wallet creation failed"
+  },
+  "addFunds": {
+    "message": "Tambah dana",
+    "description": "Button for adding funds"
+  },
+  "rewardsSettings": {
+    "message": "Setelan Rewards",
+    "description": "Button for opening settings page"
+  },
+  "earningsClaimDefault": {
+    "message": "Reward Anda dari Iklan ditampilkan di sini!",
+    "description": "Panel notification text for Ads grant"
+  },
+  "and": {
+    "message": "dan",
+    "description": "The word 'and'"
+  },
+  "huhiRewardsSubTitle": {
+    "message": "Dapatkan Hadiah untuk Penjelajahan Anda!",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "disabledPanelTextTwo": {
+    "message": "Dapatkan penghasilan dengan melihat iklan yang menghargai privasi, dan salurkan pendapatan untuk mendukung pencipta konten yang Anda sukai.",
+    "description": "Text block for wallet disabled panel"
+  },
+  "enableRewards": {
+    "message": "Aktifkan Huhi Rewards",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "privacyPolicy": {
+    "message": "Kebijakan Privasi",
+    "description": "Privacy Policy"
+  },
+  "serviceText": {
+    "message": "Dengan mengklik \"Aktifkan Huhi Rewards\", Anda menyatakan bahwa Anda telah membaca dan menyetujui",
+    "description": "Terms of service main text"
+  },
+  "termsOfService": {
+    "message": "Ketentuan Layanan",
+    "description": "Terms of Service"
+  },
+  "welcomeBack": {
+    "message": "Selamat Datang Kembali!",
+    "description": "Title message for wallet disabled panel"
+  },
+  "tipsProcessedNotification": {
+    "message": "Kontribusi bulanan Anda telah diproses!",
+    "description": "Message for monthly contributions processed notification"
+  },
+  "contributionTips": {
+    "message": "Kontribusi & Tip",
+    "description": "Title for monthly contributions processed notification"
+  },
+  "serviceTextPanelWelcome": {
+    "message": "Dengan mengklik 'Ikuti Reward', Anda menyatakan telah membaca dan menyetujui",
+    "description": "Terms of service panel opt-in text"
+  },
+  "bat": {
+    "message": "BAT",
+    "description": "BAT text for displaying converted tip amount."
+  },
+  "bap": {
+    "message": "BAP",
+    "description": "BAT Points abbreviation text"
+  },
+  "turnOnAds": {
+    "message": "Aktifkan Iklan",
+    "description": "Prompt to turn on Ads via notification"
+  },
+  "adsEarnings": {
+    "message": "diperoleh dari iklan",
+    "description": "Description text for ad grants in grant details"
+  },
+  "twitterTipsHoverText": {
+    "message": "Beri tip untuk tuit ini",
+    "description": "Hover text for Twitter tips action"
+  },
+  "twitterTipsIconLabel": {
+    "message": "Tip",
+    "description": "Icon label for Twitter tips"
+  },
+  "redditTipsHoverText": {
+    "message": "Beri pos ini tip",
+    "description": "Hover text for Reddit tips action"
+  },
+  "redditTipsIconLabel": {
+    "message": "Tip",
+    "description": "Icon label for Reddit tips"
+  },
+  "githubTipsHoverText": {
+    "message": "Kirim Tip",
+    "description": "Hover text for GitHub tips action"
+  },
+  "githubTipsIconLabel": {
+    "message": "Tip",
+    "description": "Icon label for GitHub tips"
+  },
+  "verifiedPublisherNotification": {
+    "message": "Kreator $name$ diverifikasi belum lama ini",
+    "description": "Notification text that tells user which publisher just verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "huhisoft.com"
+      }
+    }
+  },
+  "pendingNotEnoughFundsNotification": {
+    "message": "Anda memiliki tip tertunda akibat dana kurang",
+    "description": "Notification text that tells user his wallet is under funded for pending contribution to complete"
+  },
+  "pendingContributionTitle": {
+    "message": "Kontribusi Tertunda",
+    "description": "Notification title for pending contribution type"
+  },
+  "grantFinishTitleUGP": {
+    "message": "Ini hari keberuntungan Anda!",
+    "description": "Cosmetic text upon captcha success"
+  },
+  "grantFinishTextUGP": {
+    "message": "Hibah $currency$ Anda sedang dikirim.",
+    "description": "Cosmetic text indicating grant funds are on the way",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "token"
+      }
+    }
+  },
+  "grantFinishTokenTitleUGP": {
+    "message": "Hibah Token Gratis",
+    "description": "Token title on success screen"
+  },
+  "grantFinishPointTitleUGP": {
+    "message": "Hibah Poin Gratis",
+    "description": "Point title on success screen"
+  },
+  "grantFinishTitleAds": {
+    "message": "Anda memperoleh Reward Iklan!",
+    "description": "Cosmetic text upon captcha success for ads"
+  },
+  "grantFinishTextAds": {
+    "message": "Reward sedang dikirim ke dompet Huhi Rewards Anda.",
+    "description": "Cosmetic text indicating ads funds are on the way"
+  },
+  "grantFinishTokenTitleAds": {
+    "message": "Jumlah Reward Anda",
+    "description": "Token title on success screen for ads"
+  },
+  "rewardsPanelTextVerify":  {
+    "message": "verifikasi",
+    "description": "CTA in the footer to verify"
+  },
+  "walletButtonDisconnected":  {
+    "message": "Terputus",
+    "description": "CTA status button"
+  },
+  "walletButtonUnverified":  {
+    "message": "Verifikasi Dompet",
+    "description": "CTA to verify wallet in the wallet "
+  },
+  "walletButtonVerified":  {
+    "message": "Dompet Terverifikasi",
+    "description": "Displayed in wallet that tells users that he is verified"
+  },
+  "walletGoToUphold":  {
+    "message": "Ke akun Uphold saya",
+    "description": "CTA to open uphold account"
+  },
+  "walletDisconnect":  {
+    "message": "Putuskan dari Huhi Reward",
+    "description": "CTA to disconnect user wallet from rewards"
+  },
+  "walletVerified":  {
+    "message": "Terverifikasi",
+    "description": "Status button that tells user that he is verified"
+  },
+  "walletVerifiedNotification":  {
+    "message": "Dompet Anda terverifikasi!",
+    "description": "Title for notification when wallet becomes verified"
+  },
+  "walletVerifiedTextNotification":  {
+    "message": "Selamat! Dompet $name$ Anda berhasil terverifikasi dan siap menambahkan atau menarik dana.",
+    "description": "Title for notification when wallet becomes verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Uphold"
+      }
+    }
+  },
+  "walletDisconnectedNotification":  {
+    "message": "Ups. Dompet Anda tidak dapat dijangkau.",
+    "description": "Title for notification when wallet is disconnected."
+  },
+  "walletDisconnectedTextNotification":  {
+    "message": "Tak perlu khawatir. Ini dapat terjadi karena berbagai alasan keamanan. Menghubungkan ulang dompet Anda akan mengatasi masalah ini.",
+    "description": "Title for notification when wallet is disconnected"
+  },
+  "connectedText":  {
+    "message": "Pencipta Terverifikasi Huhi ini belum mengkonfigurasi akunnya untuk menerima kontribusi dari pengguna Huhi. Tips yang Anda kirim akan tetap disimpan di dompet Anda sampai mereka menyelesaikan proses ini.",
+    "description": "Text shown for connected publishers that are not fully verified in the panel"
+  },
+  "walletGoToVerifyPage":  {
+    "message": "Selesaikan verifikasi dompet",
+    "description": "CTA for completing wallet verification"
+  },
+  "set": {
+    "message": "Tetapkan…",
+    "description": "Button text for setting monthly contribution"
+  },
+  "tokens":  {
+    "message": "token",
+    "description": "Standard tokens text"
+  },
+  "point":  {
+    "message": "Poin",
+    "description": "BAT Point text"
+  },
+  "token":  {
+    "message": "Token",
+    "description": "BAT Token text"
+  },
+  "points":  {
+    "message": "poin",
+    "description": "BAT Points text"
+  },
+  "tokenGrants":  {
+    "message": "Hibah Token",
+    "description": "BAT Tokens Grant Text"
+  },
+  "pointGrants":  {
+    "message": "Hibah Poin",
+    "description": "BAT Points Grant Text"
+  },
+  "greetingsVerified":  {
+    "message": "Halo, $name$!",
+    "description": "Greetings for external wallet popup",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "John"
+      }
+    }
+  },
+  "cancel":  {
+    "message": "Batal",
+    "description": "Text for cancel button"
+  },
+  "login":  {
+    "message": "Masuk",
+    "description": "Text for login button"
+  },
+  "loginMessageTitle":  {
+    "message": "Memverifikasi dompet mengizinkan Anda mengelola dana dengan lebih efisien.",
+    "description": "Text for login button"
+  },
+  "loginMessageText":  {
+    "message": "Anda perlu memiliki minimal 25 BAT untuk membuat akun Uphold. Silakan coba kembali nanti. <br/> Jika Anda sudah memiliki akun Uphold yang terverifikasi, lanjutkan ke masuk akun.",
+    "description": "Text for login button"
+  },
+  "walletConnected":  {
+    "message": "Tersambung",
+    "description": "Status button that tells user that he is connected"
+  },
+  "walletPending":  {
+    "message": "Tertunda",
+    "description": "Status button that tells user that he is currently pending"
+  }
+}

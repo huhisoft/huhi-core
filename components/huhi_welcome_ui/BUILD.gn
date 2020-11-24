@@ -1,0 +1,17 @@
+import("//huhi/components/common/typescript.gni")
+
+transpile_web_ui("huhi_welcome_ui") {
+  entry_points = [
+    ["huhi_welcome", rebase_path("huhi_welcome.tsx")]
+  ]
+
+  resource_name = "huhi_welcome"
+}
+
+pack_web_resources("generated_resources") {
+  resource_name = "huhi_welcome"
+  output_dir = "$root_gen_dir/huhi/components/huhi_welcome/resources"
+  deps = [
+    ":huhi_welcome_ui"
+  ]
+}

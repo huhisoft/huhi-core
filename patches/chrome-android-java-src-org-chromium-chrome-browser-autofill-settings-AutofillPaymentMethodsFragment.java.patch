@@ -1,0 +1,13 @@
+diff --git a/chrome/android/java/src/org/chromium/chrome/browser/autofill/settings/AutofillPaymentMethodsFragment.java b/chrome/android/java/src/org/chromium/chrome/browser/autofill/settings/AutofillPaymentMethodsFragment.java
+index 0e938171032a9bc9f0b9f6e89c9dc77f5b4ccf0b..660cac79ba2814f2b1056f66bbd03f13c3360129 100644
+--- a/chrome/android/java/src/org/chromium/chrome/browser/autofill/settings/AutofillPaymentMethodsFragment.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/autofill/settings/AutofillPaymentMethodsFragment.java
+@@ -30,7 +30,7 @@ import org.chromium.components.browser_ui.settings.ChromeSwitchPreference;
+  * Autofill credit cards fragment, which allows the user to edit credit cards and control
+  * payment apps.
+  */
+-public class AutofillPaymentMethodsFragment extends PreferenceFragmentCompat
++public class AutofillPaymentMethodsFragment extends org.chromium.chrome.browser.settings.HuhiPreferenceFragment
+         implements PersonalDataManager.PersonalDataManagerObserver {
+     private static final String PREF_PAYMENT_APPS = "payment_apps";
+ 

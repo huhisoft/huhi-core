@@ -1,0 +1,11 @@
+import("//huhi/components/huhi_together/buildflags/buildflags.gni")
+
+source_set("browser") {
+  sources = [
+    "regions.h",
+  ]
+
+  public_deps = [
+    "//huhi/components/huhi_together/buildflags",
+  ]
+}

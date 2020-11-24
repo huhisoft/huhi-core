@@ -1,0 +1,12 @@
+diff --git a/components/content_settings/core/common/content_settings.cc b/components/content_settings/core/common/content_settings.cc
+index fed84cf57ac87df1c82d81c7b9ef9e7f7b0f0c63..93bbe7d94af08a74886f40ed1c403e3d5cc73f6e 100644
+--- a/components/content_settings/core/common/content_settings.cc
++++ b/components/content_settings/core/common/content_settings.cc
+@@ -178,6 +178,7 @@ bool RendererContentSettingRules::IsRendererContentSetting(
+          content_type == ContentSettingsType::JAVASCRIPT ||
+          content_type == ContentSettingsType::CLIENT_HINTS ||
+          content_type == ContentSettingsType::POPUPS ||
++         HUHI_IS_RENDERER_CONTENT_SETTING
+          content_type == ContentSettingsType::MIXEDSCRIPT;
+ }
+ 

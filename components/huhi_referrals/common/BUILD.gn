@@ -1,0 +1,10 @@
+import("//huhi/components/huhi_referrals/buildflags/buildflags.gni")
+
+assert(enable_huhi_referrals)
+
+source_set("common") {
+  sources = [
+    "pref_names.cc",
+    "pref_names.h"
+  ]
+}

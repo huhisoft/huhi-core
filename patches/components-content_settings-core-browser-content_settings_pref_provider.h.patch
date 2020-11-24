@@ -1,0 +1,12 @@
+diff --git a/components/content_settings/core/browser/content_settings_pref_provider.h b/components/content_settings/core/browser/content_settings_pref_provider.h
+index 4a9ce3a8eb9e5dcfe2b19a336b34f6cfdf68b8d8..97910be49844fc16bf758ff729d22ce2ee3df6af 100644
+--- a/components/content_settings/core/browser/content_settings_pref_provider.h
++++ b/components/content_settings/core/browser/content_settings_pref_provider.h
+@@ -67,6 +67,7 @@ class PrefProvider : public UserModifiableProvider {
+   ContentSettingsPref* GetPref(ContentSettingsType type) const;
+ 
+  private:
++  friend class HuhiPrefProvider;
+   friend class DeadlockCheckerObserver;  // For testing.
+ 
+   void Notify(const ContentSettingsPattern& primary_pattern,

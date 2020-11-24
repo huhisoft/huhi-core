@@ -1,0 +1,9 @@
+import("//build/buildflag_header.gni")
+import("//huhi/components/huhi_shields/browser/buildflags/buildflags.gni")
+
+buildflag_header("buildflags") {
+  header = "buildflags.h"
+  flags = [
+    "HUHI_STP_ENABLED=$huhi_stp_enabled",
+  ]
+}

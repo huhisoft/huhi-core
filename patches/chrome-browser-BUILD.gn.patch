@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/BUILD.gn b/chrome/browser/BUILD.gn
+index 98ae3acaf7cf5fbfae0e4c2e0ddb8a087e6d6e23..6e2bf378e03ad08a0e30aa38de11b19b33fa3468 100644
+--- a/chrome/browser/BUILD.gn
++++ b/chrome/browser/BUILD.gn
+@@ -2194,6 +2194,7 @@ static_library("browser") {
+     "//ui/strings",
+     "//ui/surface",
+     "//ui/web_dialogs",
++    "//huhi/browser:browser_process",
+   ]
+ 
+   if (build_with_tflite_lib) {

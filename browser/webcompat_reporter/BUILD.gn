@@ -1,0 +1,17 @@
+import("//build/config/features.gni")
+
+source_set("webcompat_reporter") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10664 is resolved
+  check_includes = false
+  sources = [
+    "webcompat_reporter_dialog.cc",
+    "webcompat_reporter_dialog.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/common",
+    "//content/public/browser",
+    "//ui/web_dialogs",
+  ]
+}

@@ -1,0 +1,26 @@
+diff --git a/chrome/installer/util/BUILD.gn b/chrome/installer/util/BUILD.gn
+index 88cc5d8d6bac4cf2a18394e7217e08a8474ff6af..6553edb21c00cc45bd568f802b0bea677c2bf244 100644
+--- a/chrome/installer/util/BUILD.gn
++++ b/chrome/installer/util/BUILD.gn
+@@ -222,7 +222,20 @@ generate_embedded_i18n("generate_strings") {
+ 
+   output_file_name_base = "installer_util_strings"
+ 
+-  branding = branding_path_component
++  brand = "$branding_path_component"
++  if (huhi_chromium_build) {
++    # When huhi_strings.grd is modified, outputs should be re-generated.
++    # This is workaround. Need to change the way of using |huhi_strings.grd|
++    # in |create_string_rc.py|.
++    sources = [
++      "//chrome/app/huhi_strings.grd"
++    ]
++    if (!is_official_build) {
++      # TODO(shong): Remove this.
++      brand = brand + "-development"
++    }
++  }
++  branding = brand
+ }
+ 
+ # Compile the generated .rc file.

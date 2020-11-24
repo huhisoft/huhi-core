@@ -1,0 +1,23 @@
+diff --git a/content/browser/browser_main_runner_impl.cc b/content/browser/browser_main_runner_impl.cc
+index 6607523e72c88837372cf21dbc73447d744d2acf..c34e0613f89367400ebd968b0dc5c5d97367c56a 100644
+--- a/content/browser/browser_main_runner_impl.cc
++++ b/content/browser/browser_main_runner_impl.cc
+@@ -16,6 +16,7 @@
+ #include "base/time/time.h"
+ #include "base/trace_event/heap_profiler_allocation_context_tracker.h"
+ #include "base/trace_event/trace_event.h"
++#include "huhi/browser/huhi_browser_main_loop.h"
+ #include "build/build_config.h"
+ #include "components/tracing/common/trace_startup_config.h"
+ #include "components/tracing/common/tracing_switches.h"
+@@ -94,8 +95,8 @@ int BrowserMainRunnerImpl::Initialize(const MainFunctionParams& parameters) {
+ 
+     gfx::InitializeFonts();
+ 
+-    main_loop_.reset(
+-        new BrowserMainLoop(parameters, std::move(scoped_execution_fence_)));
++    main_loop_.reset(new huhi::HuhiBrowserMainLoop(
++        parameters, std::move(scoped_execution_fence_)));
+ 
+     main_loop_->Init();
+ 

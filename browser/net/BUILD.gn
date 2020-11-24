@@ -1,0 +1,98 @@
+import("//huhi/browser/translate/buildflags/buildflags.gni")
+import("//huhi/components/huhi_referrals/buildflags/buildflags.gni")
+import("//huhi/components/huhi_webtorrent/browser/buildflags/buildflags.gni")
+import("//build/config/features.gni")
+
+# Refer to the keyed API spec for more details about the Huhi Services Key
+defines = huhi_service_key_defines
+
+source_set("net") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10659 is resolved
+  check_includes = false
+  configs += [ "//huhi/build/geolocation" ]
+  sources = [
+    "huhi_ad_block_tp_network_delegate_helper.cc",
+    "huhi_ad_block_tp_network_delegate_helper.h",
+    "huhi_block_safebrowsing_urls.cc",
+    "huhi_block_safebrowsing_urls.h",
+    "huhi_common_static_redirect_network_delegate_helper.cc",
+    "huhi_common_static_redirect_network_delegate_helper.h",
+    "huhi_httpse_network_delegate_helper.cc",
+    "huhi_httpse_network_delegate_helper.h",
+    "huhi_proxying_url_loader_factory.cc",
+    "huhi_proxying_url_loader_factory.h",
+    "huhi_proxying_web_socket.cc",
+    "huhi_proxying_web_socket.h",
+    "huhi_request_handler.cc",
+    "huhi_request_handler.h",
+    "huhi_site_hacks_network_delegate_helper.cc",
+    "huhi_site_hacks_network_delegate_helper.h",
+    "huhi_static_redirect_network_delegate_helper.cc",
+    "huhi_static_redirect_network_delegate_helper.h",
+    "huhi_stp_util.cc",
+    "huhi_stp_util.h",
+    "huhi_system_request_handler.cc",
+    "huhi_system_request_handler.h",
+    "resource_context_data.cc",
+    "resource_context_data.h",
+    "url_context.cc",
+    "url_context.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/app:huhi_generated_resources_grit",
+    "//huhi/browser/safebrowsing",
+    "//huhi/browser/translate/buildflags",
+    "//huhi/common",
+    "//huhi/components/huhi_component_updater/browser",
+    "//huhi/components/huhi_referrals/buildflags",
+    "//huhi/components/huhi_shields/browser",
+    "//huhi/components/huhi_webtorrent/browser/buildflags",
+    "//huhi/extensions:common",
+    "//components/prefs",
+    "//content/public/browser",
+    "//content/public/common",
+    "//components/content_settings/core/browser",
+    "//extensions/common:common_constants",
+    "//mojo/public/cpp/bindings",
+    "//mojo/public/cpp/system",
+    "//net",
+    "//services/network/public/cpp",
+    "//services/network/public/mojom",
+    "//third_party/blink/public/common",
+    "//third_party/blink/public/mojom:mojom_platform_headers",
+    "//third_party/re2",
+    "//url",
+  ]
+
+  if (enable_huhi_referrals) {
+    sources += [
+      "huhi_referrals_network_delegate_helper.cc",
+      "huhi_referrals_network_delegate_helper.h",
+    ]
+
+    deps += [
+      "//huhi/components/huhi_referrals/browser",
+    ]
+  }
+
+  if (enable_huhi_webtorrent) {
+    sources += [
+      "huhi_torrent_redirect_network_delegate_helper.cc",
+      "huhi_torrent_redirect_network_delegate_helper.h",
+    ]
+
+    deps += [
+      "//huhi/components/huhi_webtorrent/browser/",
+      "//extensions/browser",
+    ]
+  }
+
+  if (enable_huhi_translate_go) {
+    sources += [
+      "huhi_translate_redirect_network_delegate_helper.cc",
+      "huhi_translate_redirect_network_delegate_helper.h",
+    ]
+  }
+}

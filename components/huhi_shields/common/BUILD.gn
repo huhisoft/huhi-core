@@ -1,0 +1,15 @@
+source_set("common") {
+  sources = [
+    "huhi_shield_constants.h",
+    "huhi_shield_utils.cc",
+    "huhi_shield_utils.h",
+    "features.cc",
+    "features.h",
+  ]
+
+  deps = [
+    "//base",
+    "//components/content_settings/core/common",
+    "//url",
+  ]
+}

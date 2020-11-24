@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/webui/history/history_ui.cc b/chrome/browser/ui/webui/history/history_ui.cc
+index 03f8195e1c12d87299ba83788157f76c7dbf10a7..4c796fb329fd3a8d9ad2718de009bf2da1b31646 100644
+--- a/chrome/browser/ui/webui/history/history_ui.cc
++++ b/chrome/browser/ui/webui/history/history_ui.cc
+@@ -65,6 +65,7 @@ content::WebUIDataSource* CreateHistoryUIHTMLSource(Profile* profile) {
+   content::WebUIDataSource* source =
+       content::WebUIDataSource::Create(chrome::kChromeUIHistoryHost);
+ 
++  HuhiCustomizeHistoryDataSource(source);
+   static constexpr webui::LocalizedString kStrings[] = {
+       // Localized strings (alphabetical order).
+       {"actionMenuDescription", IDS_HISTORY_ACTION_MENU_DESCRIPTION},

@@ -1,0 +1,206 @@
+import("//huhi/browser/tor/buildflags/buildflags.gni")
+import("//huhi/components/binance/browser/buildflags/buildflags.gni")
+import("//huhi/components/gemini/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wayback_machine/buildflags/buildflags.gni")
+import("//huhi/components/huhi_webtorrent/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_together/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//huhi/components/moonpay/browser/buildflags/buildflags.gni")
+import("//build/config/features.gni")
+import("//components/gcm_driver/config.gni")
+
+declare_args() {
+  huhi_infura_project_id = ""
+}
+
+source_set("extensions") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10661 is resolved
+  check_includes = false
+  sources = [
+    "api/huhi_action_api.cc",
+    "api/huhi_action_api.h",
+    "api/huhi_extensions_api_client.cc",
+    "api/huhi_extensions_api_client.h",
+    "api/huhi_shields_api.cc",
+    "api/huhi_shields_api.h",
+    "api/huhi_theme_api.cc",
+    "api/huhi_theme_api.h",
+    "api/greaselion_api.cc",
+    "api/greaselion_api.h",
+    "api/settings_private/huhi_prefs_util.cc",
+    "api/settings_private/huhi_prefs_util.h",
+    "huhi_component_loader.cc",
+    "huhi_component_loader.h",
+    "huhi_extension_management.cc",
+    "huhi_extension_management.h",
+    "huhi_extension_provider.cc",
+    "huhi_extension_provider.h",
+    "huhi_extension_service.cc",
+    "huhi_extension_service.h",
+    "huhi_extensions_browser_api_provider.cc",
+    "huhi_extensions_browser_api_provider.h",
+    "huhi_extensions_browser_client_impl.cc",
+    "huhi_extensions_browser_client_impl.h",
+    "huhi_theme_event_router.cc",
+    "huhi_theme_event_router.h",
+    "updater/huhi_update_client_config.cc",
+    "updater/huhi_update_client_config.h",
+  ]
+
+  if (huhi_wallet_enabled) {
+    sources += [
+      "api/huhi_wallet_api.cc",
+      "api/huhi_wallet_api.h",
+      "huhi_wallet_util.cc",
+      "huhi_wallet_util.h"
+    ]
+    configs += [ ":infura_config" ]
+  }
+
+  deps = [
+    ":resources",
+    "//base",
+    "//huhi/app:huhi_generated_resources_grit",
+    "//huhi/browser/tor:buildflags",
+    "//huhi/browser/webcompat_reporter",
+    "//huhi/common",
+    "//huhi/common:pref_names",
+    "//huhi/common/extensions/api",
+    "//huhi/components/huhi_component_updater/browser",
+    "//huhi/components/huhi_rewards/browser/buildflags",
+    "//huhi/components/huhi_shields/browser",
+    "//huhi/components/huhi_shields/common",
+    "//huhi/components/huhi_wayback_machine:buildflags",
+    "//huhi/components/ipfs/browser/buildflags",
+    "//chrome/browser/extensions",
+    "//chrome/common",
+    "//components/gcm_driver:gcm_driver",
+    "//components/gcm_driver:gcm_buildflags",
+    "//components/omnibox/browser:browser",
+    "//components/prefs",
+    "//components/services/patch/content",
+    "//components/services/unzip/content",
+    "//components/update_client:patch_impl",
+    "//components/update_client:unzip_impl",
+    "//content/public/browser",
+    "//extensions/browser",
+    "//extensions/common",
+    "//third_party/re2",
+    "//ui/base",
+    "//url",
+  ]
+
+  if (moonpay_enabled) {
+    sources += [
+      "api/moonpay_api.cc",
+      "api/moonpay_api.h",
+    ]
+
+    deps += [
+      "//huhi/components/moonpay/browser/",
+      "//huhi/components/moonpay/common/",
+      "//huhi/components/ntp_widget_utils/browser",
+    ]
+  }
+
+  if (ipfs_enabled) {
+    sources += [
+      "api/ipfs_api.cc",
+      "api/ipfs_api.h",
+    ]
+    deps += [
+      "//huhi/components/ipfs/browser",
+      "//huhi/components/ipfs/common",
+    ]
+  }
+
+  if (huhi_rewards_enabled) {
+    sources += [
+      "api/huhi_rewards_api.cc",
+      "api/huhi_rewards_api.h",
+      "api/rewards_notifications_api.cc",
+      "api/rewards_notifications_api.h",
+    ]
+
+    deps += [
+      "//huhi/components/huhi_rewards/browser",
+      "//huhi/vendor/bat-native-ledger:headers",
+    ]
+  }
+  if (enable_huhi_webtorrent) {
+    deps += [
+      "//huhi/components/huhi_webtorrent/browser",
+    ]
+    sources += [
+      "huhi_webtorrent_navigation_throttle.cc",
+      "huhi_webtorrent_navigation_throttle.h",
+    ]
+  }
+  if (enable_huhi_wayback_machine) {
+    deps += [
+      "//huhi/components/huhi_wayback_machine",
+    ]
+  }
+  if (gemini_enabled) {
+    sources += [
+      "api/gemini_api.cc",
+      "api/gemini_api.h",
+    ]
+    deps += [
+      "//huhi/components/gemini/browser",
+      "//huhi/components/ntp_widget_utils/browser",
+    ]
+  }
+
+  if (binance_enabled) {
+    sources += [
+      "api/binance_api.cc",
+      "api/binance_api.h",
+    ]
+
+    deps += [
+      "//huhi/components/binance/browser",
+      "//huhi/components/ntp_widget_utils/browser",
+    ]
+  }
+
+  if (huhi_together_enabled) {
+    sources += [
+      "api/huhi_together_api.cc",
+      "api/huhi_together_api.h",
+    ]
+
+    deps += [
+      "//huhi/components/huhi_together/browser",
+      "//huhi/components/ntp_widget_utils/browser",
+    ]
+  }
+}
+
+group("resources") {
+  deps = [
+    "//huhi/components/huhi_extension:generated_resources",
+    "//huhi/components/huhi_extension:static_resources",
+  ]
+  if (huhi_rewards_enabled) {
+    deps += [
+      "//huhi/components/huhi_rewards/resources/extension:extension_generated_resources",
+      "//huhi/components/huhi_rewards/resources/extension:static_resources",
+    ]
+  }
+  if (enable_huhi_webtorrent) {
+    deps += [
+      "//huhi/components/huhi_webtorrent:generated_resources",
+      "//huhi/components/huhi_webtorrent:static_resources",
+    ]
+  }
+}
+
+config("infura_config") {
+  defines = [
+    "HUHI_SERVICES_KEY=\"$huhi_services_key\"",
+    "HUHI_INFURA_PROJECT_ID=\"$huhi_infura_project_id\""
+  ]
+}

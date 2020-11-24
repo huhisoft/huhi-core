@@ -1,0 +1,90 @@
+// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Huhi Software
+// License, v. 2.0. If a copy of the MPL was not distributed with this file,
+// You can obtain one at http://mozilla.org/MPL/2.0/.
+module bat_ads.mojom;
+
+import "huhi/vendor/bat-native-ads/include/bat/ads/public/interfaces/ads.mojom";
+import "huhi/vendor/bat-native-ads/include/bat/ads/public/interfaces/ads_database.mojom";
+
+const string kServiceName = "bat_ads";
+
+// Service which hands out bat ads.
+interface BatAdsService {
+  Create(pending_associated_remote<BatAdsClient> bat_ads_client,
+         pending_associated_receiver<BatAds> database) => ();
+  SetEnvironment(ads.mojom.HuhiAdsEnvironment environment) => ();
+  SetBuildChannel(ads.mojom.HuhiAdsBuildChannel build_channel) => ();
+  SetDebug(bool is_debug) => ();
+};
+
+interface BatAdsClient {
+  [Sync]
+  IsEnabled() => (bool is_enabled);
+  [Sync]
+  ShouldAllowAdConversionTracking() => (bool should_allow);
+  [Sync]
+  GetAdsPerHour() => (uint64 ads_per_hour);
+  [Sync]
+  GetAdsPerDay() => (uint64 ads_per_day);
+  [Sync]
+  IsNetworkConnectionAvailable() => (bool available);
+  [Sync]
+  IsForeground() => (bool is_foreground);
+  [Sync]
+  ShouldShowNotifications() => (bool should_show);
+  [Sync]
+  LoadResourceForId(string id) => (string value);
+  [Sync]
+  CanShowBackgroundNotifications() => (bool can_show);
+  [Sync]
+  ShouldAllowAdsSubdivisionTargeting() => (bool should_allow);
+  [Sync]
+  GetAdsSubdivisionTargetingCode() => (string subdivision_targeting_code);
+  [Sync]
+  GetAutomaticallyDetectedAdsSubdivisionTargetingCode() => (string subdivision_targeting_code);
+
+  SetAllowAdsSubdivisionTargeting(bool should_allow);
+  SetAdsSubdivisionTargetingCode(string subdivision_targeting_code);
+  SetAutomaticallyDetectedAdsSubdivisionTargetingCode(string subdivision_targeting_code);
+  SetIdleThreshold(int32 threshold);
+  ShowNotification(string notification_info);
+  CloseNotification(string uuid);
+  UrlRequest(ads.mojom.HuhiAdsUrlRequest request) => (ads.mojom.HuhiAdsUrlResponse response);
+  Save(string name, string value) => (int32 result);
+  LoadUserModelForId(string id) => (int32 result, string value);
+  Load(string name) => (int32 result, string value);
+  RunDBTransaction(ads_database.mojom.DBTransaction transaction) => (ads_database.mojom.DBCommandResponse response);
+  OnAdRewardsChanged();
+  Log(string file, int32 line, int32 verbose_level, string message);
+};
+
+interface BatAds {
+  Initialize() => (int32 result);
+  Shutdown() => (int32 result);
+  ChangeLocale(string locale);
+  OnAdsSubdivisionTargetingCodeHasChanged();
+  OnPageLoaded(int32 tab_id, string original_url, string url, string html);
+  OnUnIdle();
+  OnIdle();
+  OnForeground();
+  OnBackground();
+  OnMediaPlaying(int32 tab_id);
+  OnMediaStopped(int32 tab_id);
+  OnTabUpdated(int32 tab_id, string url, bool is_active, bool is_browser_active, bool is_incognito);
+  OnTabClosed(int32 tab_id);
+  GetAdNotification(string uuid) => (string json);
+  OnAdNotificationEvent(string uuid, ads.mojom.HuhiAdsAdNotificationEventType event_type);
+  RemoveAllHistory() => (int32 result);
+  OnWalletUpdated(string payment_id, string recovery_seed_base64);
+  UpdateAdRewards(bool should_reconcile);
+  GetAdsHistory(uint64 from_timestamp, uint64 to_timestamp) => (string json);
+  GetTransactionHistory() => (bool success, string json);
+  ToggleAdThumbUp(string creative_instance_id, string creative_set_id, int32 action) => (string creative_instance_id, int32 action);
+  ToggleAdThumbDown(string creative_instance_id, string creative_set_id, int32 action) => (string creative_instance_id, int32 action);
+  ToggleAdOptInAction(string category, int32 action) => (string category, int32 action);
+  ToggleAdOptOutAction(string category, int32 action) => (string category, int32 action);
+  ToggleSaveAd(string creative_instance_id, string creative_set_id, bool saved) => (string creative_instance_id, bool saved);
+  ToggleFlagAd(string creative_instance_id, string creative_set_id, bool flagged) => (string creative_instance_id, bool flagged);
+  OnUserModelUpdated(string id);
+};

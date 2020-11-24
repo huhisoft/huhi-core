@@ -1,0 +1,12 @@
+diff --git a/build/config/chrome_build.gni b/build/config/chrome_build.gni
+index e8f9660f2c3d0def9307e4ebd2fd3e293150e6a7..85de05951af7ef10e532e56209342cc1683f3a82 100644
+--- a/build/config/chrome_build.gni
++++ b/build/config/chrome_build.gni
+@@ -1,6 +1,7 @@
+ # Copyright 2015 The Chromium Authors. All rights reserved.
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
++import("//huhi/build/config/huhi_build.gni")
+ 
+ declare_args() {
+   # Select the desired branding flavor. False means normal Chromium branding,

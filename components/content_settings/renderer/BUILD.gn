@@ -1,0 +1,33 @@
+import("//build/config/features.gni")
+
+source_set("renderer") {
+  visibility = [
+    "//chrome/renderer/*",
+    "//components/content_settings/renderer/*",
+    "//huhi/renderer/*",
+    "//huhi:child_dependencies",
+    "//huhi/test:*"
+  ]
+
+  sources = [
+    "huhi_content_settings_agent_impl.cc",
+    "huhi_content_settings_agent_impl.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/common",
+    "//huhi/components/huhi_shields/common",
+    "//huhi/third_party/blink/renderer:renderer",
+    "//chrome/common",
+    "//components/content_settings/core/common",
+    "//components/content_settings/renderer",
+    "//content/public/renderer",
+    "//mojo/public/cpp/bindings",
+    "//services/service_manager/public/cpp",
+    "//third_party/blink/public:blink",
+    "//third_party/blink/public/mojom:mojom_platform_blink_headers",
+    "//huhi/content:common",
+    "//url",
+  ]
+}

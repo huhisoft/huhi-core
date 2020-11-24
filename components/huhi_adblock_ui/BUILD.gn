@@ -1,0 +1,17 @@
+import("//huhi/components/common/typescript.gni")
+
+transpile_web_ui("huhi_adblock_ui") {
+  entry_points = [
+    ["huhi_adblock", rebase_path("huhi_adblock.tsx")]
+  ]
+
+  resource_name = "huhi_adblock"
+}
+
+pack_web_resources("generated_resources") {
+  resource_name = "huhi_adblock"
+  output_dir = "$root_gen_dir/huhi/components/huhi_adblock/resources"
+  deps = [
+    ":huhi_adblock_ui"
+  ]
+}

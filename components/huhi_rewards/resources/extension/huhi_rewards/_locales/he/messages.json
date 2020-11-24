@@ -1,0 +1,626 @@
+{
+  "huhiRewards": {
+    "message": "Huhi Rewards",
+    "description": "Title in welcome screen for the panel"
+  },
+  "welcomeButtonTextOne": {
+    "message": "התחילו להרוויח עכשיו!",
+    "description": "CTA on welcome screen in the panel, existing users"
+  },
+  "welcomeButtonTextTwo": {
+    "message": "הצטרפות ל-Rewards",
+    "description": "CTA on welcome screen in the panel, new users"
+  },
+  "welcomeDescOne": {
+    "message": "קבלו תשלום עבור צפייה בפרסומות והשתמשו בו כדי לתגמל את יוצרי התוכן האהובים עליכם.",
+    "description": "Entry text for welcome screen in the panel, existing user"
+  },
+  "welcomeDescTwo": {
+    "message": "כעת תוכלו לצבור קופונים עבור צפייה בפרסומות מכבדות פרטיות.",
+    "description": "Entry text for welcome screen in the panel, new user"
+  },
+  "welcomeDescPoints": {
+    "message": "כעת תוכל/י להרוויח נקודות עבור צפייה במודעות פרסומת השומרות על הפרטיות.",
+    "description": "Entry text for welcome screen in the panel, points"
+  },
+  "welcomeFooterTextOne": {
+    "message": "בדקו מה יובא",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, existing user"
+  },
+  "welcomeFooterTextTwo": {
+    "message": "לימדו עוד",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, new user"
+  },
+  "welcomeHeaderOne": {
+    "message": "עשינו ל-Huhi Rewards שדרגו גדול.",
+    "description": "Main header title for welcome screen in the panel, existing user"
+  },
+  "welcomeHeaderTwo": {
+    "message": "התכוננו לחוות את האינטרנט הבא.",
+    "description": "Main header title for welcome screen in the panel, new user"
+  },
+  "yourWallet": {
+    "message": "הארנק שלך",
+    "description": "Title of wallet section where we display data about wallet"
+  },
+  "grants": {
+    "message": "מענקים",
+    "description": "Title for grant section in wallet summary"
+  },
+  "details": {
+    "message": "פרטים",
+    "description": "Title for grant section in wallet panel summary"
+  },
+  "yourBalance": {
+    "message": "היתרה שלך",
+    "description": "Wallet panel title for anon wallets"
+  },
+  "batPoints": {
+    "message": "נקודות BAT",
+    "description": "BAT Points text"
+  },
+  "batPointsMessage": {
+    "message": "ניתן להשתמש בו ב-Huhi Rewards כדי לתרום ליוצרי התוכן החביבים עליך. לא ניתן להמיר נקודות BAT ב-BAT.",
+    "description": "Text for BAT Point helper message"
+  },
+  "on": {
+    "message": "פעיל",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "verifiedPublisher": {
+    "message": "יוצר מאומת של Huhi ",
+    "description": "Tells user that this particular publisher is a Huhi Verified Creator"
+  },
+  "rewardsContributeAttentionScore": {
+    "message": "שימו לב",
+    "description": "Label for auto contribute table attention for the publisher"
+  },
+  "donateMonthly": {
+    "message": "תרומה חודשית",
+    "description": "Label for drop down menu where user select amount for monthly contribution for particular publisher"
+  },
+  "includeInAuto": {
+    "message": "כלול בתרומות העצמיות",
+    "description": "Label for checkbox that allows user to exclude publishers from auto contribute"
+  },
+  "donateNow": {
+    "message": "שלח טיפ...",
+    "description": "CTA for sending tip form site banner"
+  },
+  "enableTips": {
+    "message": "הרשאת טיפים",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "for": {
+    "message": "בשביל",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "rewardsSummary": {
+    "message": "סיכום תגמולים",
+    "description": "Section title in wallet panel, which contains monthly rewards summary"
+  },
+  "monthApr": {
+    "message": "אפריל",
+    "description": "Month"
+  },
+  "monthAug": {
+    "message": "אוגוסט",
+    "description": "Month"
+  },
+  "monthDec": {
+    "message": "דצמבר",
+    "description": "Month"
+  },
+  "monthFeb": {
+    "message": "פברואר",
+    "description": "Month"
+  },
+  "monthJan": {
+    "message": "ינואר",
+    "description": "Month"
+  },
+  "monthJul": {
+    "message": "יולי",
+    "description": "Month"
+  },
+  "monthJun": {
+    "message": "יוני",
+    "description": "Month"
+  },
+  "monthMar": {
+    "message": "מרץ",
+    "description": "Month"
+  },
+  "monthMay": {
+    "message": "מאי",
+    "description": "Month"
+  },
+  "monthNov": {
+    "message": "נובמבר",
+    "description": "Month"
+  },
+  "monthOct": {
+    "message": "אוקטובר",
+    "description": "Month"
+  },
+  "monthSep": {
+    "message": "ספטמבר",
+    "description": "Month"
+  },
+  "tokenGrant": {
+    "message": "מענקי $currency$",
+    "description": "Title for grant notification",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "Token"
+      }
+    }
+  },
+  "tokenGrantClaimed": {
+    "message": "מענקי אסימון נתבעו",
+    "description": "Title for grant section in wallet summary"
+  },
+  "pointGrantClaimed": {
+    "message": "מענקי נקודות נתבעו",
+    "description": "Title for point grant section in wallet summary"
+  },
+  "earningsAds": {
+    "message": "צבירה מפרסומות",
+    "description": "Title for ads section in wallet summary"
+  },
+  "rewardsContribute": {
+    "message": "תרומה אוטומטית",
+    "description": "Title for auto contribute section in wallet summary"
+  },
+  "oneTimeDonation": {
+    "message": "טיפ חד-פעמי",
+    "description": "Title for one time tips section in wallet summary"
+  },
+  "expiresOn": {
+    "message": "פג תוקף ב-",
+    "description": "Used for grant representation. Whole string is '30.0 BAT expires on 08/05/2022'"
+  },
+  "recurringDonations": {
+    "message": "תרומות חודשיות",
+    "description": "Title for monthly contributions section in wallet summary"
+  },
+  "off": {
+    "message": "מכובה",
+    "description": "Label used in toggle indicating that toggle is off"
+  },
+  "ok": {
+    "message": "אוקיי",
+    "description": "Used in notification to dismiss notification"
+  },
+  "huhiAdsLaunchMsg": {
+    "message": "כעת באפשרותך להרוויח כסף מצפייה בפרסומות.",
+    "description": "Message for ads launch notification"
+  },
+  "huhiAdsLaunchTitle": {
+    "message": "פרסומות earnings ",
+    "description": "Message used in notification to let users know Ads is available"
+  },
+  "huhiAdsTitle": {
+    "message": "פרסומות Huhi",
+    "description": "Notification title when we display info about ads"
+  },
+  "huhiContributeTitle": {
+    "message": "תרומה אוטומטית",
+    "description": "Notification title when we display info about auto contribution"
+  },
+  "contributeNotificationSuccess": {
+    "message": "תרמת $amount$ $currency$",
+    "description": "We show this string in the notification when contribution is successful",
+    "placeholders": {
+      "amount": {
+        "content": "$1",
+        "example": "10.0"
+      },
+      "currency": {
+        "content": "$2",
+        "example": "BAT"
+      }
+    }
+  },
+  "grantNotification": {
+    "message": "מחכה לכם מענק.",
+    "description": "Description for new grant notification"
+  },
+  "backupNow": {
+    "message": "גבה עכשיו",
+    "description": "Notification button text when we ask user to backup wallet"
+  },
+  "backupWalletTitle": {
+    "message": "ארנק גיבוי",
+    "description": "Notification title when we ask user to backup wallet"
+  },
+  "backupWalletNotification": {
+    "message": "אנא גבו את ארנק ה-Huhi שלכם.",
+    "description": "Description for backup wallet notification"
+  },
+  "insufficientFundsNotification": {
+    "message": "חשבון Huhi Rewards שלך מחכה להפקה.",
+    "description": "Description for new insufficient funds notification"
+  },
+  "insufficientFunds": {
+    "message": "יתרה אינה מספיקה ",
+    "description": "Title for insufficient funds notification"
+  },
+  "huhiRewardsCreatingText": {
+    "message": "הגדרת ארנק",
+    "description": "Used in a button displaying wallet creation process"
+  },
+  "contributeNotificationError": {
+    "message": "אירעה תקלה בעיבוד התרומה שלכם.",
+    "description": "We show this string in notification when contribution fails"
+  },
+  "contributeNotificationNotEnoughFunds": {
+    "message": "לא ניתן היה להשלים את התשלום החודשי המתוכנן שלכם עבור תרומה אוטומטית ותרומות חודשיות בשל חוסר בכסף. אנו ננסה שוב בעוד 30 יום.",
+    "description": "We show this string in the notification when you don't have enough funds for contribution"
+  },
+  "contributeNotificationTipError": {
+    "message": "לא ניתן לשלוח את הטיפ שלך. נא לנסות שוב מאוחר יותר.",
+    "description": "We show this string in notification when tip fails"
+  },
+  "noActivity": {
+    "message": "אין פעילויות עדיין...",
+    "description": "Allows the user to see that there have been no transactions or other activity in their wallet"
+  },
+  "captchaDrag": {
+    "message": "גרור את סמל ה-BAT אל",
+    "description": "Directs the user to drag the BAT icon"
+  },
+  "captchaProveHuman": {
+    "message": "הוכיחו שהנכם בני אדם!",
+    "description": "Cosmetic text for captcha prompt"
+  },
+  "captchaTarget": {
+    "message": "יעד.",
+    "description": "Captcha Target"
+  },
+  "captchaMissedTarget": {
+    "message": "מממ ... לא ממש. נסו שוב.",
+    "description": "Message upon failing captcha"
+  },
+  "claim": {
+    "message": "תביעה",
+    "description": "Claim text"
+  },
+  "newTokenGrant": {
+    "message": "מענק אסימון חינם ",
+    "description": "Token grant label"
+  },
+  "grantExpire": {
+    "message": "תאריך תפוגת מענק",
+    "description": "Grant expiry label"
+  },
+  "grantGeneralErrorButton": {
+    "message": "אוקיי",
+    "description": "Button text for clearing the error."
+  },
+  "grantGeneralErrorText": {
+    "message": "Huhi Rewards נתקל בבעיה. אנא נסו שוב מאוחר יותר.",
+    "description": "Error text when user is having problems claiming a grant."
+  },
+  "grantGeneralErrorTitle": {
+    "message": "אופס, משהו לא בסדר. אנא נסו שוב מאוחר יותר.",
+    "description": "Error title when user is having problems claiming a grant."
+  },
+  "unVerifiedCheck": {
+    "message": "רענן סטטוס",
+    "description": "Text of link that allows to check verified status of unverified publisher"
+  },
+  "unVerifiedPublisher": {
+    "message": "טרם אומת",
+    "description": "Status of the publisher shown in the panel"
+  },
+  "unVerifiedText": {
+    "message": "יוצר זה עדיין לא נרשם לקבלת תרומות ממשתמשי Huhi. כל הטיפים שתשלחו יישארו בארנק שלכם עד אשר יאומת.",
+    "description": "Notice about unverified publisher."
+  },
+  "unVerifiedTextMore": {
+    "message": "למד עוד.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "reservedAmountText": {
+    "message": "הקצית {{reservedAmount}} {{currency}} ליוצרים שלא נרשמו לקבלת תרומות. הדפדפן שלך ימשיך לנסות לתרום עד שהם יאומתו, אך לא יותר מ-90 יום.",
+    "description": "Notification about how much BAT do you have reserved"
+  },
+  "reservedMoreLink": {
+    "message": "למד עוד.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "disabledPanelOff": {
+    "message": "כבוי",
+    "description": "Off state text for Panel's disabled state"
+  },
+  "disabledPanelSettings": {
+    "message": "הגדרות.",
+    "description": "Settings Link for Panel's disabled state"
+  },
+  "disabledPanelText": {
+    "message": "בשלב זה אינכם צוברים כל הטבות Rewards במהלך הגלישה. הפעילו מחדש את Rewards ב-",
+    "description": "Text for Panel's disabled state"
+  },
+  "disabledPanelTitle": {
+    "message": "Huhi Rewards הינו ",
+    "description": "Title for Panel's disabled state"
+  },
+  "walletFailedTitle": {
+    "message": "יצירת ארנק נכשלה",
+    "description": "Failure title for wallet creation"
+  },
+  "walletFailedButton": {
+    "message": "ניסיון חוזר",
+    "description": "Button for re-try after wallet creation failed"
+  },
+  "addFunds": {
+    "message": "הוסף/י כסף",
+    "description": "Button for adding funds"
+  },
+  "rewardsSettings": {
+    "message": "הגדרות תשלומים",
+    "description": "Button for opening settings page"
+  },
+  "earningsClaimDefault": {
+    "message": "התגמולים שלך מ-Ads הגיעו!",
+    "description": "Panel notification text for Ads grant"
+  },
+  "and": {
+    "message": "ו",
+    "description": "The word 'and'"
+  },
+  "huhiRewardsSubTitle": {
+    "message": "גלשו וקבלו תגמולים!",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "disabledPanelTextTwo": {
+    "message": "הרווח/י מצפייה בפרסומות שמכבדות את פרטיותך, ותעביר/י את זה הלאה כדי לתמוך ביוצרי תוכן שאת/ת אוהב/ת.",
+    "description": "Text block for wallet disabled panel"
+  },
+  "enableRewards": {
+    "message": "הפעל תגמולי גלישה",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "privacyPolicy": {
+    "message": "מדיניות הפרטיות",
+    "description": "Privacy Policy"
+  },
+  "serviceText": {
+    "message": "בלחיצה על \"אפשר את Huhi Rewards\", הינך מאשר/ת שקראת והסכמת ל",
+    "description": "Terms of service main text"
+  },
+  "termsOfService": {
+    "message": "תנאי שירות",
+    "description": "Terms of Service"
+  },
+  "welcomeBack": {
+    "message": "ברוך שובך!",
+    "description": "Title message for wallet disabled panel"
+  },
+  "tipsProcessedNotification": {
+    "message": "התרומות החודשיות שלך עובדו!",
+    "description": "Message for monthly contributions processed notification"
+  },
+  "contributionTips": {
+    "message": "תרומות וטיפים",
+    "description": "Title for monthly contributions processed notification"
+  },
+  "serviceTextPanelWelcome": {
+    "message": "בהקשה על \"הצטרפות לפרסים\", את/ה מאשר/ת שקראת והסכמת ל-",
+    "description": "Terms of service panel opt-in text"
+  },
+  "bat": {
+    "message": "BAT",
+    "description": "BAT text for displaying converted tip amount."
+  },
+  "bap": {
+    "message": "BAP",
+    "description": "BAT Points abbreviation text"
+  },
+  "turnOnAds": {
+    "message": "הפעל פרסומות",
+    "description": "Prompt to turn on Ads via notification"
+  },
+  "adsEarnings": {
+    "message": "סכום שהתקבל מפרסומות",
+    "description": "Description text for ad grants in grant details"
+  },
+  "twitterTipsHoverText": {
+    "message": "תן/י טיפ לציוץ זה",
+    "description": "Hover text for Twitter tips action"
+  },
+  "twitterTipsIconLabel": {
+    "message": "טיפ",
+    "description": "Icon label for Twitter tips"
+  },
+  "redditTipsHoverText": {
+    "message": "תן טיפ לפוסט זה",
+    "description": "Hover text for Reddit tips action"
+  },
+  "redditTipsIconLabel": {
+    "message": "טיפ",
+    "description": "Icon label for Reddit tips"
+  },
+  "githubTipsHoverText": {
+    "message": "שליחת טיפ",
+    "description": "Hover text for GitHub tips action"
+  },
+  "githubTipsIconLabel": {
+    "message": "טיפ",
+    "description": "Icon label for GitHub tips"
+  },
+  "verifiedPublisherNotification": {
+    "message": "היוצר/ת $name$ אומת/ה לאחרונה",
+    "description": "Notification text that tells user which publisher just verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "huhisoft.com"
+      }
+    }
+  },
+  "pendingNotEnoughFundsNotification": {
+    "message": "יש לכם טיפים שממתינים בשל חוסר בכסף",
+    "description": "Notification text that tells user his wallet is under funded for pending contribution to complete"
+  },
+  "pendingContributionTitle": {
+    "message": "תרומה ממתינה",
+    "description": "Notification title for pending contribution type"
+  },
+  "grantFinishTitleUGP": {
+    "message": "זהו יום המזל שלכם!",
+    "description": "Cosmetic text upon captcha success"
+  },
+  "grantFinishTextUGP": {
+    "message": "מענק ה-$currency$ שלך בדרך",
+    "description": "Cosmetic text indicating grant funds are on the way",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "token"
+      }
+    }
+  },
+  "grantFinishTokenTitleUGP": {
+    "message": "מענק אסימון חינם ",
+    "description": "Token title on success screen"
+  },
+  "grantFinishPointTitleUGP": {
+    "message": "מענק נקודות בחינם",
+    "description": "Point title on success screen"
+  },
+  "grantFinishTitleAds": {
+    "message": "זכית בתגמול על פרסומות!",
+    "description": "Cosmetic text upon captcha success for ads"
+  },
+  "grantFinishTextAds": {
+    "message": "התגמול שלך בדרך לארנק תגמולי ה-Huhi שלך.",
+    "description": "Cosmetic text indicating ads funds are on the way"
+  },
+  "grantFinishTokenTitleAds": {
+    "message": "סכום התגמול שלך",
+    "description": "Token title on success screen for ads"
+  },
+  "rewardsPanelTextVerify":  {
+    "message": "אימות",
+    "description": "CTA in the footer to verify"
+  },
+  "walletButtonDisconnected":  {
+    "message": "מנותק",
+    "description": "CTA status button"
+  },
+  "walletButtonUnverified":  {
+    "message": "אימות ארנק",
+    "description": "CTA to verify wallet in the wallet "
+  },
+  "walletButtonVerified":  {
+    "message": "הארנק מאומת",
+    "description": "Displayed in wallet that tells users that he is verified"
+  },
+  "walletGoToUphold":  {
+    "message": "עבור לחשבון Uphold שלי",
+    "description": "CTA to open uphold account"
+  },
+  "walletDisconnect":  {
+    "message": "התנתקות מתגמולי Huhi",
+    "description": "CTA to disconnect user wallet from rewards"
+  },
+  "walletVerified":  {
+    "message": "מאומת",
+    "description": "Status button that tells user that he is verified"
+  },
+  "walletVerifiedNotification":  {
+    "message": "הארנק שלך מאומת!",
+    "description": "Title for notification when wallet becomes verified"
+  },
+  "walletVerifiedTextNotification":  {
+    "message": "ברכותינו! הארנק $name$ שלך אומת בהצלחה ומוכן להוספת ומשיכת כספים.",
+    "description": "Title for notification when wallet becomes verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Uphold"
+      }
+    }
+  },
+  "walletDisconnectedNotification":  {
+    "message": "הו לא. הארנק שלך אינו זמין.",
+    "description": "Title for notification when wallet is disconnected."
+  },
+  "walletDisconnectedTextNotification":  {
+    "message": "אל דאגה. דבר זה יכול לקרות ממגוון סיבות אבטחה. חיבור מחדש של הארנק שלך יפתור את הבעיה.",
+    "description": "Title for notification when wallet is disconnected"
+  },
+  "connectedText":  {
+    "message": "יוצר מאומת זה של Huhi טרם הגדיר את חשבונו לקבלת תרומות ממשתמשי Huhi. טיפים שתשלחו יישארו בארנקכם עד אשר הוא יסיים תהליך זה.",
+    "description": "Text shown for connected publishers that are not fully verified in the panel"
+  },
+  "walletGoToVerifyPage":  {
+    "message": "השלמת אימות הארנק",
+    "description": "CTA for completing wallet verification"
+  },
+  "set": {
+    "message": "הגדר...",
+    "description": "Button text for setting monthly contribution"
+  },
+  "tokens":  {
+    "message": "Tokens",
+    "description": "Standard tokens text"
+  },
+  "point":  {
+    "message": "נקודה",
+    "description": "BAT Point text"
+  },
+  "token":  {
+    "message": "טוקן",
+    "description": "BAT Token text"
+  },
+  "points":  {
+    "message": "נקודות",
+    "description": "BAT Points text"
+  },
+  "tokenGrants":  {
+    "message": "מענק אסימונים",
+    "description": "BAT Tokens Grant Text"
+  },
+  "pointGrants":  {
+    "message": "מענקי נקודות",
+    "description": "BAT Points Grant Text"
+  },
+  "greetingsVerified":  {
+    "message": "שלום, $name$!",
+    "description": "Greetings for external wallet popup",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "John"
+      }
+    }
+  },
+  "cancel":  {
+    "message": "ביטול",
+    "description": "Text for cancel button"
+  },
+  "login":  {
+    "message": "התחבר",
+    "description": "Text for login button"
+  },
+  "loginMessageTitle":  {
+    "message": "אימות הארנק מאפשר לכם לנהל את הכספים שלכם בצורה יעילה יותר.",
+    "description": "Text for login button"
+  },
+  "loginMessageText":  {
+    "message": "נדרשים לכם מינימום של 25 BAT כדי ליצור חשבון Uphold. נא לנסות שוב מאוחר יותר. <br/> אם כבר יש לכם חשבון Uphold מאומת, המשיכו להתחברות.",
+    "description": "Text for login button"
+  },
+  "walletConnected":  {
+    "message": "מחובר",
+    "description": "Status button that tells user that he is connected"
+  },
+  "walletPending":  {
+    "message": "בהמתנה",
+    "description": "Status button that tells user that he is currently pending"
+  }
+}

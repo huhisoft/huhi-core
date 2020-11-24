@@ -1,0 +1,29 @@
+diff --git a/net/base/proxy_server.cc b/net/base/proxy_server.cc
+index c0118d57e950a70a72ae88ec8a1baae6aaa54df1..b293dc6688566ee83b57282f3d7a57ffa72a551f 100644
+--- a/net/base/proxy_server.cc
++++ b/net/base/proxy_server.cc
+@@ -225,10 +225,13 @@ ProxyServer ProxyServer::FromSchemeHostAndPort(
+   HostPortPair host_port_pair;
+ 
+   if (scheme != SCHEME_INVALID && scheme != SCHEME_DIRECT) {
++    std::string username;
++    std::string password;
+     std::string host;
+     int port = -1;
+     // If the scheme has a host/port, parse it.
+-    bool ok = ParseHostAndPort(host_and_port, &host, &port);
++    bool ok = ParseAuthHostAndPort(host_and_port, &username, &password,
++                                   &host, &port);
+     if (!ok)
+       return ProxyServer();  // Invalid -- failed parsing <host>[":"<port>]
+ 
+@@ -236,7 +239,8 @@ ProxyServer ProxyServer::FromSchemeHostAndPort(
+     if (port == -1)
+       port = GetDefaultPortForScheme(scheme);
+ 
+-    host_port_pair = HostPortPair(host, static_cast<uint16_t>(port));
++    host_port_pair = HostPortPair(username, password, host,
++                                  static_cast<uint16_t>(port));
+   }
+ 
+   return ProxyServer(scheme, host_port_pair);

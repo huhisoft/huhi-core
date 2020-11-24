@@ -1,0 +1,17 @@
+import("//huhi/components/common/typescript.gni")
+
+transpile_web_ui("huhi_wallet_ui") {
+  entry_points = [
+    ["huhi_wallet", rebase_path("huhi_wallet.tsx")]
+  ]
+  resource_name = "huhi_wallet"
+}
+
+pack_web_resources("generated_resources") {
+  resource_name = "huhi_wallet"
+  output_dir = "$root_gen_dir/huhi/components/huhi_wallet/resources"
+  deps = [
+    ":huhi_wallet_ui"
+  ]
+}
+

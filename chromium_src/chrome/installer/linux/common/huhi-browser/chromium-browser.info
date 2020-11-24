@@ -1,0 +1,31 @@
+# Copyright (c) 2009 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file provides common configuration information for building
+# chromium-browser packages for various platforms.
+
+# Base name of the package.
+PACKAGE="huhi-browser"
+
+# Filename of the main executable (for generating launcher scripts, etc.)
+PROGNAME=huhi
+
+# Base directory for package installation.
+INSTALLDIR=/opt/huhisoft.com/huhi
+
+# Display string for desktop menu/icon.
+MENUNAME="Huhi Web Browser"
+
+# Brief package description.
+SHORTDESC="The web browser from Huhi"
+
+# Detailed package description.
+FULLDESC="Browse faster by blocking ads and trackers that violate your privacy and cost you time and money."
+
+# Package maintainer information.
+MAINTNAME="Huhi Software"
+MAINTMAIL="support@huhisoft.com"
+PRODUCTURL="https://huhisoft.com/"
+VERSION=$(cat $OUTPUTDIR/version | tr -d 'v,')
+VERSIONFULL=$VERSION

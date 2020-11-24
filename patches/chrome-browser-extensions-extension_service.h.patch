@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/extensions/extension_service.h b/chrome/browser/extensions/extension_service.h
+index fdd2211fefaf5e7ffa580a0a170ad21f633f5f2d..203454a82a2d927a1ee9743c50b33f94b929ad17 100644
+--- a/chrome/browser/extensions/extension_service.h
++++ b/chrome/browser/extensions/extension_service.h
+@@ -445,6 +445,7 @@ class ExtensionService : public ExtensionServiceInterface,
+   static base::AutoReset<bool> DisableExternalUpdatesForTesting();
+ 
+  private:
++  friend class HuhiExtensionService;
+   // Loads extensions specified via a command line flag/switch.
+   void LoadExtensionsFromCommandLineFlag(const char* switch_name);
+ #if defined(OS_CHROMEOS)

@@ -1,0 +1,37 @@
+source_set("huhi_wayback_machine") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10652 is resolved
+  check_includes = false
+  sources = [
+    "huhi_wayback_machine_infobar_button_container.cc",
+    "huhi_wayback_machine_infobar_button_container.h",
+    "huhi_wayback_machine_infobar_contents_view.cc",
+    "huhi_wayback_machine_infobar_contents_view.h",
+    "huhi_wayback_machine_infobar_throbber.cc",
+    "huhi_wayback_machine_infobar_throbber.h",
+    "huhi_wayback_machine_infobar_view.cc",
+    "huhi_wayback_machine_infobar_view.h",
+  ]
+
+  deps = [
+    "//huhi/app:huhi_generated_resources_grit",
+    "//huhi/app/vector_icons",
+    "//huhi/components/huhi_wayback_machine",
+    "//components/resources",
+    "//content/public/browser",
+    "//ui/base",
+    "//ui/gfx",
+    "//ui/native_theme",
+    "//ui/views",
+    "//url",
+  ]
+
+  # Below dep list are indirectly used by huhi_wayback_machine target.
+  # Only added to fix intermittent build failure.
+  # chrome/common/buildflags.h is included indirectly from
+  # huhi_wayback_machine_infobar_contents_view.cc.
+  # However, this buildflags.h sometimes not generated when
+  # huhi_wayback_machine_infobar_contents_view.cc is compiled.
+  deps += [
+    "//chrome/common:buildflags",
+  ]
+}

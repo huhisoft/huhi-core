@@ -1,0 +1,3 @@
+declare_args() {
+  enable_huhi_perf_predictor = true
+}

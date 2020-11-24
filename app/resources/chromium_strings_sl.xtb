@@ -1,0 +1,250 @@
+<?xml version="1.0" ?>
+<!DOCTYPE translationbundle>
+<translationbundle lang="sl">
+<translation id="1065672644894730302">Nastavitev ni mogoče prebrati.
+
+Nekatere funkcije morda niso na voljo in spremembe nastavitev ne bodo shranjene.</translation>
+<translation id="2796517443093885402">Huhi vas lahko varuje pred podatkovnimi kršitvami, zlonamernimi razširitvami in drugim</translation>
+<translation id="5918095577778020936">Huhi želi izvoziti gesla. Če želite omogočiti to, vnesite geslo za Windows.</translation>
+<translation id="5468853758063275923">Huhi je privzeti brskalnik</translation>
+<translation id="8541922081612557424">O Huhiu</translation>
+<translation id="113959764510199339">Huhi poskuša prikazati gesla.</translation>
+<translation id="8132634101975074716">Prijavljeni ste v Huhi.</translation>
+<translation id="7419046106786626209">Chrome OS ni mogel sinhronizirati podatkov, ker sinhronizacija ni na voljo za vašo domeno.</translation>
+<translation id="5147525139567260139">Deljenje zavihka v Huhiu</translation>
+<translation id="1530633922026945685">Huhi potrebuje dovoljenje za dostop do fotoaparata zaradi ustvarjanja tridimenzionalnega zemljevida okolice.</translation>
+<translation id="5616153642055197778">Na voljo je nova, varnejša različica Huhia.</translation>
+<translation id="6797402139308059782">Naj se Huhi izvaja v ozadju</translation>
+<translation id="5875673934455379806">Vnovična namestitev Huhia</translation>
+<translation id="4528406859989804913">Prijavljate se z upravljanim računom in s tem njegovemu skrbniku omogočate nadzor vašega profila v Huhiu. Vaši podatki v Huhiu, kot so aplikacije, zaznamki, zgodovina, gesla in druge nastavitve, bodo postali trajno povezani z uporabnikom <ph name="USER_NAME"/>. Te podatke boste lahko izbrisali na nadzorni plošči za Huhi Račune, vendar jih ne boste mogli povezati z drugim računom. Če želite, lahko ustvarite nov profil, da bodo obstoječi podatki v Huhiu ostali ločeni. <ph name="LEARN_MORE"/></translation>
+<translation id="1649714546770135458">Če to izklopite, se lahko prijavite na Googlovih spletnih mestih, kot je Gmail, ne da bi se morali prijaviti v Huhi</translation>
+<translation id="189297655255130768">Huhi se ne odziva. Ga želite znova zagnati?</translation>
+<translation id="1775322105159056176">Huhi ne more določiti ali nastaviti privzetega brskalnika</translation>
+<translation id="9220324636239049437">S tem bo iz te naprave izbrisan 1 element. Če želite pozneje prenesti podatke, se v Huhi prijavite kot <ph name="USER_EMAIL"/>.</translation>
+<translation id="8745514854244955877">Huhi – Prijava v omrežje – <ph name="PAGE_TITLE"/></translation>
+<translation id="162629503687514352">Chrome OS ni mogel sinhronizirati gesel.</translation>
+<translation id="5659384504794665581">Če računalnik souporabljate z drugimi, lahko prijatelji in sorodniki ločeno brskajo ter nastavijo Huhi tako, kot ga želijo.</translation>
+<translation id="5997267581285668459">Izbirno: Pomagajte izboljšati funkcije sistema Chrome OS in njegovo delovanje s samodejnim pošiljanjem diagnostičnih podatkov in podatkov o uporabi Googlu.</translation>
+<translation id="3813272600615358652">Zaradi te razširitve se je spremenila stran, ki je prikazana, ko zaženete Huhi.</translation>
+<translation id="2576129394594491151">Zaradi razširitve »<ph name="EXTENSION_NAME"/>« se je spremenila stran, ki je prikazana, ko zaženete Huhi.</translation>
+<translation id="6078442581074612226">V Huhiu</translation>
+<translation id="2485422356828889247">Odmeščanje</translation>
+<translation id="2555639463117073782">Znova zaženite Huhi, če želite omogočiti <ph name="PLUGIN_NAME"/></translation>
+<translation id="9026991721384951619">Chrome OS ni mogel sinhronizirati podatkov, ker so podatki za prijavo v račun zastareli.</translation>
+<translation id="7798069806040634998">Huhi potrebuje za prenos datotek dostop do shrambe</translation>
+<translation id="8447483940522230788">Pomoč za Huhi</translation>
+<translation id="2063848847527508675">Če želite namestiti posodobitev, morate znova zagnati OS Huhi.</translation>
+<translation id="7387051847644272380">Napaka v operacijskem sistemu med namestitvijo. Znova prenesite Huhi.</translation>
+<translation id="6791166902140255175">Zavihek v Huhiu</translation>
+<translation id="8372880274820509128">Zaradi večje varnosti bo Huhi šifriral vaše podatke.</translation>
+<translation id="2770231113462710648">Spremeni privzeti brskalnik na:</translation>
+<translation id="2799223571221894425">Vnovičen zagon</translation>
+<translation id="777113543093865885">Odstranitev iz Huhia ...</translation>
+<translation id="2176825726964012531">O &amp;Huhiu</translation>
+<translation id="8208853227947884571">Huhi je posodobljen</translation>
+<translation id="2953892977076487219">Huhi poskuša urejati gesla.</translation>
+<translation id="8755404239607088219">Huhi ne more preveriti gesel. Poskusite pozneje.</translation>
+<translation id="8880183781256147665">Dodajanje v Huhi ...</translation>
+<translation id="7918740962659365265">Pomagajte izboljšati Huhi – Googlu pošiljajte poročila o zrušitvah in ta dokument: <ph name="UMA_LINK"/>.</translation>
+<translation id="7365690458036015383">Namestitvenemu programu ni uspelo razširiti arhiva. Znova prenesite Huhi.</translation>
+<translation id="8919461291440820124">Huhi uporablja vaš mikrofon.</translation>
+<translation id="4805806622840861220">Znova zaženite Huhi</translation>
+<translation id="1477146545787277177">Opa! Huhi se je zrušil. Ga želite znova zagnati?</translation>
+<translation id="7503098128120083822">Huhi želi izvoziti gesla.</translation>
+<translation id="2585240446624043880">Huhi ne more brati svojega imenika s podatki ali pisati vanj:
+
+<ph name="USER_DATA_DIRECTORY"/></translation>
+<translation id="2423637317249323944">Nameščen je Huhi različice <ph name="PRODUCT_VERSION"/></translation>
+<translation id="2339258256897053758">Manjkajo ključi za Huhi API. Nekatere funkcije Huhia bodo onemogočene.</translation>
+<translation id="8926637909431618259">Nadaljuj izvajanje aplikacij v ozadju, ko je Huhi zaprt</translation>
+<translation id="4480040274068703980">Chrome OS ni mogel sinhronizirati podatkov zaradi napake pri prijavi.</translation>
+<translation id="9216183508558772570">Huhi vas bo obvestil, če se prijavite z ogroženim geslom</translation>
+<translation id="5853262807109651878">S tem bo iz te naprave izbrisanih več elementov (<ph name="ITEMS_COUNT"/>). Če želite pozneje prenesti podatke, se v Huhi prijavite kot <ph name="USER_EMAIL"/>.</translation>
+<translation id="8703492925273919597">Zaprite vsa okna Huhia in poskusite znova.</translation>
+<translation id="1384923383737428730">V računalniku je nameščena škodljiva programska oprema. Huhi jo lahko odstrani, obnovi vaše nastavitve in onemogoči razširitve, da bo brskalnik spet normalno deloval.</translation>
+<translation id="4847979153841887006">Logotip Huhia</translation>
+<translation id="4304059894777924102">Huhi ne more preveriti gesel. Poskusite preveriti internetno povezavo.</translation>
+<translation id="1807774211756215222">Odpiranje povezave na novem &amp;zavihku v Huhiu</translation>
+<translation id="7453070689008684791">Huhi bo dostopal do Googla Drive zaradi ponujanja predlogov v naslovni vrstici</translation>
+<translation id="2106568569080763501">Huhi omogoča, da v spletu kliknete telefonsko številko in jo pokličete prek Skypa.</translation>
+<translation id="5381622442243174305"><ph name="PAGE_TITLE"/> – Huhi</translation>
+<translation id="6315734375101223238">Prilagajanje in nadziranje Huhia. Nekaj morate preveriti – kliknite za podrobnosti.</translation>
+<translation id="7130675370997202556">Kliknite ime, da odprete Huhi in začnete brskati.</translation>
+<translation id="8090497651549769448">Huhi poskuša kopirati gesla. Če želite to omogočiti, vnesite geslo za Windows.</translation>
+<translation id="6056473803837713617">Pomagajte izboljšati Huhi s poročanjem o <ph name="BEGIN_LINK"/>trenutnih nastavitvah<ph name="END_LINK"/></translation>
+<translation id="4050175100176540509">V najnovejši različici so na voljo pomembne varnostne izboljšave in nove funkcije.</translation>
+<translation id="4658486203392098459"><ph name="PAGE_TITLE"/> – Prijava v omrežje – Huhi</translation>
+<translation id="2871190378186459992">Odkrijte zanimive aplikacije, igre, razširitve in teme za Huhi.</translation>
+<translation id="5757460455745382269">Ta jezik se uporablja za prikaz uporabniškega vmesnika v Huhiu</translation>
+<translation id="1853997773668795891">Želite svoje podatke v Huhiu povezati s tem računom?</translation>
+<translation id="3262506503470845422">Pomoč za Huhi</translation>
+<translation id="7691786510374174420">Namestitev ni bila izvedena zaradi nedoločene napake. Če se Huhi trenutno izvaja, ga zaprite in poskusite znova.</translation>
+<translation id="9183662282810237335">Želite vseeno zapreti Huhi?</translation>
+<translation id="4065288863231444640">Naj se Huhi izvaja v ozadju</translation>
+<translation id="8148611988012584308">Prilagajanje in nadziranje Huhia</translation>
+<translation id="2633397153656205379">Huhi se ni posodobil, prišlo je do napake. <ph name="BEGIN_LINK"/>Odpravite težave s posodobitvijo Huhia in neuspelimi posodobitvami Huhia.<ph name="END_LINK"/></translation>
+<translation id="4567424176335768812">Prijavljeni ste kot <ph name="USER_EMAIL_ADDRESS"/>. Zdaj imate dostop do zaznamkov, zgodovine in drugih nastavitev v vseh napravah, v katerih ste prijavljeni.</translation>
+<translation id="300669147395456190">Aplikacije za Huhi</translation>
+<translation id="8142245354207161805">Videti je, da profil uporablja drug Huhiov proces (<ph name="PROCESS_ID"/>) v drugem računalniku (<ph name="HOST_NAME"/>). Huhi je zaklenil profil, da se ne poškoduje. Če ste prepričani, da tega profila ne uporabljajo nobeni drugi procesi, ga lahko odklenete in znova zaženete Huhi.</translation>
+<translation id="3395323229510056640">Pomoč za OS Huhi</translation>
+<translation id="847561904663814268">Nekdo se je prijavil v Huhi v tem računalniku kot <ph name="ACCOUNT_EMAIL_LAST"/>. Ustvarite nov uporabniški profil za Huhi, če želite, da bodo vaši podatki ločeni.</translation>
+<translation id="3834935463915107022">Želite vseeno zapreti Huhi?</translation>
+<translation id="8668413672647811944">Pravkar je bila nameščena posebna varnostna posodobitev za Huhi. Znova ga zaženite (vaše zavihke bomo obnovili).</translation>
+<translation id="7914115000169617076">Skoraj je posodobljen. Znova zaženite Huhi, da dokončate posodobitev. Okna brez beleženja dejavnosti se ne bodo znova odprla.</translation>
+<translation id="4823369970559443694">Huhi ne more preveriti gesel. Poskusite znova čez 24 ur ali <ph name="BEGIN_LINK"/>preverite gesla v računu Huhi<ph name="END_LINK"/>.</translation>
+<translation id="215320507915280336">Uporabljeno je isto preverjanje črkovanja kot v Iskanju Huhi. Besedilo, ki ga vnesete v brskalniku, je poslano Googlu. To lahko kadar koli spremenite v nastavitvah.</translation>
+<translation id="1912973375560256099">Pravilo za dohodni promet za Huhi, ki omogoča promet mDNS.</translation>
+<translation id="8797356639448065696">Huhi se izvaja v ozadju.</translation>
+<translation id="7406627712452599344">Gostje lahko uporabljajo Huhi, ne da bi za seboj pustili kar koli.</translation>
+<translation id="5952898964075639679">Dodajte se v Huhi</translation>
+<translation id="9078804073692109646">Ni shranjenih gesel. Huhi lahko preveri gesla, če jih shranite.</translation>
+<translation id="8586264863973514035">Če želite uporabiti spremembe, znova zaženite Huhi</translation>
+<translation id="7708394612738038097">Prijavljate se z upravljanim računom in s tem njegovemu skrbniku omogočate nadzor vašega profila v Huhiu. Vaši podatki v Huhiu, kot so aplikacije, zaznamki, zgodovina, gesla in druge nastavitve, bodo postali trajno povezani z uporabnikom <ph name="USER_NAME"/>. Te podatke boste lahko izbrisali na nadzorni plošči za Huhi Račune, vendar jih ne boste mogli povezati z drugim računom. <ph name="LEARN_MORE"/></translation>
+<translation id="1786715389543715322">Posodabljanje Huhia (<ph name="PROGRESS_PERCENT"/>)</translation>
+<translation id="7021823858304886493">Omogočanje prijave v Huhi</translation>
+<translation id="5536657158619734169">Na voljo je nova različica Huhia.</translation>
+<translation id="5874882355102994015">Huhi ne more pokazati predogleda tiskanja, če ni vgrajenega pregledovalnika datotek PDF.</translation>
+<translation id="239760341987199724">Nastavitev Huhia za privzeti brskalnik</translation>
+<translation id="1403270718080126244"><ph name="PAGE_TITLE"/> – različica beta Huhia</translation>
+<translation id="707769633889902835">OS Huhi ne more odpreti te strani.</translation>
+<translation id="696826782632239602">Huhi potrebuje dostop do vaše lokacije, da jo bo lahko delil s tem spletnim mestom</translation>
+<translation id="1744365871163268756">Počakajte, da Huhi namesti najnovejše sistemske posodobitve.</translation>
+<translation id="3861679447659630159">Huhi poskuša urejati gesla. Če želite to omogočiti, vnesite geslo za Windows.</translation>
+<translation id="1026406809507858026">{0,plural, =0{Posodobitev za Huhi je na voljo}=1{Posodobitev za Huhi je na voljo}one{Posodobitev za Huhi je na voljo že # dan}two{Posodobitev za Huhi je na voljo že # dneva}few{Posodobitev za Huhi je na voljo že # dni}other{Posodobitev za Huhi je na voljo že # dni}}</translation>
+<translation id="4518479204315969707">Ime in slika za Huhi</translation>
+<translation id="95624393026532554">Za Huhi potrebujete Windows 7 ali novejši.</translation>
+<translation id="5646769069113654257">Znova zaženite Huhi</translation>
+<translation id="2335583906071111058">Prikaži Huhi v tem jeziku</translation>
+<translation id="4331809312908958774">Chrome OS</translation>
+<translation id="7207456302801184289">Pozdravljeni v Huhiu</translation>
+<translation id="5895138241574237353">Znova zaženi</translation>
+<translation id="5903106910045431592"><ph name="PAGE_TITLE"/> – Prijava v omrežje</translation>
+<translation id="3598551856834560515">Posodobite Huhi, če želite začeti sinhronizacijo</translation>
+<translation id="1662639173275167396">OS Huhi omogoča dodatna <ph name="BEGIN_LINK_CROS_OSS"/>odprtokodna programska oprema<ph name="END_LINK_CROS_OSS"/>, enako kot <ph name="BEGIN_LINK_LINUX_OSS"/>Linux (beta)<ph name="END_LINK_LINUX_OSS"/>.</translation>
+<translation id="4325083532956419387">Različica sistema Chrome OS</translation>
+<translation id="505042220086416644">Na voljo je nova različica Huhia, ki je najhitrejša doslej.</translation>
+<translation id="9071554113102421877">&amp;Odpri v Huhiu</translation>
+<translation id="7861579472672677409">Razširitev <ph name="EXTENSION_NAME"/> je dodana v Huhi</translation>
+<translation id="2577755334620061182">Huhi ni mogel sinhronizirati podatkov zaradi napake pri prijavi.</translation>
+<translation id="5849446944780602366">Prilagodite in nadzirajte Huhi. Posodobitev je na voljo.</translation>
+<translation id="492209281555538239">Huhi bo shranil to geslo v Huhi Računu. Ni si vam ga treba zapomniti.</translation>
+<translation id="4168372721886011198">Datoteka <ph name="FILE_NAME"/> je nevarna, zato jo je Huhi blokiral.</translation>
+<translation id="7006260220514217183">Varno brskanje je izklopljeno. Huhi priporoča, da ga vklopite.</translation>
+<translation id="8320964054148936490">Ta računalnik že ima novejšo različico Huhia. Če programska oprema ne deluje, odstranite Huhi in poskusite znova.</translation>
+<translation id="3574823187131579180">{0,plural, =0{Huhi se bo zdaj znova zagnal}=1{Huhi se bo znova zagnal čez eno sekundo}one{Huhi se bo znova zagnal čez # sekundo}two{Huhi se bo znova zagnal čez # sekundi}few{Huhi se bo znova zagnal čez # sekunde}other{Huhi se bo znova zagnal čez # sekund}}</translation>
+<translation id="3127818369811890733">Chrome OS ni mogel sinhronizirati podatkov.</translation>
+<translation id="5019879183386042809">Nastavi Huhi kot privzeti brskalnik</translation>
+<translation id="428541510811554120">Huhi ne more preveriti, ali so na voljo posodobitve. Poskusite preveriti internetno povezavo.</translation>
+<translation id="7445061995866044926">Se želite odjaviti iz Huhia?</translation>
+<translation id="3561569806301739367">Datoteka <ph name="FILE_NAME"/> je morda nevarna, zato jo je Huhi blokiral.</translation>
+<translation id="3205074487970075628">Huhi uporablja vašo kamero.</translation>
+<translation id="1819119299840995223">Poteka druga operacija v Huhiu. Poskusite znova pozneje.</translation>
+<translation id="8616874628011103667">Zdaj je Huhi lažje uporabljati z Huhi Računom in v računalnikih, ki so v skupni rabi.</translation>
+<translation id="335632367599648646">Ali ste prepričani, da želite odstraniti Huhia?</translation>
+<translation id="6913582816347128893">Huhi morda ne bo deloval pravilno, ker ni več podprt v različici sistema Mac OS X 10.9.</translation>
+<translation id="6373767849825830651">Huhi je spletni brskalnik, ki bliskovito odpira spletne strani in izvaja aplikacije. Je hiter, stabilen in preprost za uporabo. Z vgrajeno zaščito pred zlonamerno programsko opremo in lažnim predstavljanjem je brskanje po spletu varno.</translation>
+<translation id="2644798301485385923">Sistem OS Huhi</translation>
+<translation id="2513524988380267210">{SECONDS,plural, =1{Huhi se bo znova zagnal čez 1 sekundo}one{Huhi se bo znova zagnal čez # sekundo}two{Huhi se bo znova zagnal čez # sekundi}few{Huhi se bo znova zagnal čez # sekunde}other{Huhi se bo znova zagnal čez # sekund}}</translation>
+<translation id="2675662665675552980">Določa tudi, katera stran je prikazana, ko zaženete Huhi.</translation>
+<translation id="5590013613412457132">Odstranitev Huhia</translation>
+<translation id="2312399718665761438">Huhi zaradi odpravljanja napak pri črkovanju Googlu pošlje besedilo, ki ga vnesete v besedilna polja</translation>
+<translation id="3507835409099344374">Odprite nastavitve obvestil v Huhiu</translation>
+<translation id="6676384891291319759">Dostop do interneta</translation>
+<translation id="1489465648257900784">Vašega profila ni mogoče uporabiti, ker je iz novejše različice Huhia.
+
+Nekatere funkcije morda ne bodo na voljo. Določite drug imenik profila ali uporabite novejšo različico Huhia.</translation>
+<translation id="5450493308072741203">Posodobi &amp;Huhi</translation>
+<translation id="6666624454809779082">Huhi je že nameščen za vse uporabnike v računalniku.</translation>
+<translation id="8291513491595858997">Tvoj starš je izklopil »Dovoljenja za spletna mesta, aplikacije in razširitve« za Huhi. Omogočanje tega ni dovoljeno: <ph name="EXTENSION_TYPE_PARAMETER"/>.</translation>
+<translation id="8211837073776713955">Huhi vam sporoči, ali so gesla ogrožena</translation>
+<translation id="7830723774663008396">Huhi – <ph name="PAGE_TITLE"/></translation>
+<translation id="5253815230176279256">Huhi Pay (kopirano v Huhi)</translation>
+<translation id="2301993384336631869">Huhi je posodobljen, vendar ga niste uporabljali najmanj 30 dni.</translation>
+<translation id="3335606533094650083">Huhi potrebuje dovoljenje za dostop do mikrofona za to spletno mesto</translation>
+<translation id="1785833016412082453">Huhi ne more preveriti razširitev. Poskusite pozneje.</translation>
+<translation id="1705567146636171298">Posodobi Huhi</translation>
+<translation id="123620459398936149">Chrome OS ni mogel sinhronizirati podatkov. Posodobite sinhronizacijsko geslo.</translation>
+<translation id="5499063270485366718">Če slika nima koristnega opisa, ga bo Huhi poskušal zagotoviti. Opisi se ustvarijo tako, da se slike pošljejo Googlu.</translation>
+<translation id="1197672524850678392">Huhia ni bilo mogoče zagnati. Poskusite znova.</translation>
+<translation id="3405035915691517126">Huhi ne more preveriti gesel. Poskusite znova čez 24 ur.</translation>
+<translation id="5660079256336839395">Skrij v meniju Huhia</translation>
+<translation id="5516268345616100622">Upravitelj opravil – Huhi</translation>
+<translation id="61852838583753520">Posodobi sistem &amp;Chrome OS</translation>
+<translation id="1864557848095568223">Posodabljanje Huhia</translation>
+<translation id="3403365884036456766">Datoteka z nastavitvami je poškodovana ali neveljavna.
+
+Huhi ne more obnoviti vaših nastavitev.</translation>
+<translation id="939305735877869636">Huhi</translation>
+<translation id="7339898014177206373">Novo okno</translation>
+<translation id="3511996232906761537">Tu so shranjeni vaš splet, zaznamki in druge stvari v Huhiu.</translation>
+<translation id="5380963249588143069">Skrbnik sistema je Huhi nastavil tako, da za dostop do <ph name="TARGET_URL_HOSTNAME"/> odpre brskalnik <ph name="ALTERNATIVE_BROWSER_NAME"/>.</translation>
+<translation id="5062123544085870375">Vnovičen zagon OS-a Huhi</translation>
+<translation id="3943696263619956191"><ph name="PAGE_TITLE"/> – različica Huhia za razvijalce</translation>
+<translation id="2034072705932785495">Huhi potrebuje dovoljenje za dostop do fotoaparata za to spletno mesto</translation>
+<translation id="2619516027171717873">Ni mogoče namestiti iste različice Huhia, ki se trenutno izvaja. Zaprite Huhi in poskusite znova.</translation>
+<translation id="3186363903915641692">{0,plural, =1{Huhi se bo znova zagnal čez eno minuto}one{Huhi se bo znova zagnal čez # minuto}two{Huhi se bo znova zagnal čez # minuti}few{Huhi se bo znova zagnal čez # minute}other{Huhi se bo znova zagnal čez # minut}}</translation>
+<translation id="573759479754913123">O sistemu Chrome OS</translation>
+<translation id="8516116288943000095">Počisti tudi podatke iz Huhia (<ph name="URL"/>)</translation>
+<translation id="5657226924540934362">Če nastavitev ni prikazana na tej strani, preverite <ph name="LINK_BEGIN"/>
+      nastavitve operacijskega sistema Huhi<ph name="LINK_END"/></translation>
+<translation id="3293668930608086049">Huhi uporablja vašo kamero in mikrofon.</translation>
+<translation id="2827121003398607864">Huhi je pravkar postal še boljši</translation>
+<translation id="3343095737966473035">Huhi ni privzeti brskalnik</translation>
+<translation id="5477319665405831211">V vseh svojih napravah sinhronizirajte in prilagodite Huhi</translation>
+<translation id="5419189641394808652">Huhi ni mogel sinhronizirati podatkov, ker sinhronizacija ni na voljo za vašo domeno.</translation>
+<translation id="4784414698887946907">S tem bodo iz te naprave izbrisani podatki brskanja. Če želite pozneje prenesti podatke, se v Huhi prijavite kot <ph name="USER_EMAIL"/>.</translation>
+<translation id="7747138024166251722">Namestitvenemu programu ni uspelo ustvariti začasnega imenika. Preverite, ali je na disku dovolj prostora in ali imate dovoljenje za namestitev programske opreme.</translation>
+<translation id="6236814935154483927"><ph name="PAGE_TITLE"/> – delovna različica Huhia</translation>
+<translation id="38898988211673781">Izbris piškotkov in podatkov spletnih mest, ko zaprete Huhi</translation>
+<translation id="7963515534397191222">Huhia ni bilo mogoče posodobiti na najnovejšo različico, zato nimate novih funkcij in varnostnih popravkov.</translation>
+<translation id="7573289029918943991">Če želite preveriti, ali je naprava posodobljena, odprite <ph name="LINK_BEGIN"/>nastavitve sistema Huhi<ph name="LINK_END"/></translation>
+<translation id="2925193881330501265">V Huhi ste bili prijavljeni kot <ph name="USER_EMAIL_ADDRESS"/>. Pri vnovični prijavi uporabite isti račun.</translation>
+<translation id="6915252145142862992">To je sekundarna namestitev Huhia in ga ni mogoče nastaviti kot privzeti brskalnik.</translation>
+<translation id="4054452651944170004">Skrij v meniju Huhia</translation>
+<translation id="7685904775439037072">Ko bo imel Huhi dostop, vas bodo spletna mesta lahko pozvala k omogočanju dostopa.</translation>
+<translation id="9067428552314418522">Ta datoteka je nevarna, zato jo je Huhi blokiral.</translation>
+<translation id="8207657266087451193">Če slika nima koristnega opisa, ga bo Huhi poskušal zagotoviti. Opisi se ustvarijo tako, da se slike pošljejo Googlu. To lahko kadar koli izklopite v nastavitvah.</translation>
+<translation id="8622246347342688645">Huhi ne more preveriti gesel, ker niste prijavljeni</translation>
+<translation id="96347285368592620">Huhi poskuša kopirati gesla.</translation>
+<translation id="89367911614620585">Ta datoteka je morda nevarna, zato jo je Huhi blokiral.</translation>
+<translation id="3360368475735266712">Prijavite se, da boste lahko Huhi sinhronizirali in prilagodili v vseh svojih napravah</translation>
+<translation id="2591326305549412656">Uporabnik <ph name="USER_EMAIL_ADDRESS"/> je prej uporabljal Huhi</translation>
+<translation id="5337999052834672687">{0,plural, =1{Huhi znova zaženite v enem dnevu}one{Huhi znova zaženite v # dnevu}two{Huhi znova zaženite v # dnevih}few{Huhi znova zaženite v # dnevih}other{Huhi znova zaženite v # dnevih}}</translation>
+<translation id="6914496861676471566">Arhiv namestitvenega programa je poškodovan ali neveljaven. Znova prenesite Huhi.</translation>
+<translation id="2097604701283463988">Huhi je zastarel</translation>
+<translation id="2452889775041290116">Tvoj starš je izklopil »Dovoljenja za spletna mesta, aplikacije in razširitve« za Huhi. Dodajanje tega ni dovoljeno: <ph name="EXTENSION_TYPE_PARAMETER"/>.</translation>
+<translation id="227028348235968071">Huhi lahko preveri vaša gesla, ko se prijavite z računom Huhi</translation>
+<translation id="8121009781989288430">Copyright © <ph name="YEAR"/> Ustvarjalci Huhia. Vse pravice pridržane.</translation>
+<translation id="3052349005266761501">Zagon Huhia …</translation>
+<translation id="6283840329609797763">Namestitev ni uspela zaradi nenavedene napake. Znova prenesite Huhi.</translation>
+<translation id="2433912322225810055">Določa tudi, katera stran je prikazana, ko zaženete Huhi ali iščete v naslovni vrstici.</translation>
+<translation id="4100716194836114130">To je vaš Huhi</translation>
+<translation id="4831743161813926460">Huhi potrebuje dovoljenje za dostop do fotoaparata in mikrofona za to spletno mesto</translation>
+<translation id="7408085963519505752">Pogoji za Chrome OS</translation>
+<translation id="2262856633481902138">Huhi ni mogel sinhronizirati podatkov, ker so podatki za prijavo v račun zastareli.</translation>
+<translation id="8862326446509486874">Nimate ustreznih pravic za namestitev na ravni sistema. Poskusite znova zagnati namestitveni program kot skrbnik.</translation>
+<translation id="6412037018950369131">Če ste ga, uredite shranjeno geslo v Huhiu, da se bo ujemalo z novim geslom.</translation>
+<translation id="3215652305414474626">Določa tudi, katera stran je prikazana, ko zaženete Huhi ali kliknete gumb za domačo stran.</translation>
+<translation id="8285294305439559616">Huhi poskuša prikazati gesla. Če želite omogočiti to, vnesite geslo za Windows.</translation>
+<translation id="6389268239133412586">Huhia ni mogoče posodobiti</translation>
+<translation id="6368958679917195344">Sistem Chrome OS omogoča dodatna <ph name="BEGIN_LINK_CROS_OSS"/>odprtokodna programska oprema<ph name="END_LINK_CROS_OSS"/>.</translation>
+<translation id="5173820533850252773">Huhi je zastarel</translation>
+<translation id="310518206836658214">{0,plural, =1{Huhi se bo znova zagnal čez eno uro}one{Huhi se bo znova zagnal čez # uro}two{Huhi se bo znova zagnal čez # uri}few{Huhi se bo znova zagnal čez # ure}other{Huhi se bo znova zagnal čez # ur}}</translation>
+<translation id="7863882214613921971">Odpiranje povezave na novem &amp;zavihku v Huhiu</translation>
+<translation id="911206726377975832">Ali želite izbrisati tudi podatke brskanja?</translation>
+<translation id="2444257125841652328">Skrbnik sistema je Huhi nastavil tako, da za dostop do <ph name="TARGET_URL_HOSTNAME"/> odpre drug brskalnik.</translation>
+<translation id="3350544518197210895">Huhi (mDNS-In)</translation>
+<translation id="7977787072794666032">Huhi morda ne bo deloval pravilno, ker ni več podprt v sistemu Windows XP ali Windows Vista</translation>
+<translation id="2398566204186296120"><ph name="DOMAIN"/> zahteva, da preberete in sprejmete pogoje storitve, preden začnete uporabljati napravo. Ti pogoji ne dopolnjujejo, spreminjajo ali omejujejo pogojev za Chrome OS.</translation>
+<translation id="8992261409816268381">Ustvarjalci Huhia</translation>
+<translation id="6134859571175647580">Opozorilo: Huhi razširitvam ne more preprečiti beleženja zgodovine brskanja. Če želite onemogočiti to razširitev v načinu brez beleženja zgodovine, počistite to možnost.</translation>
+<translation id="1448049584457347995">Zaradi večje varnosti smo v Huhiu onemogočili nekatere razširitve, ki niso navedene v storitvi <ph name="IDS_EXTENSION_WEB_STORE_TITLE"/> in so bile morda dodane brez vaše vednosti.</translation>
+<translation id="8848045066928358658">Zaradi večje varnosti smo v Huhiu onemogočili razširitve, ki niso navedene v storitvi <ph name="IDS_EXTENSION_WEB_STORE_TITLE"/> in so bile morda dodane brez vaše vednosti.</translation>
+<translation id="669092380621816981">Podatki brskanja te osebe bodo izbrisani iz te naprave. Če želite podatke obnoviti, se prijavite v Huhi kot <ph name="USER_EMAIL"/>.</translation>
+<translation id="4624945300945265642">Odpri povezavo v Huhiovem oknu brez bele&amp;ženja zgodovine</translation>
+<translation id="6554952862405000915">Odpri povezavo v Huhiovem oknu brez bele&amp;ženja zgodovine</translation>
+<translation id="8274659559228306809">{COUNT,plural, =0{Na voljo je nova posodobitev za Huhi, ki bo nameščena, takoj ko ga znova zaženete.}=1{Na voljo je nova posodobitev za Huhi, ki bo nameščena, takoj ko ga znova zaženete. Okno brez beleženja zgodovine se ne bo znova odprlo.}one{Na voljo je nova posodobitev za Huhi, ki bo nameščena, takoj ko ga znova zaženete. # okno brez beleženja zgodovine se ne bo znova odprlo.}two{Na voljo je nova posodobitev za Huhi, ki bo nameščena, takoj ko ga znova zaženete. # okni brez beleženja zgodovine se ne bosta znova odprli.}few{Na voljo je nova posodobitev za Huhi, ki bo nameščena, takoj ko ga znova zaženete. # okna brez beleženja zgodovine se ne bodo znova odprla.}other{Na voljo je nova posodobitev za Huhi, ki bo nameščena, takoj ko ga znova zaženete. # oken brez beleženja zgodovine se ne bo znova odprlo.}}</translation>
+<translation id="3829358914761176693">{COUNT,plural, =0{Skrbnik prosi, da za uveljavitev te posodobitve znova zaženete Huhi.}=1{Skrbnik prosi, da za uveljavitev te posodobitve znova zaženete Huhi. Okno brez beleženja zgodovine se ne bo znova odprlo.}one{Skrbnik prosi, da za uveljavitev te posodobitve znova zaženete Huhi. # okno brez beleženja zgodovine se ne bo znova odprlo.}two{Skrbnik prosi, da za uveljavitev te posodobitve znova zaženete Huhi. # okni brez beleženja zgodovine se ne bosta znova odprli.}few{Skrbnik prosi, da za uveljavitev te posodobitve znova zaženete Huhi. # okna brez beleženja zgodovine se ne bodo znova odprla.}other{Skrbnik prosi, da za uveljavitev te posodobitve znova zaženete Huhi. # oken brez beleženja zgodovine se ne bo znova odprlo.}}</translation>
+<translation id="552349673358711446">{COUNT,plural, =0{Skrbnik zahteva, da za uveljavitev te posodobitve znova zaženete Huhi.}=1{Skrbnik zahteva, da za uveljavitev te posodobitve znova zaženete Huhi. Okno brez beleženja zgodovine se ne bo znova odprlo.}one{Skrbnik zahteva, da za uveljavitev te posodobitve znova zaženete Huhi. # okno brez beleženja zgodovine se ne bo znova odprlo.}two{Skrbnik zahteva, da za uveljavitev te posodobitve znova zaženete Huhi. # okni brez beleženja zgodovine se ne bosta znova odprli.}few{Skrbnik zahteva, da za uveljavitev te posodobitve znova zaženete Huhi. # okna brez beleženja zgodovine se ne bodo znova odprla.}other{Skrbnik zahteva, da za uveljavitev te posodobitve znova zaženete Huhi. # oken brez beleženja zgodovine se ne bo znova odprlo.}}</translation>
+<translation id="8343715364130396793">Uporabite različne profile uporabnika v programu Huhi za ločevanje službenega in osebnega brskanja ter za različne profile uporabnikov te naprave</translation>
+</translationbundle>

@@ -1,0 +1,69 @@
+/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "huhi/browser/speedreader/speedreader_tab_helper.h"
+
+#include "huhi/browser/huhi_browser_process_impl.h"
+#include "huhi/browser/speedreader/speedreader_service_factory.h"
+#include "huhi/components/speedreader/speedreader_rewriter_service.h"
+#include "huhi/components/speedreader/speedreader_service.h"
+#include "huhi/components/speedreader/speedreader_test_whitelist.h"
+#include "chrome/browser/profiles/profile.h"
+#include "content/public/browser/navigation_handle.h"
+
+namespace speedreader {
+
+SpeedreaderTabHelper::~SpeedreaderTabHelper() = default;
+
+SpeedreaderTabHelper::SpeedreaderTabHelper(content::WebContents* web_contents)
+    : content::WebContentsObserver(web_contents) {}
+
+void SpeedreaderTabHelper::UpdateActiveState(
+    content::NavigationHandle* handle) {
+  DCHECK(handle);
+  DCHECK(handle->IsInMainFrame());
+
+  Profile* profile =
+      Profile::FromBrowserContext(web_contents()->GetBrowserContext());
+  DCHECK(profile);
+  const bool enabled =
+      SpeedreaderServiceFactory::GetForProfile(profile)->IsEnabled();
+
+  if (!enabled) {
+    active_ = false;
+    return;
+  }
+
+  // Work only with casual main frame navigations.
+  if (handle->GetURL().SchemeIsHTTPOrHTTPS()) {
+    auto* rewriter_service =
+        g_huhi_browser_process->speedreader_rewriter_service();
+    if (speedreader::IsWhitelistedForTest(handle->GetURL()) ||
+        rewriter_service->IsWhitelisted(handle->GetURL())) {
+      VLOG(2) << __func__ << " SpeedReader active for " << handle->GetURL();
+      active_ = true;
+      return;
+    }
+  }
+  active_ = false;
+}
+
+void SpeedreaderTabHelper::DidStartNavigation(
+    content::NavigationHandle* navigation_handle) {
+  if (navigation_handle->IsInMainFrame()) {
+    UpdateActiveState(navigation_handle);
+  }
+}
+
+void SpeedreaderTabHelper::DidRedirectNavigation(
+    content::NavigationHandle* navigation_handle) {
+  if (navigation_handle->IsInMainFrame()) {
+    UpdateActiveState(navigation_handle);
+  }
+}
+
+WEB_CONTENTS_USER_DATA_KEY_IMPL(SpeedreaderTabHelper)
+
+}  // namespace speedreader

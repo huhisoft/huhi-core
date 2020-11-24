@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+     This Source Code Form is subject to the terms of the Huhi Software
+     License, v. 2.0. If a copy of the MPL was not distributed with this file,
+     You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/huhi_stats_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:baselineAligned="false" >
+
+        <LinearLayout
+            android:id="@+id/huhi_stats_ads"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:baselineAligned="false"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/huhi_stats_text_ads_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/huhi_stats_ads_color"
+                android:textStyle="bold"
+                android:textSize="24sp" />
+            <TextView
+                android:id="@+id/huhi_stats_text_ads"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="@string/huhi_stats_text_ads" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/huhi_stats_data_saved"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:baselineAligned="false"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/huhi_stats_data_saved_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/huhi_stats_data_saved_color"
+                android:textStyle="bold"
+                android:textSize="24sp" />
+            <TextView
+                android:id="@+id/huhi_stats_data_saved_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="@string/huhi_stats_text_data_saved" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/huhi_stats_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:baselineAligned="false"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/huhi_stats_text_time_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/huhi_state_time_count_color"
+                android:textStyle="bold"
+                android:textSize="24sp" />
+            <TextView
+                android:id="@+id/huhi_stats_text_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="@string/huhi_stats_text_time" />
+        </LinearLayout>
+    </LinearLayout>

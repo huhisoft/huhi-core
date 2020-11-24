@@ -1,0 +1,20 @@
+diff --git a/components/policy/tools/generate_policy_source.py b/components/policy/tools/generate_policy_source.py
+index 0fed66ab13223a3a8e22eff05575eb1d8c714580..b1528fa8db854dcf4c282d8b682e7078bde712c8 100755
+--- a/components/policy/tools/generate_policy_source.py
++++ b/components/policy/tools/generate_policy_source.py
+@@ -42,6 +42,7 @@ PLATFORM_STRINGS = {
+     'chrome.win7': ['win']
+ }
+ 
++from policy_source_helper import AddHuhiPolicies, CHROMIUM_POLICY_KEY
+ 
+ class PolicyDetails:
+   """Parses a policy template and caches all its details."""
+@@ -351,6 +352,7 @@ def main():
+     chrome_major_version = ParseVersionFile(version_path)
+ 
+   template_file_contents = _LoadJSONFile(template_file_name)
++  AddHuhiPolicies(template_file_contents)
+   risk_tags = RiskTags(template_file_contents)
+   policy_details = [
+       PolicyDetails(policy, chrome_major_version, target_platform,

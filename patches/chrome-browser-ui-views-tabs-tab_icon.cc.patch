@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/views/tabs/tab_icon.cc b/chrome/browser/ui/views/tabs/tab_icon.cc
+index 0c9e5b98b3ef5acdb3dc33f3c572d42bc37bc332..eec05b31aeb2a489bb1f8636a5be28b976d24d9e 100644
+--- a/chrome/browser/ui/views/tabs/tab_icon.cc
++++ b/chrome/browser/ui/views/tabs/tab_icon.cc
+@@ -356,7 +356,7 @@ void TabIcon::SetIcon(const GURL& url, const gfx::ImageSkia& icon) {
+ 
+   favicon_ = icon;
+ 
+-  if (!HasNonDefaultFavicon() || ShouldThemifyFaviconForUrl(url)) {
++  if (!HasNonDefaultFavicon() || HuhiShouldThemifyFaviconForUrl(url)) {
+     themed_favicon_ = ThemeImage(icon);
+   } else {
+     themed_favicon_ = gfx::ImageSkia();

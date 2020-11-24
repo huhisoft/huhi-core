@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/views/toolbar/browser_actions_container.h b/chrome/browser/ui/views/toolbar/browser_actions_container.h
+index c48a0f45febd38254cd157467d3b5697bcadb26b..17263d3b821b8cdf3788dc507f990deb7da42b0d 100644
+--- a/chrome/browser/ui/views/toolbar/browser_actions_container.h
++++ b/chrome/browser/ui/views/toolbar/browser_actions_container.h
+@@ -260,6 +260,7 @@ class BrowserActionsContainer : public views::View,
+   static views::FlexRule GetFlexRule();
+ 
+  protected:
++  friend class HuhiToolbarView;
+   // Overridden from views::View:
+   void ViewHierarchyChanged(
+       const views::ViewHierarchyChangedDetails& details) override;

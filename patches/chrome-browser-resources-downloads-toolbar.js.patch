@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/resources/downloads/toolbar.js b/chrome/browser/resources/downloads/toolbar.js
+index d7219c061c686d3d750b37017032a5b3330a2ef2..9c0993216cb4aa3cdca6df668e0036e9988df654 100644
+--- a/chrome/browser/resources/downloads/toolbar.js
++++ b/chrome/browser/resources/downloads/toolbar.js
+@@ -4,7 +4,7 @@
+ 
+ import 'chrome://resources/cr_elements/cr_action_menu/cr_action_menu.m.js';
+ import 'chrome://resources/cr_elements/cr_icon_button/cr_icon_button.m.js';
+-import 'chrome://resources/cr_elements/cr_toolbar/cr_toolbar.m.js';
++import 'chrome://huhi-resources/br_elements/br_toolbar/br_toolbar.m.js';
+ import 'chrome://resources/cr_elements/hidden_style_css.m.js';
+ import 'chrome://resources/cr_elements/icons.m.js';
+ import 'chrome://resources/cr_elements/shared_vars_css.m.js';

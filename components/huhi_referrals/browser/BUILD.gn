@@ -1,0 +1,32 @@
+import("//huhi/components/huhi_referrals/buildflags/buildflags.gni")
+
+source_set("browser") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10646 is resolved
+  check_includes = false
+  public_deps = [
+    "//huhi/components/huhi_referrals/buildflags",
+  ]
+
+  if (enable_huhi_referrals) {
+    sources = [
+      "huhi_referrals_service.cc",
+      "huhi_referrals_service.h",
+    ]
+
+    deps = [
+      "//base",
+      "//huhi/common",
+      "//huhi/components/huhi_referrals/common",
+      "//huhi/vendor/huhi_base",
+      "//chrome/common",
+      "//components/prefs",
+      "//content/public/browser",
+      "//net",
+      "//services/network/public/cpp",
+    ]
+
+    if (is_android) {
+      deps += [ "//huhi/components/safetynet:android" ]
+    }
+  }
+}

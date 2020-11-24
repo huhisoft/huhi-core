@@ -1,0 +1,28 @@
+import("//huhi/build/config.gni")
+
+source_set("browser") {
+  sources = [
+    "greaselion_download_service.cc",
+    "greaselion_download_service.h",
+    "greaselion_service.h",
+    "greaselion_service_impl.cc",
+    "greaselion_service_impl.h",
+    "switches.cc",
+    "switches.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/components/huhi_component_updater/browser",
+    "//chrome/browser/extensions:extensions",
+    "//content/public/browser",
+    "//content/public/common",
+    "//extensions/browser",
+    "//url",
+  ]
+
+  public_deps = [
+    "buildflags"
+  ]
+
+}

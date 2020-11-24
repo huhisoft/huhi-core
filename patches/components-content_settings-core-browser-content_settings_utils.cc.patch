@@ -1,0 +1,12 @@
+diff --git a/components/content_settings/core/browser/content_settings_utils.cc b/components/content_settings/core/browser/content_settings_utils.cc
+index a7a88cf7c4503fa6a2ae8881a2f7ebc5cb401d4d..a3b991193680ad07fbee955db8fcbadea30c8e56 100644
+--- a/components/content_settings/core/browser/content_settings_utils.cc
++++ b/components/content_settings/core/browser/content_settings_utils.cc
+@@ -145,6 +145,7 @@ void GetRendererContentSettingRules(const HostContentSettingsMap* map,
+                              ResourceIdentifier(), &(rules->script_rules));
+   map->GetSettingsForOneType(ContentSettingsType::POPUPS, ResourceIdentifier(),
+                              &(rules->popup_redirect_rules));
++  HUHI_GET_RENDER_CONTENT_SETTING_RULES
+ }
+ 
+ bool IsMorePermissive(ContentSetting a, ContentSetting b) {

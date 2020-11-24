@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/resources/settings/BUILD.gn b/chrome/browser/resources/settings/BUILD.gn
+index 80ce6474e7b5279433cfc22a9d0a6403717cb606..751642e29d9192d46417c41eb01d52783c0724e0 100644
+--- a/chrome/browser/resources/settings/BUILD.gn
++++ b/chrome/browser/resources/settings/BUILD.gn
+@@ -31,6 +31,7 @@ if (optimize_webui) {
+ 
+     deps = [
+       ":unpak",
++      "//huhi/browser/resources/settings:unpak",
+       "../../../../ui/webui/resources:modulize",
+     ]
+     excludes = [ "chrome://resources/js/cr.m.js" ]

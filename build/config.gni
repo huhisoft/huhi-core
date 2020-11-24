@@ -1,0 +1,132 @@
+import("//huhi/build/features.gni")
+import("//build/util/branding.gni")
+
+declare_args() {
+  # Release channel support.
+  # "beta" for beta release.
+  # "dev" for dev channel release.
+  # "nightly" for nightly channel release.
+  # "" for stable channel release.
+  huhi_channel = ""
+  is_release_channel = true
+  base_sparkle_update_url = ""
+  enable_sparkle = is_official_build && is_mac
+
+  huhi_dsa_file = "dsa_pub.pem"
+
+  huhi_product_name = ""
+  huhi_project_name = ""
+  huhi_exe = ""
+  huhi_version_major = ""
+  huhi_version_minor = ""
+  huhi_version_build = ""
+  huhi_version_patch = 0
+  chrome_version_string = ""
+  chrome_version_major = ""
+  build_omaha = false
+  tag_ap =""
+  target_apk_base=""
+  huhi_android_keystore_path = "."
+  huhi_android_keystore_name = ""
+  huhi_android_keystore_password = ""
+  huhi_android_key_password = ""
+
+  skip_signing = false
+
+  # Used for generating delta installer on Win.
+  build_delta_installer = false
+  last_chrome_installer = ""
+}
+
+if (base_sparkle_update_url == "") {
+  base_sparkle_update_url = "https://updates.huhisoft.com/sparkle/Huhi-Browser"
+}
+_update_channel = huhi_channel
+if (_update_channel == "") {
+  _update_channel = "stable"
+}
+huhi_feed_url = "$base_sparkle_update_url/$_update_channel/appcast.xml"
+
+huhi_version = "$huhi_version_major.$huhi_version_minor.$huhi_version_build"
+
+if (huhi_exe == "") {
+  huhi_exe = huhi_project_name
+}
+
+huhi_dist_dir = "$root_out_dir/dist"
+if (is_win) {
+  huhi_exe = "$huhi_exe.exe"
+  huhi_underline_full_version = "_$chrome_version_major" + "_$huhi_version_major" + "_$huhi_version_minor" + "_$huhi_version_build"
+  _channel = ""
+  huhi_app_guid = "{AFE6A462-C574-4B8A-AF43-4CC60DF4563B}"
+  if (is_official_build) {
+    if (huhi_channel == "beta") {
+      _channel = "Beta"
+      huhi_app_guid = "{103BD053-949B-43A8-9120-2E424887DE11}"
+    } else if (huhi_channel == "dev") {
+      _channel = "Dev"
+      huhi_app_guid = "{CB2150F2-595F-4633-891A-E39720CE0531}"
+    } else if (huhi_channel == "nightly") {
+      _channel = "Nightly"
+      huhi_app_guid = "{C6CB981E-DB30-4876-8639-109F8933582C}"
+    } else {
+      assert(huhi_channel == "", "Unknown channel name")
+    }
+  } else {
+    _channel = "Development"
+  }
+  _arch = ""
+  if (target_cpu == "x86") {
+    _arch = "32"
+  }
+  huhi_installer_exe = "huhi_installer$huhi_underline_full_version.exe"
+  huhi_stub_installer_exe = "HuhiBrowser$_channel" + "Setup$_arch$huhi_underline_full_version.exe"
+  huhi_silent_stub_installer_exe = "HuhiBrowserSilent$_channel" + "Setup$_arch$huhi_underline_full_version.exe"
+  huhi_untagged_stub_installer_exe = "HuhiBrowserUntagged$_channel" + "Setup$_arch$huhi_underline_full_version.exe"
+  huhi_standalone_installer_exe = "HuhiBrowserStandalone$_channel" + "Setup$_arch$huhi_underline_full_version.exe"
+  huhi_silent_installer_exe = "HuhiBrowserStandaloneSilent$_channel" + "Setup$_arch$huhi_underline_full_version.exe"
+  huhi_untagged_installer_exe = "HuhiBrowserStandaloneUntagged$_channel" + "Setup$_arch$huhi_underline_full_version.exe"
+} else if (is_mac) {
+  huhi_exe = "$chrome_product_full_name.app"
+  huhi_dmg = "$chrome_product_full_name.dmg"
+  huhi_pkg = "$chrome_product_full_name.pkg"
+
+  huhi_product_dir_name_suffix = ""
+  if (is_official_build) {
+    if (huhi_channel == "beta") {
+      huhi_product_dir_name_suffix = "-Beta"
+    } else if (huhi_channel == "dev") {
+      huhi_product_dir_name_suffix = "-Dev"
+    } else if (huhi_channel == "nightly") {
+      huhi_product_dir_name_suffix = "-Nightly"
+    } else {
+      assert(huhi_channel == "", "Unknown channel name")
+    }
+  } else {
+    huhi_product_dir_name_suffix = "-Development"
+  }
+  huhi_product_dir_name = "HuhiSoftware/Huhi-Browser$huhi_product_dir_name_suffix"
+}
+
+huhi_platform = "darwin"
+if (is_win) {
+  huhi_platform = "win32"
+} else if (is_linux) {
+  huhi_platform = "linux"
+}
+
+is_release_channel = huhi_channel == ""
+
+huhi_apk_output = ""
+if (is_android) {
+  huhi_apk_output += "$root_out_dir/apks/Huhi"
+  if (target_apk_base == "modern") {
+    assert(target_cpu != "arm64" && target_cpu != "x64")
+    huhi_apk_output += "Modern"
+  } else if (target_cpu == "arm64" || target_cpu == "x64" ||
+      target_apk_base == "mono") {
+    huhi_apk_output += "Mono"
+  }
+
+  huhi_apk_output += "$target_cpu.apk"
+}

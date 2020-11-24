@@ -1,0 +1,50 @@
+import("//build/buildflag_header.gni")
+import("//huhi/components/speedreader/buildflags.gni")
+
+buildflag_header("buildflags") {
+  header = "buildflags.h"
+  flags = [
+    "ENABLE_SPEEDREADER=$enable_speedreader",
+    "ENABLE_SPEEDREADER_FEATURE=$enable_speedreader_feature",
+  ]
+}
+
+source_set("speedreader") {
+  public_deps = [
+    ":buildflags",
+    "//huhi/build/rust",
+  ]
+
+  sources = [
+    "features.cc",
+    "features.h",
+    "speedreader_component.cc",
+    "speedreader_component.h",
+    "speedreader_pref_names.h",
+    "speedreader_rewriter_service.cc",
+    "speedreader_rewriter_service.h",
+    "speedreader_service.cc",
+    "speedreader_service.h",
+    "speedreader_switches.h",
+    "speedreader_test_whitelist.cc",
+    "speedreader_test_whitelist.h",
+    "speedreader_throttle.cc",
+    "speedreader_throttle.h",
+    "speedreader_url_loader.cc",
+    "speedreader_url_loader.h",
+  ]
+
+  deps = [
+    "//huhi/components/huhi_component_updater/browser",
+    "//huhi/components/resources:static_resources_grit",
+    "//huhi/components/resources",
+    "//huhi/components/weekly_storage",
+    "//components/keyed_service/core:core",
+    "//components/prefs:prefs",
+    "//services/network/public/cpp",
+    "//services/network/public/mojom",
+    "//third_party/blink/public/common",
+    "//ui/base",  # For ResourceBundle, consider getting rid of this?
+    "//url",
+  ]
+}

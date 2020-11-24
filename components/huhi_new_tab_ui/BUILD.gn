@@ -1,0 +1,17 @@
+import("//huhi/components/common/typescript.gni")
+
+transpile_web_ui("huhi_new_tab_ui") {
+  entry_points = [
+    ["huhi_new_tab", rebase_path("huhi_new_tab.tsx")]
+  ]
+
+  resource_name = "huhi_new_tab"
+}
+
+pack_web_resources("generated_resources") {
+  resource_name = "huhi_new_tab"
+  output_dir = "$root_gen_dir/huhi/components/huhi_new_tab/resources"
+  deps = [
+    ":huhi_new_tab_ui"
+  ]
+}

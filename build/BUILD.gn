@@ -1,0 +1,22 @@
+import("//huhi/build/config.gni")
+
+# Changing these will cause a full rebuild
+huhi_include_dirs_ = [
+  "//huhi/chromium_src",
+]
+
+if (huhi_chromium_build) {
+  config("compiler") {
+    include_dirs = huhi_include_dirs_
+    defines = [ "HUHI_CHROMIUM_BUILD" ]
+  }
+} else {
+  config("compiler") {}
+}
+
+# do not expose this as a public config anywhere
+config("version") {
+  defines = [
+    "HUHI_CHROMIUM_VERSION=\"$chrome_version_string\"",
+  ]
+}

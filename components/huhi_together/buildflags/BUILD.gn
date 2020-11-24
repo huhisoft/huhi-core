@@ -1,0 +1,10 @@
+import("buildflags.gni")
+import("//build/buildflag_header.gni")
+import("//huhi/components/huhi_together/buildflags/buildflags.gni")
+
+buildflag_header("buildflags") {
+  header = "buildflags.h"
+  flags = [
+    "HUHI_TOGETHER_ENABLED=$huhi_together_enabled",
+  ]
+}

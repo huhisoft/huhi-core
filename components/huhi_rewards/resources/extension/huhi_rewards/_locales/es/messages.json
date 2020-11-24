@@ -1,0 +1,626 @@
+{
+  "huhiRewards": {
+    "message": "Huhi Rewards",
+    "description": "Title in welcome screen for the panel"
+  },
+  "welcomeButtonTextOne": {
+    "message": "¡Empieza a ganar ya!",
+    "description": "CTA on welcome screen in the panel, existing users"
+  },
+  "welcomeButtonTextTwo": {
+    "message": "Unirme a Huhi Rewards",
+    "description": "CTA on welcome screen in the panel, new users"
+  },
+  "welcomeDescOne": {
+    "message": "Obtén recompensas por visualizar anuncios y envíalas a tus creadores de contenido favoritos para apoyarlos.",
+    "description": "Entry text for welcome screen in the panel, existing user"
+  },
+  "welcomeDescTwo": {
+    "message": "Ahora puedes ganar tokens visualizando anuncios respetuosos con la privacidad.",
+    "description": "Entry text for welcome screen in the panel, new user"
+  },
+  "welcomeDescPoints": {
+    "message": "Ahora puedes ganar puntos visualizando anuncios respetuosos con la privacidad.",
+    "description": "Entry text for welcome screen in the panel, points"
+  },
+  "welcomeFooterTextOne": {
+    "message": "Echa un vistazo a las mejoras",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, existing user"
+  },
+  "welcomeFooterTextTwo": {
+    "message": "Más información",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, new user"
+  },
+  "welcomeHeaderOne": {
+    "message": "Le hemos dado a Huhi Rewards una gran actualización.",
+    "description": "Main header title for welcome screen in the panel, existing user"
+  },
+  "welcomeHeaderTwo": {
+    "message": "Prepárate para experimentar el próximo Internet.",
+    "description": "Main header title for welcome screen in the panel, new user"
+  },
+  "yourWallet": {
+    "message": "Tu monedero",
+    "description": "Title of wallet section where we display data about wallet"
+  },
+  "grants": {
+    "message": "Concesiones",
+    "description": "Title for grant section in wallet summary"
+  },
+  "details": {
+    "message": "Detalles",
+    "description": "Title for grant section in wallet panel summary"
+  },
+  "yourBalance": {
+    "message": "Tu saldo",
+    "description": "Wallet panel title for anon wallets"
+  },
+  "batPoints": {
+    "message": "Puntos BAT",
+    "description": "BAT Points text"
+  },
+  "batPointsMessage": {
+    "message": "pueden utilizarse en Huhi Rewards para contribuir con tus creadores de contenido favoritos. Los Puntos BAT no pueden cambiarse por BAT.",
+    "description": "Text for BAT Point helper message"
+  },
+  "on": {
+    "message": "en",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "verifiedPublisher": {
+    "message": "Creador verificado por Huhi",
+    "description": "Tells user that this particular publisher is a Huhi Verified Creator"
+  },
+  "rewardsContributeAttentionScore": {
+    "message": "Atención",
+    "description": "Label for auto contribute table attention for the publisher"
+  },
+  "donateMonthly": {
+    "message": "Contribución Mensual",
+    "description": "Label for drop down menu where user select amount for monthly contribution for particular publisher"
+  },
+  "includeInAuto": {
+    "message": "Incluir en Contribución automática",
+    "description": "Label for checkbox that allows user to exclude publishers from auto contribute"
+  },
+  "donateNow": {
+    "message": "Enviar una propina...",
+    "description": "CTA for sending tip form site banner"
+  },
+  "enableTips": {
+    "message": "Habilitar propinas",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "for": {
+    "message": "para",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "rewardsSummary": {
+    "message": "Resumen de Rewards",
+    "description": "Section title in wallet panel, which contains monthly rewards summary"
+  },
+  "monthApr": {
+    "message": "Abril",
+    "description": "Month"
+  },
+  "monthAug": {
+    "message": "Agosto",
+    "description": "Month"
+  },
+  "monthDec": {
+    "message": "Diciembre",
+    "description": "Month"
+  },
+  "monthFeb": {
+    "message": "Febrero",
+    "description": "Month"
+  },
+  "monthJan": {
+    "message": "Enero",
+    "description": "Month"
+  },
+  "monthJul": {
+    "message": "Julio",
+    "description": "Month"
+  },
+  "monthJun": {
+    "message": "Junio",
+    "description": "Month"
+  },
+  "monthMar": {
+    "message": "Marzo",
+    "description": "Month"
+  },
+  "monthMay": {
+    "message": "Mayo",
+    "description": "Month"
+  },
+  "monthNov": {
+    "message": "Noviembre",
+    "description": "Month"
+  },
+  "monthOct": {
+    "message": "Octubre",
+    "description": "Month"
+  },
+  "monthSep": {
+    "message": "Septiembre",
+    "description": "Month"
+  },
+  "tokenGrant": {
+    "message": "$currency$ Concesiones",
+    "description": "Title for grant notification",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "Token"
+      }
+    }
+  },
+  "tokenGrantClaimed": {
+    "message": "Token Reclamados",
+    "description": "Title for grant section in wallet summary"
+  },
+  "pointGrantClaimed": {
+    "message": "Puntos Reclamados",
+    "description": "Title for point grant section in wallet summary"
+  },
+  "earningsAds": {
+    "message": "Ganancias de Huhi Ads",
+    "description": "Title for ads section in wallet summary"
+  },
+  "rewardsContribute": {
+    "message": "Contribución Automática",
+    "description": "Title for auto contribute section in wallet summary"
+  },
+  "oneTimeDonation": {
+    "message": "Propinas únicas",
+    "description": "Title for one time tips section in wallet summary"
+  },
+  "expiresOn": {
+    "message": "expira el",
+    "description": "Used for grant representation. Whole string is '30.0 BAT expires on 08/05/2022'"
+  },
+  "recurringDonations": {
+    "message": "Contribuciones Mensuales",
+    "description": "Title for monthly contributions section in wallet summary"
+  },
+  "off": {
+    "message": "Desactivado",
+    "description": "Label used in toggle indicating that toggle is off"
+  },
+  "ok": {
+    "message": "ok",
+    "description": "Used in notification to dismiss notification"
+  },
+  "huhiAdsLaunchMsg": {
+    "message": "Ahora puedes ganar por visualizar anuncios.",
+    "description": "Message for ads launch notification"
+  },
+  "huhiAdsLaunchTitle": {
+    "message": "¡Huhi Ads ha llegado!",
+    "description": "Message used in notification to let users know Ads is available"
+  },
+  "huhiAdsTitle": {
+    "message": "Huhi Ads",
+    "description": "Notification title when we display info about ads"
+  },
+  "huhiContributeTitle": {
+    "message": "Contribución Automática",
+    "description": "Notification title when we display info about auto contribution"
+  },
+  "contributeNotificationSuccess": {
+    "message": "Has aportado $amount$ $currency$",
+    "description": "We show this string in the notification when contribution is successful",
+    "placeholders": {
+      "amount": {
+        "content": "$1",
+        "example": "10.0"
+      },
+      "currency": {
+        "content": "$2",
+        "example": "BAT"
+      }
+    }
+  },
+  "grantNotification": {
+    "message": "Tienes una gratificación esperándote.",
+    "description": "Description for new grant notification"
+  },
+  "backupNow": {
+    "message": "Respaldar Ahora",
+    "description": "Notification button text when we ask user to backup wallet"
+  },
+  "backupWalletTitle": {
+    "message": "Respaldar Monedero",
+    "description": "Notification title when we ask user to backup wallet"
+  },
+  "backupWalletNotification": {
+    "message": "Por favor, haz un respaldo de tu monedero Huhi.",
+    "description": "Description for backup wallet notification"
+  },
+  "insufficientFundsNotification": {
+    "message": "Tu cuenta de Huhi Rewards está a la espera de un ingreso.",
+    "description": "Description for new insufficient funds notification"
+  },
+  "insufficientFunds": {
+    "message": "Fondos insuficientes",
+    "description": "Title for insufficient funds notification"
+  },
+  "huhiRewardsCreatingText": {
+    "message": "Creando monedero",
+    "description": "Used in a button displaying wallet creation process"
+  },
+  "contributeNotificationError": {
+    "message": "Ha ocurrido un problema al procesar tu contribución.",
+    "description": "We show this string in notification when contribution fails"
+  },
+  "contributeNotificationNotEnoughFunds": {
+    "message": "Tu pago mensual programado para Contribución Automática y contribuciones mensuales no se pudo completar debido a la insuficiencia de fondos. Lo intentaremos de nuevo en 30 días.",
+    "description": "We show this string in the notification when you don't have enough funds for contribution"
+  },
+  "contributeNotificationTipError": {
+    "message": "No hemos podido enviar tu propina. Por favor, inténtalo de nuevo más tarde.",
+    "description": "We show this string in notification when tip fails"
+  },
+  "noActivity": {
+    "message": "Aún no hay actividades...",
+    "description": "Allows the user to see that there have been no transactions or other activity in their wallet"
+  },
+  "captchaDrag": {
+    "message": "Arrastra el icono BAT en",
+    "description": "Directs the user to drag the BAT icon"
+  },
+  "captchaProveHuman": {
+    "message": "¡Prueba que eres humano!",
+    "description": "Cosmetic text for captcha prompt"
+  },
+  "captchaTarget": {
+    "message": "destino.",
+    "description": "Captcha Target"
+  },
+  "captchaMissedTarget": {
+    "message": "¡Mmm!... Parece que no. Inténtalo de nuevo.",
+    "description": "Message upon failing captcha"
+  },
+  "claim": {
+    "message": "Reclamar",
+    "description": "Claim text"
+  },
+  "newTokenGrant": {
+    "message": "Concesión gratuita de token",
+    "description": "Token grant label"
+  },
+  "grantExpire": {
+    "message": "Fecha de vencimiento de la concesión",
+    "description": "Grant expiry label"
+  },
+  "grantGeneralErrorButton": {
+    "message": "OK",
+    "description": "Button text for clearing the error."
+  },
+  "grantGeneralErrorText": {
+    "message": "Huhi Rewards está teniendo problemas. Inténtalo de nuevo más tarde.",
+    "description": "Error text when user is having problems claiming a grant."
+  },
+  "grantGeneralErrorTitle": {
+    "message": "¡Vaya!, algo ha ido mal. Por favor, inténtalo de nuevo más tarde.",
+    "description": "Error title when user is having problems claiming a grant."
+  },
+  "unVerifiedCheck": {
+    "message": "Actualizar estado",
+    "description": "Text of link that allows to check verified status of unverified publisher"
+  },
+  "unVerifiedPublisher": {
+    "message": "Aún no está verificado",
+    "description": "Status of the publisher shown in the panel"
+  },
+  "unVerifiedText": {
+    "message": "Este creador aún no se ha registrado para recibir contribuciones de usuarios de Huhi. Cualquier gratificación que envíes permanecerá en tu monedero hasta que se verifique.",
+    "description": "Notice about unverified publisher."
+  },
+  "unVerifiedTextMore": {
+    "message": "Más información.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "reservedAmountText": {
+    "message": "Has designado {{reservedAmount}} {{currency}} para los creadores que todavía no se han registrado para recibir contribuciones. Tu navegador seguirá intentando contribuir hasta que verifiquen o hasta que pasen 90 días.",
+    "description": "Notification about how much BAT do you have reserved"
+  },
+  "reservedMoreLink": {
+    "message": "Más información.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "disabledPanelOff": {
+    "message": "Desactivado",
+    "description": "Off state text for Panel's disabled state"
+  },
+  "disabledPanelSettings": {
+    "message": "Configuración.",
+    "description": "Settings Link for Panel's disabled state"
+  },
+  "disabledPanelText": {
+    "message": "Actualmente no estás acumulando ningún beneficio de Rewards mientras navegas. Vuelve a activar Rewards en",
+    "description": "Text for Panel's disabled state"
+  },
+  "disabledPanelTitle": {
+    "message": "Huhi Rewards está",
+    "description": "Title for Panel's disabled state"
+  },
+  "walletFailedTitle": {
+    "message": "Creación de monedero fallida",
+    "description": "Failure title for wallet creation"
+  },
+  "walletFailedButton": {
+    "message": "Reintentar",
+    "description": "Button for re-try after wallet creation failed"
+  },
+  "addFunds": {
+    "message": "Añadir fondos",
+    "description": "Button for adding funds"
+  },
+  "rewardsSettings": {
+    "message": "Ajustes de Rewards",
+    "description": "Button for opening settings page"
+  },
+  "earningsClaimDefault": {
+    "message": "¡Tus recompensas de Anuncios están aquí!",
+    "description": "Panel notification text for Ads grant"
+  },
+  "and": {
+    "message": "y",
+    "description": "The word 'and'"
+  },
+  "huhiRewardsSubTitle": {
+    "message": "¡Recibe recompensas por Navegar!",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "disabledPanelTextTwo": {
+    "message": "Obtén recompensas por visualizar anuncios respetuosos con la privacidad, y envíalas a tus creadores de contenido favoritos para apoyarlos.",
+    "description": "Text block for wallet disabled panel"
+  },
+  "enableRewards": {
+    "message": "Habilitar Huhi Rewards",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "privacyPolicy": {
+    "message": "Política de Privacidad",
+    "description": "Privacy Policy"
+  },
+  "serviceText": {
+    "message": "Al hacer click en 'Habilitar Huhi Rewards', indicas que has leído y estás de acuerdo con los",
+    "description": "Terms of service main text"
+  },
+  "termsOfService": {
+    "message": "Términos del Servicio",
+    "description": "Terms of Service"
+  },
+  "welcomeBack": {
+    "message": "¡Bienvenido/a!",
+    "description": "Title message for wallet disabled panel"
+  },
+  "tipsProcessedNotification": {
+    "message": "¡Tus contribuciones mensuales han sido procesadas!",
+    "description": "Message for monthly contributions processed notification"
+  },
+  "contributionTips": {
+    "message": "Contribuciones & Propinas",
+    "description": "Title for monthly contributions processed notification"
+  },
+  "serviceTextPanelWelcome": {
+    "message": "Al hacer click en “Unirme a Huhi Rewards”, confirmas que has leído y aceptas los",
+    "description": "Terms of service panel opt-in text"
+  },
+  "bat": {
+    "message": "BAT",
+    "description": "BAT text for displaying converted tip amount."
+  },
+  "bap": {
+    "message": "BAP",
+    "description": "BAT Points abbreviation text"
+  },
+  "turnOnAds": {
+    "message": "Activar Ads",
+    "description": "Prompt to turn on Ads via notification"
+  },
+  "adsEarnings": {
+    "message": "ganado de anuncios",
+    "description": "Description text for ad grants in grant details"
+  },
+  "twitterTipsHoverText": {
+    "message": "Contribuir a este tweet",
+    "description": "Hover text for Twitter tips action"
+  },
+  "twitterTipsIconLabel": {
+    "message": "Propina",
+    "description": "Icon label for Twitter tips"
+  },
+  "redditTipsHoverText": {
+    "message": "Dar una propina a esta publicación ",
+    "description": "Hover text for Reddit tips action"
+  },
+  "redditTipsIconLabel": {
+    "message": "Propina",
+    "description": "Icon label for Reddit tips"
+  },
+  "githubTipsHoverText": {
+    "message": "Enviar una Propina",
+    "description": "Hover text for GitHub tips action"
+  },
+  "githubTipsIconLabel": {
+    "message": "Propina",
+    "description": "Icon label for GitHub tips"
+  },
+  "verifiedPublisherNotification": {
+    "message": "Creador $name$ verificado recientemente",
+    "description": "Notification text that tells user which publisher just verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "huhisoft.com"
+      }
+    }
+  },
+  "pendingNotEnoughFundsNotification": {
+    "message": "Tienes propinas pendientes debido a fondos insuficientes",
+    "description": "Notification text that tells user his wallet is under funded for pending contribution to complete"
+  },
+  "pendingContributionTitle": {
+    "message": "Contribución Pendiente",
+    "description": "Notification title for pending contribution type"
+  },
+  "grantFinishTitleUGP": {
+    "message": "¡Es tu día de suerte!",
+    "description": "Cosmetic text upon captcha success"
+  },
+  "grantFinishTextUGP": {
+    "message": "Tu concesión de $currency$ está en camino.",
+    "description": "Cosmetic text indicating grant funds are on the way",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "token"
+      }
+    }
+  },
+  "grantFinishTokenTitleUGP": {
+    "message": "Token Gratuito",
+    "description": "Token title on success screen"
+  },
+  "grantFinishPointTitleUGP": {
+    "message": "Punto Gratuito",
+    "description": "Point title on success screen"
+  },
+  "grantFinishTitleAds": {
+    "message": "¡Has ganado una Recompensa de Anuncios!",
+    "description": "Cosmetic text upon captcha success for ads"
+  },
+  "grantFinishTextAds": {
+    "message": "Tu Recompensa está de camino a tu monedero de Huhi Rewards.",
+    "description": "Cosmetic text indicating ads funds are on the way"
+  },
+  "grantFinishTokenTitleAds": {
+    "message": "Cantidad de Reward",
+    "description": "Token title on success screen for ads"
+  },
+  "rewardsPanelTextVerify":  {
+    "message": "verificar",
+    "description": "CTA in the footer to verify"
+  },
+  "walletButtonDisconnected":  {
+    "message": "Desconectado",
+    "description": "CTA status button"
+  },
+  "walletButtonUnverified":  {
+    "message": "Verificar Monedero",
+    "description": "CTA to verify wallet in the wallet "
+  },
+  "walletButtonVerified":  {
+    "message": "Monedero verificado",
+    "description": "Displayed in wallet that tells users that he is verified"
+  },
+  "walletGoToUphold":  {
+    "message": "Ir a mi cuenta Uphold",
+    "description": "CTA to open uphold account"
+  },
+  "walletDisconnect":  {
+    "message": "Desconectar de Huhi Rewards",
+    "description": "CTA to disconnect user wallet from rewards"
+  },
+  "walletVerified":  {
+    "message": "Verificado",
+    "description": "Status button that tells user that he is verified"
+  },
+  "walletVerifiedNotification":  {
+    "message": "¡Se ha verificado tu monedero!",
+    "description": "Title for notification when wallet becomes verified"
+  },
+  "walletVerifiedTextNotification":  {
+    "message": "¡Enhorabuena! Tu monedero  $name$ se ha verificado correctamente y ya está listo para añadir y retirar fondos.",
+    "description": "Title for notification when wallet becomes verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Uphold"
+      }
+    }
+  },
+  "walletDisconnectedNotification":  {
+    "message": "¡Vaya! Tu monedero no está disponible.",
+    "description": "Title for notification when wallet is disconnected."
+  },
+  "walletDisconnectedTextNotification":  {
+    "message": "No te preocupes. Esto puede suceder por varios motivos de seguridad. Reconectar tu monedero resolverá este problema.",
+    "description": "Title for notification when wallet is disconnected"
+  },
+  "connectedText":  {
+    "message": "Este Editor verificado por Huhi aún no ha configurado su cuenta para recibir contribuciones de los usuarios de Huhi. Cualquier propina que envíes permanecerá en tu monedero hasta que complete este proceso.",
+    "description": "Text shown for connected publishers that are not fully verified in the panel"
+  },
+  "walletGoToVerifyPage":  {
+    "message": "Finaliza la verificación de tu monedero",
+    "description": "CTA for completing wallet verification"
+  },
+  "set": {
+    "message": "Establecer...",
+    "description": "Button text for setting monthly contribution"
+  },
+  "tokens":  {
+    "message": "tokens",
+    "description": "Standard tokens text"
+  },
+  "point":  {
+    "message": "Punto",
+    "description": "BAT Point text"
+  },
+  "token":  {
+    "message": "Token",
+    "description": "BAT Token text"
+  },
+  "points":  {
+    "message": "puntos",
+    "description": "BAT Points text"
+  },
+  "tokenGrants":  {
+    "message": "Concesiones de Token",
+    "description": "BAT Tokens Grant Text"
+  },
+  "pointGrants":  {
+    "message": "Puntos",
+    "description": "BAT Points Grant Text"
+  },
+  "greetingsVerified":  {
+    "message": "¡Hola, $name$!",
+    "description": "Greetings for external wallet popup",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "John"
+      }
+    }
+  },
+  "cancel":  {
+    "message": "Cancelar",
+    "description": "Text for cancel button"
+  },
+  "login":  {
+    "message": "Acceder",
+    "description": "Text for login button"
+  },
+  "loginMessageTitle":  {
+    "message": "Verificar la cartera le permitirá gestionar sus fondos de manera más eficaz.",
+    "description": "Text for login button"
+  },
+  "loginMessageText":  {
+    "message": "Tiene que tener un mínimo de 25 BAT para crear una cuenta en Uphold. Inténtelo de nuevo más tarde.<br/> Si ya tiene una cuenta de Uphold verificada, continúe para iniciar sesión.",
+    "description": "Text for login button"
+  },
+  "walletConnected":  {
+    "message": "Conectado",
+    "description": "Status button that tells user that he is connected"
+  },
+  "walletPending":  {
+    "message": "Pendiente",
+    "description": "Status button that tells user that he is currently pending"
+  }
+}

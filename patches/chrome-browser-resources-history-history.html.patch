@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/resources/history/history.html b/chrome/browser/resources/history/history.html
+index 7f78155dfe5944c2beeceff1acddb6780a32f74f..4522eaf101ebaa192abbde7710deb5c861e8c902 100644
+--- a/chrome/browser/resources/history/history.html
++++ b/chrome/browser/resources/history/history.html
+@@ -78,6 +78,7 @@
+       justify-content: center;
+     }
+   </style>
++  <link rel="stylesheet" href="chrome://huhi-resources/page_specific/history/history_loading_shim.css">
+ </head>
+ 
+ <body class="loading">

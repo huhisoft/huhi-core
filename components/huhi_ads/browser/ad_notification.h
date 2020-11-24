@@ -1,0 +1,33 @@
+/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#ifndef HUHI_COMPONENTS_HUHI_ADS_BROWSER_AD_NOTIFICATION_H_
+#define HUHI_COMPONENTS_HUHI_ADS_BROWSER_AD_NOTIFICATION_H_
+
+#include <memory>
+
+#include "base/compiler_specific.h"
+#include "base/macros.h"
+#include "build/build_config.h"
+
+namespace message_center {
+class Notification;
+}
+
+namespace ads {
+struct AdNotificationInfo;
+}
+
+namespace huhi_ads {
+
+// On Android, this URL must represent an HTTP or HTTPS web origin.
+const char* const kHuhiAdsUrlPrefix = "https://www.huhisoft.com/ads/?";
+
+std::unique_ptr<message_center::Notification> CreateAdNotification(
+    const ads::AdNotificationInfo& info);
+
+}  // namespace huhi_ads
+
+#endif  // HUHI_COMPONENTS_HUHI_ADS_BROWSER_AD_NOTIFICATION_H_

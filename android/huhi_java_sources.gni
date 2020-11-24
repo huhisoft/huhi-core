@@ -1,0 +1,193 @@
+# Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Huhi Software
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import("//huhi/browser/huhi_ads/android/java_sources.gni")
+import("//huhi/components/huhi_ads/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_referrals/buildflags/buildflags.gni")
+import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_sync/buildflags/buildflags.gni")
+import("//huhi/components/safetynet/java_sources.gni")
+import("//components/feed/features.gni")
+
+huhi_java_sources = [
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiAppHooks.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiBadge.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiFeatureList.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiHelper.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiIntentHandler.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiLaunchIntentDispatcher.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRelaunchUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsBalance.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsNativeWorker.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsObserver.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsDonationSentActivity.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsExternalWallet.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsHelper.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsPanelPopup.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsPublisher.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsSiteBannerActivity.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsUserWalletActivity.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiRewardsVerifyWalletActivity.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiSyncReflectionUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/app/HuhiActivity.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/appmenu/HuhiTabbedAppMenuPropertiesDelegate.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/document/HuhiLauncherActivity.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/externalnav/HuhiExternalNavigationHandler.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/help/HuhiHelpAndFeedback.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/homepage/HuhiHomepageManager.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/homepage/settings/HuhiHomepageSettings.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/night_mode/settings/HuhiRadioButtonGroupThemePreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/night_mode/settings/HuhiThemePreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/HuhiNotificationManagerProxyImpl.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/HuhiNotificationPlatformBridge.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/HuhiNotificationSettingsBridge.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/HuhiOnboardingNotification.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/HuhiSetDefaultBrowserNotificationService.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/HuhiUphold.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/channels/HuhiChannelDefinitions.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/retention/RetentionNotificationPublisher.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/retention/RetentionNotification.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/notifications/retention/RetentionNotificationUtil.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp/HuhiDuckDuckGoOfferView.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp/HuhiNewTabPage.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp/HuhiNewTabPageLayout.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp/IncognitoNewTabPageView.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/model/NTPImage.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/model/BackgroundImage.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/model/Wallpaper.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/model/TopSite.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/model/ImageCredit.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/model/SponsoredLogo.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/model/SponsoredTab.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/util/SponsoredImageUtil.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/util/NTPUtil.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/util/NewTabPageListener.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/util/FetchWallpaperWorkerTask.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/NTPBackgroundImagesBridge.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/RewardsBottomSheetDialogFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ntp_background_images/SuperReferralShareDialogFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/omnibox/suggestions/editurl/HuhiEditUrlSuggestionProcessor.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/HuhiRewardsOnboardingFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/HuhiRewardsService.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/NonSwipeableViewPager.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/OnboardingActivity.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/OnboardingPrefManager.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/OnboardingViewPagerAdapter.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/OnViewPagerAction.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/SearchEngineEnum.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/SearchEngineOnboardingFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/TroubleshootingOnboardingFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/SearchActivity.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/v2/HighlightItem.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/v2/HighlightDialogFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/v2/HighlightView.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/v2/OnboardingV2PagerAdapter.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/onboarding/v2/OnboardingV2Fragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/huhi_stats/HuhiStatsBottomSheetDialogFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/huhi_stats/HuhiStatsUtil.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/partnercustomizations/HuhiPartnerBrowserCustomizations.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/partnercustomizations/CloseHuhiManager.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/preferences/HuhiPreferenceKeys.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/preferences/HuhiPrefServiceBridge.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/preferences/website/HuhiShieldsContentSettings.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/preferences/website/HuhiShieldsContentSettingsObserver.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/privacy/settings/HuhiPrivacySettings.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/qrreader/BarcodeTracker.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/qrreader/BarcodeTrackerFactory.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/qrreader/CameraSource.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/qrreader/CameraSourcePreview.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/language/settings/HuhiLanguageSettings.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/search_engines/settings/HuhiBaseSearchEngineAdapter.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiStatsPreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/AppearancePreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/BackgroundImagesPreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/BackgroundVideoPlaybackPreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiCustomTabsPreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiLicensePreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiLicensePreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiMainPreferencesBase.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiPreferenceFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiPrivateSearchEnginePreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiRewardsPreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiRewardsResetPreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiRewardsResetPreferenceDialog.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiSearchEngineAdapter.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiSearchEnginePreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiSearchEngineUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiStandardSearchEnginePreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/ClosingAllTabsClosesHuhiPreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/developer/HuhiQAPreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/developer/HuhiRewardsDebugPreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/SearchEngineTabModelSelectorObserver.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/settings/themes/HuhiRadioButtonGroupCustomHomepageThemePreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/signin/HuhiSigninManager.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/site_settings/DesktopModePreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/site_settings/PlayYTVideoInBrowserPreferences.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/sync/HuhiAndroidSyncSettings.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/sync/settings/HuhiManageSyncSettings.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/toolbar/HuhiHomeButton.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/toolbar/bottom/BookmarksButton.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/toolbar/bottom/HuhiBottomToolbarConfiguration.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/toolbar/bottom/HuhiBottomToolbarCoordinator.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/toolbar/bottom/HuhiBottomToolbarVariationManager.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/toolbar/bottom/HuhiBrowsingModeBottomToolbarCoordinator.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/toolbar/bottom/HuhiSearchAccelerator.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/toolbar/top/HuhiToolbarLayout.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ui/huhi_tricks/checkbox_to_switch/CheckBoxPreference.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/ui/messages/infobar/HuhiSimpleConfirmInfoBarBuilder.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/upgrade/HuhiPackageReplacedBroadcastReceiver.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/upgrade/HuhiUpgradeJobIntentService.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/upgrade/NotificationIntent.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/util/HuhiDbUtil.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/util/HuhiReferrer.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/util/PackageUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/util/TabUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/util/ConfigurationUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/util/ImageUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/widget/tile/HuhiTileWithTextView.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/tabmodel/HuhiTabCreator.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/local_database/DatabaseHelper.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/local_database/TopSiteTable.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/local_database/HuhiStatsTable.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/local_database/SavedBandwidthTable.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/rate/RateDialogFragment.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/rate/RateUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/rate/RateFeedbackUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/shields/HuhiShieldsMenuObserver.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/shields/HuhiShieldsHandler.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/shields/HuhiShieldsUtils.java",
+  "../../huhi/android/java/org/chromium/chrome/browser/CrossPromotionalModalDialogFragment.java"
+]
+
+if (huhi_rewards_enabled || enable_huhi_referrals) {
+  huhi_java_sources += huhi_rewards_java_sources
+}
+
+if (huhi_ads_enabled) {
+  huhi_java_sources += huhi_ads_java_sources
+}
+
+if (enable_feed_in_chrome) {
+  huhi_java_sources += [
+    "//huhi/android/feed/core/java/src/org/chromium/chrome/browser/feed/HuhiFeedSurfaceCoordinator.java",
+  ]
+}
+
+if (enable_huhi_sync) {
+  huhi_java_sources += [
+    "../../huhi/android/java/org/chromium/chrome/browser/HuhiSyncInformers.java",
+    "../../huhi/android/java/org/chromium/chrome/browser/HuhiSyncWorker.java",
+    "../../huhi/android/java/org/chromium/chrome/browser/settings/HuhiSyncScreensPreference.java",
+    "../../huhi/android/java/org/chromium/chrome/browser/sync/HuhiSyncDevices.java",
+  ]
+}
+
+huhi_components_browser_ui_site_settings_android_java = [
+  "//huhi/components/browser_ui/site_settings/android/java/src/org/chromium/components/browser_ui/site_settings/HuhiSiteSettingsPreferencesBase.java",
+]
+
+huhi_java_base_sources = [
+  "//huhi/android/java/org/chromium/base/HuhiCommandLineInitUtil.java",
+]

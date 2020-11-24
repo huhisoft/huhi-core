@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/browser.h b/chrome/browser/ui/browser.h
+index ab2a03e6e87890ae1364971f3009483789ef0260..059a281db6b5b35299444d5b3e290f77d153d695 100644
+--- a/chrome/browser/ui/browser.h
++++ b/chrome/browser/ui/browser.h
+@@ -664,6 +664,7 @@ class Browser : public TabStripModelObserver,
+   // dragging.
+   void SetIsInTabDragging(bool is_in_tab_dragging);
+ 
++  HUHI_BROWSER_H
+  private:
+   friend class BrowserTest;
+   friend class ExclusiveAccessTest;

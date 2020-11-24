@@ -1,0 +1,6 @@
+import("//build/config/features.gni")
+import("//extensions/buildflags/buildflags.gni")
+
+declare_args() {
+  huhi_wallet_enabled = enable_extensions
+}

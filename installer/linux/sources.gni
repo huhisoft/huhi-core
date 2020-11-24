@@ -1,0 +1,37 @@
+# Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Huhi Software
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+common_packaging_files_sources = [
+  "//huhi/chromium_src/chrome/app/resources/manpage.1.in",
+  "//huhi/chromium_src/chrome/installer/linux/common/huhi-browser/chromium-browser.appdata.xml",
+  "//huhi/chromium_src/chrome/installer/linux/common/huhi-browser/chromium-browser.info",
+  "//huhi/installer/linux/common/huhi_installer.include",
+  "//huhi/LICENSE",
+]
+
+common_packaging_files_excluded_sources = [
+  "//chrome/app/resources/manpage.1.in",
+  "common/chromium-browser/chromium-browser.appdata.xml",
+  "common/chromium-browser/chromium-browser.info",
+]
+
+huhi_packaging_files_executables = [
+  "$root_out_dir/huhi",
+  "$root_out_dir/huhi_sandbox",
+]
+
+excluded_packaging_files_executables = [
+  "$root_out_dir/chrome",
+  "$root_out_dir/chrome_sandbox",
+]
+
+huhi_installer_deps = [
+  "//huhi/build/linux:copy_exe",
+  "//huhi/build/linux:copy_sandbox",
+]
+
+strip_chrome_binary_deps = [
+  "//huhi/build/linux:copy_exe",
+]

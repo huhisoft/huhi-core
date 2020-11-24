@@ -1,0 +1,24 @@
+import("//build/buildflag_header.gni")
+import("//components/gcm_driver/config.gni")
+
+source_set("gcm_driver") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10663 is resolved
+  check_includes = false
+  if (!use_gcm_from_platform) {
+    sources = [
+      "huhi_gcm_channel_status.cc",
+      "huhi_gcm_channel_status.h",
+      "huhi_gcm_utils.cc",
+      "huhi_gcm_utils.h",
+    ]
+
+    deps = [
+      "//base",
+      "//huhi/common:pref_names",
+      "//components/prefs",
+      "//components/pref_registry",
+      # For profile.h
+      "//content/public/browser",
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+diff --git a/chrome/browser/resources/history/history_item.html b/chrome/browser/resources/history/history_item.html
+index d83a93155188dba679af6ddda1b880949a69cfb3..9331a87f3543b1af4d29de4aafadb06638040587 100644
+--- a/chrome/browser/resources/history/history_item.html
++++ b/chrome/browser/resources/history/history_item.html
+@@ -1,4 +1,4 @@
+-    <style include="shared-style cr-icons">
++    <style include="shared-style cr-icons huhi-history-item">
+       :host {
+         display: block;
+         outline: none;

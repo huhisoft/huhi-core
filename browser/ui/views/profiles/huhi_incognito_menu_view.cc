@@ -1,0 +1,119 @@
+/* Copyright 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "huhi/browser/ui/views/profiles/huhi_incognito_menu_view.h"
+
+#include <memory>
+#include <utility>
+
+#include "huhi/browser/huhi_browser_process_impl.h"
+#include "huhi/browser/profiles/profile_util.h"
+#include "huhi/browser/tor/buildflags.h"
+#include "huhi/grit/huhi_generated_resources.h"
+#include "chrome/app/vector_icons/vector_icons.h"
+#include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/profiles/profile_manager.h"
+#include "chrome/browser/profiles/profile_window.h"
+#include "chrome/browser/ui/browser.h"
+#include "chrome/browser/ui/browser_list.h"
+#include "chrome/browser/ui/views/chrome_layout_provider.h"
+#include "chrome/grit/generated_resources.h"
+#include "components/vector_icons/vector_icons.h"
+#include "ui/base/l10n/l10n_util.h"
+#include "ui/base/models/image_model.h"
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/browser/extensions/huhi_tor_client_updater.h"
+#include "huhi/browser/tor/tor_profile_service.h"
+#endif
+
+namespace {
+
+bool ShouldShowTorProfileButton(Profile* profile) {
+  DCHECK(profile);
+#if BUILDFLAG(ENABLE_TOR)
+  return !tor::TorProfileService::IsTorDisabled() &&
+         !huhi::IsTorProfile(profile) &&
+         !g_huhi_browser_process->tor_client_updater()
+              ->GetExecutablePath()
+              .empty();
+#else
+  return false;
+#endif
+}
+
+int GetProfileMenuTitleId(Profile* profile) {
+  return huhi::IsTorProfile(profile) ? IDS_TOR_PROFILE_NAME
+                                      : IDS_INCOGNITO_PROFILE_MENU_TITLE;
+}
+
+int GetProfileMenuCloseButtonTextId(Profile* profile) {
+  return huhi::IsTorProfile(profile) ? IDS_PROFILES_EXIT_TOR
+                                      : IDS_INCOGNITO_PROFILE_MENU_CLOSE_BUTTON;
+}
+
+int GetWindowCount(Profile* profile) {
+  return huhi::IsTorProfile(profile)
+             ? 0
+             : BrowserList::GetOffTheRecordBrowsersActiveForProfile(profile);
+}
+
+}  // namespace
+
+void HuhiIncognitoMenuView::BuildMenu() {
+  ChromeLayoutProvider* provider = ChromeLayoutProvider::Get();
+  // The icon color is set to match the menu text, which guarantees sufficient
+  // contrast and a consistent visual appearance.
+  const SkColor icon_color = provider->GetTypographyProvider().GetColor(
+      *this, views::style::CONTEXT_LABEL, views::style::STYLE_PRIMARY);
+
+  int window_count = GetWindowCount(browser()->profile());
+  SetProfileIdentityInfo(
+      /*profile_name=*/base::string16(),
+      /*background_color=*/SK_ColorTRANSPARENT,
+      /*edit_button=*/base::nullopt,
+      ui::ImageModel::FromVectorIcon(kIncognitoProfileIcon, icon_color),
+      l10n_util::GetStringUTF16(GetProfileMenuTitleId(browser()->profile())),
+      window_count > 1 ? l10n_util::GetPluralStringFUTF16(
+                             IDS_INCOGNITO_WINDOW_COUNT_MESSAGE, window_count)
+                       : base::string16());
+
+  AddTorButton();
+
+  AddFeatureButton(l10n_util::GetStringUTF16(
+                       GetProfileMenuCloseButtonTextId(browser()->profile())),
+                   base::BindRepeating(&IncognitoMenuView::OnExitButtonClicked,
+                                       base::Unretained(this)),
+                   kCloseAllIcon);
+}
+
+void HuhiIncognitoMenuView::AddTorButton() {
+  if (ShouldShowTorProfileButton(browser()->profile())) {
+    AddFeatureButton(
+        l10n_util::GetStringUTF16(IDS_PROFILES_OPEN_TOR_PROFILE_BUTTON),
+        base::BindRepeating(&HuhiIncognitoMenuView::OnTorProfileButtonClicked,
+                            base::Unretained(this)),
+        vector_icons::kLaunchIcon);
+  }
+}
+
+void HuhiIncognitoMenuView::OnTorProfileButtonClicked() {
+  profiles::SwitchToTorProfile(ProfileManager::CreateCallback());
+}
+
+base::string16 HuhiIncognitoMenuView::GetAccessibleWindowTitle() const {
+  return huhi::IsTorProfile(browser()->profile())
+             ? l10n_util::GetStringUTF16(IDS_TOR_PROFILE_NAME)
+             : IncognitoMenuView::GetAccessibleWindowTitle();
+}
+
+void HuhiIncognitoMenuView::OnExitButtonClicked() {
+  if (huhi::IsTorProfile(browser()->profile())) {
+    RecordClick(ActionableItem::kExitProfileButton);
+    profiles::CloseTorProfileWindows();
+  } else {
+    IncognitoMenuView::OnExitButtonClicked();
+  }
+}

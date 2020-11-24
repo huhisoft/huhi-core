@@ -1,0 +1,54 @@
+<receiver android:name="org.chromium.chrome.browser.notifications.HuhiSetDefaultBrowserNotificationService"
+    android:exported="false">
+    <intent-filter>
+          <action android:name="DEEP_LINK"/>
+    </intent-filter>
+</receiver>
+
+<receiver android:name="org.chromium.chrome.browser.notifications.retention.RetentionNotificationPublisher"
+    android:exported="false">
+</receiver>
+
+<activity android:name="org.chromium.chrome.browser.HuhiRewardsDonationSentActivity"
+    android:theme="@android:style/Theme.Translucent.NoTitleBar"
+    android:configChanges="orientation|keyboardHidden|keyboard|screenSize|mcc|mnc|screenLayout|smallestScreenSize" />
+
+<activity android:name="org.chromium.chrome.browser.HuhiRewardsSiteBannerActivity"
+    android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+<activity
+    android:name="org.chromium.chrome.browser.HuhiRewardsVerifyWalletActivity"
+    android:theme="@style/Theme.Chromium.Activity.Fullscreen"/>
+
+<activity
+    android:name="org.chromium.chrome.browser.HuhiRewardsUserWalletActivity"
+    android:theme="@style/HuhiTranslucent"/>
+
+<!-- Onboarding notification -->
+<receiver android:name="org.chromium.chrome.browser.notifications.HuhiOnboardingNotification"
+    android:exported="false">
+</receiver>
+<activity
+    android:name="org.chromium.chrome.browser.onboarding.OnboardingActivity"
+    android:theme="@style/Theme.Chromium.Activity.Fullscreen"
+    android:screenOrientation="sensorPortrait"/>
+<activity
+    android:name="org.chromium.chrome.browser.onboarding.SearchActivity"
+    android:theme="@style/Theme.Chromium.Activity.Fullscreen"
+    android:screenOrientation="sensorPortrait"/>
+
+<service android:name="org.chromium.chrome.browser.onboarding.HuhiRewardsService"
+    android:exported="false">
+</service>
+
+<!-- Upgrade related -->
+<receiver android:name="org.chromium.chrome.browser.upgrade.HuhiPackageReplacedBroadcastReceiver"
+    android:exported="false">
+    <intent-filter>
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+    </intent-filter>
+</receiver>
+
+<service android:name="org.chromium.chrome.browser.upgrade.HuhiUpgradeJobIntentService"
+    android:permission="android.permission.BIND_JOB_SERVICE"
+    android:exported="false"/>

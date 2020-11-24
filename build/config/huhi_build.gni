@@ -1,0 +1,12 @@
+# Add imports here for things that need to be available in chromium code.
+# This file is included in most gn files either directly or through
+# import("//build/config/chrome_build.gni") in compiler.gni
+import("//huhi/huhi_repack_locales.gni")
+import("//huhi/browser/extensions/resources.gni")
+import("//huhi/build/config/compiler.gni")
+import("//huhi/build/features.gni")
+import("//huhi/components/sync/sources.gni")
+import("//huhi/components/sync/driver/sources.gni")
+import("//huhi/installer/linux/sources.gni")
+import("//huhi/net/sources.gni")
+import("//huhi/third_party/blink/renderer/includes.gni")

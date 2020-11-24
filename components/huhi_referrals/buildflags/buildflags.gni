@@ -1,0 +1,5 @@
+import("//build/config/features.gni")
+
+declare_args() {
+  enable_huhi_referrals = is_mac || is_linux || is_win || is_android
+}

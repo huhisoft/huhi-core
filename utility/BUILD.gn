@@ -1,0 +1,76 @@
+import("//huhi/browser/tor/buildflags/buildflags.gni")
+import("//huhi/components/huhi_ads/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//build/config/features.gni")
+import("//build/config/ui.gni")
+
+source_set("utility") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10623 is resolved
+  check_includes = false
+  visibility = [
+    "//chrome/utility/*",
+    "//huhi/utility/*",
+    "//huhi:child_dependencies",
+    "//huhi/test:*"
+  ]
+
+  sources = [
+    "huhi_content_utility_client.cc",
+    "huhi_content_utility_client.h",
+  ]
+
+  deps = [
+    "//chrome/common",
+    "//content/public/common",
+  ]
+
+  if (!is_android) {
+    sources += [
+      "importer/huhi_external_process_importer_bridge.cc",
+      "importer/huhi_external_process_importer_bridge.h",
+      "importer/huhi_profile_import_impl.cc",
+      "importer/huhi_profile_import_impl.h",
+      "importer/chrome_importer.cc",
+      "importer/chrome_importer.h",
+    ]
+
+    deps += [
+      "//base",
+      "//huhi/common/importer:interfaces",
+      "//chrome/app:chromium_strings",
+      "//components/os_crypt",
+      "//components/password_manager/core/browser",
+      "//components/webdata/common",
+    ]
+  }
+
+  if (is_mac) {
+    sources += [
+      "importer/huhi_safari_importer.mm",
+      "importer/huhi_safari_importer.h",
+    ]
+
+    deps += [
+      "//base",
+      "//sql",
+      "//url",
+    ]
+  }
+
+  if (enable_tor) {
+    deps += [ "//huhi/components/services/tor" ]
+  }
+
+  if (ipfs_enabled) {
+    deps += [ "//huhi/components/services/ipfs" ]
+  }
+
+  if (huhi_ads_enabled) {
+    deps += [ "//huhi/components/services/bat_ads:lib" ]
+  }
+
+  if (huhi_rewards_enabled) {
+    deps += [ "//huhi/components/services/bat_ledger:lib" ]
+  }
+}

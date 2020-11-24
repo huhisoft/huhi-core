@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/resources/settings/settings.js b/chrome/browser/resources/settings/settings.js
+index 7de9664f61b6bb1fd62ed4022d061d1d96163bff..97eeb5caa6d466a0a88b13f6c4d68ccea07b29f6 100644
+--- a/chrome/browser/resources/settings/settings.js
++++ b/chrome/browser/resources/settings/settings.js
+@@ -2,6 +2,7 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
++import './huhi_overrides/index.js';
+ import './settings_ui/settings_ui.js';
+ 
+ export {PluralStringProxyImpl as SettingsPluralStringProxyImpl} from 'chrome://resources/js/plural_string_proxy.js';

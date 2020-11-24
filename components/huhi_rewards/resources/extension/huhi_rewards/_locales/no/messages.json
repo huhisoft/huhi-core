@@ -1,0 +1,626 @@
+{
+  "huhiRewards": {
+    "message": "Huhi-belønninger",
+    "description": "Title in welcome screen for the panel"
+  },
+  "welcomeButtonTextOne": {
+    "message": "Begynn å tjene nå!",
+    "description": "CTA on welcome screen in the panel, existing users"
+  },
+  "welcomeButtonTextTwo": {
+    "message": "Bli med i Rewards",
+    "description": "CTA on welcome screen in the panel, new users"
+  },
+  "welcomeDescOne": {
+    "message": "Få betalt for å se på reklame og gi videre for å støtte dine favoritt-tekstforfattere.",
+    "description": "Entry text for welcome screen in the panel, existing user"
+  },
+  "welcomeDescTwo": {
+    "message": "Du kan nå tjene tokens for å se på reklame som respekterer personvern.",
+    "description": "Entry text for welcome screen in the panel, new user"
+  },
+  "welcomeDescPoints": {
+    "message": "Du kan nå tjene poeng for å se på annonser som respekterer personvernet.",
+    "description": "Entry text for welcome screen in the panel, points"
+  },
+  "welcomeFooterTextOne": {
+    "message": "Sjekk hva som er forbedret",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, existing user"
+  },
+  "welcomeFooterTextTwo": {
+    "message": "Lær mer",
+    "description": "Link in the footer (takes you to rewards settings page) for welcome screen in the panel, new user"
+  },
+  "welcomeHeaderOne": {
+    "message": "Vi har gitt Huhi Rewards en stor oppgradering.",
+    "description": "Main header title for welcome screen in the panel, existing user"
+  },
+  "welcomeHeaderTwo": {
+    "message": "Gjør deg klar til å oppleve et nytt internett. ",
+    "description": "Main header title for welcome screen in the panel, new user"
+  },
+  "yourWallet": {
+    "message": "Din lommebok",
+    "description": "Title of wallet section where we display data about wallet"
+  },
+  "grants": {
+    "message": "Stipend",
+    "description": "Title for grant section in wallet summary"
+  },
+  "details": {
+    "message": "Detaljer",
+    "description": "Title for grant section in wallet panel summary"
+  },
+  "yourBalance": {
+    "message": "Saldoen din",
+    "description": "Wallet panel title for anon wallets"
+  },
+  "batPoints": {
+    "message": "BAT-poeng",
+    "description": "BAT Points text"
+  },
+  "batPointsMessage": {
+    "message": "kan brukes i Huhi-belønninger for å bidra til dine foretrukne innholdsskapere. BAT-poeng kan ikke veksles inn i BAT.",
+    "description": "Text for BAT Point helper message"
+  },
+  "on": {
+    "message": "på",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "verifiedPublisher": {
+    "message": "Huhi verifisert skaper",
+    "description": "Tells user that this particular publisher is a Huhi Verified Creator"
+  },
+  "rewardsContributeAttentionScore": {
+    "message": "NB",
+    "description": "Label for auto contribute table attention for the publisher"
+  },
+  "donateMonthly": {
+    "message": "Månedlig bidrag",
+    "description": "Label for drop down menu where user select amount for monthly contribution for particular publisher"
+  },
+  "includeInAuto": {
+    "message": "Inkluder i auto-bidrag",
+    "description": "Label for checkbox that allows user to exclude publishers from auto contribute"
+  },
+  "donateNow": {
+    "message": "Send tips",
+    "description": "CTA for sending tip form site banner"
+  },
+  "enableTips": {
+    "message": "Aktiver Tips",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "for": {
+    "message": "for",
+    "description": "The whole string is 'Enable tips on YouTube for like.'"
+  },
+  "rewardsSummary": {
+    "message": "Sammendrag av belønninger",
+    "description": "Section title in wallet panel, which contains monthly rewards summary"
+  },
+  "monthApr": {
+    "message": "April",
+    "description": "Month"
+  },
+  "monthAug": {
+    "message": "august",
+    "description": "Month"
+  },
+  "monthDec": {
+    "message": "Desember",
+    "description": "Month"
+  },
+  "monthFeb": {
+    "message": "februar",
+    "description": "Month"
+  },
+  "monthJan": {
+    "message": "Januar",
+    "description": "Month"
+  },
+  "monthJul": {
+    "message": "Juli",
+    "description": "Month"
+  },
+  "monthJun": {
+    "message": "juni",
+    "description": "Month"
+  },
+  "monthMar": {
+    "message": "Mars",
+    "description": "Month"
+  },
+  "monthMay": {
+    "message": "Mai",
+    "description": "Month"
+  },
+  "monthNov": {
+    "message": "November",
+    "description": "Month"
+  },
+  "monthOct": {
+    "message": "oktober",
+    "description": "Month"
+  },
+  "monthSep": {
+    "message": "September",
+    "description": "Month"
+  },
+  "tokenGrant": {
+    "message": "$currency$-tildelinger",
+    "description": "Title for grant notification",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "Token"
+      }
+    }
+  },
+  "tokenGrantClaimed": {
+    "message": "Tokenstipender gjort krav på",
+    "description": "Title for grant section in wallet summary"
+  },
+  "pointGrantClaimed": {
+    "message": "Poengtildelinger gjort krav på",
+    "description": "Title for point grant section in wallet summary"
+  },
+  "earningsAds": {
+    "message": "Opptjente midler fra reklamer",
+    "description": "Title for ads section in wallet summary"
+  },
+  "rewardsContribute": {
+    "message": "Auto-bidra",
+    "description": "Title for auto contribute section in wallet summary"
+  },
+  "oneTimeDonation": {
+    "message": "Engangstips",
+    "description": "Title for one time tips section in wallet summary"
+  },
+  "expiresOn": {
+    "message": "utløper den",
+    "description": "Used for grant representation. Whole string is '30.0 BAT expires on 08/05/2022'"
+  },
+  "recurringDonations": {
+    "message": "Månedlige bidrag",
+    "description": "Title for monthly contributions section in wallet summary"
+  },
+  "off": {
+    "message": "Av",
+    "description": "Label used in toggle indicating that toggle is off"
+  },
+  "ok": {
+    "message": "ok",
+    "description": "Used in notification to dismiss notification"
+  },
+  "huhiAdsLaunchMsg": {
+    "message": "Nå kan du tjene på å se annonser.",
+    "description": "Message for ads launch notification"
+  },
+  "huhiAdsLaunchTitle": {
+    "message": "Huhi-annonser er her!",
+    "description": "Message used in notification to let users know Ads is available"
+  },
+  "huhiAdsTitle": {
+    "message": "Huhi-annonser",
+    "description": "Notification title when we display info about ads"
+  },
+  "huhiContributeTitle": {
+    "message": "Auto-bidra",
+    "description": "Notification title when we display info about auto contribution"
+  },
+  "contributeNotificationSuccess": {
+    "message": "Du har bidratt med $amount$ $currency$",
+    "description": "We show this string in the notification when contribution is successful",
+    "placeholders": {
+      "amount": {
+        "content": "$1",
+        "example": "10.0"
+      },
+      "currency": {
+        "content": "$2",
+        "example": "BAT"
+      }
+    }
+  },
+  "grantNotification": {
+    "message": "Du har en tildeling som venter på deg.",
+    "description": "Description for new grant notification"
+  },
+  "backupNow": {
+    "message": "Sikkerhetskopier nå",
+    "description": "Notification button text when we ask user to backup wallet"
+  },
+  "backupWalletTitle": {
+    "message": "Sikkerhetskopier lommeboken",
+    "description": "Notification title when we ask user to backup wallet"
+  },
+  "backupWalletNotification": {
+    "message": "Sikkerhetskopier Huhi-lommeboken din.",
+    "description": "Description for backup wallet notification"
+  },
+  "insufficientFundsNotification": {
+    "message": "Huhi Rewards-kontoen din venter på et innskudd.",
+    "description": "Description for new insufficient funds notification"
+  },
+  "insufficientFunds": {
+    "message": "Utilstrekkelige midler",
+    "description": "Title for insufficient funds notification"
+  },
+  "huhiRewardsCreatingText": {
+    "message": "Opprettelse av lommebok",
+    "description": "Used in a button displaying wallet creation process"
+  },
+  "contributeNotificationError": {
+    "message": "Det oppstod et problem under behandlingen av bidraget ditt.",
+    "description": "We show this string in notification when contribution fails"
+  },
+  "contributeNotificationNotEnoughFunds": {
+    "message": "Den planlagte månedlige betalingen din for autobidrag og månedlige bidrag kunne ikke fullføres på grunn av utilstrekkelige midler. Vi prøver igjen om 30 dager.",
+    "description": "We show this string in the notification when you don't have enough funds for contribution"
+  },
+  "contributeNotificationTipError": {
+    "message": "Kan ikke sende tipsen din. Vennligst prøv igjen senere.",
+    "description": "We show this string in notification when tip fails"
+  },
+  "noActivity": {
+    "message": "Ingen aktiviteter enda",
+    "description": "Allows the user to see that there have been no transactions or other activity in their wallet"
+  },
+  "captchaDrag": {
+    "message": "Dra BAT-ikonet til",
+    "description": "Directs the user to drag the BAT icon"
+  },
+  "captchaProveHuman": {
+    "message": "Bevis at du er et menneske!",
+    "description": "Cosmetic text for captcha prompt"
+  },
+  "captchaTarget": {
+    "message": "mål.",
+    "description": "Captcha Target"
+  },
+  "captchaMissedTarget": {
+    "message": "Hmm… det stemmer ikke helt. Prøv på nytt.",
+    "description": "Message upon failing captcha"
+  },
+  "claim": {
+    "message": "Gjør krav på",
+    "description": "Claim text"
+  },
+  "newTokenGrant": {
+    "message": "Gratis tokenstipend",
+    "description": "Token grant label"
+  },
+  "grantExpire": {
+    "message": "Utløpsdato for stipend",
+    "description": "Grant expiry label"
+  },
+  "grantGeneralErrorButton": {
+    "message": "OK",
+    "description": "Button text for clearing the error."
+  },
+  "grantGeneralErrorText": {
+    "message": "Huhi Rewards har et problem. Prøv igjen senere.",
+    "description": "Error text when user is having problems claiming a grant."
+  },
+  "grantGeneralErrorTitle": {
+    "message": "Opp sann, noe er galt. Prøv igjen senere.",
+    "description": "Error title when user is having problems claiming a grant."
+  },
+  "unVerifiedCheck": {
+    "message": "Oppdater status",
+    "description": "Text of link that allows to check verified status of unverified publisher"
+  },
+  "unVerifiedPublisher": {
+    "message": "Ikke verifisert ennå",
+    "description": "Status of the publisher shown in the panel"
+  },
+  "unVerifiedText": {
+    "message": "Denne skaperen har ikke registrert seg for å motta bidrag fra Huhi-brukere ennå. Eventuell driks du sender, blir værende i lommeboken din til den er verifisert.",
+    "description": "Notice about unverified publisher."
+  },
+  "unVerifiedTextMore": {
+    "message": "Finn ut mer.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "reservedAmountText": {
+    "message": "Du har satt av {{reservedAmount}} {{currency}} til skapere som ennå ikke har registrert seg for å motta bidrag. Nettleseren din fortsetter å prøve å bidra til vedkommende har verifisert seg, eller til det har gått 90 dager.",
+    "description": "Notification about how much BAT do you have reserved"
+  },
+  "reservedMoreLink": {
+    "message": "Finn ut mer.",
+    "description": "Text for the link that explains more about reserved amount"
+  },
+  "disabledPanelOff": {
+    "message": "Av",
+    "description": "Off state text for Panel's disabled state"
+  },
+  "disabledPanelSettings": {
+    "message": "Innstillinger.",
+    "description": "Settings Link for Panel's disabled state"
+  },
+  "disabledPanelText": {
+    "message": "Du opparbeider deg for tiden ingen Rewards-fordeler mens du surfer. Slå Rewards på igjen",
+    "description": "Text for Panel's disabled state"
+  },
+  "disabledPanelTitle": {
+    "message": "Huhi Rewards er",
+    "description": "Title for Panel's disabled state"
+  },
+  "walletFailedTitle": {
+    "message": "Opprettelse av lommebok var mislykket",
+    "description": "Failure title for wallet creation"
+  },
+  "walletFailedButton": {
+    "message": "Prøv igjen",
+    "description": "Button for re-try after wallet creation failed"
+  },
+  "addFunds": {
+    "message": "Legg til midler",
+    "description": "Button for adding funds"
+  },
+  "rewardsSettings": {
+    "message": "Belønningsinnstillinger",
+    "description": "Button for opening settings page"
+  },
+  "earningsClaimDefault": {
+    "message": "Dine annonsebelønninger er her!",
+    "description": "Panel notification text for Ads grant"
+  },
+  "and": {
+    "message": "og",
+    "description": "The word 'and'"
+  },
+  "huhiRewardsSubTitle": {
+    "message": "Bli belønnet for å surfe!",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "disabledPanelTextTwo": {
+    "message": "Tjen ved å se annonser som respekterer personvernet, og gi det videre for å støtte innholdsskapere du elsker.",
+    "description": "Text block for wallet disabled panel"
+  },
+  "enableRewards": {
+    "message": "Aktiver Huhi-belønninger",
+    "description": "Subtitle for wallet disabled panel"
+  },
+  "privacyPolicy": {
+    "message": "Personvernerklæring",
+    "description": "Privacy Policy"
+  },
+  "serviceText": {
+    "message": "Ved å klikke 'Aktiver Huhi Rewards' indikerer du at du har lest og aksepterer",
+    "description": "Terms of service main text"
+  },
+  "termsOfService": {
+    "message": "Brukervilkår",
+    "description": "Terms of Service"
+  },
+  "welcomeBack": {
+    "message": "Velkommen tilbake!",
+    "description": "Title message for wallet disabled panel"
+  },
+  "tipsProcessedNotification": {
+    "message": "De månedlige bidragene dine er behandlet!",
+    "description": "Message for monthly contributions processed notification"
+  },
+  "contributionTips": {
+    "message": "Bidrag og tips",
+    "description": "Title for monthly contributions processed notification"
+  },
+  "serviceTextPanelWelcome": {
+    "message": "Ved å klikke 'Aktiver Rewards' indikerer du at du har lest og aksepterer",
+    "description": "Terms of service panel opt-in text"
+  },
+  "bat": {
+    "message": "BAT",
+    "description": "BAT text for displaying converted tip amount."
+  },
+  "bap": {
+    "message": "BAP",
+    "description": "BAT Points abbreviation text"
+  },
+  "turnOnAds": {
+    "message": "Slå på annonser",
+    "description": "Prompt to turn on Ads via notification"
+  },
+  "adsEarnings": {
+    "message": "opptjent fra annonser",
+    "description": "Description text for ad grants in grant details"
+  },
+  "twitterTipsHoverText": {
+    "message": "Tips om denne tweeten",
+    "description": "Hover text for Twitter tips action"
+  },
+  "twitterTipsIconLabel": {
+    "message": "Tips",
+    "description": "Icon label for Twitter tips"
+  },
+  "redditTipsHoverText": {
+    "message": "Tips dette innlegget",
+    "description": "Hover text for Reddit tips action"
+  },
+  "redditTipsIconLabel": {
+    "message": "Tips",
+    "description": "Icon label for Reddit tips"
+  },
+  "githubTipsHoverText": {
+    "message": "Send tips",
+    "description": "Hover text for GitHub tips action"
+  },
+  "githubTipsIconLabel": {
+    "message": "Tips",
+    "description": "Icon label for GitHub tips"
+  },
+  "verifiedPublisherNotification": {
+    "message": "Skaper $name$ nylig verifisert",
+    "description": "Notification text that tells user which publisher just verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "huhisoft.com"
+      }
+    }
+  },
+  "pendingNotEnoughFundsNotification": {
+    "message": "Du har ventende tips grunnet utilstrekkelige midler",
+    "description": "Notification text that tells user his wallet is under funded for pending contribution to complete"
+  },
+  "pendingContributionTitle": {
+    "message": "Venter på bidrag",
+    "description": "Notification title for pending contribution type"
+  },
+  "grantFinishTitleUGP": {
+    "message": "Det er din lykkedag!",
+    "description": "Cosmetic text upon captcha success"
+  },
+  "grantFinishTextUGP": {
+    "message": "$currency$-tildelingen din er på vei.",
+    "description": "Cosmetic text indicating grant funds are on the way",
+    "placeholders": {
+      "currency": {
+        "content": "$1",
+        "example": "token"
+      }
+    }
+  },
+  "grantFinishTokenTitleUGP": {
+    "message": "Gratis tokenstipend",
+    "description": "Token title on success screen"
+  },
+  "grantFinishPointTitleUGP": {
+    "message": "Gratis poengtildeling",
+    "description": "Point title on success screen"
+  },
+  "grantFinishTitleAds": {
+    "message": "Du har tjent en annonsebelønning!",
+    "description": "Cosmetic text upon captcha success for ads"
+  },
+  "grantFinishTextAds": {
+    "message": "Belønningen er på vei til Huhi-belønningslommeboken din.",
+    "description": "Cosmetic text indicating ads funds are on the way"
+  },
+  "grantFinishTokenTitleAds": {
+    "message": "Belønningsbeløpet ditt",
+    "description": "Token title on success screen for ads"
+  },
+  "rewardsPanelTextVerify":  {
+    "message": "verifiser",
+    "description": "CTA in the footer to verify"
+  },
+  "walletButtonDisconnected":  {
+    "message": "Koblet fra",
+    "description": "CTA status button"
+  },
+  "walletButtonUnverified":  {
+    "message": "Verifiser lommebok",
+    "description": "CTA to verify wallet in the wallet "
+  },
+  "walletButtonVerified":  {
+    "message": "Lommeboken er verifisert",
+    "description": "Displayed in wallet that tells users that he is verified"
+  },
+  "walletGoToUphold":  {
+    "message": "Gå til Uphold-kontoen min",
+    "description": "CTA to open uphold account"
+  },
+  "walletDisconnect":  {
+    "message": "Koble fra Huhi Rewards",
+    "description": "CTA to disconnect user wallet from rewards"
+  },
+  "walletVerified":  {
+    "message": "Verifisert",
+    "description": "Status button that tells user that he is verified"
+  },
+  "walletVerifiedNotification":  {
+    "message": "Lommeboken din er verifisert!",
+    "description": "Title for notification when wallet becomes verified"
+  },
+  "walletVerifiedTextNotification":  {
+    "message": "Gratulerer! $name$-lommeboken ble verifisert og er klar for innskudd og uttak av penger.",
+    "description": "Title for notification when wallet becomes verified",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Uphold"
+      }
+    }
+  },
+  "walletDisconnectedNotification":  {
+    "message": "Oi da. Lommeboken din kan ikke nås.",
+    "description": "Title for notification when wallet is disconnected."
+  },
+  "walletDisconnectedTextNotification":  {
+    "message": "Ingen grunn til bekymring. Det kan være en rekke sikkerhetsårsaker til at dette skjer. Koble til lommeboken på nytt for å løse problemet.",
+    "description": "Title for notification when wallet is disconnected"
+  },
+  "connectedText":  {
+    "message": "Denne verifiserte Huhi-skaperen har ikke konfigurert kontoen sin for mottak av bidrag fra Huhi-brukere ennå. Tips du sender, blir værende i lommeboken din til vedkommende fullfører denne prosessen.",
+    "description": "Text shown for connected publishers that are not fully verified in the panel"
+  },
+  "walletGoToVerifyPage":  {
+    "message": "Fullfør lommebokverifiseringen",
+    "description": "CTA for completing wallet verification"
+  },
+  "set": {
+    "message": "Angi …",
+    "description": "Button text for setting monthly contribution"
+  },
+  "tokens":  {
+    "message": "sjetonger",
+    "description": "Standard tokens text"
+  },
+  "point":  {
+    "message": "Poeng",
+    "description": "BAT Point text"
+  },
+  "token":  {
+    "message": "Token ",
+    "description": "BAT Token text"
+  },
+  "points":  {
+    "message": "poeng",
+    "description": "BAT Points text"
+  },
+  "tokenGrants":  {
+    "message": "Tilskudd til polletter",
+    "description": "BAT Tokens Grant Text"
+  },
+  "pointGrants":  {
+    "message": "Poengtildelinger",
+    "description": "BAT Points Grant Text"
+  },
+  "greetingsVerified":  {
+    "message": "Hallo, $name$!",
+    "description": "Greetings for external wallet popup",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "John"
+      }
+    }
+  },
+  "cancel":  {
+    "message": "Avbryt",
+    "description": "Text for cancel button"
+  },
+  "login":  {
+    "message": "Pålogging",
+    "description": "Text for login button"
+  },
+  "loginMessageTitle":  {
+    "message": "Verifisering av lommeboken gjør at du kan administrere midlene dine mer effektivt.",
+    "description": "Text for login button"
+  },
+  "loginMessageText":  {
+    "message": "Du må ha minst 25 BAT for å opprette en Uphold-konto. Vennligst prøv igjen senere. <br/> Dersom du allerede har en verifisert Uphold-konto: Fortsett til innloggingen.",
+    "description": "Text for login button"
+  },
+  "walletConnected":  {
+    "message": "Tilkoblet",
+    "description": "Status button that tells user that he is connected"
+  },
+  "walletPending":  {
+    "message": "Påventende",
+    "description": "Status button that tells user that he is currently pending"
+  }
+}

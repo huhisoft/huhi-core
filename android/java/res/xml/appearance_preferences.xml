@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+     This Source Code Form is subject to the terms of the Huhi Software
+     License, v. 2.0. If a copy of the MPL was not distributed with this file,
+     You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+      android:key="hide_huhi_rewards_icon"
+      android:title="@string/hide_huhi_rewards_icon_title"
+      android:summaryOn="@string/hide_huhi_rewards_icon_description"
+      android:summaryOff="@string/hide_huhi_rewards_icon_description" />
+
+    <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+        android:key="huhi_bottom_toolbar_enabled_key"
+        android:title="@string/bottom_toolbar_enable"
+        android:summaryOn="@string/text_on"
+        android:summaryOff="@string/text_off" />
+
+    <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+        android:key="huhi_night_mode_enabled_key"
+        android:title="@string/night_mode_enable"
+        android:summaryOn="@string/text_on"
+        android:summaryOff="@string/text_off" />
+
+    <Preference
+        android:fragment="org.chromium.chrome.browser.night_mode.settings.HuhiThemePreferences"
+        android:key="ui_theme"
+        android:title="@string/theme_settings" />
+
+</PreferenceScreen>

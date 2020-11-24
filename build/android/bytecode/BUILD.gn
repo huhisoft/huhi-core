@@ -1,0 +1,37 @@
+# Copyright 2020 The Huhi Software Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/android/rules.gni")
+
+assert(current_toolchain == default_toolchain)
+
+java_binary("java_bytecode_rewriter") {
+  sources = [
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiClassVisitor.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiAndroidSyncSettingsClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiCommandLineInitUtilClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiEditUrlSuggestionProcessorClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiFeedSurfaceCoordinatorClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiHomepageManagerClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiLaunchIntentDispatcherClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiMainPreferenceBaseClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiManageSyncSettingsClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiNewTabPageClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiNewTabPageLayoutClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiSearchEngineAdapterClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/ByteCodeProcessor.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/ClassPathValidator.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/ThreadAssertionClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/TypeUtils.java",
+  ]
+  main_class = "org.huhi.bytecode.ByteCodeProcessor"
+  deps = [
+    "//third_party/android_deps:org_ow2_asm_asm_java",
+    "//third_party/android_deps:org_ow2_asm_asm_tree_java",
+    "//third_party/android_deps:org_ow2_asm_asm_util_java",
+  ]
+  wrapper_script_name = "helper/java_bytecode_rewriter"
+  enable_bytecode_checks = false
+}

@@ -1,0 +1,28 @@
+diff --git a/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.idl b/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.idl
+index a58003a655e496c5d6051df2dc53bfe07d03b45e..274570e923ebdebbe919cf22674f7760a48322f6 100644
+--- a/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.idl
++++ b/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.idl
+@@ -63,10 +63,10 @@
+     void stroke(Path2D path);
+     void clip(optional CanvasFillRule winding);
+     void clip(Path2D path, optional CanvasFillRule winding);
+-    [HighEntropy, MeasureAs=OffscreenCanvasIsPointInPath] boolean isPointInPath(unrestricted double x, unrestricted double y, optional CanvasFillRule winding);
+-    [HighEntropy, MeasureAs=OffscreenCanvasIsPointInPath] boolean isPointInPath(Path2D path, unrestricted double x, unrestricted double y, optional CanvasFillRule winding);
+-    [HighEntropy, MeasureAs=OffscreenCanvasIsPointInStroke] boolean isPointInStroke(unrestricted double x, unrestricted double y);
+-    [HighEntropy, MeasureAs=OffscreenCanvasIsPointInStroke] boolean isPointInStroke(Path2D path, unrestricted double x, unrestricted double y);
++    [CallWith=ScriptState, HighEntropy, MeasureAs=OffscreenCanvasIsPointInPath] boolean isPointInPath(unrestricted double x, unrestricted double y, optional CanvasFillRule winding);
++    [CallWith=ScriptState, HighEntropy, MeasureAs=OffscreenCanvasIsPointInPath] boolean isPointInPath(Path2D path, unrestricted double x, unrestricted double y, optional CanvasFillRule winding);
++    [CallWith=ScriptState, HighEntropy, MeasureAs=OffscreenCanvasIsPointInStroke] boolean isPointInStroke(unrestricted double x, unrestricted double y);
++    [CallWith=ScriptState, HighEntropy, MeasureAs=OffscreenCanvasIsPointInStroke] boolean isPointInStroke(Path2D path, unrestricted double x, unrestricted double y);
+ 
+     // text (see also the CanvasDrawingStyles interface)
+     void fillText(DOMString text, unrestricted double x, unrestricted double y, optional unrestricted double maxWidth);
+@@ -81,7 +81,7 @@
+     // pixel manipulation
+     [RaisesException] ImageData createImageData(ImageData imagedata);
+     [RaisesException] ImageData createImageData(long sw, long sh);
+-    [HighEntropy, MeasureAs=OffscreenCanvasGetImageData, RaisesException] ImageData getImageData(long sx, long sy, long sw, long sh);
++    [CallWith=ScriptState, HighEntropy, MeasureAs=OffscreenCanvasGetImageData, RaisesException] ImageData getImageData(long sx, long sy, long sw, long sh);
+     [RaisesException] void putImageData(ImageData imagedata, long dx, long dy);
+     [RaisesException] void putImageData(ImageData imagedata, long dx, long dy, long dirtyX, long dirtyY, long dirtyWidth, long dirtyHeight);
+ 

@@ -1,0 +1,49 @@
+import("//build/buildflag_header.gni")
+import("//huhi/components/p3a/buildflags.gni")
+
+buildflag_header("buildflags") {
+  header = "buildflags.h"
+  flags = [
+    "HUHI_P3A_ENABLED=$huhi_p3a_enabled",
+  ]
+}
+
+source_set("p3a") {
+  sources = [
+    "huhi_histogram_rewrite.cc",
+    "huhi_histogram_rewrite.h",
+    "huhi_p2a_protocols.cc",
+    "huhi_p2a_protocols.h",
+    "huhi_p3a_log_store.cc",
+    "huhi_p3a_log_store.h",
+    "huhi_p3a_service.cc",
+    "huhi_p3a_service.h",
+    "huhi_p3a_scheduler.cc",
+    "huhi_p3a_scheduler.h",
+    "huhi_p3a_switches.h",
+    "huhi_p3a_uploader.cc",
+    "huhi_p3a_uploader.h",
+    "pref_names.cc",
+    "pref_names.h",
+  ]
+
+  deps = [
+    "//huhi/browser:stats_updater",
+    "//huhi/browser:version_info",
+    "//huhi/common",
+    "//huhi/common:pref_names",
+    "//huhi/components/p3a:buildflags",
+    "//huhi/components/huhi_prochlo",
+    "//huhi/components/huhi_prochlo:prochlo_proto",
+    "//huhi/components/huhi_referrals/common",
+    "//huhi/vendor/huhi_base",
+    "//components/metrics",
+    "//components/prefs",
+    "//content/public/browser",
+    "//content/public/common",
+    "//services/network/public/cpp",
+    "//services/network/public/mojom",
+    "//url",
+  ]
+}
+

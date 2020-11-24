@@ -1,0 +1,20 @@
+<style include="settings-shared md-select">
+</style>
+<div class="settings-box first">
+  <div class="start">$i18n{appearanceSettingsHuhiTheme}</div>
+  <select id="huhiThemeType" class="md-select"
+      on-change="onHuhiThemeTypeChange_">
+    <template is="dom-repeat" items="[[huhiThemeList_]]">
+      <option value="[[item.value]]"
+          selected="[[huhiThemeTypeEqual_(item.value, huhiThemeType_)]]">
+        [[item.name]]
+      </option>
+    </template>
+  </select>
+</div>
+<template is="dom-if" if="[[useThemesSubPage_()]]">
+  <cr-link-row class="hr" id="themes-subpage-trigger"
+      label="$i18n{themes}" on-click="onThemeTap_"
+      role-description="$i18n{subpageArrowRoleDescription}">
+  </cr-link-row>
+</template>

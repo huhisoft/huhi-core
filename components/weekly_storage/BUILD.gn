@@ -1,0 +1,11 @@
+source_set("weekly_storage") {
+  sources = [
+    "weekly_storage.cc",
+    "weekly_storage.h",
+  ]
+
+  deps = [
+    "//base:base",
+    "//components/prefs",
+  ]
+}

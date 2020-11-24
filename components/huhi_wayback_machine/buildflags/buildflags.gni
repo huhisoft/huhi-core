@@ -1,0 +1,3 @@
+declare_args() {
+  enable_huhi_wayback_machine = is_win || is_mac || is_desktop_linux
+}

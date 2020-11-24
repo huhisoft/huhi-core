@@ -1,0 +1,23 @@
+/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.chromium.chrome.browser;
+
+/**
+ *  Huhi configuration.
+ */
+public class HuhiConfig {
+#if defined(HUHI_ANDROID_DEVELOPER_OPTIONS_CODE)
+  public static final String DEVELOPER_OPTIONS_CODE = HUHI_ANDROID_DEVELOPER_OPTIONS_CODE;
+#else
+  public static final String DEVELOPER_OPTIONS_CODE = "";
+#endif
+
+#if defined(HUHI_ANDROID_SYNC_ENABLED)
+  public static final boolean SYNC_ENABLED = HUHI_ANDROID_SYNC_ENABLED;
+#else
+  public static final boolean SYNC_ENABLED = false;
+#endif
+}

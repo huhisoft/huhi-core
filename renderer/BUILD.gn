@@ -1,0 +1,22 @@
+import("//build/config/features.gni")
+
+source_set("renderer") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10632 is resolved
+  check_includes = false
+  visibility = [
+    "//chrome/renderer/*",
+    "//huhi/renderer/*",
+    "//huhi:child_dependencies",
+    "//huhi/test:*"
+  ]
+
+  sources = [
+    "huhi_content_renderer_client.cc",
+    "huhi_content_renderer_client.h",
+  ]
+
+  deps = [
+    "//huhi/components/content_settings/renderer",
+    "//third_party/blink/public:blink",
+  ]
+}

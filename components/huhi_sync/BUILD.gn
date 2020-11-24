@@ -1,0 +1,85 @@
+import("//huhi/components/common/typescript.gni")
+import("//build/config/features.gni")
+import("//tools/grit/grit_rule.gni")
+import("//tools/grit/repack.gni")
+import("buildflags/buildflags.gni")
+
+declare_args() {
+  huhi_sync_endpoint = "https://sync.huhisoft.com"
+}
+
+config("huhi_sync_config") {
+  defines = [
+    "HUHI_SYNC_ENDPOINT=\"$huhi_sync_endpoint\""
+  ]
+}
+
+source_set("crypto") {
+  sources = [
+    "crypto/crypto.cc",
+    "crypto/crypto.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/vendor/bat-native-tweetnacl:tweetnacl",
+    "//huhi/vendor/bip39wally-core-native:bip39wally-core",
+    "//crypto",
+    "//third_party/boringssl",
+  ]
+
+  if (is_android) {
+    deps += [ "//third_party/android_sdk:cpu_features" ]
+  }
+}
+
+source_set("features") {
+  sources = [
+    "features.cc",
+    "features.h",
+  ]
+
+  deps = [
+    "//base",
+    "buildflags",
+  ]
+}
+
+source_set("network_time_helper") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10650 is resolved
+  check_includes = false
+  sources = [
+    "network_time_helper.cc",
+    "network_time_helper.h",
+  ]
+
+  deps = [
+    "//base",
+    "//components/network_time",
+  ]
+}
+
+source_set("prefs") {
+  sources = [
+    "huhi_sync_prefs.cc",
+    "huhi_sync_prefs.h",
+  ]
+
+  deps = [
+    "//base",
+    "//components/os_crypt",
+    "//components/prefs",
+    "//components/pref_registry",
+  ]
+}
+
+group("huhi_sync") {
+  deps = [
+    ":crypto",
+    ":features",
+    ":network_time_helper",
+    ":prefs",
+    "buildflags",
+    "//base",
+  ]
+}

@@ -1,0 +1,12 @@
+diff --git a/components/sync/driver/BUILD.gn b/components/sync/driver/BUILD.gn
+index 8baa714b0341b6164d1975a8a2cea18b21a778a9..ea6a392244751b12c9ddc160cb33ff543f796ad4 100644
+--- a/components/sync/driver/BUILD.gn
++++ b/components/sync/driver/BUILD.gn
+@@ -116,6 +116,7 @@ static_library("driver") {
+   }
+ 
+   configs += [ "//build/config/compiler:wexit_time_destructors" ]
++  sources += huhi_components_sync_driver_sources deps += huhi_components_sync_driver_deps defines = huhi_service_key_defines
+ }
+ 
+ grit("resources") {

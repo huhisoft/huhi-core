@@ -1,0 +1,44 @@
+// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Huhi Software
+// License, v. 2.0. If a copy of the MPL was not distributed with this file,
+// You can obtain one at http://mozilla.org/MPL/2.0/.
+module ads.mojom;
+
+enum HuhiAdsEnvironment {
+  STAGING = 0,
+  PRODUCTION,
+  DEVELOPMENT
+};
+
+struct HuhiAdsBuildChannel {
+  bool is_release;
+  string name;
+};
+
+enum HuhiAdsAdNotificationEventType {
+  kViewed = 0,
+  kClicked,
+  kDismissed,
+  kTimedOut
+};
+
+enum HuhiAdsUrlRequestMethod {
+  GET = 0,
+  PUT,
+  POST
+};
+
+struct HuhiAdsUrlRequest {
+  string url;
+  array<string> headers;
+  string content;
+  string content_type;
+  HuhiAdsUrlRequestMethod method;
+};
+
+struct HuhiAdsUrlResponse {
+  string url;
+  int32 status_code;
+  string body;
+  map<string, string> headers;
+};

@@ -1,0 +1,12 @@
+diff --git a/components/crash/core/app/crash_reporter_client.cc b/components/crash/core/app/crash_reporter_client.cc
+index 1d0fb4f2a633fa5ddbe232ce19d716c22be78a37..19c3e6216c1d42463b6ea53684d3c9fea593de2d 100644
+--- a/components/crash/core/app/crash_reporter_client.cc
++++ b/components/crash/core/app/crash_reporter_client.cc
+@@ -189,6 +189,7 @@ void CrashReporterClient::GetSanitizationInformation(
+ #endif
+ 
+ std::string CrashReporterClient::GetUploadUrl() {
++  HUHI_CRASH_REPORTER_CLIENT_GET_UPLOAD_URL
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING) && defined(OFFICIAL_BUILD)
+   // Only allow the possibility of report upload in official builds. This
+   // crash server won't have symbols for any other build types.

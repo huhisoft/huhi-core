@@ -1,0 +1,32 @@
+import("//chrome/common/features.gni")
+import("//tools/grit/grit_rule.gni")
+
+grit("huhi_theme_resources") {
+  source = "huhi_theme_resources.grd"
+  defines = chrome_grit_defines
+  outputs = [
+    "grit/huhi_theme_resources.h",
+    "grit/huhi_theme_resources_map.cc",
+    "grit/huhi_theme_resources_map.h",
+    "huhi_theme_resources_100_percent.pak",
+    "huhi_theme_resources_200_percent.pak",
+    "huhi_theme_resources_300_percent.pak",
+  ]
+
+  resource_ids = "//huhi/browser/resources/resource_ids"
+
+  output_dir = "$root_gen_dir/huhi"
+}
+
+grit("huhi_unscaled_resources") {
+  source = "huhi_unscaled_resources.grd"
+  defines = chrome_grit_defines
+  outputs = [
+    "grit/huhi_unscaled_resources.h",
+    "huhi_unscaled_resources.pak",
+  ]
+
+  resource_ids = "//huhi/browser/resources/resource_ids"
+
+  output_dir = "$root_gen_dir/huhi"
+}

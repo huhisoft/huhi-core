@@ -1,0 +1,20 @@
+diff --git a/chrome/android/chrome_public_apk_tmpl.gni b/chrome/android/chrome_public_apk_tmpl.gni
+index d029559d9d1fcf131531df53d45d01f46c8a7fba..f1ef434f59c61146e2fb6604072c2fc3343ad6da 100644
+--- a/chrome/android/chrome_public_apk_tmpl.gni
++++ b/chrome/android/chrome_public_apk_tmpl.gni
+@@ -216,6 +216,7 @@ template("chrome_public_common_apk_or_module_tmpl") {
+       "${_material_package}:[Ss]lider",
+       "${_material_package}:[Tt]oolbarLayout",
+     ]
++    resource_exclusion_exceptions += huhi_resources_exclusion_exceptions resource_values_filter_rules -= huhi_resource_values_filter_rules_exclusions
+ 
+     if (!_is_monochrome) {
+       product_config_java_packages = [ "org.chromium.chrome.browser" ]
+@@ -325,6 +326,7 @@ template("chrome_public_common_apk_or_module_tmpl") {
+       if (!defined(proguard_configs)) {
+         proguard_configs = []
+       }
++      proguard_configs += ["//huhi/android/java/proguard.flags",]
+       proguard_configs += [
+         "//chrome/android/proguard/main.flags",
+         "//base/android/proguard/chromium_apk.flags",

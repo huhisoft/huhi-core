@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/resources/settings/settings_ui/settings_ui.js b/chrome/browser/resources/settings/settings_ui/settings_ui.js
+index d9459ba22b9ed42f87b915505ff66819fa5f2ce3..0de948cdf040763448c42f6859bbbb050f2271a6 100644
+--- a/chrome/browser/resources/settings/settings_ui/settings_ui.js
++++ b/chrome/browser/resources/settings/settings_ui/settings_ui.js
+@@ -12,7 +12,7 @@
+  */
+ import 'chrome://resources/cr_elements/cr_drawer/cr_drawer.m.js';
+ import 'chrome://resources/cr_elements/cr_page_host_style_css.m.js';
+-import 'chrome://resources/cr_elements/cr_toolbar/cr_toolbar.m.js';
++import 'chrome://huhi-resources/br_elements/br_toolbar/br_toolbar.m.js';
+ import 'chrome://resources/cr_elements/icons.m.js';
+ import 'chrome://resources/cr_elements/shared_vars_css.m.js';
+ import 'chrome://resources/polymer/v3_0/paper-styles/color.js';

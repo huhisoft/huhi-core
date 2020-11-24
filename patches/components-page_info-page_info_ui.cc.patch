@@ -1,0 +1,12 @@
+diff --git a/components/page_info/page_info_ui.cc b/components/page_info/page_info_ui.cc
+index 87d77aa394f81887d8a4923fbd4abaca8ed8631c..71dd781811ff7c547cd7d77c118b72d3d4e07493 100644
+--- a/components/page_info/page_info_ui.cc
++++ b/components/page_info/page_info_ui.cc
+@@ -555,6 +555,7 @@ const gfx::ImageSkia PageInfoUI::GetPermissionIcon(const PermissionInfo& info,
+                                                    SkColor related_text_color) {
+   const gfx::VectorIcon* icon = &gfx::kNoneIcon;
+   switch (info.type) {
++    HUHI_PAGE_INFO_UI_GET_PERMISSION_ICON
+     case ContentSettingsType::COOKIES:
+       icon = &vector_icons::kCookieIcon;
+       break;

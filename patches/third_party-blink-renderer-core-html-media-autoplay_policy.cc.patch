@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/core/html/media/autoplay_policy.cc b/third_party/blink/renderer/core/html/media/autoplay_policy.cc
+index b7ec37b07760fb36b577869b50f438e28b4e1ece..ddcc59bca198ce0370b273af7c01b58134995439 100644
+--- a/third_party/blink/renderer/core/html/media/autoplay_policy.cc
++++ b/third_party/blink/renderer/core/html/media/autoplay_policy.cc
+@@ -309,6 +309,7 @@ bool AutoplayPolicy::IsGestureNeededForPlayback() const {
+   if (!IsLockedPendingUserGesture())
+     return false;
+ 
++  HUHI_AUTOPLAY_POLICY_IS_GESTURE_NEEDED_FOR_PLAYBACK
+   // We want to allow muted video to autoplay if the element is allowed to
+   // autoplay muted.
+   return !IsEligibleForAutoplayMuted();

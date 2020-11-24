@@ -1,0 +1,145 @@
+{
+  "version": 4,
+  "issuers": [
+    {
+      "name": "confirmation",
+      "publicKey": "qi1Vl8YrPEZliN5wmBgLTuGkbk8K505QwlXLTZjUd34="
+    },
+    {
+      "name": "0.05BAT",
+      "publicKey": "mmXlFlskcF+LjQmJTPQUmoDMV8Co2r+0eNqSyzCywmk="
+    }
+  ],
+  "ping": 7200000,
+  "campaigns": [
+    {
+      "creativeSets": [
+        {
+          "creatives": [
+            {
+              "creativeInstanceId": "18d8df02-68b1-4a6d-81a1-67357b157e2a",
+              "type": {
+                "code": "notification_all_v1",
+                "name": "notification",
+                "platform": "all",
+                "version": 1
+              },
+              "payload": {
+                "body": "Test Ad 1 Campaign 1 Body",
+                "title": "Test Ad 1 Campaign 1 Title",
+                "targetUrl": "https://huhisoft.com/1"
+              }
+            },
+            {
+              "creativeInstanceId": "1e945c25-98a2-443c-a7f5-e695110d2b84",
+              "type": {
+                "code": "notification_all_v1",
+                "name": "notification",
+                "platform": "all",
+                "version": 1
+              },
+              "payload": {
+                "body": "Test Ad 2 Campaign 1 Body",
+                "title": "Test Ad 2 Campaign 1 Title",
+                "targetUrl": "https://huhisoft.com/2"
+              }
+            }
+          ],
+          "segments": [
+            {
+              "code": "yNl0N-ers2",
+              "name": "Technology & Computing"
+            }
+          ],
+          "oses": [
+          ],
+          "conversions": [
+            {
+              "observationWindow": 30,
+              "urlPattern": "https://www.huhisoft.com/*",
+              "type": "postview"
+            }
+          ],
+          "channels": [
+          ],
+          "creativeSetId": "340c927f-696e-4060-9933-3eafc56c3f31",
+          "perDay": 5,
+          "totalMax": 100
+        }
+      ],
+      "dayParts": [
+      ],
+      "geoTargets": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "campaignId": "27a624a1-9c80-494a-bf1b-af327b563f85",
+      "startAt": "<time:now>",
+      "endAt": "<time:distant_future>",
+      "dailyCap": 10,
+      "advertiserId": "a437c7f3-9a48-4fe8-b37b-99321bea93fe",
+      "priority": 1,
+      "ptr": 1.0
+    },
+    {
+      "creativeSets": [
+        {
+          "creatives": [
+            {
+              "creativeInstanceId": "19c92705-b156-45a5-84f5-5b529cc28af8",
+              "type": {
+                "code": "notification_all_v1",
+                "name": "notification",
+                "platform": "all",
+                "version": 1
+              },
+              "payload": {
+                "body": "Test Ad 1 Campaign 2 Body",
+                "title": "Test Ad 1 Campaign 2 Title",
+                "targetUrl": "https://huhisoft.com/1"
+              }
+            }
+          ],
+          "segments": [
+            {
+              "code": "yNl0N-ers2",
+              "name": "Food & Drink"
+            }
+          ],
+          "oses": [
+          ],
+          "conversions": [
+            {
+              "observationWindow": 7,
+              "urlPattern": "https://www.huhisoft.com/*",
+              "type": "postclick"
+            }
+          ],
+          "channels": [
+          ],
+          "creativeSetId": "3e2e503a-dd38-42d1-9e26-1e5dbb66aada",
+          "perDay": 5,
+          "totalMax": 100
+        }
+      ],
+      "dayParts": [
+      ],
+      "geoTargets": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "campaignId": "02fbf4b0-bc72-4499-8dc4-e31e1697e5e8",
+      "startAt": "<time:now>",
+      "endAt": "<time:distant_future>",
+      "dailyCap": 10,
+      "advertiserId": "db3f5832-ce6a-401d-b8ba-8be4a67137a0",
+      "priority": 1,
+      "ptr": 1.0
+    }
+  ],
+  "catalogId": "29e5c8bc0ba319069980bb390d8e8f9b58c05a20"
+}

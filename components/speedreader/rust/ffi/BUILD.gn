@@ -1,0 +1,45 @@
+# Copyright 2020 The Huhi Software Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Huhi Software
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import("//huhi/build/cargo.gni")
+import("//huhi/build/rust/config.gni")
+
+config("external_config") {
+  if (is_mac) {
+    defines = [ "SPEEDREADER_SHARED_LIBRARY" ]
+  }
+}
+
+# Generate FFI header from Rust source
+cargo_cbindgen("speedreader_ffi_header") {
+  visibility = [ ":*" ]
+  config = "cbindgen.toml"
+  output = "${target_gen_dir}/speedreader_ffi.h"
+
+  sources = [
+    "Cargo.lock",
+    "Cargo.toml",
+    "cbindgen.toml",
+    "charbuf.rs",
+    "lib.rs",
+    "speedreader.rs",
+  ]
+}
+
+source_set("ffi") {
+  public_configs = [ ":external_config" ]
+  visibility = [ "//huhi/build/rust:*" ]
+  defines = [ "SPEEDREADER_IMPLEMENTATION" ]
+
+  sources = [
+    "speedreader.cc",
+    "speedreader.h"
+  ]
+
+  deps = [
+    "//base",
+    ":speedreader_ffi_header",
+  ]
+}

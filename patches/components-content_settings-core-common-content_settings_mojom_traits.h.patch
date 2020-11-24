@@ -1,0 +1,12 @@
+diff --git a/components/content_settings/core/common/content_settings_mojom_traits.h b/components/content_settings/core/common/content_settings_mojom_traits.h
+index 7ffaa9b4ec4338ead98b6d30ac188c73e3b07542..5fe94e46719386dfe3c2cc5c137109b58861871e 100644
+--- a/components/content_settings/core/common/content_settings_mojom_traits.h
++++ b/components/content_settings/core/common/content_settings_mojom_traits.h
+@@ -147,6 +147,7 @@ struct StructTraits<
+   static bool Read(
+       content_settings::mojom::RendererContentSettingRulesDataView data,
+       RendererContentSettingRules* out);
++  HUHI_CONTENT_SETTINGS_MOJOM_TRAITS_H
+ };
+ 
+ }  // namespace mojo

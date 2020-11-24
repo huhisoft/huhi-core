@@ -1,0 +1,181 @@
+/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "huhi/browser/ui/views/translate/huhi_translate_bubble_view.h"
+
+#include "huhi/browser/ui/views/translate/huhi_translate_icon_view.h"
+#include "huhi/grit/huhi_generated_resources.h"
+#include "chrome/browser/extensions/webstore_install_with_prompt.h"
+#include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/ui/browser_finder.h"
+#include "chrome/browser/ui/views/chrome_layout_provider.h"
+#include "chrome/browser/ui/views/frame/browser_view.h"
+#include "chrome/browser/ui/views/frame/toolbar_button_provider.h"
+#include "components/prefs/pref_service.h"
+#include "components/translate/core/browser/translate_pref_names.h"
+#include "extensions/browser/extension_registry.h"
+#include "ui/base/l10n/l10n_util.h"
+#include "ui/views/controls/button/checkbox.h"
+#include "ui/views/controls/button/md_text_button.h"
+#include "ui/views/layout/grid_layout.h"
+#include "ui/views/style/platform_style.h"
+
+HuhiTranslateBubbleView::HuhiTranslateBubbleView(
+    views::View* anchor_view,
+    std::unique_ptr<TranslateBubbleModel> model,
+    translate::TranslateErrors::Type error_type,
+    content::WebContents* web_contents)
+    : TranslateBubbleView(anchor_view,
+                          std::move(model),
+                          error_type,
+                          web_contents) {
+}
+
+HuhiTranslateBubbleView::~HuhiTranslateBubbleView() {
+}
+
+views::View* HuhiTranslateBubbleView::HuhiCreateViewBeforeTranslate() {
+  views::View* view = new views::View();
+  views::GridLayout* layout =
+      view->SetLayoutManager(std::make_unique<views::GridLayout>());
+  ChromeLayoutProvider* provider = ChromeLayoutProvider::Get();
+
+  constexpr int kButtonColumnSetId = 0;
+  views::ColumnSet* cs = layout->AddColumnSet(kButtonColumnSetId);
+  cs->AddColumn(views::GridLayout::LEADING, views::GridLayout::CENTER,
+                views::GridLayout::kFixedSize,
+                views::GridLayout::ColumnSize::kUsePreferred, 0,
+                0);
+  cs->AddPaddingColumn(1.0, 0);
+  cs->AddColumn(views::GridLayout::LEADING, views::GridLayout::CENTER,
+                views::GridLayout::kFixedSize,
+                views::GridLayout::ColumnSize::kUsePreferred, 0,
+                0);
+  cs->AddPaddingColumn(
+      views::GridLayout::kFixedSize,
+      provider->GetDistanceMetric(views::DISTANCE_RELATED_BUTTON_HORIZONTAL));
+  cs->AddColumn(views::GridLayout::LEADING, views::GridLayout::CENTER,
+                views::GridLayout::kFixedSize,
+                views::GridLayout::ColumnSize::kUsePreferred, 0,
+                0);
+
+  auto dont_ask_button = std::make_unique<views::LabelButton>(
+      this,
+      l10n_util::GetStringUTF16(IDS_HUHI_TRANSLATE_BUBBLE_DONT_ASK_AGAIN));
+  dont_ask_button->SetID(BUTTON_ID_ALWAYS_TRANSLATE);
+
+  // Use the same text color as the cancel button.
+  const auto color =
+      views::style::GetColor(*dont_ask_button, views::style::CONTEXT_BUTTON_MD,
+                             views::style::STYLE_PRIMARY);
+  dont_ask_button->SetTextColor(views::Button::STATE_NORMAL, color);
+
+  auto accept_button = std::make_unique<views::MdTextButton>(
+      this, l10n_util::GetStringUTF16(IDS_HUHI_TRANSLATE_BUBBLE_INSTALL));
+  accept_button->SetID(BUTTON_ID_DONE);
+  accept_button->SetIsDefault(true);
+
+  auto cancel_button = std::make_unique<views::MdTextButton>(
+      this, l10n_util::GetStringUTF16(IDS_HUHI_TRANSLATE_BUBBLE_CANCEL));
+  cancel_button->SetID(BUTTON_ID_CLOSE);
+
+  layout->StartRowWithPadding(
+      views::GridLayout::kFixedSize, kButtonColumnSetId,
+      views::GridLayout::kFixedSize,
+      provider->GetDistanceMetric(views::DISTANCE_UNRELATED_CONTROL_VERTICAL));
+
+  layout->AddView(std::move(dont_ask_button));
+
+  if (views::PlatformStyle::kIsOkButtonLeading) {
+    layout->AddView(std::move(accept_button));
+    layout->AddView(std::move(cancel_button));
+  } else {
+    layout->AddView(std::move(cancel_button));
+    layout->AddView(std::move(accept_button));
+  }
+
+  return view;
+}
+
+void HuhiTranslateBubbleView::InstallGoogleTranslate() {
+  if (!web_contents())
+    return;
+  Browser* browser = chrome::FindBrowserWithWebContents(web_contents());
+  if (!browser)
+    return;
+
+  HuhiTranslateIconView* translate_icon =
+    static_cast<HuhiTranslateIconView*>(
+        BrowserView::GetBrowserViewForBrowser(browser)
+        ->toolbar_button_provider()
+        ->GetPageActionIconView(PageActionIconType::kTranslate));
+  DCHECK(translate_icon);
+
+  translate_icon->InstallGoogleTranslate();
+}
+
+void HuhiTranslateBubbleView::DisableOfferTranslatePref() {
+  if (!web_contents())
+    return;
+
+  Profile* profile =
+      Profile::FromBrowserContext(web_contents()->GetBrowserContext());
+  PrefService* const prefs = profile->GetOriginalProfile()->GetPrefs();
+  DCHECK(prefs);
+
+  prefs->SetBoolean(prefs::kOfferTranslateEnabled, false);
+}
+
+void HuhiTranslateBubbleView::ButtonPressed(views::Button* sender,
+                                             const ui::Event& event) {
+  switch (static_cast<ButtonID>(sender->GetID())) {
+    case BUTTON_ID_DONE: {
+      InstallGoogleTranslate();
+      break;
+    }
+    case BUTTON_ID_CLOSE: {
+      CloseBubble();
+      break;
+    }
+    case BUTTON_ID_ALWAYS_TRANSLATE: {
+      DisableOfferTranslatePref();
+      CloseBubble();
+      break;
+    }
+    default: {
+      // We don't expect other buttons used by chromium's original views.
+      NOTREACHED();
+    }
+  }
+}
+
+bool HuhiTranslateBubbleView::AcceleratorPressed(
+    const ui::Accelerator& accelerator) {
+  switch (model_->GetViewState()) {
+    case TranslateBubbleModel::VIEW_STATE_BEFORE_TRANSLATE: {
+      if (accelerator.key_code() == ui::VKEY_RETURN) {
+        InstallGoogleTranslate();
+        return true;
+      }
+      break;
+    }
+    default: {
+      // We don't expect views in other states.
+      NOTREACHED();
+    }
+  }
+
+  return TranslateBubbleView::AcceleratorPressed(accelerator);
+}
+
+bool HuhiTranslateBubbleView::ShouldShowWindowTitle() const {
+  return true;
+}
+
+void HuhiTranslateBubbleView::Init() {
+  TranslateBubbleView::Init();
+  RemoveChildView(translate_view_);
+  translate_view_ = AddChildView(HuhiCreateViewBeforeTranslate());
+}

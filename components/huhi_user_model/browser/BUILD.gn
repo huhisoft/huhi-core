@@ -1,0 +1,20 @@
+source_set("browser") {
+  sources = [
+    "component_info.cc",
+    "component_info.h",
+    "component_util.cc",
+    "component_util.h",
+    "components.h",
+    "user_model_file_service.cc",
+    "user_model_file_service.h",
+    "user_model_info.h",
+    "user_model_observer.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/components/huhi_component_updater/browser",
+    "//huhi/components/l10n/browser",
+    "//huhi/components/l10n/common",
+  ]
+}

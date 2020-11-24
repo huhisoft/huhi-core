@@ -1,0 +1,17 @@
+diff --git a/chrome/browser/resources/extensions/sidebar.html b/chrome/browser/resources/extensions/sidebar.html
+index e0f78db25671968ef2889a07e4ad2aeef7336a4b..64d64be98e691147954829a751a97e89f6c17400 100644
+--- a/chrome/browser/resources/extensions/sidebar.html
++++ b/chrome/browser/resources/extensions/sidebar.html
+@@ -70,6 +70,7 @@
+   </a>
+ </iron-selector>
+ <div>
++<!--
+   <div class="separator"></div>
+   <a class="section-item" id="more-extensions" target="_blank"
+       href="$i18n{getMoreExtensionsUrl}" on-click="onMoreExtensionsTap_">
+@@ -78,3 +79,4 @@
+     <paper-ripple></paper-ripple>
+   </a>
+ </div>
++-->

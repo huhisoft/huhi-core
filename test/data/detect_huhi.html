@@ -1,0 +1,11 @@
+<script>
+  var huhi_detected = false;
+  navigator.huhi.isHuhi().then((response) => {
+    if (response === true) {
+      huhi_detected = true;
+    }
+  });
+  function getHuhiDetected() {
+    return huhi_detected;
+  }
+</script>

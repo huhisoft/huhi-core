@@ -1,0 +1,7 @@
+huhi_ads_java_sources = [
+  "../../huhi/browser/huhi_ads/android/java/org/chromium/chrome/browser/HuhiAdsNativeHelper.java",
+  "../../huhi/browser/huhi_ads/android/java/org/chromium/chrome/browser/dialogs/HuhiAdsSignupDialog.java",
+  "../../huhi/browser/huhi_ads/android/java/org/chromium/chrome/browser/notifications/HuhiAds.java",
+  "../../huhi/browser/huhi_ads/android/java/org/chromium/chrome/browser/notifications/HuhiAdsNotificationBuilder.java",
+  "../../huhi/browser/huhi_ads/android/java/org/chromium/chrome/browser/onboarding/HuhiAdsOnboardingFragment.java",
+]

@@ -1,0 +1,20 @@
+diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
+index 45a4034ad784d91c1d2b03619f1be2f55e922e11..1d7ab06bec6b901c52e563a69ae772f76896d3a8 100644
+--- a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
++++ b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
+@@ -1599,6 +1599,7 @@ ImageData* BaseRenderingContext2D::createImageData(
+ }
+ 
+ ImageData* BaseRenderingContext2D::getImageData(
++    HUHI_GET_IMAGE_DATA_PARAMS
+     int sx,
+     int sy,
+     int sw,
+@@ -1686,6 +1687,7 @@ ImageData* BaseRenderingContext2D::getImageData(
+     return nullptr;
+   }
+ 
++  HUHI_GET_IMAGE_DATA
+   bool may_have_stray_area =
+       IsAccelerated()  // GPU readback may fail silently.
+       || StaticBitmapImage::MayHaveStrayArea(snapshot, image_data_rect);

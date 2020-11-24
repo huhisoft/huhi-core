@@ -1,0 +1,9 @@
+import("//build/buildflag_header.gni")
+import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
+
+buildflag_header("buildflags") {
+  header = "buildflags.h"
+  flags = [
+    "HUHI_REWARDS_ENABLED=$huhi_rewards_enabled",
+  ]
+}

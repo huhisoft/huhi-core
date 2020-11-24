@@ -1,0 +1,12 @@
+diff --git a/chrome/android/java/res/layout/custom_tabs_toolbar.xml b/chrome/android/java/res/layout/custom_tabs_toolbar.xml
+index 00a9c318afe2b53de0e6c8555770661fd6170671..b3bb40378590abaea76d5718dc2d556e1522a472 100644
+--- a/chrome/android/java/res/layout/custom_tabs_toolbar.xml
++++ b/chrome/android/java/res/layout/custom_tabs_toolbar.xml
+@@ -96,6 +96,7 @@
+         android:layout_gravity="center_vertical|end"
+         android:gravity="center_vertical"
+         android:orientation="horizontal" />
++    <include layout="@layout/huhi_custom_tabs_toolbar" android:layout_height="wrap_content" android:layout_width="match_parent" />
+     <org.chromium.ui.widget.ChromeImageButton
+         android:id="@+id/menu_button"
+         style="@style/ToolbarButton"

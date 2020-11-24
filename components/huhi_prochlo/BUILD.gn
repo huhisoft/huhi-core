@@ -1,0 +1,28 @@
+import("//third_party/protobuf/proto_library.gni")
+
+source_set("huhi_prochlo") {
+  sources = [
+    "huhi_prochlo_crypto.cc",
+    "huhi_prochlo_crypto.h",
+    "huhi_prochlo_message.cc",
+    "huhi_prochlo_message.h",
+    "prochlo_crypto.cc",
+    "prochlo_crypto.h",
+    "prochlo_data.h",
+  ]
+
+  public_deps = [
+    ":prochlo_proto",
+    "//base:base",
+    "//crypto",
+    "//third_party/boringssl",
+    "//third_party/protobuf:protobuf_lite",
+  ]
+}
+
+proto_library("prochlo_proto") {
+  sources = [
+    "prochlo_message.proto",
+  ]
+  proto_in_dir = "."
+}

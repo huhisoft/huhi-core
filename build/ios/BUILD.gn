@@ -1,0 +1,5 @@
+import("//huhi/build/config.gni")
+
+group("huhi") {
+  deps = [ "//huhi/vendor/huhi-ios" ]
+}

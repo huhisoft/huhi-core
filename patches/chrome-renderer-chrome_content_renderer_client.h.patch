@@ -1,0 +1,12 @@
+diff --git a/chrome/renderer/chrome_content_renderer_client.h b/chrome/renderer/chrome_content_renderer_client.h
+index 066a1a0690c013ffdb8ee043f8489e250ac430f0..3b974e020afeab4ff66995b377f8b16e0c281de4 100644
+--- a/chrome/renderer/chrome_content_renderer_client.h
++++ b/chrome/renderer/chrome_content_renderer_client.h
+@@ -232,6 +232,7 @@ class ChromeContentRendererClient
+ #endif
+ 
+  private:
++  friend class HuhiContentRendererClient;
+   FRIEND_TEST_ALL_PREFIXES(ChromeContentRendererClientTest, NaClRestriction);
+   FRIEND_TEST_ALL_PREFIXES(ChromeContentRendererClientTest,
+                            ShouldSuppressErrorPage);

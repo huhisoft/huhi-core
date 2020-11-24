@@ -1,0 +1,8 @@
+group("android") {
+  deps = [
+    "//huhi/common",
+    "//components/prefs",
+    "//components/user_prefs",
+    "//url",
+  ]
+}

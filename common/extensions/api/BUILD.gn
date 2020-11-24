@@ -1,0 +1,174 @@
+import("//huhi/components/binance/browser/buildflags/buildflags.gni")
+import("//huhi/components/gemini/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_together/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//huhi/components/moonpay/browser/buildflags/buildflags.gni")
+import("//tools/grit/grit_rule.gni")
+import("//tools/json_schema_compiler/json_features.gni")
+import("//tools/json_schema_compiler/json_schema_api.gni")
+json_features("api_features") {
+  feature_type = "APIFeature"
+  method_name = "AddHuhiAPIFeatures"
+  sources = [
+    "//chrome/common/extensions/api/_api_features.json",
+    "//extensions/common/api/_api_features.json",
+    "_api_features.json",
+  ]
+
+  if (huhi_wallet_enabled) {
+    sources += [ "_huhi_wallet_api_features.json" ]
+  }
+
+  if (ipfs_enabled) {
+    sources += [ "_ipfs_api_features.json" ]
+  }
+
+  if (binance_enabled) {
+    sources += [ "_binance_api_features.json" ]
+  }
+
+  if (gemini_enabled) {
+    sources += [ "_gemini_api_features.json" ]
+  }
+
+  if (huhi_together_enabled) {
+    sources += [ "_huhi_together_api_features.json" ]
+  }
+
+  if (moonpay_enabled) {
+    sources += [ "_moonpay_api_features.json" ]
+  }
+}
+
+json_features("permission_features") {
+  feature_type = "PermissionFeature"
+  method_name = "AddHuhiPermissionFeatures"
+  sources = [
+    "//chrome/common/extensions/api/_permission_features.json",
+    "//extensions/common/api/_permission_features.json",
+    "_permission_features.json",
+  ]
+}
+
+json_features("manifest_features") {
+  feature_type = "ManifestFeature"
+  method_name = "AddHuhiManifestFeatures"
+  sources = [
+    "//chrome/common/extensions/api/_manifest_features.json",
+    "//extensions/common/api/_manifest_features.json",
+    "_manifest_features.json",
+  ]
+}
+
+json_features("behavior_features") {
+  feature_type = "BehaviorFeature"
+  method_name = "AddHuhiBehaviorFeatures"
+  sources = [
+    "//extensions/common/api/_behavior_features.json",
+  ]
+}
+
+huhi_extensions_api_schema_sources = [
+  "huhi_shields.json",
+  "huhi_rewards.json",
+  "huhi_theme.json",
+  "greaselion.json",
+  "rewards_notifications.json",
+]
+
+if (ipfs_enabled) {
+  huhi_extensions_api_schema_sources += [ "ipfs.json" ]
+}
+
+if (huhi_wallet_enabled) {
+  huhi_extensions_api_schema_sources += [ "huhi_wallet.json" ]
+}
+
+if (binance_enabled) {
+  huhi_extensions_api_schema_sources += [ "binance.json" ]
+}
+
+if (gemini_enabled) {
+  huhi_extensions_api_schema_sources += [ "gemini.json" ]
+}
+
+if (huhi_together_enabled) {
+  huhi_extensions_api_schema_sources += [ "huhi_together.json" ]
+}
+
+if (moonpay_enabled) {
+  huhi_extensions_api_schema_sources += [ "moonpay.json" ]
+}
+
+huhi_extensions_api_uncompiled_sources = []
+huhi_extensions_api_root_namespace = "extensions::api::%(namespace)s"
+huhi_extensions_api_schema_include_rules =
+    "//huhi/common/extensions/api:extensions::api::%(namespace)s"
+
+huhi_extensions_api_deps = [
+  "//chrome/common/extensions/api",
+  "//extensions/common/api",
+  "//skia",
+  ":api_features",
+  ":permission_features",
+  ":manifest_features",
+  ":behavior_features",
+  ":resources",
+]
+
+grit("resources") {
+  source = "huhi_api_resources.grd"
+  outputs = [
+    "grit/huhi_api_resources.h",
+    "huhi_api_resources.pak",
+  ]
+  resource_ids = "//huhi/browser/resources/resource_ids"
+}
+
+function_registration("generated_api_registration") {
+  sources = huhi_extensions_api_schema_sources
+  impl_dir = "//huhi/common/extensions/api/"
+  bundle_name = "Huhi"
+  root_namespace = huhi_extensions_api_root_namespace
+
+  deps = [
+    "//extensions/common",
+  ]
+
+  visibility = [ ":api" ]
+}
+
+generated_json_strings("generated_api_json_strings") {
+  sources = huhi_extensions_api_schema_sources +
+            huhi_extensions_api_uncompiled_sources
+
+  configs = [ "//build/config:precompiled_headers" ]
+  bundle_name = "Huhi"
+  schema_include_rules = huhi_extensions_api_schema_include_rules
+
+  root_namespace = huhi_extensions_api_root_namespace
+  deps = huhi_extensions_api_deps
+
+  visibility = [ ":api" ]
+}
+
+generated_types("generated_api_types") {
+  sources = huhi_extensions_api_schema_sources
+  configs = [ "//build/config:precompiled_headers" ]
+  schema_include_rules = huhi_extensions_api_schema_include_rules
+
+  root_namespace = huhi_extensions_api_root_namespace
+  deps = huhi_extensions_api_deps
+  visibility = [ ":api" ]
+}
+
+# Public Targets
+
+group("api") {
+  public_deps = [
+    ":generated_api_json_strings",
+    ":generated_api_registration",
+    ":generated_api_types",
+  ]
+}

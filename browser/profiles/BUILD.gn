@@ -1,0 +1,44 @@
+import("//components/gcm_driver/config.gni")
+
+source_set("profiles") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10648 is resolved
+  check_includes = false
+  sources = [
+    "huhi_bookmark_model_loaded_observer.cc",
+    "huhi_bookmark_model_loaded_observer.h",
+    "huhi_profile_avatar_downloader.cc",
+    "huhi_profile_avatar_downloader.h",
+    "huhi_profile_impl.cc",
+    "huhi_profile_impl.h",
+    "huhi_profile_manager.cc",
+    "huhi_profile_manager.h",
+    "profile_util.cc",
+    "profile_util.h",
+  ]
+
+  if (is_win) {
+    sources += [
+      "huhi_profile_shortcut_manager_win.cc",
+      "huhi_profile_shortcut_manager_win.h",
+    ]
+  }
+
+  deps = [
+    "//base",
+    "//huhi/browser/gcm_driver",
+    "//huhi/browser/tor",
+    "//huhi/browser/translate/buildflags",
+    "//huhi/common:pref_names",
+    "//huhi/common/tor",
+    "//huhi/components/huhi_ads/browser",
+    "//huhi/components/huhi_rewards/browser",
+    "//huhi/components/huhi_sync:prefs",
+    "//huhi/content:browser",
+    "//chrome/common",
+    "//components/gcm_driver:gcm_buildflags",
+    "//components/safe_browsing/core/common:safe_browsing_prefs",
+    "//components/translate/core/browser",
+    "//third_party/blink/public/common",
+    "//ui/base",
+  ]
+}

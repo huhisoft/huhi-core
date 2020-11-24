@@ -1,0 +1,21 @@
+source_set("tor") {
+  visibility = [
+    "//huhi/utility:*",
+    "//huhi/test:*"
+  ]
+
+  sources = [
+    "tor_launcher_impl.cc",
+    "tor_launcher_impl.h",
+    "tor_launcher_service.cc",
+    "tor_launcher_service.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/common/tor",
+    "//mojo/public/cpp/bindings",
+    "public/interfaces",
+    "//services/service_manager",
+  ]
+}

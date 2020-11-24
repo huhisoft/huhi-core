@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/views/update_recommended_message_box.h b/chrome/browser/ui/views/update_recommended_message_box.h
+index e7038138c170785a4a382e222e4be0df0af99a15..b95a50eeba6901efa2118f7ba11a3ade6f530eec 100644
+--- a/chrome/browser/ui/views/update_recommended_message_box.h
++++ b/chrome/browser/ui/views/update_recommended_message_box.h
+@@ -20,6 +20,8 @@ class UpdateRecommendedMessageBox : public views::DialogDelegate {
+   static void Show(gfx::NativeWindow parent_window);
+ 
+  private:
++  friend class UpdateRecommendedMessageBoxMac;
++
+   UpdateRecommendedMessageBox();
+   ~UpdateRecommendedMessageBox() override;
+ 

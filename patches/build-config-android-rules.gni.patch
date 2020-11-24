@@ -1,0 +1,20 @@
+diff --git a/build/config/android/rules.gni b/build/config/android/rules.gni
+index 0cd77fbd18390ff4d6bc6e682fd1917a9374f08a..4150aa4653c27e5cc0abbb780e9022d028127203 100644
+--- a/build/config/android/rules.gni
++++ b/build/config/android/rules.gni
+@@ -513,6 +513,7 @@ if (enable_java_templates) {
+   #   }
+   template("java_cpp_enum") {
+     set_sources_assignment_filter([])
++    foreach(source, invoker.sources) { foreach(filter, huhi_java_cpp_enum_filter) { if(source == filter) { invoker.sources -= [filter] }}}
+     action_with_pydeps(target_name) {
+       forward_variables_from(invoker,
+                              [
+@@ -626,6 +627,7 @@ if (enable_java_templates) {
+   #     output = "$target_gen_dir/AndroidManifest.xml"
+   #   }
+   template("jinja_template") {
++    if (defined(invoker.includes)) { invoker.includes += huhi_android_manifest_includes } else { invoker.includes = huhi_android_manifest_includes }
+     action_with_pydeps(target_name) {
+       forward_variables_from(invoker,
+                              [

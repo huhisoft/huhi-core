@@ -1,0 +1,45 @@
+import("//huhi/build/config.gni")
+import("//huhi/components/binance/browser/buildflags/buildflags.gni")
+
+assert(binance_enabled)
+
+declare_args() {
+  binance_client_id = ""
+}
+
+source_set("browser") {
+  public_deps = [
+    "buildflags"
+  ]
+  sources = [
+    "binance_json_parser.cc",
+    "binance_json_parser.h",
+    "binance_service.cc",
+    "binance_service.h",
+    "regions.h"
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/common:pref_names",
+    "//huhi/components/ntp_widget_utils/browser",
+    "//components/country_codes:country_codes",
+    "//components/keyed_service/content",
+    "//components/keyed_service/core",
+    "//components/os_crypt:os_crypt",
+    "//components/prefs:prefs",
+    "//components/user_prefs",
+    "//content/public/browser",
+    "//net",
+    "//services/network/public/cpp",
+    "//url",
+  ]
+  configs += [ ":binance_config" ]
+}
+
+
+config("binance_config") {
+  defines = [
+    "BINANCE_CLIENT_ID=\"$binance_client_id\""
+  ]
+}

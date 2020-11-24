@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+     This Source Code Form is subject to the terms of the Huhi Software
+     License, v. 2.0. If a copy of the MPL was not distributed with this file,
+     You can obtain one at http://mozilla.org/MPL/2.0/.
+-->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="HuhiSwitchTheme">
+        <item name="colorControlActivated">#fb542b</item>
+    </style>
+
+    <style name="HuhiDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="HuhiRewardsSwitchTheme">
+        <item name="colorControlActivated">@color/huhi_rewards_theme_color</item>
+        <item name="colorSwitchThumbNormal">@color/modern_grey_600</item>
+        <item name="android:colorForeground">@color/modern_grey_600</item>
+    </style>
+
+    <!-- Buttons for Huhi Sync -->
+    <style name="HuhiSyncButton">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/huhi_sync_btn</item>
+        <item name="android:layout_marginStart">15dp</item>
+        <item name="android:layout_marginEnd">15dp</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="HuhiSyncBottomButton">
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="HuhiSyncToggleOffButtonLeft">
+        <item name="android:textColor">@color/huhi_theme_color</item>
+        <item name="android:background">@drawable/huhi_sync_toggle_off_btn_left</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="HuhiSyncToggleOffButtonRight">
+        <item name="android:textColor">@color/huhi_theme_color</item>
+        <item name="android:background">@drawable/huhi_sync_toggle_off_btn_right</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="HuhiSyncToggleOnButtonRight">
+        <item name="android:textColor">@color/white_alpha_65</item>
+        <item name="android:background">@drawable/huhi_sync_toggle_on_btn_right</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="HuhiSyncToggleOnButtonLeft">
+        <item name="android:textColor">@color/white_alpha_65</item>
+        <item name="android:background">@drawable/huhi_sync_toggle_on_btn_left</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="NewTabPopupMenuLight" parent="Widget.AppCompat.PopupMenu">
+      <item name="android:textColor">@android:color/black</item>
+      <item name="android:itemBackground">@android:color/white</item>
+    </style>
+
+    <style name="NewTabPopupMenuDark" parent="Widget.AppCompat.PopupMenu">
+      <item name="android:textColor">@color/new_tab_menu_text_dark_color</item>
+      <item name="android:itemBackground">@color/new_tab_menu_bg_dark_color</item>
+    </style>
+
+    <style name="HuhiTranslucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/translucent_activity_background_color</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+</resources>

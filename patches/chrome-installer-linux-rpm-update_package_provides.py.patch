@@ -1,0 +1,31 @@
+diff --git a/chrome/installer/linux/rpm/update_package_provides.py b/chrome/installer/linux/rpm/update_package_provides.py
+index ef5c5989f8cbff3dbaa045f12a5a1970a461dde6..165c851193371db6487da53603ce9b6d7eb2039d 100755
+--- a/chrome/installer/linux/rpm/update_package_provides.py
++++ b/chrome/installer/linux/rpm/update_package_provides.py
+@@ -33,6 +33,7 @@ LIBRARY_FILTER = set([
+     "libatspi.so.0",
+     "libc.so",
+     "libcairo.so",
++    "libcairo-gobject.so.2",
+     "libcups.so",
+     "libdbus-1.so",
+     "libdrm.so.2",
+@@ -53,7 +54,10 @@ LIBRARY_FILTER = set([
+     "libnssutil3.so",
+     "libpango-1.0.so",
+     "libpangocairo-1.0.so",
++    "libplc4.so",
++    "libplds4.so",
+     "libpthread.so",
++    "libresolv.so.2",
+     "librt.so",
+     "libsmime3.so",
+     "libstdc++.so",
+@@ -62,6 +66,7 @@ LIBRARY_FILTER = set([
+     "libxkbcommon.so.0",
+     "libxcb.so",
+     "libxcb-dri3.so.0",
++    "libz.so.1",
+     "rtld(GNU_HASH)",
+ ])
+ 

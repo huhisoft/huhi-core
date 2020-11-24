@@ -1,0 +1,31 @@
+import("//huhi/build/config.gni")
+
+group("symbol_dist_resources") {}
+group("dist_resources") {}
+
+group("create_dist_zips") {
+  deps = [
+    ":create_symbol_archive"
+  ]
+}
+
+action("create_symbol_archive") {
+  script = "//build/gn_run_binary.py"
+  shell_script = "//huhi/build/android/pack_symbols.sh"
+
+  deps = [ "//huhi/build/android:huhi" ]
+  archive_name = "$root_out_dir/dist/Default$target_cpu$target_apk_base.tar"
+
+  inputs = [
+    script,
+    shell_script,
+    huhi_apk_output,
+  ]
+
+  outputs = [ archive_name ]
+
+  args = [
+    rebase_path(shell_script, root_build_dir),
+    rebase_path(archive_name, root_out_dir),
+  ]
+}

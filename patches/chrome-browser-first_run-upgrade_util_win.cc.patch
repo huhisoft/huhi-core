@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/first_run/upgrade_util_win.cc b/chrome/browser/first_run/upgrade_util_win.cc
+index 97cd4d1365eda7480c07c3b52c339515ca3acb40..a39aadfa07a3f1063c1fa3fd9a14ad8d159e2260 100644
+--- a/chrome/browser/first_run/upgrade_util_win.cc
++++ b/chrome/browser/first_run/upgrade_util_win.cc
+@@ -41,7 +41,7 @@
+ #include "components/prefs/pref_service.h"
+ #include "ui/base/ui_base_switches.h"
+ 
+-#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
++#if BUILDFLAG(GOOGLE_CHROME_BRANDING) || (defined(HUHI_CHROMIUM_BUILD) && defined(OFFICIAL_BUILD))
+ #include "google_update/google_update_idl.h"
+ #endif
+ 
+@@ -55,7 +55,7 @@ bool GetNewerChromeFile(base::FilePath* path) {
+ }
+ 
+ bool InvokeGoogleUpdateForRename() {
+-#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
++#if BUILDFLAG(GOOGLE_CHROME_BRANDING) || (defined(HUHI_CHROMIUM_BUILD) && defined(OFFICIAL_BUILD))
+   Microsoft::WRL::ComPtr<IProcessLauncher> ipl;
+   HRESULT hr = ::CoCreateInstance(__uuidof(ProcessLauncherClass), nullptr,
+                                   CLSCTX_ALL, IID_PPV_ARGS(&ipl));

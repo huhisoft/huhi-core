@@ -1,0 +1,21 @@
+diff --git a/components/strings/BUILD.gn b/components/strings/BUILD.gn
+index 4f264ebc35e4b48b91c89ccd48413a83bb8442dd..03f226b2d8ce617f9608be24ae7ae4347c3c15ea 100644
+--- a/components/strings/BUILD.gn
++++ b/components/strings/BUILD.gn
+@@ -40,6 +40,7 @@ grit("components_strings") {
+   if (is_android) {
+     outputs += android_components_strings_java_resources
+   }
++  deps = [ "//huhi/components/resources:strings" ]
+ }
+ 
+ if (is_android) {
+@@ -52,7 +53,7 @@ if (is_android) {
+ }
+ 
+ grit("components_chromium_strings") {
+-  source = "../components_chromium_strings.grd"
++  source = "../components_${branding_path_component}_strings.grd"
+   outputs = [ "grit/components_chromium_strings.h" ]
+   foreach(locale, locales_with_fake_bidi) {
+     outputs += [ "components_chromium_strings_$locale.pak" ]

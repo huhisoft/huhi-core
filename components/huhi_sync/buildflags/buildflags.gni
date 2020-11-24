@@ -1,0 +1,6 @@
+import("//huhi/build/config.gni")
+import("//build/config/features.gni")
+
+declare_args() {
+  enable_huhi_sync = true
+}

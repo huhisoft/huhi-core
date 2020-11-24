@@ -1,0 +1,28 @@
+import("//huhi/build/config.gni")
+
+assert(is_linux)
+
+huhi_linux_channel_stable = ""
+huhi_linux_channel_dev = "dev"
+huhi_linux_channel_nightly = "nightly"
+linux_channel_stable = "stable"
+linux_channel_beta = "beta"
+linux_channel_dev = "unstable"
+
+# Our channel name and upstream linux channel name is different.
+if (huhi_channel == "") {
+  linux_channel = linux_channel_stable
+} else if (huhi_channel == "beta") {
+  linux_channel = linux_channel_beta
+} else if (huhi_channel == "dev") {
+  linux_channel = linux_channel_dev
+} else if (huhi_channel == "nightly") {
+  linux_channel = huhi_linux_channel_nightly
+} else if (huhi_channel == "development") {
+  # To avoid gn error, just fills with stable.
+  # This doesn't have meaning in debug build.
+  linux_channel = linux_channel_stable
+} else {
+  assert(false, "Not supported channel name: $huhi_channel")
+}
+

@@ -1,0 +1,12 @@
+diff --git a/chrome/tools/build/mac/BUILD.gn b/chrome/tools/build/mac/BUILD.gn
+index 6bd3e8d2e5b6335adfb01e81881073b0629e71dc..d166a66297a104efed639a8621d7483ba6bc9e2a 100644
+--- a/chrome/tools/build/mac/BUILD.gn
++++ b/chrome/tools/build/mac/BUILD.gn
+@@ -4,6 +4,7 @@
+ 
+ executable("infoplist_strings_tool") {
+   configs += [ "//build/config/compiler:wexit_time_destructors" ]
++  configs += [ "//huhi/common:constants_configs" ]
+ 
+   sources = [ "infoplist_strings_util.mm" ]
+ 

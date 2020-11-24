@@ -1,0 +1,24 @@
+diff --git a/tools/gritsettings/resource_ids.spec b/tools/gritsettings/resource_ids.spec
+index 0818d69864408fe2aa1c58e460cd61f13f54f8f0..eb66f15d12ba13b06a96f51130e263fd6f444810 100644
+--- a/tools/gritsettings/resource_ids.spec
++++ b/tools/gritsettings/resource_ids.spec
+@@ -47,6 +47,9 @@
+   "chrome/app/chromium_strings.grd": {
+     "messages": [400],
+   },
++  "chrome/app/huhi_strings.grd": {
++    "messages": [400],
++  },
+   "chrome/app/google_chrome_strings.grd": {
+     "messages": [400],
+   },
+@@ -377,6 +380,9 @@
+     "META": {"align": 100},
+     "messages": [2700],
+   },
++  "components/components_huhi_strings.grd": {
++    "messages": [2700],
++  },
+   "components/components_google_chrome_strings.grd": {
+     "messages": [2700],
+   },

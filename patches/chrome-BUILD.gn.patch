@@ -1,0 +1,113 @@
+diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
+index 5670687f18f166da366afba61f7bbc3ecdf48acb..373e32e1b3b8c8153920fa807719e10da67af1d2 100644
+--- a/chrome/BUILD.gn
++++ b/chrome/BUILD.gn
+@@ -146,6 +146,10 @@ if (!is_android && !is_mac) {
+         "common/crash_keys.cc",
+         "common/crash_keys.h",
+       ]
++      if (huhi_chromium_build) {
++        sources -= [ "app/chrome_exe.rc", ]
++        sources += [ "//huhi/app/huhi_exe.rc", ]
++      }
+ 
+       deps += [
+         ":chrome_dll",
+@@ -404,11 +408,12 @@ if (is_win) {
+       "--bundle_id=$chrome_mac_bundle_id",
+     ]
+   }
++  copy("huhi_app_plist") { deps = [ "//huhi:huhi_app_plist" ] sources = [ "$root_gen_dir/huhi/huhi_app_plist_tweaked.plist" ] outputs = [ "$root_gen_dir/chrome/{{source_file_part}}" ] }
+ 
+   mac_app_bundle("chrome_app") {
+     output_name = chrome_product_full_name
+ 
+-    info_plist_target = ":chrome_app_plist"
++    info_plist_target = ":huhi_app_plist"
+     extra_substitutions = [
+       "CHROMIUM_BUNDLE_ID=$chrome_mac_bundle_id",
+       "CHROMIUM_SHORT_NAME=$chrome_product_short_name",
+@@ -426,6 +431,7 @@ if (is_win) {
+       "//chrome/common:buildflags",
+       "//chrome/common:version_header",
+     ]
++    deps += [ "//huhi:huhi_app" ]
+ 
+     if (enable_stripping) {
+       # At link time, preserve the global symbols specified in the .exports
+@@ -494,7 +500,7 @@ if (is_win) {
+     args =
+         [
+           "-b",
+-          "${branding_path_component}_strings",
++          _strings_file,
+           "-v",
+           rebase_path(chrome_version_file, root_build_dir),
+           "-g",
+@@ -563,6 +569,7 @@ if (is_win) {
+       # this dependency directly copies the file into the framework's
+       # resources directory.
+       public_deps += [ ":chrome_framework_widevine_signature" ]
++      public_deps -= [ ":chrome_framework_widevine_signature" ]
+     }
+   }
+ 
+@@ -595,6 +602,7 @@ if (is_win) {
+       "--scm=0",
+     ]
+   }
++  copy("huhi_helper_plist") { deps = [ "//huhi:huhi_helper_plist" ] sources = [ "$root_gen_dir/huhi/huhi_helper_plist_tweaked.plist" ] outputs = [ "$root_gen_dir/chrome/{{source_file_part}}" ] }
+ 
+   compile_entitlements("entitlements") {
+     entitlements_templates = [ "app/app-entitlements.plist" ]
+@@ -618,7 +626,7 @@ if (is_win) {
+ 
+       output_name = chrome_helper_name + invoker.helper_name_suffix
+ 
+-      info_plist_target = ":chrome_helper_plist"
++      info_plist_target = ":huhi_helper_plist"
+       extra_substitutions = [
+         "CHROMIUM_BUNDLE_ID=$chrome_mac_bundle_id",
+         "CHROMIUM_SHORT_NAME=$chrome_product_short_name",
+@@ -1007,6 +1015,10 @@ if (is_win) {
+     if (is_chrome_branded) {
+       deps += [ ":default_apps" ]
+     }
++    if (huhi_chromium_build) {
++      deps += [ "//huhi:framework_bundle_data" ]
++      if (defined(chrome_framework_version)) { framework_contents += [ "Frameworks", ] }
++    }
+ 
+     ldflags = [ "-Wl,-install_name,@executable_path/../Frameworks/$chrome_framework_name.framework/Versions/$chrome_version_full/$chrome_framework_name" ]
+ 
+@@ -1164,6 +1176,7 @@ if (is_win) {
+ 
+ group("browser_dependencies") {
+   public_deps = [
++    "//huhi:browser_dependencies",
+     "//chrome/browser",
+     "//chrome/common",
+     "//components/gwp_asan/buildflags",
+@@ -1239,12 +1252,13 @@ group("child_dependencies") {
+       # this is OK because all of content is linked into one library.
+       "//content/browser",
+     ]
++    assert_no_deps -= [ "//content/browser" ]
+   }
+ }
+ 
+ if (is_win) {
+   process_version_rc_template("chrome_exe_version") {
+-    sources = [ "app/chrome_exe.ver" ]
++    sources = [ "//huhi/app/huhi_exe.ver" ]
+     output = "$target_gen_dir/chrome_exe_version.rc"
+   }
+ 
+@@ -1298,6 +1312,7 @@ group("resources") {
+     "//chrome/browser:resources",
+     "//chrome/common:resources",
+     "//chrome/renderer:resources",
++    "//huhi:resources",
+   ]
+ }
+ 

@@ -1,0 +1,73 @@
+import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
+import("//huhi/components/common/typescript.gni")
+import("//extensions/buildflags/buildflags.gni")
+import("//tools/grit/grit_rule.gni")
+import("//tools/grit/repack.gni")
+
+pack_web_resources("page_generated_resources") {
+  resource_name = "huhi_rewards_page"
+  output_dir = "$root_gen_dir/huhi/components/huhi_rewards/resources"
+  # need webpack and GRD generation first
+  if (is_android) {
+    deps = [ "android_page" ]
+  } else {
+    deps = [ "page" ]
+  }
+}
+
+pack_web_resources("internals_generated_resources") {
+  resource_name = "huhi_rewards_internals"
+  output_dir = "$root_gen_dir/huhi/components/huhi_rewards/resources"
+  # need webpack and GRD generation first
+  deps = [
+    "internals"
+  ]
+}
+
+pack_web_resources("tip_generated_resources") {
+  resource_name = "huhi_rewards_tip"
+  output_dir = "$root_gen_dir/huhi/components/huhi_rewards/resources"
+  # need webpack and GRD generation first
+  deps = [
+    "tip"
+  ]
+}
+
+grit("static_resources") {
+  source = "huhi_rewards_static_resources.grd"
+
+  outputs = [
+    "grit/huhi_rewards_resources.h",
+    "huhi_rewards_static.pak",
+  ]
+
+  deps = [
+  ]
+
+  grit_flags = [
+    "-E",
+    "root_gen_dir=" + rebase_path(root_gen_dir, root_build_dir),
+  ]
+
+  resource_ids = "//huhi/browser/resources/resource_ids"
+
+  output_dir = "$root_gen_dir/huhi/components/huhi_rewards/resources"
+}
+
+repack("resources") {
+  public_deps = [
+    ":page_generated_resources",
+    ":internals_generated_resources",
+    ":tip_generated_resources",
+    ":static_resources",
+  ]
+
+  sources = [
+    "$root_gen_dir/huhi/components/huhi_rewards/resources/huhi_rewards_page_generated.pak",
+    "$root_gen_dir/huhi/components/huhi_rewards/resources/huhi_rewards_internals_generated.pak",
+    "$root_gen_dir/huhi/components/huhi_rewards/resources/huhi_rewards_tip_generated.pak",
+    "$root_gen_dir/huhi/components/huhi_rewards/resources/huhi_rewards_static.pak",
+  ]
+
+  output = "$root_gen_dir/huhi/components/huhi_rewards/resources/huhi_rewards_resources.pak"
+}

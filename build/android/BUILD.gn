@@ -1,0 +1,158 @@
+import("//huhi/build/config.gni")
+import("//build/config/android/rules.gni")
+
+action("sign_app") {
+  script = "//huhi/build/android/sign_apk.py"
+  _apksigner = "$android_sdk_build_tools/apksigner"
+  _zipalign = "$android_sdk_build_tools/zipalign"
+
+  deps = []
+  target_sign_app_path = ""
+  if (target_cpu == "arm64" || target_cpu == "x64" ||
+      target_apk_base == "mono") {
+    target_sign_app_path = "$root_out_dir/apks/MonochromePublic.apk"
+  } else {
+    target_sign_app_path = "$root_out_dir/apks/ChromePublic.apk"
+  }
+
+  outputs = [ "$target_sign_app_path-singed" ]
+  args = [
+    rebase_path(_zipalign, root_out_dir),
+    rebase_path(_apksigner, root_out_dir),
+    rebase_path(target_sign_app_path, root_out_dir),
+    rebase_path("$huhi_android_keystore_path", root_out_dir),
+    "$huhi_android_keystore_password",
+    "$huhi_android_key_password",
+    "$huhi_android_keystore_name"
+  ]
+}
+
+copy("huhi") {
+  visibility = [ "*" ]
+  deps = []
+  sources = []
+  if (target_cpu == "arm64" || target_cpu == "x64" ||
+      target_apk_base == "mono") {
+    deps += ["//chrome/android:monochrome_public_apk"]
+    sources += [
+      "$root_out_dir/apks/MonochromePublic.apk"
+    ]
+  } else {
+    deps += ["//chrome/android:chrome_public_apk"]
+    sources += [
+      "$root_out_dir/apks/ChromePublic.apk"
+    ]
+  }
+  outputs = [
+    huhi_apk_output
+  ]
+}
+
+java_strings_grd("android_huhi_strings_grd") {
+  grd_file = "//huhi/browser/ui/android/strings/android_huhi_strings.grd"
+  outputs = [
+    "values/android_huhi_strings.xml",
+    "values-af/android_huhi_strings.xml",
+    "values-am/android_huhi_strings.xml",
+    "values-ar/android_huhi_strings.xml",
+    "values-as/android_huhi_strings.xml",
+    "values-az/android_huhi_strings.xml",
+    "values-be/android_huhi_strings.xml",
+    "values-bg/android_huhi_strings.xml",
+    "values-bn/android_huhi_strings.xml",
+    "values-bs/android_huhi_strings.xml",
+    "values-ca/android_huhi_strings.xml",
+    "values-cs/android_huhi_strings.xml",
+    "values-da/android_huhi_strings.xml",
+    "values-de/android_huhi_strings.xml",
+    "values-el/android_huhi_strings.xml",
+    "values-en-rGB/android_huhi_strings.xml",
+    "values-es/android_huhi_strings.xml",
+    "values-es-rUS/android_huhi_strings.xml",
+    "values-et/android_huhi_strings.xml",
+    "values-eu/android_huhi_strings.xml",
+    "values-fa/android_huhi_strings.xml",
+    "values-fi/android_huhi_strings.xml",
+    "values-fr/android_huhi_strings.xml",
+    "values-fr-rCA/android_huhi_strings.xml",
+    "values-gl/android_huhi_strings.xml",
+    "values-gu/android_huhi_strings.xml",
+    "values-hi/android_huhi_strings.xml",
+    "values-hr/android_huhi_strings.xml",
+    "values-hu/android_huhi_strings.xml",
+    "values-hy/android_huhi_strings.xml",
+    "values-in/android_huhi_strings.xml",
+    "values-is/android_huhi_strings.xml",
+    "values-it/android_huhi_strings.xml",
+    "values-iw/android_huhi_strings.xml",
+    "values-ja/android_huhi_strings.xml",
+    "values-ka/android_huhi_strings.xml",
+    "values-kk/android_huhi_strings.xml",
+    "values-km/android_huhi_strings.xml",
+    "values-kn/android_huhi_strings.xml",
+    "values-ko/android_huhi_strings.xml",
+    "values-ky/android_huhi_strings.xml",
+    "values-lo/android_huhi_strings.xml",
+    "values-lt/android_huhi_strings.xml",
+    "values-lv/android_huhi_strings.xml",
+    "values-mk/android_huhi_strings.xml",
+    "values-ml/android_huhi_strings.xml",
+    "values-mn/android_huhi_strings.xml",
+    "values-mr/android_huhi_strings.xml",
+    "values-ms/android_huhi_strings.xml",
+    "values-my/android_huhi_strings.xml",
+    "values-nb/android_huhi_strings.xml",
+    "values-ne/android_huhi_strings.xml",
+    "values-nl/android_huhi_strings.xml",
+    "values-or/android_huhi_strings.xml",
+    "values-pa/android_huhi_strings.xml",
+    "values-pl/android_huhi_strings.xml",
+    "values-pt-rBR/android_huhi_strings.xml",
+    "values-pt-rPT/android_huhi_strings.xml",
+    "values-ro/android_huhi_strings.xml",
+    "values-ru/android_huhi_strings.xml",
+    "values-si/android_huhi_strings.xml",
+    "values-sk/android_huhi_strings.xml",
+    "values-sl/android_huhi_strings.xml",
+    "values-sq/android_huhi_strings.xml",
+    "values-sr/android_huhi_strings.xml",
+    "values-sv/android_huhi_strings.xml",
+    "values-sw/android_huhi_strings.xml",
+    "values-ta/android_huhi_strings.xml",
+    "values-te/android_huhi_strings.xml",
+    "values-th/android_huhi_strings.xml",
+    "values-tl/android_huhi_strings.xml",
+    "values-tr/android_huhi_strings.xml",
+    "values-uk/android_huhi_strings.xml",
+    "values-ur/android_huhi_strings.xml",
+    "values-uz/android_huhi_strings.xml",
+    "values-vi/android_huhi_strings.xml",
+    "values-zh-rCN/android_huhi_strings.xml",
+    "values-zh-rHK/android_huhi_strings.xml",
+    "values-zh-rTW/android_huhi_strings.xml",
+    "values-zu/android_huhi_strings.xml",
+  ]
+}
+
+generate_jni("jni_headers") {
+  sources = [
+    "//huhi/android/java/org/chromium/chrome/browser/HuhiFeatureList.java",
+    "//huhi/android/java/org/chromium/chrome/browser/HuhiRelaunchUtils.java",
+    "//huhi/android/java/org/chromium/chrome/browser/HuhiRewardsNativeWorker.java",
+    "//huhi/android/java/org/chromium/chrome/browser/app/HuhiActivity.java",
+    "//huhi/android/java/org/chromium/chrome/browser/notifications/HuhiNotificationPlatformBridge.java",
+    "//huhi/android/java/org/chromium/chrome/browser/notifications/HuhiNotificationSettingsBridge.java",
+    "//huhi/android/java/org/chromium/chrome/browser/ntp_background_images/NTPBackgroundImagesBridge.java",
+    "//huhi/android/java/org/chromium/chrome/browser/preferences/HuhiPrefServiceBridge.java",
+    "//huhi/android/java/org/chromium/chrome/browser/preferences/website/HuhiShieldsContentSettings.java",
+    "//huhi/android/java/org/chromium/chrome/browser/signin/HuhiSigninManager.java",
+    "//huhi/android/java/org/chromium/chrome/browser/settings/developer/HuhiQAPreferences.java",
+  ]
+
+  if (enable_huhi_sync ) {
+    sources += [
+      "//huhi/android/java/org/chromium/chrome/browser/HuhiSyncWorker.java",
+      "//huhi/android/java/org/chromium/chrome/browser/sync/HuhiSyncDevices.java",
+    ]
+  }
+}

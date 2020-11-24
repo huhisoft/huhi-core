@@ -1,0 +1,46 @@
+diff --git a/chrome/browser/resources/settings/privacy_page/personalization_options.js b/chrome/browser/resources/settings/privacy_page/personalization_options.js
+index ac89f95e3b5c98dcba8635ba60ad3817a057ea87..760975b00917cb0fd93029118811599b90277973 100644
+--- a/chrome/browser/resources/settings/privacy_page/personalization_options.js
++++ b/chrome/browser/resources/settings/privacy_page/personalization_options.js
+@@ -34,7 +34,7 @@ Polymer({
+     /** @type {settings.SyncStatus} */
+     syncStatus: Object,
+ 
+-    // <if expr="_google_chrome and not chromeos">
++    // <if expr="_chromium and not chromeos">
+     // TODO(dbeam): make a virtual.* pref namespace and set/get this normally
+     // (but handled differently in C++).
+     /** @private {chrome.settingsPrivate.PrefObject} */
+@@ -80,14 +80,14 @@ Polymer({
+   ready() {
+     this.browserProxy_ = settings.PrivacyPageBrowserProxyImpl.getInstance();
+ 
+-    // <if expr="_google_chrome and not chromeos">
++    // <if expr="_chromium and not chromeos">
+     const setMetricsReportingPref = this.setMetricsReportingPref_.bind(this);
+     this.addWebUIListener('metrics-reporting-change', setMetricsReportingPref);
+     this.browserProxy_.getMetricsReporting().then(setMetricsReportingPref);
+     // </if>
+   },
+ 
+-  // <if expr="_google_chrome and not chromeos">
++  // <if expr="_chromium and not chromeos">
+   /** @private */
+   onMetricsReportingChange_() {
+     const enabled = this.$.metricsReportingControl.checked;
+@@ -137,6 +137,7 @@ Polymer({
+   },
+   // </if>
+ 
++  // <if expr="_google_chrome">
+   /**
+    * @return {boolean}
+    * @private
+@@ -185,6 +186,7 @@ Polymer({
+     }
+     this.showSignoutDialog_ = false;
+   },
++  // </if>
+ 
+   /**
+    * @param {!Event} e

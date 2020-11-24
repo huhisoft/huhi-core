@@ -1,0 +1,34 @@
+diff --git a/chrome/android/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarTablet.java b/chrome/android/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarTablet.java
+index feed3adad5278f1ebb2f0658b044bacf76073d5c..15438b97ad7eab103a38ac5e34e8886389b5dc77 100644
+--- a/chrome/android/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarTablet.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarTablet.java
+@@ -57,7 +57,7 @@ import java.util.Collection;
+  * The Toolbar object for Tablet screens.
+  */
+ @SuppressLint("Instantiatable")
+-public class ToolbarTablet extends ToolbarLayout
++public class ToolbarTablet extends HuhiToolbarLayout
+         implements OnClickListener, View.OnLongClickListener, TabCountObserver {
+     // The number of toolbar buttons that can be hidden at small widths (reload, back, forward).
+     public static final int HIDEABLE_BUTTON_COUNT = 3;
+@@ -333,10 +333,12 @@ public class ToolbarTablet extends ToolbarLayout
+             DownloadUtils.downloadOfflinePage(getContext(), getToolbarDataProvider().getTab());
+             RecordUserAction.record("MobileToolbarDownloadPage");
+         }
++        super.onClick(v);
+     }
+ 
+     @Override
+     public boolean onLongClick(View v) {
++        if (super.onLongClick(v)) return true;
+         String description = null;
+         Context context = getContext();
+         Resources resources = context.getResources();
+@@ -401,6 +403,7 @@ public class ToolbarTablet extends ToolbarLayout
+         mLocationBar.getBackground().setColorFilter(textBoxColor, PorterDuff.Mode.SRC_IN);
+ 
+         mLocationBar.updateVisualsForState();
++        super.onThemeColorChanged(color, shouldAnimate);
+     }
+ 
+     /**

@@ -1,0 +1,81 @@
+import("//build/config/features.gni")
+import("//huhi/components/huhi_wayback_machine/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_sync/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+
+source_set("infobars") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10649 is resolved
+  check_includes = false
+  sources = [
+    "huhi_confirm_p3a_infobar_delegate.cc",
+    "huhi_confirm_p3a_infobar_delegate.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/browser/ui",
+    "//huhi/components/p3a",
+    "//huhi/app:huhi_generated_resources_grit",
+    "//chrome/app:chromium_strings",
+    "//chrome/browser/ui",
+    "//components/infobars/core",
+    "//components/prefs",
+    "//components/strings",
+    "//ui/base",
+    "//ui/views",
+    "//url",
+  ]
+
+  if (huhi_wallet_enabled) {
+    sources += [
+      "crypto_wallets_infobar_delegate.cc",
+      "crypto_wallets_infobar_delegate.h",
+    ]
+
+    deps += [
+      "//huhi/browser/huhi_wallet:huhi_wallet",
+      "//huhi/common:pref_names",
+      "//huhi/components/huhi_wallet/browser:browser",
+      "//components/user_prefs:user_prefs",
+      "//extensions/common:common_constants",
+    ]
+  }
+
+  if (ipfs_enabled) {
+    sources += [
+      "ipfs_infobar_delegate.cc",
+      "ipfs_infobar_delegate.h",
+    ]
+    deps += [
+      "//huhi/components/ipfs/browser",
+      "//huhi/components/ipfs/common",
+      "//components/user_prefs"
+    ]
+  }
+
+  if (enable_huhi_wayback_machine) {
+    sources += [
+      "huhi_wayback_machine_delegate_impl.cc",
+      "huhi_wayback_machine_delegate_impl.h",
+    ]
+
+    deps += [
+      "//huhi/components/huhi_wayback_machine",
+      "//huhi/common:switches",
+    ]
+  }
+
+  if (enable_huhi_sync) {
+    sources += [
+      "sync_v2_migrate_infobar_delegate.cc",
+      "sync_v2_migrate_infobar_delegate.h",
+    ]
+
+    deps += [
+      "//huhi/common:common",
+      "//huhi/components/huhi_sync:features",
+      "//huhi/components/huhi_sync:prefs",
+    ]
+  }
+}

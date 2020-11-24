@@ -1,0 +1,81 @@
+/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "huhi/components/huhi_ads/browser/background_helper_mac.h"
+
+#import <Cocoa/Cocoa.h>
+
+#include "base/logging.h"
+#include "base/mac/foundation_util.h"
+#include "base/mac/mac_logging.h"
+#include "base/mac/mac_util.h"
+#include "base/mac/scoped_nsautorelease_pool.h"
+#include "base/mac/scoped_nsobject.h"
+#include "base/mac/sdk_forward_declarations.h"
+
+@interface BackgroundHelperDelegate : NSObject {
+ @private
+  huhi_ads::BackgroundHelper* helper_;  // NOT OWNED
+}
+
+- (void)appDidBecomeActive:(NSNotification*)notification;
+- (void)appDidResignActive:(NSNotification*)notification;
+
+@end
+
+@implementation BackgroundHelperDelegate
+
+- (id)initWithHelper:(huhi_ads::BackgroundHelper*)helper {
+  if ((self = [super init])) {
+    helper_ = helper;
+
+    NSNotificationCenter* notificationCenter =
+        [NSNotificationCenter defaultCenter];
+    [notificationCenter
+        addObserver:self
+           selector:@selector(appDidBecomeActive:)
+               name:NSApplicationDidBecomeActiveNotification
+             object:nil];
+    [notificationCenter
+        addObserver:self
+           selector:@selector(appDidResignActive:)
+               name:NSApplicationDidResignActiveNotification
+             object:nil];
+  }
+  return self;
+}
+
+- (void)appDidBecomeActive:(NSNotification*)notification {
+  helper_->TriggerOnForeground();
+}
+
+- (void)appDidResignActive:(NSNotification*)notification {
+  helper_->TriggerOnBackground();
+}
+
+@end
+
+namespace huhi_ads {
+
+BackgroundHelperMac::BackgroundHelperMac() {
+  delegate_.reset(
+      [[BackgroundHelperDelegate alloc] initWithHelper:this]);
+}
+
+BackgroundHelperMac::~BackgroundHelperMac() {}
+
+bool BackgroundHelperMac::IsForeground() const {
+  return [[NSApplication sharedApplication] isActive];
+}
+
+BackgroundHelperMac* BackgroundHelperMac::GetInstance() {
+  return base::Singleton<BackgroundHelperMac>::get();
+}
+
+BackgroundHelper* BackgroundHelper::GetInstance() {
+  return BackgroundHelperMac::GetInstance();
+}
+
+}  // namespace huhi_ads

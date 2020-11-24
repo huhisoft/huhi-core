@@ -1,0 +1,10 @@
+COMPANY_FULLNAME=Huhi Software, Inc.
+COMPANY_SHORTNAME=Huhi Software
+PRODUCT_FULLNAME=Huhi Browser Beta
+PRODUCT_SHORTNAME=Huhi
+PRODUCT_INSTALLER_FULLNAME=Huhi Installer
+PRODUCT_INSTALLER_SHORTNAME=Huhi Installer
+COPYRIGHT=Copyright 2016 The Huhi Software Authors. All rights reserved.
+MAC_BUNDLE_ID=com.huhi.Browser.beta
+MAC_CREATOR_CODE=Cr24
+MAC_TEAM_ID=KL8N8XSYF4

@@ -1,0 +1,544 @@
+import("//tools/grit/repack.gni")
+import("//build/config/zip.gni")
+import("//huhi/build/config.gni")
+import("//ui/base/ui_features.gni")
+import("//third_party/icu/config.gni")
+import("//build/config/locales.gni")
+import("//build/util/process_version.gni")
+import("//extensions/buildflags/buildflags.gni")
+import("//media/cdm/library_cdm/cdm_paths.gni")
+import("//tools/v8_context_snapshot/v8_context_snapshot.gni")
+import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
+import("//huhi/build/cargo.gni")
+
+if (!is_ios) {
+  import("//huhi/huhi_paks.gni")
+}
+
+if (is_mac) {
+  import("//build/config/mac/rules.gni")
+  import("//huhi/build/mac/tweak_info_plist.gni")
+}
+
+if (is_linux) {
+  import("//huhi/build/linux/channels.gni")
+}
+
+if (!is_ios) {
+  group("child_dependencies") {
+    deps = [
+      "//huhi/renderer",
+      "//huhi/utility",
+      "common"
+    ]
+  }
+
+  group("browser_dependencies") {
+    deps = [
+      "browser",
+      "chromium_src:browser",
+      "chromium_src/chrome/app",
+      "common",
+      "//components/omnibox/common",
+      "//services/device/public/cpp:device_features",
+    ]
+
+    data_deps = [
+      ":unpacked_resources",
+    ]
+
+    if (!is_ios) {
+      deps += [
+        ":packed_resources",
+      ]
+    }
+  }
+}
+
+if (is_win) {
+  # create_installer_archive.py assumes that last_chrome_installer folder has
+  # courgette.exe.
+  if (build_delta_installer) {
+    copy("copy_courgette_binary") {
+      visibility = [ ":mini_installer_dependencies" ]
+      sources = [ "$root_out_dir/courgette.exe" ]
+      outputs = [ "$root_out_dir/$last_chrome_installer/{{source_file_part}}" ]
+      deps = [
+        "//courgette",
+        "//courgette:copy_courgette_binaries",
+      ]
+    }
+  }
+
+  group("mini_installer_dependencies") {
+    deps = [ ":huhi" ]
+
+    if (build_delta_installer) {
+      deps += [ ":copy_courgette_binary" ]
+    }
+  }
+}
+
+group("huhi") {
+  deps = ["build/$target_os:huhi"]
+  if (!is_android && !is_ios) {
+    deps += [
+      ":generate_version",
+      "//chrome"
+    ]
+  }
+}
+
+group("resources") {
+  public_deps = [
+    # TODO(bridiver)
+    # "//huhi/browser:resources",
+    # "//huhi/common:resources",
+    # "//huhi/renderer:resources",
+    "//huhi/components/resources",
+  ]
+
+  data_deps = [
+    "//huhi/components/resources:about_credits"
+  ]
+}
+
+if (is_android) {
+  android_assets("huhi_pak_assets") {
+    sources = [
+      "$root_build_dir/huhi_resources.pak",
+      "$root_build_dir/huhi_100_percent.pak",
+      "//huhi/LICENSE.html",
+      "//huhi/android/java/org/chromium/chrome/browser/onboarding/animations/onboarding_ads.json",
+      "//huhi/android/java/org/chromium/chrome/browser/onboarding/animations/privacy_protection.json",
+      "//huhi/android/java/org/chromium/chrome/browser/onboarding/animations/save_data_and_battery.json",
+      "//huhi/android/java/org/chromium/chrome/browser/onboarding/animations/website_loads_faster.json",
+      "//huhi/android/java/org/chromium/chrome/browser/onboarding/animations/onboarding_ads_notification.json",
+      "//huhi/android/java/org/chromium/chrome/browser/onboarding/animations/onboarding_rewards.json",
+    ]
+    deps = [
+      "//huhi:browser_dependencies",
+    ]
+    disable_compression = true
+  }
+}
+
+config("rust_link") {
+  # https://bugzilla.mozilla.org/show_bug.cgi?id=1188030#c14
+  if (!is_component_build) {
+    ldflags = [ "-Wl,-no_compact_unwind" ]
+  }
+}
+
+if (is_mac) {
+  group("framework_bundle_data") {
+    # this only seems to work correctly when applied to
+    # the chrome_framework target so we add it here
+    public_configs = [ ":rust_link" ]
+    deps = [
+      "components/huhi_extension/extension/huhi_extension:huhi_extension_framework_bundle_data",
+    ]
+    if (huhi_rewards_enabled) {
+      deps += [
+        "components/huhi_rewards/resources/extension:framework_bundle_data",
+      ]
+    }
+  }
+}
+
+group("unpacked_resources") {
+  if (!is_mac) {
+    deps = []
+    if (enable_extensions) {
+      deps = [
+        "//huhi/components/huhi_extension/extension/huhi_extension:locales",
+      ]
+      if (huhi_rewards_enabled) {
+        deps += [
+          "//huhi/components/huhi_rewards/resources/extension:locales",
+        ]
+      }
+    }
+  }
+}
+
+#TODO(bridiver) - what to do
+if (!is_ios) {
+group("huhi_tests") {
+  testonly = true
+
+  deps = [
+    "test:huhi_unit_tests",
+  ]
+
+  if (!is_android) {
+    deps += [
+      "test:huhi_browser_tests",
+    ]
+  }
+}
+}
+
+if (!is_ios) {
+  huhi_paks("packed_resources") {
+    if (is_mac) {
+      output_dir = "$root_gen_dir/repack"
+      copy_data_to_bundle = true
+    } else {
+      output_dir = root_out_dir
+    }
+  }
+}
+
+branding_dir = "//chrome/app/theme/$branding_path_component"
+copy("theme_files") {
+  visibility = [ ":*" ]
+  sources = [
+    "$branding_dir/product_logo_128_beta.png",
+    "$branding_dir/product_logo_128_dev.png",
+    "$branding_dir/product_logo_128_development.png",
+    "$branding_dir/product_logo_128_nightly.png",
+  ]
+  outputs = [
+    "$root_out_dir/installer/theme/{{source_file_part}}",
+  ]
+}
+
+group("create_dist") {
+  deps = []
+  if (is_android) {
+    deps += [
+      "app/$target_os:create_dist_zips"
+    ]
+  } else if (is_linux) {
+    # zip will be created along with installer
+    deps += [
+      ":create_symbols_dist"
+    ]
+  } else {
+    deps += [
+      ":create_dist_zips"
+    ]
+  }
+  if (is_win) {
+    deps += [
+      "build/win:create_signed_installer"
+    ]
+
+    if (build_omaha) {
+      deps += [
+        "//huhi/vendor/omaha",
+      ]
+    }
+  }
+  if (is_mac) {
+    if (skip_signing) {
+      deps += [
+        "build/mac:unsigned_dmg"
+      ]
+    } else {
+      deps += [
+        "build/mac:finalize_dmg_pkg"
+      ]
+    }
+  }
+  if (is_linux) {
+    deps += [
+      "//chrome/installer/linux:$linux_channel",
+      "//huhi/app/linux:dist_resources",
+      ":theme_files",
+    ]
+  }
+}
+
+if (!is_mac && !is_android && !is_ios) {
+  copy("huhi_locale_dist_resources") {
+    deps = [
+      "//chrome:packed_resources",
+    ]
+
+    sources = []
+    foreach(locale, locales) {
+      sources += [ "$root_out_dir/locales/$locale.pak" ]
+    }
+    outputs = [
+      "$huhi_dist_dir/locales/{{source_file_part}}",
+    ]
+  }
+
+  if (enable_extensions) {
+    group("huhi_extensions_locale_dist_resources") {
+      deps = [
+        "//huhi/components/huhi_extension/extension/huhi_extension:locales",
+      ]
+      if (huhi_rewards_enabled) {
+        deps += [
+          "//huhi/components/huhi_rewards/resources/extension:locales",
+        ]
+      }
+
+      public_deps = []
+      foreach(locale, locales) {
+        # public_deps is used intentionaly because ":create_dist_zip" needs the all dependency
+        # of all locale files.
+        public_deps += [":huhi_shields_locales_${locale}"]
+        if (huhi_rewards_enabled) {
+          public_deps += [":huhi_rewards_locales_${locale}"]
+        }
+      }
+    }
+
+    foreach(locale, locales) {
+      if (huhi_rewards_enabled) {
+        copy("huhi_rewards_locales_${locale}") {
+          deps = [ "//huhi/components/huhi_rewards/resources/extension:locales_$locale" ]
+
+          locale = string_replace(locale, "-", "_")
+          sources = [ "$root_out_dir/resources/huhi_rewards/_locales/$locale/messages.json" ]
+          outputs = [
+            "$huhi_dist_dir/resources/huhi_rewards/_locales/$locale/{{source_file_part}}",
+          ]
+        }
+      }
+      copy("huhi_shields_locales_${locale}") {
+        deps = [ "//huhi/components/huhi_extension/extension/huhi_extension:locales_$locale" ]
+
+        locale = string_replace(locale, "-", "_")
+        sources = [ "$root_out_dir/resources/huhi_extension/_locales/$locale/messages.json" ]
+        outputs = [
+          "$huhi_dist_dir/resources/huhi_extension/_locales/$locale/{{source_file_part}}",
+        ]
+      }
+    }
+  }
+}
+
+copy("huhi_license_dist_resources") {
+  sources = [
+    "//huhi/LICENSE",
+  ]
+
+  outputs = [
+    "$huhi_dist_dir/{{source_file_part}}"
+  ]
+}
+
+process_version("generate_version") {
+  template_file = "version.version"
+  extra_args = [ "-e", "HUHI_BROWSER_VERSION=\"$huhi_version\"" ]
+  output = "$root_out_dir/version"
+  process_only = true
+}
+
+if (!is_android && !is_ios) {
+  copy("huhi_dist_resources") {
+    sources = [ "$root_out_dir/version" ]
+
+    deps = [
+      ":huhi",
+      ":generate_version",
+      ":huhi_license_dist_resources",
+      ":packed_resources",
+      "build/$target_os:huhi",
+      "//chrome:packed_resources",
+      "//third_party/icu:icudata",
+    ]
+
+    if (!is_mac) {
+      sources += [
+        "$root_out_dir/huhi_resources.pak",
+        "$root_out_dir/huhi_100_percent.pak",
+        "$root_out_dir/huhi_200_percent.pak",
+        "$root_out_dir/$huhi_exe",
+        "$root_out_dir/chrome_100_percent.pak",
+        "$root_out_dir/chrome_200_percent.pak",
+        "$root_out_dir/icudtl.dat",
+        "$root_out_dir/resources.pak",
+      ]
+
+      if (v8_use_external_startup_data) {
+        deps += [ "//v8" ]
+
+        if (use_v8_context_snapshot) {
+          sources += [ "$root_out_dir/v8_context_snapshot.bin" ]
+          deps += [ "//tools/v8_context_snapshot" ]
+        } else {
+          sources += [ "$root_out_dir/snapshot_blob.bin" ]
+        }
+      }
+    }
+
+    outputs = [
+      "$huhi_dist_dir/{{source_file_part}}"
+    ]
+  }
+}
+
+if (target_cpu == "x86") {
+  target_arch = "ia32"
+} else {
+  target_arch = target_cpu
+}
+
+action("create_symbols_dist") {
+  output = "$huhi_dist_dir/$huhi_project_name-v$huhi_version-$huhi_platform-$target_arch-symbols.zip"
+
+  script = "//huhi/script/create-dist.py"
+
+  inputs = get_target_outputs(":huhi_license_dist_resources")
+  dir_inputs = [ "$huhi_project_name.breakpad.syms" ]
+
+  file_inputs = []
+  foreach(input, inputs) {
+    file_inputs += [ rebase_path(input, huhi_dist_dir) ]
+  }
+
+  rebase_output = rebase_path(output)
+  rebase_base_dir = rebase_path(huhi_dist_dir)
+
+  args = [
+    "--base-dir=$rebase_base_dir",
+    "--inputs=$file_inputs",
+    "--dir-inputs=$dir_inputs",
+    "--output=$rebase_output",
+  ]
+
+  outputs = [ output ]
+
+  deps = [
+    "app/$current_os:symbol_dist_resources",
+    ":huhi_license_dist_resources",
+  ]
+}
+
+action("create_dist_zips") {
+  output = "$huhi_dist_dir/$huhi_project_name-v$huhi_version-$huhi_platform-$target_arch.zip"
+
+  script = "//huhi/script/create-dist.py"
+
+  inputs = get_target_outputs(":huhi_license_dist_resources")
+
+  if (!is_mac && !is_android && !is_ios) {
+    inputs += get_target_outputs(":huhi_dist_resources")
+    inputs += get_target_outputs(":huhi_locale_dist_resources")
+    if (enable_extensions) {
+      foreach(locale, locales) {
+        inputs += get_target_outputs(":huhi_shields_locales_${locale}")
+        if (huhi_rewards_enabled) {
+          inputs += get_target_outputs(":huhi_rewards_locales_${locale}")
+        }
+      }
+    }
+  }
+
+  if (is_win) {
+    inputs += [
+      "$huhi_dist_dir/chrome_elf.dll",
+    ]
+  }
+
+  file_inputs = []
+  foreach(input, inputs) {
+    file_inputs += [ rebase_path(input, huhi_dist_dir) ]
+  }
+
+  dir_inputs = []
+  if (is_mac) {
+    dir_inputs += [
+      "$huhi_exe",
+    ]
+  }
+
+  outputs = [
+    output
+  ]
+
+  deps = [
+    ":create_symbols_dist",
+    ":huhi_license_dist_resources",
+    "app/$current_os:dist_resources",
+  ]
+
+  if (!is_mac && !is_android && !is_ios) {
+    deps += [
+      ":huhi_dist_resources",
+      ":huhi_locale_dist_resources",
+    ]
+
+    if (enable_extensions) {
+      deps += [
+        ":huhi_extensions_locale_dist_resources",
+      ]
+    }
+  }
+
+  rebase_output = rebase_path(output)
+  if (is_mac) {
+    rebase_base_dir = rebase_path(root_out_dir)
+  } else {
+    rebase_base_dir = rebase_path(huhi_dist_dir, root_out_dir)
+  }
+  args = [
+    "--base-dir=$rebase_base_dir",
+    "--inputs=$file_inputs",
+    "--dir-inputs=$dir_inputs",
+    "--output=$rebase_output",
+  ]
+}
+
+if (is_mac) {
+  group("huhi_app") {
+    deps = [
+      ":huhi_app_plist"
+    ]
+
+    if (enable_sparkle) {
+      deps += [ "//huhi/vendor/sparkle:sparkle_resources_bundle_data" ]
+    }
+  }
+
+  huhi_tweak_info_plist("huhi_app_plist") {
+    info_plist = "$root_gen_dir/chrome/chrome_app_plist_tweaked.plist"
+
+    args = [
+      "--huhi_channel=" + huhi_channel,
+      "--huhi_product_dir_name=" + huhi_product_dir_name,
+      "--huhi_feed_url=" + huhi_feed_url,
+      "--huhi_dsa_file=" + huhi_dsa_file,
+      "--huhi_version=" + huhi_version,
+    ]
+
+    deps = [
+      "//chrome:chrome_app_plist",
+    ]
+  }
+
+  huhi_tweak_info_plist("huhi_helper_plist") {
+    info_plist = "$root_gen_dir/chrome/chrome_helper_plist_tweaked.plist"
+    args = [
+      "--huhi_channel=" + huhi_channel,
+      "--huhi_product_dir_name=" + huhi_product_dir_name,
+      "--huhi_version=" + huhi_version,
+    ]
+
+    deps = [
+      "//chrome:chrome_helper_plist"
+    ]
+  }
+}
+
+action("audit_deps") {
+  script = "//huhi/script/audit_deps.py"
+
+  outputs = [ "$root_gen_dir/non-existent-audit_deps" ]
+
+  args = [
+    "--source_root=" + rebase_path("//huhi"),
+    "--rustup_path=" + rustup_path,
+    "--cargo_path=" + rustup_path,
+  ]
+
+  if (defined(rustc_toolchain)) {
+    args += [ "--toolchain=$rustc_toolchain" ]
+  }
+}

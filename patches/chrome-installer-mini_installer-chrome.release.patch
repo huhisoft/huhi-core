@@ -1,0 +1,36 @@
+diff --git a/chrome/installer/mini_installer/chrome.release b/chrome/installer/mini_installer/chrome.release
+index abfb1fab34d6fc6e531c456337969dafb18d5395..f5a8f6b9aa0938bce7ae3fb970e746362c5c7943 100644
+--- a/chrome/installer/mini_installer/chrome.release
++++ b/chrome/installer/mini_installer/chrome.release
+@@ -6,7 +6,7 @@
+ #
+ # Chrome Application dir entries, sorted alphabetically.
+ #
+-chrome.exe: %(ChromeDir)s\
++huhi.exe: %(ChromeDir)s\
+ chrome_proxy.exe: %(ChromeDir)s\
+ #
+ # Chrome version dir assembly manifest.
+@@ -18,9 +18,14 @@ chrome_proxy.exe: %(ChromeDir)s\
+ #
+ # Chrome version dir entries, sorted alphabetically.
+ #
++huhi.exe.sig: %(VersionDir)s\
+ chrome.dll: %(VersionDir)s\
++chrome.dll.sig: %(VersionDir)s\
++huhi_resources.pak: %(VersionDir)s\
++huhi_100_percent.pak: %(VersionDir)s\
+ chrome_100_percent.pak: %(VersionDir)s\
+ chrome_child.dll: %(VersionDir)s\
++chrome_child.dll.sig: %(VersionDir)s\
+ chrome_elf.dll: %(VersionDir)s\
+ chrome_pwa_launcher.exe: %(VersionDir)s\
+ d3dcompiler_47.dll: %(VersionDir)s\
+@@ -64,6 +69,7 @@ MEIPreload\preloaded_data.pb: %(VersionDir)s\MEIPreload\
+ 
+ [HIDPI]
+ chrome_200_percent.pak: %(VersionDir)s\
++huhi_200_percent.pak: %(VersionDir)s\
+ 
+ [FFMPEG]
+ ffmpeg.dll: %(VersionDir)s\

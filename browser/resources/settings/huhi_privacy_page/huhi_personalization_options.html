@@ -1,0 +1,56 @@
+<link rel="import" href="chrome://resources/html/polymer.html">
+
+<link rel="import" href="chrome://resources/html/i18n_behavior.html">
+<link rel="import" href="chrome://resources/html/web_ui_listener_behavior.html">
+<link rel="import" href="chrome://resources/cr_elements/md_select_css.html">
+<link rel="import" href="huhi_privacy_page_browser_proxy.html">
+<link rel="import" href="../settings_shared_css.html">
+<link rel="import" href="../settings_vars_css.html">
+
+<dom-module id="settings-huhi-personalization-options">
+  <template>
+    <style include="settings-shared md-select iron-flex">
+      .settings-box {
+        display: flex;
+        justify-content: space-between;
+      }
+    </style>
+    <div class="settings-box">
+      <div calss="start" id="labelWrapper">
+        <div class="label">$i18n{webRTCPolicyLabel}</div>
+        <a id="learnMore" href="$i18n{webRTCLearnMoreURL}" target="_blank">
+          $i18n{webRTCPolicySubLabel}
+        </a>
+      </div>
+      <select id="webRTCPolicy" class="md-select"
+          on-change="onWebRTCPolicyChange_">
+        <template is="dom-repeat" items="[[webRTCPolicies_]]">
+          <option value="[[item.value]]"
+              selected="[[webRTCPolicyEqual_(item.value, webRTCPolicy_)]]">
+            [[item.name]]
+          </option>
+        </template>
+      </select>
+    </div>
+    <settings-toggle-button id="p3aEnabled"
+        class="cr-row"
+        pref=""
+        checked="[[p3aEnabled_]]"
+        label="$i18n{p3aEnableTitle}"
+        sub-label="$i18n{p3aEnabledDesc}"
+        on-settings-boolean-control-change="onP3AEnabledChange_">
+    </settings-toggle-button>
+    <settings-toggle-button id="pushMessagingEnabled"
+        class="cr-row"
+        pref="{{prefs.huhi.gcm.channel_status}}"
+        label="$i18n{pushMessagingLabel}">
+        <template is="dom-if" if="[[shouldShowRestart_(
+          prefs.huhi.gcm.channel_status.value)]]">
+        <cr-button on-click="restartBrowser_" slot="more-actions">
+          $i18n{restart}
+        </cr-button>
+      </template>
+    </settings-toggle-button>
+  </template>
+  <script src="huhi_personalization_options.js"></script>
+</dom-module>

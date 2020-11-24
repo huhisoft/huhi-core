@@ -1,0 +1,20 @@
+diff --git a/chrome/chrome_repack_locales.gni b/chrome/chrome_repack_locales.gni
+index b714d4e3b4cef6cc2f24ec2ad6f16be388ae12bf..a5e48daa6479f644cf7549242879b23b42fd1b53 100644
+--- a/chrome/chrome_repack_locales.gni
++++ b/chrome/chrome_repack_locales.gni
+@@ -36,6 +36,7 @@ template("chrome_repack_locales") {
+       "${root_gen_dir}/ui/strings/app_locale_settings_",
+       "${root_gen_dir}/ui/strings/ui_strings_",
+     ]
++    source_patterns += huhi_locale_source_patterns
+     if (!defined(deps)) {
+       deps = []
+     }
+@@ -53,6 +54,7 @@ template("chrome_repack_locales") {
+       "//ui/strings:app_locale_settings",
+       "//ui/strings:ui_strings",
+     ]
++    deps += huhi_locale_deps
+     if (defined(invoker.deps)) {
+       deps += invoker.deps
+     }

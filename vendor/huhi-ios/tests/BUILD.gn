@@ -1,0 +1,31 @@
+import("//build/config/ios/rules.gni")
+
+ios_xctest_test("huhi_rewards_ios_tests") {
+  testonly = true
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10703 is resolved
+  check_includes = false
+  deps = [
+    "//huhi/vendor/huhi-ios:huhi_rewards_ios_framework+link",
+    "//huhi/vendor/bat-native-ledger"
+  ]
+
+  bundle_deps = [
+    "//huhi/vendor/huhi-ios:huhi_rewards_ios_framework+bundle",
+  ]
+
+  configs += [ "//huhi/vendor/huhi-ios:internal_config" ]
+  configs += [ "//build/config/compiler:enable_arc" ]
+
+  frameworks = [
+    "CoreData.framework",
+  ]
+
+  sources = [
+    "main.mm",
+    "ledger_database_test.mm",
+    "dictionary_transform_test.mm",
+    "vector_transform_test.mm",
+    "test_foo.mm",
+    "ads_wrapper_test.mm",
+  ]
+}

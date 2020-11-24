@@ -1,0 +1,29 @@
+static_library("lib") {
+  visibility = [
+    "//huhi/utility:*",
+    "//huhi/test:*",
+  ]
+
+  sources = [
+    "bat_ledger_app.cc",
+    "bat_ledger_app.h",
+    "bat_ledger_client_mojo_bridge.cc",
+    "bat_ledger_client_mojo_bridge.h",
+    "bat_ledger_impl.cc",
+    "bat_ledger_impl.h",
+    "bat_ledger_service_impl.cc",
+    "bat_ledger_service_impl.h",
+  ]
+
+  public_deps = [
+    "public/interfaces",
+  ]
+
+  deps = [
+    "//huhi/base:base",
+    "//huhi/vendor/bat-native-ledger",
+    "//mojo/public/cpp/system",
+    "//services/service_manager/public/cpp",
+  ]
+}
+

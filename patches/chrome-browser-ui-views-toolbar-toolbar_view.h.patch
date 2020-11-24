@@ -1,0 +1,43 @@
+diff --git a/chrome/browser/ui/views/toolbar/toolbar_view.h b/chrome/browser/ui/views/toolbar/toolbar_view.h
+index f4af66fa98b30f80689e0f8776596af720c3fb75..ceeffeafa6603911b2bb84ccb75bc4223ffa028e 100644
+--- a/chrome/browser/ui/views/toolbar/toolbar_view.h
++++ b/chrome/browser/ui/views/toolbar/toolbar_view.h
+@@ -94,12 +94,14 @@ class ToolbarView : public views::AccessiblePaneView,
+   ~ToolbarView() override;
+ 
+   // Create the contents of the Browser Toolbar.
++  virtual
+   void Init();
+ 
+   // Forces the toolbar (and transitively the location bar) to update its
+   // current state.  If |tab| is non-NULL, we're switching (back?) to this tab
+   // and should restore any previous location bar state (such as user editing)
+   // as well.
++  virtual
+   void Update(content::WebContents* tab);
+ 
+   // Updates the visibility of the custom tab bar, potentially animating the
+@@ -130,6 +132,7 @@ class ToolbarView : public views::AccessiblePaneView,
+       IntentPickerResponse callback);
+ 
+   // Shows a bookmark bubble and anchors it appropriately.
++  virtual
+   void ShowBookmarkBubble(const GURL& url,
+                           bool already_bookmarked,
+                           bookmarks::BookmarkBubbleObserver* observer);
+@@ -196,6 +199,7 @@ class ToolbarView : public views::AccessiblePaneView,
+   void ChildPreferredSizeChanged(views::View* child) override;
+ 
+  protected:
++  friend class HuhiToolbarView;
+   // AccessiblePaneView:
+   bool SetPaneFocusAndFocusDefault() override;
+ 
+@@ -243,6 +247,7 @@ class ToolbarView : public views::AccessiblePaneView,
+   views::View* GetViewForDrop() override;
+ 
+   // Loads the images for all the child views.
++  virtual
+   void LoadImages();
+ 
+   // Shows the critical notification bubble against the app menu.

@@ -1,0 +1,28 @@
+source_set("browser") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10624 is resolved
+  check_includes = false
+  if (!is_ios) {
+    sources = [
+      "huhi_content_settings_ephemeral_provider.cc",
+      "huhi_content_settings_ephemeral_provider.h",
+      "huhi_content_settings_pref_provider.cc",
+      "huhi_content_settings_pref_provider.h",
+      "huhi_content_settings_utils.cc",
+      "huhi_content_settings_utils.h",
+    ]
+
+    deps = [
+      "//base",
+      "//huhi/common:network_constants",
+      "//huhi/common:pref_names",
+      "//huhi/common:shield_exceptions",
+      "//huhi/components/huhi_shields/common",
+      "//huhi/components/content_settings/core/common",
+      "//components/content_settings/core/common",
+      "//components/prefs",
+      "//extensions/buildflags",
+      "//net",
+      "//url",
+    ]
+  }
+}

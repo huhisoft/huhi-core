@@ -1,0 +1,12 @@
+diff --git a/content/browser/browser_main_loop.h b/content/browser/browser_main_loop.h
+index 67326c0444035367b37ae4b9af98a4a20e061bc5..e6d9fe4a3c1ffdc904578ed97e868ab44de6acfd 100644
+--- a/content/browser/browser_main_loop.h
++++ b/content/browser/browser_main_loop.h
+@@ -137,6 +137,7 @@ class CONTENT_EXPORT BrowserMainLoop {
+   void PreMainMessageLoopStart();
+   void MainMessageLoopStart();
+   void PostMainMessageLoopStart();
++  virtual
+   void PreShutdown();
+ 
+   // Create and start running the tasks we need to complete startup. Note that

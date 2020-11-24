@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/modules/plugins/dom_plugin_array.cc b/third_party/blink/renderer/modules/plugins/dom_plugin_array.cc
+index c7e41cbb470861f63d7a9c9183f1dad425870619..d3e81bd5fd25abd45301c6474fd31d0e42c6557d 100644
+--- a/third_party/blink/renderer/modules/plugins/dom_plugin_array.cc
++++ b/third_party/blink/renderer/modules/plugins/dom_plugin_array.cc
+@@ -145,6 +145,7 @@ void DOMPluginArray::UpdatePluginData() {
+       }
+     }
+   }
++  HUHI_DOM_PLUGINS_UPDATE_PLUGIN_DATA
+ }
+ 
+ void DOMPluginArray::ContextDestroyed() {

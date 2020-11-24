@@ -1,0 +1,12 @@
+declare_args() {
+  huhi_chromium_build = true
+
+  huhi_services_key = ""
+}
+
+huhi_service_key_defines = []
+if (huhi_services_key != "") {
+  huhi_service_key_defines += [ "HUHI_SERVICES_KEY=\"$huhi_services_key\"" ]
+} else {
+  huhi_service_key_defines += [ "HUHI_SERVICES_KEY=\"dummytoken\"" ]
+}

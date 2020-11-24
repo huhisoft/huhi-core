@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/resources/extensions/extensions.html b/chrome/browser/resources/extensions/extensions.html
+index c5980f41fd1bf20110b8c84b658485bc1f038282..341bb63303900d2d495876c4d4a62b2b1c56cef3 100644
+--- a/chrome/browser/resources/extensions/extensions.html
++++ b/chrome/browser/resources/extensions/extensions.html
+@@ -53,6 +53,7 @@
+       width: 100%;
+     }
+   </style>
++  <link rel="stylesheet" href="chrome://huhi-resources/page_specific/extensions/extensions_loading_shim.css">
+   <script type="module" src="extensions.js"></script>
+ </head>
+ <body>

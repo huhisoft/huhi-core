@@ -1,0 +1,52 @@
+diff --git a/chrome/installer/linux/rpm/build.sh b/chrome/installer/linux/rpm/build.sh
+index 074d57d45118499caf6ba1a215e81240c98733b3..e895da5f3fd58c8f08dc0f87d7703b64f39aad84 100755
+--- a/chrome/installer/linux/rpm/build.sh
++++ b/chrome/installer/linux/rpm/build.sh
+@@ -15,8 +15,9 @@ gen_spec() {
+   # Different channels need to install to different locations so they
+   # don't conflict with each other.
+   local PACKAGE_ORIG="${PACKAGE}"
+-  local PACKAGE_FILENAME="${PACKAGE}-${CHANNEL}"
++  local PACKAGE_FILENAME="${PACKAGE}"
+   if [ "$CHANNEL" != "stable" ]; then
++    local PACKAGE_FILENAME="${PACKAGE}-${CHANNEL}"
+     local INSTALLDIR="${INSTALLDIR}-${CHANNEL}"
+     local PACKAGE="${PACKAGE}-${CHANNEL}"
+     local MENUNAME="${MENUNAME} (${CHANNEL})"
+@@ -87,6 +88,12 @@ do_package() {
+   PROVIDES="${PACKAGE}"
+   RPM_COMMON_DEPS="${OUTPUTDIR}/rpm_common.deps"
+   DEPENDS=$(cat "${RPM_COMMON_DEPS}" | tr '\n' ',')
++
++  # Ensure that our signing key is up-to-date (huhi/huhi-browser#4205).
++  if [ "$CHANNEL" = "stable" ]; then
++    DEPENDS="huhi-keyring, ${DEPENDS}"
++  fi
++
+   gen_spec
+ 
+   # Create temporary rpmbuild dirs.
+@@ -109,7 +116,10 @@ do_package() {
+     --define "__os_install_post  %{nil}" \
+     --define "_build_id_links none" \
+     "${SPEC}"
+-  PKGNAME="${PACKAGE}-${CHANNEL}-${VERSION}-${PACKAGE_RELEASE}"
++  PKGNAME="${PACKAGE}-${VERSION}-${PACKAGE_RELEASE}"
++  if [ "$CHANNEL" != "stable" ]; then
++    PKGNAME="${PACKAGE}-${CHANNEL}-${VERSION}-${PACKAGE_RELEASE}"
++  fi
+   mv "$RPMBUILD_DIR/RPMS/$ARCHITECTURE/${PKGNAME}.${ARCHITECTURE}.rpm" \
+      "${OUTPUTDIR}"
+   # Make sure the package is world-readable, otherwise it causes problems when
+@@ -145,7 +155,10 @@ verify_channel() {
+       CHANNEL=stable
+       ;;
+     unstable|dev|alpha )
+-      CHANNEL=unstable
++      CHANNEL=dev
++      ;;
++    nightly )
++      CHANNEL=nightly
+       ;;
+     testing|beta )
+       CHANNEL=beta

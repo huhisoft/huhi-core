@@ -1,0 +1,9 @@
+import("//build/config/android/rules.gni")
+
+generate_jni("jni_headers") {
+  sources = [
+    "java/org/chromium/chrome/browser/HuhiAdsNativeHelper.java",
+    "java/org/chromium/chrome/browser/dialogs/HuhiAdsSignupDialog.java",
+    "java/org/chromium/chrome/browser/notifications/HuhiAds.java",
+  ]
+}

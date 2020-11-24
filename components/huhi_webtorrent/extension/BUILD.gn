@@ -1,0 +1,16 @@
+import("//huhi/components/common/typescript.gni")
+
+transpile_web_ui("generate_huhi_webtorrent") {
+  entry_points = [
+    ["huhi_webtorrent", rebase_path("huhi_webtorrent.tsx")],
+    ["huhi_webtorrent_background", rebase_path("background.ts")]
+  ]
+
+  resource_name = "huhi_webtorrent"
+
+  # Must match the relative path from the static GRD to the manifest.json
+  # plus any other relative path we want these files to live in the extension
+  extra_relative_path = "/huhi_webtorrent/extension/out"
+
+  public_asset_path = "/extension/out/"
+}

@@ -1,0 +1,12 @@
+diff --git a/chrome/test/base/testing_profile.cc b/chrome/test/base/testing_profile.cc
+index 3ff369ebc25e3aa944b04a9e05bca8a315a545d1..270c8195c21f1ded5520723bfa7d83363f707f29 100644
+--- a/chrome/test/base/testing_profile.cc
++++ b/chrome/test/base/testing_profile.cc
+@@ -325,6 +325,7 @@ void TestingProfile::Init() {
+       EnsureBrowserContextKeyedServiceFactoriesBuilt();
+ 
+ #if BUILDFLAG(ENABLE_SUPERVISED_USERS)
++  HUHI_INIT
+   if (!IsOffTheRecord()) {
+     SupervisedUserSettingsService* settings_service =
+         SupervisedUserSettingsServiceFactory::GetForKey(key_.get());

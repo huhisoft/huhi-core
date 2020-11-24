@@ -1,0 +1,19 @@
+diff --git a/ui/webui/resources/cr_elements/shared_style_css.html b/ui/webui/resources/cr_elements/shared_style_css.html
+index e5f836283c763baabf5cc7465437b3e30a718bd9..00031b06939617fd2ac5234dd9dc2a26fef80eec 100644
+--- a/ui/webui/resources/cr_elements/shared_style_css.html
++++ b/ui/webui/resources/cr_elements/shared_style_css.html
+@@ -3,12 +3,13 @@
+ <link rel="import" href="shared_vars_css.html">
+ <link rel="import" href="hidden_style_css.html">
+ <link rel="import" href="cr_icons_css.html">
++<link rel="import" href="chrome://huhi-resources/br_elements/shared_style_css.html">
+ 
+ <!-- Common styles for Material Design WebUI. Included directly in
+   settings_shared_css.html. -->
+ <dom-module id="cr-shared-style">
+   <template>
+-    <style include="cr-hidden-style cr-icons">
++    <style include="cr-hidden-style br-shared-style cr-icons">
+       html,
+       :host {
+         --scrollable-border-color: var(--google-grey-refresh-300);

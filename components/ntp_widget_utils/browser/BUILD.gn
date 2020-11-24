@@ -1,0 +1,17 @@
+import("//huhi/build/config.gni")
+
+source_set("browser") {
+  sources = [
+    "ntp_widget_utils_oauth.cc",
+    "ntp_widget_utils_oauth.h",
+    "ntp_widget_utils_region.cc",
+    "ntp_widget_utils_region.h",
+  ]
+
+  deps = [
+    "//base",
+    "//components/country_codes",
+    "//components/prefs",
+    "//crypto",
+  ]
+}

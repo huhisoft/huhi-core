@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/extensions/extension_management.h b/chrome/browser/extensions/extension_management.h
+index 13e52e141826bb54a518c64142143c76ed28565d..92598c4c4e0eec399f6c4d0ea8488b284f33079a 100644
+--- a/chrome/browser/extensions/extension_management.h
++++ b/chrome/browser/extensions/extension_management.h
+@@ -197,6 +197,7 @@ class ExtensionManagement : public KeyedService {
+   bool is_child() const { return is_child_; }
+ 
+  private:
++  friend class HuhiExtensionManagement;
+   using SettingsIdMap =
+       std::unordered_map<ExtensionId,
+                          std::unique_ptr<internal::IndividualSettings>>;

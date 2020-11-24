@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grit-part>
+  <!-- Polymer 3.0 Elements -->
+  <include name="IDR_HUHI_WEBUI_PAGE_SPECIFIC_HUHI_HISTORY_ITEM_M_JS"
+           file="${root_gen_dir}/huhi/ui/webui/resources/page_specific/history/huhi_history_item.m.js"
+           use_base_dir="false"
+           type="BINDATA"
+           compress="gzip" />
+</grit-part>

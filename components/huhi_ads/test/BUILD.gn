@@ -1,0 +1,104 @@
+# Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Huhi Software
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import("//huhi/build/config.gni")
+import("//huhi/components/huhi_ads/browser/buildflags/buildflags.gni")
+import("//testing/test.gni")
+
+source_set("huhi_ads_unit_tests") {
+  testonly = true
+  if (huhi_ads_enabled) {
+    sources = [
+      "//huhi/components/huhi_ads/browser/ads_service_impl_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/ad_conversions/ad_conversions_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/ads_client_mock.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/ads_client_mock.h",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/ads_pacing_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/ads_tabs_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/classification/classification_util_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/classification/page_classifier/page_classifier_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/classification/page_classifier/page_classifier_util_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/classification/purchase_intent_classifier/purchase_intent_classifier_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/database/tables/ad_conversions_database_table_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/database/tables/creative_ad_notifications_database_table_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/filters/ads_history_confirmation_filter_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/filters/ads_history_conversion_filter_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/filters/ads_history_date_range_filter_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/conversion_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/daily_cap_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/dismissed_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/landed_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/marked_as_inappropriate_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/marked_to_no_longer_receive_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/per_day_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/per_hour_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/subdivision_targeting_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/exclusion_rules/total_max_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/frequency_capping_unittest_util.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/frequency_capping_unittest_util.h",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/permission_rules/ads_per_day_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/permission_rules/ads_per_hour_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/permission_rules/minimum_wait_time_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/permission_rules/unblinded_tokens_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping/permission_rules/user_activity_frequency_cap_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/platform/platform_helper_mock.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/platform/platform_helper_mock.h",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/privacy/privacy_util_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/privacy/unblinded_tokens/unblinded_tokens_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/privacy/unblinded_tokens/unblinded_tokens_unittest_util.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/privacy/unblinded_tokens/unblinded_tokens_unittest_util.h",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/security/security_util_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/ad_rewards/ad_grants/ad_grants_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/ad_rewards/payments/payments_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/redeem_unblinded_payment_tokens/redeem_unblinded_payment_tokens_url_request_builder_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/redeem_unblinded_token/create_confirmation_url_request_builder_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/redeem_unblinded_token/fetch_payment_token_url_request_builder_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/redeem_unblinded_token/redeem_unblinded_token_delegate_mock.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/redeem_unblinded_token/redeem_unblinded_token_delegate_mock.h",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/redeem_unblinded_token/redeem_unblinded_token_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/refill_unblinded_tokens/get_signed_tokens_url_request_builder_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/server/refill_unblinded_tokens/request_signed_tokens_url_request_builder_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/sorts/ad_conversions/ad_conversions_sort_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/sorts/ads_history/ads_history_sort_unittest.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/unittest_util.cc",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/unittest_util.h",
+      "//huhi/vendor/bat-native-ads/src/bat/ads/internal/url_util_unittest.cc",
+    ]
+
+    if (!is_android) {
+      sources += [
+        # TODO(https://github.com/huhi-intl/bat-native-usermodel/issues/26):
+        # Fix bat-native-user-model unittests fail to load data files from
+        # 'huhi/vendor/bat-native-usermodel/test/data'
+        "//huhi/vendor/bat-native-usermodel/test/usermodel_unittest.cc",
+      ]
+    }
+
+    deps = [
+      "//base/test:test_support",
+      "//huhi/base:base",
+      "//huhi/browser:browser_process",
+      "//huhi/components/huhi_ads/browser:browser",
+      "//huhi/components/huhi_ads/browser:testutil",
+      "//huhi/components/huhi_rewards/browser:browser",
+      "//huhi/components/huhi_rewards/common:common",
+      "//huhi/components/huhi_rewards/test:huhi_rewards_unit_tests",
+      "//huhi/components/challenge_bypass_ristretto",
+      "//huhi/test:huhi_browser_tests",
+      "//huhi/vendor/bat-native-ads",
+      "//huhi/vendor/bat-native-ledger",
+      "//huhi/vendor/bat-native-rapidjson",
+      "//huhi/vendor/bat-native-usermodel",
+      "//chrome/browser:browser",
+      "//components/prefs:prefs",
+      "//content/test:test_support",
+    ]
+
+    data = [ "//huhi/vendor/bat-native-ads/data/" ]
+
+    configs += [ "//huhi/vendor/bat-native-ads:internal_config" ]
+
+  }  # if (huhi_ads_enabled)
+}  # source_set("huhi_ads_unit_tests")

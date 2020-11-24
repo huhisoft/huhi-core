@@ -1,0 +1,16 @@
+import("//chrome/browser/resources/settings/settings.gni")
+
+settings_namespace_rewrites += [
+  "settings.HuhiAppearanceBrowserProxyImpl|HuhiAppearanceBrowserProxyImpl",
+  "settings.HuhiDefaultExtensionsBrowserProxyImpl|HuhiDefaultExtensionsBrowserProxyImpl",
+  "settings.HuhiNewTabBrowserProxyImpl|HuhiNewTabBrowserProxyImpl",
+  "settings.HuhiPrivacyBrowserProxyImpl|HuhiPrivacyBrowserProxyImpl",
+  "settings.HuhiSyncBrowserProxy|HuhiSyncBrowserProxy",
+  "settings.DefaultHuhiShieldsBrowserProxyImpl|DefaultHuhiShieldsBrowserProxyImpl",
+  "settings.SocialBlockingPageProxyImpl|SocialBlockingPageProxyImpl",
+  "settings.Router|Router"
+]
+
+settings_auto_imports += [
+  "chrome/browser/resources/settings/router.html|Router,Route,RouteObserverBehavior",
+]

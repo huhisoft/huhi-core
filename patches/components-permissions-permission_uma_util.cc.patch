@@ -1,0 +1,21 @@
+diff --git a/components/permissions/permission_uma_util.cc b/components/permissions/permission_uma_util.cc
+index a5475f3b4433c4656606b4d747fc4e21a3a0f100..4254c39723f72b9b7031be976d0ff64f7a1c9c51 100644
+--- a/components/permissions/permission_uma_util.cc
++++ b/components/permissions/permission_uma_util.cc
+@@ -50,7 +50,7 @@ namespace {
+ 
+ const int kPriorCountCap = 10;
+ 
+-std::string GetPermissionRequestString(PermissionRequestType type) {
++std::string GetPermissionRequestString_ChromiumImpl(PermissionRequestType type) {
+   switch (type) {
+     case PermissionRequestType::MULTIPLE:
+       return "AudioAndVideoCapture";
+@@ -565,6 +565,7 @@ void PermissionUmaUtil::RecordPermissionAction(
+       base::UmaHistogramEnumeration("Permissions.Action.FontAccess", action,
+                                     PermissionAction::NUM);
+       break;
++    HUHI_PERMISSIONUMAUTIL_RECORDPERMISSIONACTION
+     // The user is not prompted for these permissions, thus there is no
+     // permission action recorded for them.
+     default:

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+     This Source Code Form is subject to the terms of the Huhi Software
+     License, v. 2.0. If a copy of the MPL was not distributed with this file,
+     You can obtain one at http://mozilla.org/MPL/2.0/.
+-->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Theme colors -->
+    <!-- Overriding chromium theme colors to huhi theme colors -->
+    <color name="modern_blue_300">#FF7654</color>
+    <color name="modern_blue_600">#EA3A0D</color>
+    <color name="modern_blue_700">#C22700</color>
+    <color name="black_alpha_30">#4D000000</color>
+    <color name="black_alpha_50">#80000000</color>
+
+    <!-- Onborading colors -->
+    <color name="onboarding_orange">#fb542b</color>
+    <color name="onboarding_gray">#84889c</color>
+    <color name="onboarding_black">#1e2029</color>
+    <color name="onboarding_radio_button_active">#f0f1ff</color>
+
+    <color name="onboarding_timer_color">#4f30ab</color>
+
+    <color name="onboarding_text_color">@color/onboarding_black</color>
+    <color name="onboarding_bg_color">@android:color/white</color>
+
+    <color name="onboarding_progressbar_secondary_bg">#ced4da</color>
+    <color name="onboarding_progress_start_color">#FA7250</color>
+    <color name="onboarding_progress_mid_color">#FF1893</color>
+    <color name="onboarding_progress_end_color">#4F30AB</color>
+    <color name="onboarding_indicator_selected_color">#FF7654</color>
+    <color name="onboarding_indicator_default_color">#C2C4CF</color>
+
+    <color name="huhi_shield_bg_color">@color/default_primary_color</color>
+
+    <!-- Sync colors -->
+    <color name="huhi_sync_bg_color">@color/modern_grey_50</color>
+    <color name="huhi_sync_border_color">@color/modern_grey_50</color>
+    <color name="huhi_sync_bg_secondary_color">@android:color/white</color>
+
+    <color name="huhi_set_default_dialog_text_color">@color/modern_grey_700</color>
+
+    <!-- Theme colors -->
+    <color name="huhi_theme_color">#fb542b</color>
+    <color name="huhi_rewards_theme_color">#392DD1</color>
+
+    <!-- Incognito mode colors -->
+    <color name="ntp_bg_incognito">@color/incognito_modern_primary_color</color>
+
+    <!-- Incognito background and branding colors -->
+    <color name="incognito_modern_primary_color">#210950</color>
+
+    <color name="toolbar_background_primary_incognito">#1B0C32</color>
+    <color name="toolbar_text_box_background_incognito">#3D2742</color>
+
+    <color name="tab_back_incognito">@color/toolbar_background_primary_incognito</color>
+
+    <color name="compositor_background_tab_bg_incognito">@color/toolbar_background_primary_incognito</color>
+    <color name="compositor_background_tab_outline_incognito">@color/toolbar_background_primary_incognito</color>
+    <color name="compositor_tab_title_bar_text_incognito">@android:color/white</color>
+
+    <!-- Incognito NTP Colors. -->
+    <color name="incognito_emphasis">@android:color/white</color>
+
+    <color name="find_in_page_query_incognito_hint_color">@color/white_alpha_70</color>
+
+    <color name="new_tab_menu_text_dark_color">@android:color/white</color>
+    <color name="new_tab_menu_bg_dark_color">@color/modern_grey_800</color>
+    <color name="ntp_non_disruptive_banner_bg_color">#E6343a40</color>
+    <color name="translucent_activity_background_color">#AA3B3B3B</color>
+    <color name="user_wallet_background">#F1F3F5</color>
+    <color name="user_wallet_status">#49CC69</color>
+
+    <!-- User wallet -->
+    <color name="user_wallet_dimmed_note">#E6E3F4</color>
+
+    <color name="qr_button_color">@android:color/white</color>
+    <color name="section_divider_color">#c8c7cc</color>
+    <color name="shield_title_color">@android:color/black</color>
+    <color name="shield_text_color">#212529</color>
+    <color name="shield_advanced_controls_color">#222326</color>
+
+    <color name="shield_bg_color">#FFFFFF</color>
+    <color name="shield_back_button_tint">@color/huhi_theme_color</color>
+
+    <color name="shield_toggle_button_tint">#5E6175</color>
+    <color name="shield_toggle_bg_color">#F8F9FA</color>
+    
+    <color name="shield_secondary_color">#868E96</color>
+    <color name="shield_divider_color">#c8c7cc</color>
+    <color name="shield_option_text_color">#777777</color>
+    <color name="shield_rounded_button_color">#C2C4CF</color>
+    <color name="shield_thank_you_icon_color">#212529</color>
+
+    <color name="huhi_stats_ads_color">#FB542B</color>
+    <color name="huhi_stats_data_saved_color">#4C54D2</color>
+    <color name="huhi_state_time_count_color">#212529</color>
+
+    <color name="huhi_stats_title_color">#868E96</color>
+    <color name="huhi_stats_text_color">#212529</color>
+
+    <color name="huhi_stats_bg_color">#FFFFFF</color>
+    <color name="huhi_stats_bg_color_20_alpha">#33212529</color>
+    <color name="huhi_stats_close_button_color">#495057</color>
+    <color name="huhi_stats_radio_group_bg">#E9E9F4</color>
+    <color name="huhi_stats_empty_text_color">#339AF0</color>
+    <color name="huhi_stats_empty_bg_color">#335DB5FC</color>
+    <color name="huhi_stats_empty_border_color">#5DB5FC</color>
+    <color name="huhi_stats_badge_tint_color">#495057</color>
+    <color name="huhi_stats_radio_button_active">@android:color/white</color>
+</resources>

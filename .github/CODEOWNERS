@@ -1,0 +1,69 @@
+patches/ @bridiver
+chromium_src/ @bridiver
+script/build-bisect.py @bsclifton
+script/uplift.py @bsclifton
+vendor/huhi-ios/ @kylehickinson
+/README.md @bsclifton
+Jenkinsfile @mihaiplesa
+
+# Rewards
+browser/huhi_rewards/ @NejcZdovc
+browser/extensions/api/huhi_rewards_api.cc @NejcZdovc
+browser/extensions/api/huhi_rewards_api.h @NejcZdovc
+browser/ui/webui/huhi_rewards_page_ui.cc @NejcZdovc
+browser/ui/webui/huhi_rewards_page_ui.h @NejcZdovc
+browser/ui/webui/huhi_rewards_ui.cc @NejcZdovc
+browser/ui/webui/huhi_rewards_ui.h @NejcZdovc
+components/huhi_rewards/ @NejcZdovc
+components/services/bat_ledger/ @NejcZdovc
+vendor/bat-native-ledger/ @NejcZdovc
+
+# Ads
+vendor/bat-native-ads/ @tmancey
+components/huhi_ads/ @tmancey
+components/services/bat_ads/ @tmancey
+
+# Network
+browser/net/ @iefremov
+
+# Huhi theme
+browser/themes @simonhong
+
+# Widevine
+browser/widevine @simonhong
+
+# Wayback machine
+browser/ui/views/infobars/huhi_wayback_machine_* @simonhong
+components/huhi_wayback_machine @simonhong
+
+# Licensing of third-party components
+common/licenses/ @fmarier
+script/huhi_license_helper.py @fmarier
+script/check_npm_licenses.py @fmarier
+script/generate_licenses.py @fmarier
+
+# Crypto Wallets
+browser/huhi_wallet/ @bbondy @ryanml
+components/huhi_wallet/ @bbondy @ryanml
+
+# Huhi Referrals Service
+components/huhi_referrals/browser/huhi_referrals_service* @simonhong
+
+# Huhi Sync
+components/huhi_sync/ @darkdh
+components/sync/driver/ @darkdh
+chromium_src/components/sync/ @darkdh
+chromium_src/components/sync_device_info/device_info_sync_bridge.cc @darkdh
+
+# Speedreader
+browser/speedreader/ @iefremov
+components/speedreader/ @iefremov
+
+# P3A
+browser/p3a/ @iefremov
+components/huhi_prochlo/ @iefremov
+components/p3a/ @iefremov
+components/weekly_storage/ @iefremov
+
+# Perf predictor
+components/huhi_perf_predictor/ @iefremov

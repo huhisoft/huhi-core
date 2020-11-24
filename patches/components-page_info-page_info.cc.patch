@@ -1,0 +1,12 @@
+diff --git a/components/page_info/page_info.cc b/components/page_info/page_info.cc
+index 08a84c7ff5ebf00cd460b5a914edaa67773e1811..33dc8ec45065a96033f790bdc9b78a73182aaec5 100644
+--- a/components/page_info/page_info.cc
++++ b/components/page_info/page_info.cc
+@@ -967,6 +967,7 @@ void PageInfo::PresentSitePermissions() {
+       }
+     }
+ 
++    HUHI_PAGE_INFO_SHOULD_SHOW_PERMISSION
+     if (ShouldShowPermission(
+             permission_info, site_url_, content_settings, web_contents(),
+             HasContentSettingChangedViaPageInfo(permission_info.type),

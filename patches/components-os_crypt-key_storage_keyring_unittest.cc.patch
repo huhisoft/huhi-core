@@ -1,0 +1,13 @@
+diff --git a/components/os_crypt/key_storage_keyring_unittest.cc b/components/os_crypt/key_storage_keyring_unittest.cc
+index 010febfe974a2bdd2efb52c78b1fc16c5d248768..520063e47c568a469d9ee3462e371d2bc5f2b7e5 100644
+--- a/components/os_crypt/key_storage_keyring_unittest.cc
++++ b/components/os_crypt/key_storage_keyring_unittest.cc
+@@ -18,7 +18,7 @@ namespace {
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+ const char kApplicationName[] = "chrome";
+ #else
+-const char kApplicationName[] = "chromium";
++const char kApplicationName[] = "huhi";
+ #endif
+ 
+ // Replaces some of GnomeKeyringLoader's methods with mocked ones.

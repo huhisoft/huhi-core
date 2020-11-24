@@ -1,0 +1,22 @@
+<style include="settings-shared iron-flex">
+</style>
+<settings-animated-pages id="pages" section="huhiSync">
+  <div route-path="default">
+    <cr-link-row id="huhi-sync-setup"
+      label$="[[syncLabel_]]"
+      on-click="onSyncTap_"
+      role-description="$i18n{subpageArrowRoleDescription}">
+    </cr-link-row>
+  </div>
+
+  <template is="dom-if" route-path="/huhiSync/setup">
+    <settings-subpage
+      associated-control="[[$$('#huhi-sync-setup')]]"
+      page-title="[[syncLabel_]]">
+      <settings-huhi-sync-subpage
+          sync-status="[[syncStatus_]]">
+      </settings-huhi-sync-subpage>
+    </settings-subpage>
+
+  </template>
+</settings-animated-pages>

@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/chrome_pages.cc b/chrome/browser/ui/chrome_pages.cc
+index c988ba9c4101ee947de2bed7288222875bbdf944..b6172ac9accef6dbeb9442cdd81195a3f0e5de01 100644
+--- a/chrome/browser/ui/chrome_pages.cc
++++ b/chrome/browser/ui/chrome_pages.cc
+@@ -369,7 +369,7 @@ void ShowSlow(Browser* browser) {
+ #endif
+ }
+ 
+-GURL GetSettingsUrl(const std::string& sub_page) {
++HUHI_GET_SETTINGS_URL
+   return GURL(std::string(kChromeUISettingsURL) + sub_page);
+ }
+ 

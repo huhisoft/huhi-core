@@ -1,0 +1,153 @@
+import("//huhi/build/config.gni")
+import("//huhi/components/huhi_ads/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
+
+source_set("browser") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10639 is resolved
+  check_includes = false
+  public_deps = [
+    "buildflags",
+  ]
+
+  sources = [
+    "ads_service.cc",
+    "ads_service.h",
+    "ads_service_factory.cc",
+    "ads_service_factory.h",
+    "ads_service_observer.h",
+    "ads_tab_helper.cc",
+    "ads_tab_helper.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/common",
+    "//huhi/components/huhi_ads/common",
+    "//huhi/components/huhi_rewards/common",
+    "//huhi/components/huhi_rewards/browser",
+    "//huhi/components/l10n/browser",
+    "//chrome/common:buildflags",
+    "//components/dom_distiller/content/browser",
+    "//components/dom_distiller/core",
+    "//components/keyed_service/content",
+    "//components/keyed_service/core",
+    "//components/prefs",
+    "//components/pref_registry",
+    "//components/sessions",
+    "//url",
+    # for profile.h
+    "//components/domain_reliability",
+    "//content/public/browser",
+    "//content/public/common",
+  ]
+
+  if (huhi_ads_enabled) {
+    sources += [
+      "ad_notification.cc",
+      "ad_notification.h",
+      "ads_notification_handler.cc",
+      "ads_notification_handler.h",
+      "ads_p2a.cc",
+      "ads_p2a.h",
+      "ads_service_impl.cc",
+      "ads_service_impl.h",
+      "background_helper.cc",
+      "background_helper.h",
+      "notification_helper.cc",
+      "notification_helper.h",
+    ]
+
+    deps += [
+      "//huhi/vendor/bat-native-ads",
+      "//huhi/components/huhi_ads/resources",
+      "//huhi/components/services/bat_ads/public/cpp",
+      "//components/history/core/browser",
+      "//components/history/core/common",
+      "//components/wifi",
+      "//net",
+      "//services/network/public/cpp",
+      "//services/network/public/mojom",
+      "//ui/base",
+      "//ui/message_center/public/cpp",
+    ]
+
+    if (is_android) {
+      sources += [
+        "background_helper_android.cc",
+        "background_helper_android.h",
+        "notification_helper_android.cc",
+        "notification_helper_android.h",
+      ]
+      deps += [
+        "//huhi/browser/huhi_ads/android:jni_headers",
+        "//huhi/build/android:jni_headers",
+        "//chrome/android:jni_headers",
+      ]
+    }
+
+    if (is_linux) {
+      sources += [
+        "background_helper_linux.cc",
+        "background_helper_linux.h",
+        "notification_helper_linux.cc",
+        "notification_helper_linux.h",
+      ]
+      deps += [ "//ui/gfx/x" ]
+    }
+
+    if (is_mac) {
+      sources += [
+        "background_helper_mac.h",
+        "background_helper_mac.mm",
+        "notification_helper_mac.h",
+        "notification_helper_mac.mm",
+      ]
+    }
+
+    if (is_win) {
+      sources += [
+        "background_helper_win.cc",
+        "background_helper_win.h",
+        "notification_helper_win.cc",
+        "notification_helper_win.h",
+      ]
+      deps += [
+        "//ui/views",
+        "//ui/gfx",
+      ]
+    }
+  }
+}
+
+source_set("testutil") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10650 is resolved
+  check_includes = false
+  testonly = true
+
+  deps = [
+    ":browser",
+    "//base",
+    "//content/public/browser",
+    "//chrome/test:test_support",
+    "//testing/gtest",
+  ]
+
+  if (huhi_ads_enabled) {
+    deps += [
+      "//huhi/vendor/bat-native-ads",
+    ]
+
+    configs += [
+      "//huhi/vendor/bat-native-ads:internal_config"
+    ]
+  }
+
+  sources = [
+    "test_util.cc",
+    "test_util.h",
+  ]
+
+  if (is_android) {
+    deps += [ "//chrome/android:test_support_jni_headers" ]
+  }
+}

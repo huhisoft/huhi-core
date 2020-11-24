@@ -1,0 +1,20 @@
+diff --git a/chrome/common/extensions/chrome_extensions_client.cc b/chrome/common/extensions/chrome_extensions_client.cc
+index cdf3fff06145a398cdca4d4b3765f63dd73bd4f7..a50646299fe6c5a80f06b5181150970aac4982bc 100644
+--- a/chrome/common/extensions/chrome_extensions_client.cc
++++ b/chrome/common/extensions/chrome_extensions_client.cc
+@@ -13,6 +13,7 @@
+ #include "base/metrics/histogram_macros.h"
+ #include "base/strings/string_util.h"
+ #include "base/values.h"
++#include "huhi/common/extensions/huhi_extensions_api_provider.h"
+ #include "chrome/common/chrome_switches.h"
+ #include "chrome/common/extensions/chrome_extensions_api_provider.h"
+ #include "chrome/common/extensions/manifest_handlers/theme_handler.h"
+@@ -57,6 +58,7 @@ const char kThumbsWhiteListedExtension[] = "khopmbdjffemhegeeobelklnbglcdgfh";
+ ChromeExtensionsClient::ChromeExtensionsClient() {
+   AddAPIProvider(std::make_unique<ChromeExtensionsAPIProvider>());
+   AddAPIProvider(std::make_unique<CoreExtensionsAPIProvider>());
++  AddAPIProvider(std::make_unique<HuhiExtensionsAPIProvider>());
+ }
+ 
+ ChromeExtensionsClient::~ChromeExtensionsClient() {

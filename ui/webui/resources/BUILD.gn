@@ -1,0 +1,74 @@
+import("//tools/grit/grit_rule.gni")
+import("//ui/webui/webui_features.gni")
+import("//tools/polymer/polymer.gni")
+
+grit("resources") {
+  defines = [ "optimize_webui=$optimize_webui" ]
+  source = "huhi_webui_resources.grd"
+
+  deps = [ ":modulize" ]
+
+  # The .grd contains references to generated files.
+  enable_input_discovery_for_gn_analyze = true
+
+  outputs = [
+    "grit/huhi_webui_resources.h",
+    "grit/huhi_webui_resources_map.cc",
+    "grit/huhi_webui_resources_map.h",
+    "huhi_webui_resources.pak",
+  ]
+
+  resource_ids = "//huhi/browser/resources/resource_ids"
+
+  grit_flags = [
+    "-E",
+    "root_gen_dir=" + rebase_path(root_gen_dir, root_build_dir),
+  ]
+}
+
+copy("rollup_resources") {
+  visibility = [ ":*" ]
+
+  sources = [
+    "polymer_overriding.js",
+  ]
+
+  outputs = [
+    "$root_gen_dir/huhi/ui/webui/resources/{{source_file_part}}",
+  ]
+}
+
+copy("override_resources") {
+  visibility = [ ":*" ]
+
+  sources = [
+    "overrides/cr_button.js",
+    "overrides/cr_toggle.js",
+  ]
+
+  outputs = [
+    "$root_gen_dir/huhi/ui/webui/resources/overrides/{{source_file_part}}",
+  ]
+}
+
+copy("rollup_overrides") {
+  visibility = [ ":*" ]
+
+  sources = [
+    "tools/huhi_rollup_overrides.js",
+  ]
+
+  outputs = [
+    "$root_gen_dir/chrome/browser/resources/{{source_file_part}}",
+  ]
+}
+
+group("modulize") {
+  deps = [
+    ":rollup_resources",
+    ":override_resources",
+    ":rollup_overrides",
+    "br_elements:polymer3_elements",
+    "page_specific:polymer3_elements",
+  ]
+}

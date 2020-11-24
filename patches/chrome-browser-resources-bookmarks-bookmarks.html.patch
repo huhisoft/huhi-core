@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/resources/bookmarks/bookmarks.html b/chrome/browser/resources/bookmarks/bookmarks.html
+index 2b1fee2c9f2d054358ecb29ebb3eefb9f7142f21..cf27a210b16b54dd76292534b5910ebbf4d3176f 100644
+--- a/chrome/browser/resources/bookmarks/bookmarks.html
++++ b/chrome/browser/resources/bookmarks/bookmarks.html
+@@ -28,6 +28,7 @@
+       height: var(--md-toolbar-height);
+     }
+   </style>
++  <link rel="stylesheet" href="chrome://huhi-resources/page_specific/bookmarks/bookmarks_loading_shim.css">
+ </head>
+ <body>
+   <bookmarks-app></bookmarks-app>

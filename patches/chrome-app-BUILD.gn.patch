@@ -1,0 +1,22 @@
+diff --git a/chrome/app/BUILD.gn b/chrome/app/BUILD.gn
+index 25423aabc06fea888727bec369c74056a0b8db31..d38ce64e036b82b774ff0e3bac826998b0160364 100644
+--- a/chrome/app/BUILD.gn
++++ b/chrome/app/BUILD.gn
+@@ -73,6 +73,8 @@ grit("generated_resources") {
+   if (is_android) {
+     outputs += android_generated_java_resources
+   }
++
++  deps = [ "//huhi/app:huhi_generated_resources_grit" ]
+ }
+ 
+ if (is_android) {
+@@ -95,7 +97,7 @@ grit("google_chrome_strings") {
+ }
+ 
+ grit("chromium_strings") {
+-  source = "chromium_strings.grd"
++  source = "${branding_path_component}_strings.grd"
+   defines = chrome_grit_defines
+   output_dir = "$root_gen_dir/chrome"
+   outputs =

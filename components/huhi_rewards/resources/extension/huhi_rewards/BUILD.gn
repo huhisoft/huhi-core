@@ -1,0 +1,25 @@
+import("//huhi/components/common/typescript.gni")
+
+group("huhi_rewards") {
+  deps = [
+    ":huhi_rewards_panel",
+  ]
+}
+
+transpile_web_ui("huhi_rewards_panel") {
+  entry_points = [
+    ["huhi_rewards_panel", rebase_path("huhi_rewards_panel.tsx")],
+    ["huhi_rewards_panel_background", rebase_path("background.ts")],
+    ["huhi_rewards_panel_content_twitter", rebase_path("content_scripts/twitter.ts")],
+    ["huhi_rewards_panel_content_reddit", rebase_path("content_scripts/reddit.ts")],
+    ["huhi_rewards_panel_content_github", rebase_path("content_scripts/github.ts")]
+  ]
+
+  resource_name = "huhi_rewards_panel"
+
+  # Must match the relative path from the static GRD to the manifest.json
+  # plus any other relative path we want these files to live in the extension
+  extra_relative_path = "/huhi_rewards/out"
+
+  public_asset_path = "/out/"
+}

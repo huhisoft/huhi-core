@@ -1,0 +1,23 @@
+/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Huhi Software
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#ifndef HUHI_COMPONENTS_NTP_BACKGROUND_IMAGES_BROWSER_URL_CONSTANTS_H_
+#define HUHI_COMPONENTS_NTP_BACKGROUND_IMAGES_BROWSER_URL_CONSTANTS_H_
+
+namespace ntp_background_images {
+
+extern const char kBrandedWallpaperHost[];
+extern const char kLogoPath[];
+extern const char kWallpaperPathPrefix[];
+extern const char kSuperReferralPath[];
+extern const char kSponsoredImagesPath[];
+
+extern const char kPublicKey[];
+extern const char kComponentID[];
+extern const char kThemeName[];
+
+}  // namespace ntp_background_images
+
+#endif  // HUHI_COMPONENTS_NTP_BACKGROUND_IMAGES_BROWSER_URL_CONSTANTS_H_

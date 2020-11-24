@@ -1,0 +1,1313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file contains all "about" strings.  It is set to NOT be translated, in translation_expectations.pyl.  en-US only.
+-->
+<grit current_release="1" latest_public_release="0" output_all_resource_defines="false">
+  <outputs>
+    <output filename="values-af/android_huhi_strings.xml" lang="af" type="android" />
+    <output filename="values-am/android_huhi_strings.xml" lang="am" type="android" />
+    <output filename="values-ar/android_huhi_strings.xml" lang="ar" type="android" />
+    <output filename="values-as/android_huhi_strings.xml" lang="as" type="android" />
+    <output filename="values-az/android_huhi_strings.xml" lang="az" type="android" />
+    <output filename="values-be/android_huhi_strings.xml" lang="be" type="android" />
+    <output filename="values-bg/android_huhi_strings.xml" lang="bg" type="android" />
+    <output filename="values-bn/android_huhi_strings.xml" lang="bn" type="android" />
+    <output filename="values-bs/android_huhi_strings.xml" lang="bs" type="android" />
+    <output filename="values-ca/android_huhi_strings.xml" lang="ca" type="android" />
+    <output filename="values-cs/android_huhi_strings.xml" lang="cs" type="android" />
+    <output filename="values-da/android_huhi_strings.xml" lang="da" type="android" />
+    <output filename="values-de/android_huhi_strings.xml" lang="de" type="android" />
+    <output filename="values-el/android_huhi_strings.xml" lang="el" type="android" />
+    <output filename="values/android_huhi_strings.xml" lang="en" type="android" />
+    <output filename="values-en-rGB/android_huhi_strings.xml" lang="en-GB" type="android" />
+    <output filename="values-es/android_huhi_strings.xml" lang="es" type="android" />
+    <output filename="values-es-rUS/android_huhi_strings.xml" lang="es-419" type="android" />
+    <output filename="values-et/android_huhi_strings.xml" lang="et" type="android" />
+    <output filename="values-eu/android_huhi_strings.xml" lang="eu" type="android" />
+    <output filename="values-fa/android_huhi_strings.xml" lang="fa" type="android" />
+    <output filename="values-fi/android_huhi_strings.xml" lang="fi" type="android" />
+    <output filename="values-tl/android_huhi_strings.xml" lang="fil" type="android" />
+    <output filename="values-fr/android_huhi_strings.xml" lang="fr" type="android" />
+    <output filename="values-fr-rCA/android_huhi_strings.xml" lang="fr-CA" type="android" />
+    <output filename="values-gl/android_huhi_strings.xml" lang="gl" type="android" />
+    <output filename="values-gu/android_huhi_strings.xml" lang="gu" type="android" />
+    <output filename="values-hi/android_huhi_strings.xml" lang="hi" type="android" />
+    <output filename="values-hr/android_huhi_strings.xml" lang="hr" type="android" />
+    <output filename="values-hu/android_huhi_strings.xml" lang="hu" type="android" />
+    <output filename="values-hy/android_huhi_strings.xml" lang="hy" type="android" />
+    <output filename="values-in/android_huhi_strings.xml" lang="id" type="android" />
+    <output filename="values-is/android_huhi_strings.xml" lang="is" type="android" />
+    <output filename="values-it/android_huhi_strings.xml" lang="it" type="android" />
+    <output filename="values-iw/android_huhi_strings.xml" lang="iw" type="android" />
+    <output filename="values-ja/android_huhi_strings.xml" lang="ja" type="android" />
+    <output filename="values-ka/android_huhi_strings.xml" lang="ka" type="android" />
+    <output filename="values-kk/android_huhi_strings.xml" lang="kk" type="android" />
+    <output filename="values-km/android_huhi_strings.xml" lang="km" type="android" />
+    <output filename="values-kn/android_huhi_strings.xml" lang="kn" type="android" />
+    <output filename="values-ko/android_huhi_strings.xml" lang="ko" type="android" />
+    <output filename="values-ky/android_huhi_strings.xml" lang="ky" type="android" />
+    <output filename="values-lo/android_huhi_strings.xml" lang="lo" type="android" />
+    <output filename="values-lt/android_huhi_strings.xml" lang="lt" type="android" />
+    <output filename="values-lv/android_huhi_strings.xml" lang="lv" type="android" />
+    <output filename="values-mk/android_huhi_strings.xml" lang="mk" type="android" />
+    <output filename="values-ml/android_huhi_strings.xml" lang="ml" type="android" />
+    <output filename="values-mn/android_huhi_strings.xml" lang="mn" type="android" />
+    <output filename="values-mr/android_huhi_strings.xml" lang="mr" type="android" />
+    <output filename="values-ms/android_huhi_strings.xml" lang="ms" type="android" />
+    <output filename="values-my/android_huhi_strings.xml" lang="my" type="android" />
+    <output filename="values-ne/android_huhi_strings.xml" lang="ne" type="android" />
+    <output filename="values-nl/android_huhi_strings.xml" lang="nl" type="android" />
+    <output filename="values-nb/android_huhi_strings.xml" lang="no" type="android" />
+    <output filename="values-or/android_huhi_strings.xml" lang="or" type="android" />
+    <output filename="values-pa/android_huhi_strings.xml" lang="pa" type="android" />
+    <output filename="values-pl/android_huhi_strings.xml" lang="pl" type="android" />
+    <output filename="values-pt-rBR/android_huhi_strings.xml" lang="pt-BR" type="android" />
+    <output filename="values-pt-rPT/android_huhi_strings.xml" lang="pt-PT" type="android" />
+    <output filename="values-ro/android_huhi_strings.xml" lang="ro" type="android" />
+    <output filename="values-ru/android_huhi_strings.xml" lang="ru" type="android" />
+    <output filename="values-si/android_huhi_strings.xml" lang="si" type="android" />
+    <output filename="values-sk/android_huhi_strings.xml" lang="sk" type="android" />
+    <output filename="values-sl/android_huhi_strings.xml" lang="sl" type="android" />
+    <output filename="values-sq/android_huhi_strings.xml" lang="sq" type="android" />
+    <output filename="values-sr/android_huhi_strings.xml" lang="sr" type="android" />
+    <output filename="values-sv/android_huhi_strings.xml" lang="sv" type="android" />
+    <output filename="values-sw/android_huhi_strings.xml" lang="sw" type="android" />
+    <output filename="values-ta/android_huhi_strings.xml" lang="ta" type="android" />
+    <output filename="values-te/android_huhi_strings.xml" lang="te" type="android" />
+    <output filename="values-th/android_huhi_strings.xml" lang="th" type="android" />
+    <output filename="values-tr/android_huhi_strings.xml" lang="tr" type="android" />
+    <output filename="values-uk/android_huhi_strings.xml" lang="uk" type="android" />
+    <output filename="values-ur/android_huhi_strings.xml" lang="ur" type="android" />
+    <output filename="values-uz/android_huhi_strings.xml" lang="uz" type="android" />
+    <output filename="values-vi/android_huhi_strings.xml" lang="vi" type="android" />
+    <output filename="values-zh-rCN/android_huhi_strings.xml" lang="zh-CN" type="android" />
+    <output filename="values-zh-rHK/android_huhi_strings.xml" lang="zh-HK" type="android" />
+    <output filename="values-zh-rTW/android_huhi_strings.xml" lang="zh-TW" type="android" />
+    <output filename="values-zu/android_huhi_strings.xml" lang="zu" type="android" />
+  </outputs>
+  <translations>
+    <file lang="am" path="translations/android_huhi_strings_am.xtb" />
+    <file lang="ar" path="translations/android_huhi_strings_ar.xtb" />
+    <file lang="bg" path="translations/android_huhi_strings_bg.xtb" />
+    <file lang="bn" path="translations/android_huhi_strings_bn.xtb" />
+    <file lang="ca" path="translations/android_huhi_strings_ca.xtb" />
+    <file lang="cs" path="translations/android_huhi_strings_cs.xtb" />
+    <file lang="da" path="translations/android_huhi_strings_da.xtb" />
+    <file lang="de" path="translations/android_huhi_strings_de.xtb" />
+    <file lang="el" path="translations/android_huhi_strings_el.xtb" />
+    <file lang="en-GB" path="translations/android_huhi_strings_en-GB.xtb" />
+    <file lang="es" path="translations/android_huhi_strings_es.xtb" />
+    <file lang="es-419" path="translations/android_huhi_strings_es-419.xtb" />
+    <file lang="et" path="translations/android_huhi_strings_et.xtb" />
+    <file lang="fa" path="translations/android_huhi_strings_fa.xtb" />
+    <file lang="fi" path="translations/android_huhi_strings_fi.xtb" />
+    <file lang="fil" path="translations/android_huhi_strings_fil.xtb" />
+    <file lang="fr" path="translations/android_huhi_strings_fr.xtb" />
+    <file lang="fr-CA" path="translations/android_huhi_strings_fr-CA.xtb" />
+    <file lang="gu" path="translations/android_huhi_strings_gu.xtb" />
+    <file lang="hi" path="translations/android_huhi_strings_hi.xtb" />
+    <file lang="hr" path="translations/android_huhi_strings_hr.xtb" />
+    <file lang="hu" path="translations/android_huhi_strings_hu.xtb" />
+    <file lang="id" path="translations/android_huhi_strings_id.xtb" />
+    <file lang="it" path="translations/android_huhi_strings_it.xtb" />
+    <file lang="iw" path="translations/android_huhi_strings_iw.xtb" />
+    <file lang="ja" path="translations/android_huhi_strings_ja.xtb" />
+    <file lang="kn" path="translations/android_huhi_strings_kn.xtb" />
+    <file lang="ko" path="translations/android_huhi_strings_ko.xtb" />
+    <file lang="lt" path="translations/android_huhi_strings_lt.xtb" />
+    <file lang="lv" path="translations/android_huhi_strings_lv.xtb" />
+    <file lang="ml" path="translations/android_huhi_strings_ml.xtb" />
+    <file lang="mr" path="translations/android_huhi_strings_mr.xtb" />
+    <file lang="ms" path="translations/android_huhi_strings_ms.xtb" />
+    <file lang="nl" path="translations/android_huhi_strings_nl.xtb" />
+    <file lang="no" path="translations/android_huhi_strings_no.xtb" />
+    <file lang="pl" path="translations/android_huhi_strings_pl.xtb" />
+    <file lang="pt-BR" path="translations/android_huhi_strings_pt-BR.xtb" />
+    <file lang="pt-PT" path="translations/android_huhi_strings_pt-PT.xtb" />
+    <file lang="ro" path="translations/android_huhi_strings_ro.xtb" />
+    <file lang="ru" path="translations/android_huhi_strings_ru.xtb" />
+    <file lang="sk" path="translations/android_huhi_strings_sk.xtb" />
+    <file lang="sl" path="translations/android_huhi_strings_sl.xtb" />
+    <file lang="sr" path="translations/android_huhi_strings_sr.xtb" />
+    <file lang="sv" path="translations/android_huhi_strings_sv.xtb" />
+    <file lang="sw" path="translations/android_huhi_strings_sw.xtb" />
+    <file lang="ta" path="translations/android_huhi_strings_ta.xtb" />
+    <file lang="te" path="translations/android_huhi_strings_te.xtb" />
+    <file lang="th" path="translations/android_huhi_strings_th.xtb" />
+    <file lang="tr" path="translations/android_huhi_strings_tr.xtb" />
+    <file lang="uk" path="translations/android_huhi_strings_uk.xtb" />
+    <file lang="vi" path="translations/android_huhi_strings_vi.xtb" />
+    <file lang="zh-CN" path="translations/android_huhi_strings_zh-CN.xtb" />
+    <file lang="zh-TW" path="translations/android_huhi_strings_zh-TW.xtb" />
+  </translations>
+  <release seq="1" allow_pseudo="false">
+    <messages fallback_to_english="true">
+      <message name="IDS_ACCESSIBILITY_TOOLBAR_BTN_HUHI_SHIELDS" desc="Content description for the button that is enable, disable Huhi Shields.">
+        Enable/Disable Huhi Shields
+      </message>
+      <message name="IDS_HUHI_SHIELDS" desc="Huhi Shields title.">
+        Shields
+      </message>
+      <message name="IDS_HUHI_SHIELDS_BLOCK_3RD_PARTY_COOKIES_SWITCH" desc="Switch for Block Scripts.">
+        Block 3rd party cookies
+      </message>
+      <message name="IDS_HUHI_SHIELDS_ADS_TRACKING_SWITCH" desc="Switch for Block Ads and Tracking.">
+        Block Ads and Tracking
+      </message>
+      <message name="IDS_HUHI_SHIELDS_HTTPS_EVERYWHERE_SWITCH" desc="Switch for HTTPS Everywhere.">
+        Upgrade connections to HTTPS
+      </message>
+      <message name="IDS_HUHI_SHIELDS_BLOCKS_SCRIPTS_SWITCH" desc="Switch for Block Scripts.">
+        Block Scripts
+      </message>
+      <message name="IDS_HUHI_SHIELDS_BLOCK_FINGERPRINTS_SWITCH" desc="Switch for Block Fingerprints.">
+        Fingerprinting Protection
+      </message>
+      <message name="IDS_HUHI_SHIELDS_ADS_AND_TRACKERS" desc="Ads and Trackers blocked.">
+        Block cross-site trackers
+      </message>
+      <message name="IDS_HUHI_SHIELDS_FINGERPRINT_METHODS" desc="Fingerprint methods blocked.">
+        Fingerprint Methods
+      </message>
+      <message name="IDS_HUHI_SHIELDS_HTTPS_UPGRADES" desc="HTTPS Upgrades.">
+        HTTPS Upgrades
+      </message>
+      <message name="IDS_HUHI_SHIELDS_SCRIPTS_BLOCKED" desc="Scripts Blocked.">
+        Scripts Blocked
+      </message>
+      <message name="IDS_HUHI_SHIELDS_FIRST_GROUP_TITLE" desc="Title for the first group of Huhi's shields panel.">
+        Blocking Monitor
+      </message>
+      <message name="IDS_HUHI_SHIELDS_SECOND_GROUP_TITLE" desc="Title for the second group of Huhi's shields panel.">
+        Individual Controls
+      </message>
+      <message name="IDS_ACCESSIBILITY_TOOLBAR_BTN_HUHI_REWARDS" desc="Content description for the button that is enable, disable Huhi Rewards.">
+        Manage Huhi Rewards
+      </message>
+      <message name="IDS_PREFS_SECTION_SEARCH_ENGINE" desc="Title for search engine section that can select DSE of normal and private tab">
+        Search engine
+      </message>
+      <message name="IDS_PREFS_STANDARD_SEARCH_ENGINE" desc="Title for standard tab search engine option">
+        Standard Tab
+      </message>
+      <message name="IDS_PREFS_PRIVATE_SEARCH_ENGINE" desc="Title for private tab search engine option">
+        Private Tab
+      </message>
+      <message name="IDS_MENU_EXIT" desc="Menu item for exit browser. [CHAR-LIMIT=27]">
+        Exit
+      </message>
+      <message name="IDS_HTTPSE_TITLE" desc="Title for HTTPS Everywhere.">
+        HTTPS Everywhere
+      </message>
+      <message name="IDS_HTTPSE_SUMMARY" desc="Summary for HTTPS Everywhere.">
+        Opens supported sites using HTTPS instead of HTTP when possible
+      </message>
+      <message name="IDS_AD_BLOCK_TITLE" desc="Title for ad block.">
+        Ad Block
+      </message>
+      <message name="IDS_AD_BLOCK_SUMMARY" desc="Summary for ad block.">
+        Prevents ads from loading
+      </message>
+      <message name="IDS_FINGERPRINTING_PROTECTION_TITLE" desc="Title for fingerprinting protection.">
+        Fingerprinting Protection
+      </message>
+      <message name="IDS_FINGERPRINTING_PROTECTION_SUMMARY" desc="Summary for fingerprinting protection.">
+        Prevents browser from fingerprinting
+      </message>
+      <message name="IDS_CLOSE_TABS_ON_EXIT_TITLE" desc="Title for closing tabs on exit.">
+        Close tabs on exit
+      </message>
+      <message name="IDS_CLOSE_TABS_ON_EXIT_SUMMARY" desc="Summary for closing tabs on exit.">
+        Don't persist tabs between browsing sessions
+      </message>
+      <message name="IDS_HUHI_STATS_TEXT_ADS" desc="Title for the number of blocked ads and trackers">
+        Trackers &amp; Ads Blocked
+      </message>
+      <message name="IDS_HUHI_STATS_TEXT_DATA_SAVED" desc="Title for the data saved stats">
+        Data\nSaved
+      </message>
+      <message name="IDS_HUHI_STATS_TEXT_TIME" desc="Title for the estimated saved time">
+        Est. Time\nSaved
+      </message>
+      <message name="IDS_SETTINGS_DESKTOP_MODE_TITLE" desc="Title for desktop mode in site settings">
+        Desktop Mode
+      </message>
+      <message name="IDS_SETTINGS_DESKTOP_MODE_ON" desc="Desc for desktop mode in site settings">
+        Enable Desktop View for new tabs
+      </message>
+      <message name="IDS_SETTINGS_DESKTOP_MODE_OFF" desc="Desc for desktop mode in site settings">
+       Use mobile versions of sites for new tabs (recommended)
+      </message>
+      <message name="IDS_SETTINGS_DESKTOP_MODE_DISABLED_SUMMARY" desc="Summary for desktop mode in site settings">
+        Prefer mobile version of sites
+      </message>
+      <message name="IDS_SETTINGS_DESKTOP_MODE_ENABLED_SUMMARY" desc="Summary for desktop mode in site settings">
+        Prefer desktop version of sites
+      </message>
+      <message name="IDS_SETTINGS_PLAY_YT_VIDEO_IN_BROWSER_TITLE" desc="Title for desktop mode in site settings">
+        Video playback in Huhi
+      </message>
+      <message name="IDS_SETTINGS_PLAY_YT_VIDEO_IN_BROWSER_ON" desc="Desc for desktop mode in site settings">
+        If enabled, videos will be played in Huhi instead of corresponding app
+      </message>
+      <message name="IDS_PREFS_SECTION_CONTROLS" desc="Title for controls section in main preferences screen">
+        Controls
+      </message>
+      <message name="IDS_PREFS_BACKGROUND_VIDEO_PLAYBACK" desc="Title for background video playback preference in controls section">
+        Background video playback
+      </message>
+      <message name="IDS_PREFS_CLOSING_ALL_TABS_CLOSES_HUHI" desc="Title for closing all tabs closes huhi in controls section">
+        Closing all tabs closes Huhi
+      </message>
+      <message name="IDS_PREFS_BACKGROUND_VIDEO_PLAYBACK_ON" desc="Text for background video playback is on">
+        Experimental. Enables play audio from video in background when tab is not active or device screen is turned off. Try to switch to desktop mode if this feature is not working.
+      </message>
+      <message name="IDS_TEXT_ENABLED" desc="Text indicating that an option is enabled">
+        Enabled
+      </message>
+      <message name="IDS_TEXT_DISABLED" desc="Text indicating that an option is disabled">
+        Disabled
+      </message>
+      <message name="IDS_PREFS_SECTION_DISPLAY" desc='Title of "Display" section of preferences. [CHAR-LIMIT=32]'>
+        Display
+      </message>
+      <message name="IDS_PREFS_APPEARANCE" desc="Title of Appearance settings, which allows the user to change display settings. [CHAR-LIMIT=32]">
+        Appearance
+      </message>
+      <message name="IDS_HIDE_HUHI_REWARDS_ICON_TITLE" desc="Title for preference that hides or shows Huhi Rewards icon.">
+        Hide Huhi Rewards Icon
+      </message>
+      <message name="IDS_HIDE_HUHI_REWARDS_ICON_DESCRIPTION" desc="Description for preference that hides or shows Huhi Rewards icon.">
+        Hides the Huhi Rewards Icon when Huhi Rewards is not enabled
+      </message>
+      <message name="IDS_BOTTOM_TOOLBAR_ENABLE" desc="Menu item for enabling the bottom toolbar.">
+        Enable bottom toolbar
+      </message>
+      <message name="IDS_TEXT_ON" desc="Text indicating that an option is turned on. [CHAR-LIMIT=20]">
+        On
+      </message>
+      <message name="IDS_TEXT_OFF" desc="Text indicating that an option is turned off. [CHAR-LIMIT=20]">
+        Off
+      </message>
+      <message name="IDS_SETTINGS_REQUIRE_RELAUNCH_NOTICE" desc="Text for message asked about browser relaunch to apply new settings">
+        Your changes will take effect the next time you relaunch Huhi
+      </message>
+      <message name="IDS_SETTINGS_REQUIRE_RELAUNCH_NOW" desc="Text on the button causes relaunch browser now">
+        RELAUNCH NOW
+      </message>
+      <message name="IDS_SETTINGS_REQUIRE_RELAUNCH_LATER" desc="Text on the button allows to relaunch browser later">
+        LATER
+      </message>
+
+      <!-- Onboarding strings -->
+      <message name="IDS_SKIP" desc="Text for skip button in onboarding">
+        Skip
+      </message>
+      <message name="IDS_SEARCH_ENGINE_ONBOARDING" desc="Text for search engine page for onboarding">
+        Search engine onboarding
+      </message>
+      <message name="IDS_TROUBLESHOOTING_ONBOARDING" desc="Text for trouble shooting page for onboarding">
+        Troubleshooting onboarding
+      </message>
+      <message name="IDS_CHOOSE_DEFAULT_SEARCH_ENGINE" desc="Title Text for search engine page for onboarding">
+        Choose default search engine
+      </message>
+      <message name="IDS_SEARCH_ENGINE_TEXT" desc="Text for search engine page for onboarding">
+        You can always change your preference later in app settings.
+      </message>
+      <message name="IDS_SAVE" desc="Text for save button">
+        Save
+      </message>
+      <message name="IDS_BLOCK" desc="Partial Text for huhi shield page">
+        Block
+      </message>
+      <message name="IDS_HUHI_SHIELDS_ONBOARDING_TITLE" desc="Title for huhi shield page">
+        Huhi Shields
+      </message>
+      <message name="IDS_HUHI_SHIELDS_ONBOARDING_TEXT" desc="Text for huhi shield page">
+        privacy-invading ads and trackers so you can browse without being followed around the web.
+      </message>
+      <message name="IDS_EARN_TOKENS" desc="Partial Text for huhi rewards page">
+        Earn <ph name="TOKEN">%1$s<ex>token</ex></ph>s
+      </message>
+      <message name="IDS_HUHI_REWARDS_ONBOARDING_TITLE" desc="Title for huhi rewards page">
+        Huhi Rewards
+      </message>
+      <message name="IDS_HUHI_REWARDS_ONBOARDING_TEXT" desc="Text for huhi rewards page">
+        by viewing privacy-respecting ads and support your favorite sites and creators by default.
+      </message>
+      <message name="IDS_HUHI_REWARDS_ONBOARDING_TEXT2" desc="Alternate Text for huhi rewards page">
+        for seeing privacy-respecting ads.
+      </message>
+      <message name="IDS_TERMS_TEXT" desc="Text for terms of service page">
+        By tapping Earn &amp; Give, you agree to the
+      </message>
+      <message name="IDS_TERMS_OF_SERVICE" desc="Text for terms of service">
+        Terms of Service
+      </message>
+      <message name="IDS_START_BROWSING" desc="Text for start browsing button">
+        Start browsing
+      </message>
+      <message name="IDS_I_DIDNT_SEE" desc="Text for i didt see it button">
+        I didn&apos;t see an ad
+      </message>
+      <message name="IDS_HUHI_ADS_ONBOARDING_TITLE" desc="Title for huhi ads page">
+        Huhi will show your first ad in
+      </message>
+      <message name="IDS_HUHI_ADS_ONBOARDING_TEXT" desc="Text for huhi ads page">
+        Now you'll earn token from Huhi Ads.
+      </message>
+      <message name="IDS_THIS_IS_YOUR_FIRST_AD" desc="Text huhi rewards notification.">
+        This is your first Huhi ad. Tap to learn more.
+      </message>
+      <message name="IDS_TURN_ON" desc="Text for turn on button">
+        Turn On
+      </message>
+      <message name="IDS_FINISH" desc="Text for finish button">
+        Finish
+      </message>
+      <message name="IDS_EARN_AND_GIVE" desc="Button text for rewards onboarding.">
+        Earn &amp; Give
+      </message>
+      <message name="IDS_CONTINUE_TO_WALLET" desc="Text for continue to wallet button">
+        Continue to wallet
+      </message>
+      <message name="IDS_CONTINUE_BUTTON" desc="Generic label for a button to continue to the next screen. Used in multiple contexts. [CHAR-LIMIT=20]">
+        Continue
+      </message>
+      <message name="IDS_CANCEL" desc="Label for a cancel button. Used in multiple contexts. [CHAR-LIMIT=20]">
+        Cancel
+      </message>
+      <message name="IDS_MENU_SET_DEFAULT_BROWSER" desc="Title for set default browser menu item">
+        Set as default browser
+      </message>
+      <message name="IDS_HUHI_SET_DEFAULT_BROWSER_DIALOG_TEXT" desc="Dialog for setting default browser">
+        Select Huhi Browser from the list and tap 'Always'
+      </message>
+      <message name="IDS_HUHI_ALREADY_SET_AS_DEFAULT_BROWSER" desc="Toast message for those whom have already set Huhi as default browser">
+        Huhi is already set as your default browser.
+      </message>
+      <message name="IDS_HUHI_DEFAULT_BROWSER_GO_TO_SETTINGS" desc="Toast message for those without 7.0 to go to settings to change default browser">
+        You've already set a default browser. You may change the default browser in your app settings.
+      </message>
+      <message name="IDS_HUHI_DEFAULT_BROWSER_TITLE" desc="Title for default browser notification.">
+        Huhi is lightning fast
+      </message>
+      <message name="IDS_HUHI_DEFAULT_BROWSER_BODY" desc="Body for default browser notification.">
+        Make Huhi your default browser!
+      </message>
+      <message name="IDS_HUHI_MAKE_DEFAULT_TEXT" desc="Text for positive default browser notification button.">
+        Make default
+      </message>
+      <message name="IDS_HUHI_MAKE_DEFAULT_NO" desc="Negative button text for making default browser.">
+        No
+      </message>
+      <message name="IDS_MENU_HUHI_REWARDS" desc="Title for huhi rewards menu item">
+        Huhi Rewards
+      </message>
+      <message name="IDS_DDG_OFFER_TITLE" desc="Title for DDG offer.">
+        Private search with DuckDuckGo?
+      </message>
+      <message name="IDS_DDG_OFFER_TEXT" desc="Text for DDG offer.">
+        With private search, Huhi will use DuckDuckGo to answer your searches while you are in this private tab. DuckDuckGo is a search engine that does not track your search history, enabling you to search privately.
+      </message>
+      <message name="IDS_DDG_OFFER_POSITIVE" desc="Positive button text for DDG offer.">
+        Yes
+      </message>
+      <message name="IDS_DDG_OFFER_NEGATIVE" desc="Negative button text for DDG offer.">
+        No
+      </message>
+      <message name="IDS_DDG_OFFER_LINK" desc="Text for DDG offer link.">
+        Learn about private search with DuckDuckGo
+      </message>
+      <message name="IDS_HUHI_UI_THANK_YOU" desc="A message that appears after tipping">
+        Thank you
+      </message>
+      <message name="IDS_HUHI_UI_TIP_TEXT" desc="string from Thank you screen">
+        You've just sent a tip to:
+      </message>
+      <message name="IDS_HUHI_UI_AUTO_TIP_TEXT" desc="string from Thank you screen">
+        You are automatically sending a tip to:
+      </message>
+      <message name="IDS_HUHI_UI_MONTHLY_TEXT" desc="string from Thank you screen">
+        Monthly
+      </message>
+      <message name="IDS_HUHI_UI_FIRST_TIP_TEXT" desc="string from Thank you screen">
+        Your first monthly tip will be sent on:
+      </message>
+      <message name="IDS_HUHI_UI_SITE_BANNER_NOTICE_TEXT" desc="A message on tipping page when a creator is not verified yet">
+        NOTE: This creator has not yet signed up to receive contributions from Huhi users. We'll keep trying to contribute until they verify, or until 90 days have passed.
+      </message>
+      <message name="IDS_HUHI_UI_SITE_BANNER_WELCOME" desc="Tipping page title">
+        Welcome!
+      </message>
+      <message name="IDS_HUHI_UI_REWARDS_BANNER_TEXT1" desc="Tipping page description">
+        You can support this site by sending a tip. It's a way of thanking them for making great content. Verified content creators get paid for their tips during the first week of each calendar month.
+      </message>
+      <message name="IDS_HUHI_UI_REWARDS_BANNER_TEXT2" desc="Tipping page description 2">
+        If you like, you can schedule monthly tips to support this site on a continuous basis.
+      </message>
+      <message name="IDS_HUHI_UI_DONATION_AMOUNT" desc="Tipping amount screen title">
+        Tip amount
+      </message>
+      <message name="IDS_HUHI_UI_WALLET_BALANCE" desc="Wallet balance on tipping screen">
+        wallet balance:
+      </message>
+      <message name="IDS_HUHI_UI_SEND_TIP" desc="Send my tip button text">
+        send my tip
+      </message>
+      <message name="IDS_HUHI_UI_MAKE_MONTHLY" desc="A button to make monthly tipping">
+        Make this monthly
+      </message>
+      <message name="IDS_HUHI_UI_MONTH_JAN" desc="Name of a month">JANUARY</message>
+      <message name="IDS_HUHI_UI_MONTH_FEB" desc="Name of a month">FEBRUARY</message>
+      <message name="IDS_HUHI_UI_MONTH_MAR" desc="Name of a month">MARCH</message>
+      <message name="IDS_HUHI_UI_MONTH_APR" desc="Name of a month">APRIL</message>
+      <message name="IDS_HUHI_UI_MONTH_MAY" desc="Name of a month">MAY</message>
+      <message name="IDS_HUHI_UI_MONTH_JUN" desc="Name of a month">JUNE</message>
+      <message name="IDS_HUHI_UI_MONTH_JUL" desc="Name of a month">JULY</message>
+      <message name="IDS_HUHI_UI_MONTH_AUG" desc="Name of a month">AUGUST</message>
+      <message name="IDS_HUHI_UI_MONTH_SEP" desc="Name of a month">SEPTEMBER</message>
+      <message name="IDS_HUHI_UI_MONTH_OCT" desc="Name of a month">OCTOBER</message>
+      <message name="IDS_HUHI_UI_MONTH_NOV" desc="Name of a month">NOVEMBER</message>
+      <message name="IDS_HUHI_UI_MONTH_DEC" desc="Name of a month">DECEMBER</message>
+      <message name="IDS_HUHI_UI_WELCOME_HEADER_TWO" desc="Get ready to experience the next Internet.">
+        Get ready to experience
+the next Internet.
+      </message>
+      <message name="IDS_HUHI_UI_WELCOME_DESC_TWO" desc="Get paid for viewing ads and pay it forward to support your favorite content creators.">
+        You can now earn <ph name="TOKEN">%1$s<ex>token</ex></ph>s for
+watching privacy-respecting ads.
+      </message>
+      <message name="IDS_HUHI_UI_WELCOME_BUTTON_TEXT_TWO" desc="Button to join Huhi Rewards">
+        JOIN REWARDS
+      </message>
+      <message name="IDS_HUHI_UI_HUHI_REWARDS" desc="Menu item and title for Huhi Rewards Settings. [CHAR-LIMIT=27]">
+        Huhi Rewards
+      </message>
+      <message name="IDS_HUHI_UI_WELCOME_FOOTER_TEXT_TWO" desc="Learn more hyperlink">
+        LEARN MORE
+      </message>
+      <message name="IDS_HUHI_UI_YOUR_WALLET" desc="Your wallet title">
+        Your wallet
+      </message>
+      <message name="IDS_HUHI_UI_BAT_TEXT" desc="A token name">
+        BAT
+      </message>
+      <message name="IDS_HUHI_UI_USD" desc="USD value of tokens">
+        <ph name="VALUE">%1$s<ex>0.0</ex></ph>
+      </message>
+      <message name="IDS_HUHI_UI_USD_TEXT" desc="Text for USD value">
+        USD
+      </message>
+      <message name="IDS_HUHI_UI_GRANTS" desc="Grants button text">
+        Grants
+      </message>
+      <message name="IDS_HUHI_REWARDS_LOCAL_PANEL_ADD_FUNDS" desc="Add Funds button text">
+        Add Funds
+      </message>
+      <message name="IDS_HUHI_UI_SETTINGS" desc="Settings button text">
+        Settings
+      </message>
+      <message name="IDS_HUHI_UI_WELCOME_BACK_MESSAGE" desc="Welcome back title">
+        Welcome back!
+      </message>
+      <message name="IDS_HUHI_UI_GET_REWARDED" desc="Welcome back first description">
+        Get rewarded for browsing.
+      </message>
+      <message name="IDS_HUHI_UI_HUHI_REWARDS_DESC" desc="Welcome back second description">
+        Earn by viewing privacy-respecting
+ads, and pay it forward to support
+content creators you love.
+      </message>
+      <message name="IDS_HUHI_WELCOME_PAGE_REWARDS_TITLE" desc="Enable Rewards button">
+        ENABLE HUHI REWARDS
+      </message>
+      <message name="IDS_HUHI_UI_VERIFIED_PUBLISHER" desc="A message that a particular publisher is verified">
+        Huhi Verified Publisher
+      </message>
+      <message name="IDS_HUHI_UI_NOT_VERIFIED_PUBLISHER" desc="A message that a particular publisher is not verified">
+        Not yet verified
+      </message>
+      <message name="IDS_HUHI_UI_NOT_VERIFIED_PUBLISHER_DESCRIPTION" desc="A message that appear when a particular publisher is not verified">
+        This creator has not yet signed up to receive contributions from Huhi users.
+        Any tips you send will remain in your wallet until they verify.
+      </message>
+      <message name="IDS_HUHI_UI_DONATE_NOW" desc="Send a tip button text">
+        Send a tip...
+      </message>
+      <message name="IDS_HUHI_UI_NO_ACTIVITY" desc="A message that appears when no activity was done yet related to payments">
+        No activities yet this
+month...
+      </message>
+      <message name="IDS_HUHI_UI_ONE_TIME_DONATION" desc="A message about one time tips">
+        One-time Tips
+      </message>
+      <message name="IDS_HUHI_UI_RECURRING_DONATION" desc="A message about monthly tips">
+        Monthly Tips
+      </message>
+      <message name="IDS_HUHI_UI_REWARDS_CONTRIBUTE_ATTENTION" desc="A message about user's attantion on a particular website">
+        Attention
+      </message>
+      <message name="IDS_HUHI_UI_TOKEN_GRANT_CLAIMED" desc="A message about tokens being claimed">
+        Token Grants Claimed
+      </message>
+      <message name="IDS_HUHI_UI_EARNINGS_ADS" desc="A message about earning from ads">
+        Earnings from Ads
+      </message>
+      <message name="IDS_HUHI_UI_REWARDS_CONTRIBUTE" desc="A message about auto-contribute">
+        Auto-Contribute
+      </message>
+      <message name="IDS_HUHI_UI_REWARDS_SUMMARY" desc="Rewards Summary section title">
+        REWARDS SUMMARY
+      </message>
+      <message name="IDS_HUHI_UI_CLAIM" desc="A claim grant button text">
+        Claim
+      </message>
+      <message name="IDS_HUHI_UI_INCLUDE_IN_AUTO" desc="A switch to include a particular website in auto contribution or not">
+        Include in Auto-Contribute
+      </message>
+      <message name="IDS_HUHI_UI_DONATE_MONTHLY" desc="">
+        Tip this site monthly
+      </message>
+      <message name="IDS_HUHI_UI_REWARDS_CREATING_TEXT" desc="Creating a wallet button message">
+        Creating wallet
+      </message>
+      <message name="IDS_HUHI_UI_MONTH_YEAR" desc="Current year">
+        <ph name="MONTH">%1$s<ex>DECEMBER</ex></ph> <ph name="YEAR">%2$s<ex>2018</ex></ph>
+      </message>
+      <message name="IDS_HUHI_UI_REWARDS_CONTRIBUTE_DESCRIPTION" desc="A notication message description about auto-contribute">
+        You've contributed <ph name="BAT_VALUE">%1$s<ex>50</ex></ph>  <ph name="BAT_TEXT">%2$s<ex>BAT</ex></ph>.
+      </message>
+      <message name="IDS_HUHI_UI_NOTIFICATION_DESC_NO_FUNDS" desc="A notification about not enough funds">
+        Your scheduled monthly payment for Auto-Contribute and monthly tips could not be completed due to insufficient funds. We'll try again in 30 days.
+      </message>
+      <message name="IDS_HUHI_UI_NOTIFICATION_DESC_TIP_ERROR" desc="A notification about tip processing problem">
+        There was a problem processing your tip, please try again.
+      </message>
+      <message name="IDS_HUHI_UI_NOTIFICATION_DESC_CONTR_ERROR" desc="A notification about contribution processing problem">
+        There was a problem processing your contribution.
+      </message>
+      <message name="IDS_HUHI_UI_NEW_TOKEN_GRANT" desc="A notification about free token grant">
+        Free Token Grant
+      </message>
+      <message name="IDS_NOTIFICATION_CATEGORY_GROUP_HUHI_ADS" desc="Subheading for 'Huhi Ads' section of a list of notification categories. [CHAR-LIMIT=32]">
+        Huhi Ads
+      </message>
+      <message name="IDS_NOTIFICATION_CATEGORY_HUHI_ADS" desc="Label for Huhi Ads. [CHAR-LIMIT=32]">
+        Huhi Ads
+      </message>
+      <message name="IDS_HUHI_UI_NEW_GRANT" desc="A notification about free token grant">
+         A free <ph name="TOKEN">%1$s<ex>token</ex></ph> grant is available.
+      </message>
+      <message name="IDS_HUHI_ADS_YOU_EARNED" desc='Huhi Ads "You earned" text'>
+        You've earned
+      </message>
+      <message name="IDS_HUHI_UI_INSUFFICIENT_FUNDS_MSG" desc="A message about not enough funds">
+        Insufficient Funds
+      </message>
+      <message name="IDS_HUHI_UI_INSUFFICIENT_FUNDS_DESC" desc="A notification message about not enough funds">
+        Your Huhi Rewards account is waiting for a deposit.
+      </message>
+      <message name="IDS_HUHI_UI_BACKUP_WALLET_MSG" desc="A notification message title about backing up the wallet">
+        Backup Wallet
+      </message>
+      <message name="IDS_HUHI_UI_BACKUP_WALLET_DESC" desc="A notification message description about backing up the wallet">
+        Please backup your Huhi wallet.
+      </message>
+      <message name="IDS_HUHI_REWARDS_LOCAL_UH_OH" desc="A prefix to a message about a problem">
+        Uh oh!
+      </message>
+      <message name="IDS_HUHI_REWARDS_LOCAL_SERVER_NOT_RESPONDING" desc="A message that appears when no connection to rewards server">
+        The Huhi Rewards server is not responding. We will fix this as soon as possible.
+      </message>
+      <message name="IDS_HUHI_UI_ERROR_INIT_WALLET" desc="An error which appear on wallet creation with no connection to the rewards service">
+        Please try again later
+      </message>
+      <message name="IDS_HUHI_UI_EXPIRES_ON" desc="A message about grants expiration date">
+        expires on <ph name="DATE">%1$s<ex>4/14/2019</ex></ph>
+      </message>
+      <message name="IDS_HUHI_UI_ADS_EARNINGS" desc="Description text for ad grants in grant details">
+        earned from ads
+      </message>
+      <message name="IDS_HUHI_UI_ON_YOUTUBE" desc="A suffix to YouTube channel creator">
+        on YouTube
+      </message>
+      <message name="IDS_HUHI_UI_ON_TWITCH" desc="A suffix to Twitch channel creator">
+        on Twitch
+      </message>
+      <message name="IDS_HUHI_UI_RESERVED_AMOUNT_TEXT" desc="A message that some amount of tokens reserved for non verified publishers">
+        You've designated <ph name="BAT_VALUE">%1$s<ex>50</ex></ph>  <ph name="BAT_TEXT">%2$s<ex>BAT</ex></ph> for creators who haven't
+yet signed up to receive contributions. Your browser will keep trying to contribute
+until they verify, or until 90 days have passed.
+      </message>
+      <message name="IDS_HUHI_UI_NOT_ENOUGH_TOKENS" desc="Message if not enough tokens to make a tip">
+        not enough <ph name="TOKEN">%1$s<ex>token</ex></ph>s
+      </message>
+      <message name="IDS_HUHI_UI_PLEASE" desc="Part of a message about not enough tokens to pay">
+        please
+      </message>
+      <message name="IDS_HUHI_UI_ADD_FUNDS" desc="Part of a message about not enough tokens to pay">
+        add funds
+      </message>
+      <message name="IDS_HUHI_UI_DO_MONTHLY" desc="Set monthly tip button text">
+        set monthly tip
+      </message>
+      <message name="IDS_HUHI_REWARDS_NOT_AVAILABLE" desc="The message for the dialog when Huhi Rewards is not available on the device.">
+        We're sorry it appears Huhi Rewards is not available on your device
+      </message>
+      <message name="IDS_HUHI_ADS_EXISTING_USER_OFFER_TITLE" desc="Title for Huhi Ads offer.">
+        Huhi Ads are here!
+      </message>
+      <message name="IDS_HUHI_SYNC_DEVICE_FAILURE" desc="Text for Huhi Sync device failure.">
+	Sync could not be setup
+      </message>
+      <message name="IDS_HUHI_SYNC_THIS_DEVICE_TEXT" desc="Text for Huhi Sync this device.">
+	(this device)
+      </message>
+      <message name="IDS_HUHI_SYNC_DEVICES_TITLE" desc="Text for Huhi Sync devices title.">
+	OTHER DEVICES ON CHAIN
+      </message>
+      <message name="IDS_HUHI_SYNC_LOADING_DEVICES_TITLE" desc="Text for Huhi Sync loading devices title.">
+	LOADING DEVICES...
+      </message>
+      <message name="IDS_HUHI_SYNC_LEAVING_SYNC_CHAIN_TITLE" desc="Text for Huhi Sync leaving sync chain (doing reset) title.">
+  LEAVING THE SYNC CHAIN...
+      </message>
+      <message name="IDS_HUHI_SYNC_WORD_COUNT_TEXT" desc="Text for Huhi Sync word count message.">
+	Word count: <ph name="WORD_COUNT">%1$d</ph>
+      </message>
+      <message name="IDS_HUHI_SYNC_WORD_COUNT_ERROR" desc="Text for Huhi Sync word count error.">
+	Incorrect number of words
+      </message>
+      <message name="IDS_HUHI_SYNC_WRONG_CODE_ERROR" desc="Text for wrong Huhi Sync code error.">
+	Wrong sync code
+      </message>
+      <message name="IDS_HUHI_SYNC_WRONG_QRCODE_ERROR" desc="Text for wrong Huhi Sync QR code error.">
+	Wrong sync QR code
+      </message>
+      <message name="IDS_HUHI_SYNC_OFFICIAL" desc="Text for Huhi Sync preference.">
+	Huhi Sync
+      </message>
+      <message name="IDS_HUHI_SYNC_DESCRIPTION_PAGE_1_PART_1" desc="Text for Huhi Sync description part 1.">
+	Huhi Sync allows you to sync bookmarks data privately between your Huhi Browsers on your various devices.
+      </message>
+      <message name="IDS_HUHI_SYNC_DESCRIPTION_PAGE_1_PART_2" desc="Text for Huhi Sync description part 2.">
+	Simply scan the code from your sync chain that you created on another device. Or start a new sync chain.
+      </message>
+      <message name="IDS_HUHI_SYNC_QRCODE_MESSAGE_V2" desc="Text for Huhi Sync QR code message.">
+	Using existing synced device, open Huhi Settings and navigate to Settings > Sync. Choose "Add Device" and scan the QR Code displayed on the screen.
+      </message>
+      <message name="IDS_HUHI_SYNC_COPIED_TEXT" desc="Text for Huhi Sync copied text message.">
+	Copied to Clipboard
+      </message>
+      <message name="IDS_HUHI_SYNC_CODE_WORDS_TITLE" desc="Text for Huhi Sync code words title.">
+	Pair
+      </message>
+      <message name="IDS_HUHI_SYNC_CATEGORIES_TEXT" desc="Text for show categories to sync button.">
+  Categories
+      </message>
+      <message name="IDS_HUHI_SYNC_REMOVE_DEVICE_TEXT" desc="Text for Huhi Sync remove device message.">
+	Remove this device
+      </message>
+      <message name="IDS_HUHI_SYNC_DELETE_DEVICE" desc="Text for Huhi Sync delete device message.">
+	Are you sure you want to delete device '<ph name="DEVICE_NAME">%1$s</ph>'?
+      </message>
+      <message name="IDS_HUHI_SYNC_SCAN_CHAIN_CODE" desc="Text for Huhi Sync chain code message.">
+	Scan or enter sync code
+      </message>
+      <message name="IDS_HUHI_SYNC_START_NEW_CHAIN" desc="Text for Huhi Sync start new chain message.">
+	Start a new sync chain
+      </message>
+      <message name="IDS_HUHI_SYNC_BTN_MOBILE" desc="Text for Huhi Sync add a mobile device button.">
+	Add a Mobile Device
+      </message>
+      <message name="IDS_HUHI_SYNC_BTN_LAPTOP" desc="Text for Huhi Sync add a laptop button.">
+	Add a Computer
+      </message>
+      <message name="IDS_HUHI_SYNC_ADD_MOBILE_DEVICE_TEXT_PART_1" desc="Text for Huhi Sync add a mobile device description part 1.">
+	Using a second phone or tablet, navigate to Huhi Settings > Sync > Scan.
+      </message>
+      <message name="IDS_HUHI_SYNC_ADD_MOBILE_DEVICE_TEXT_PART_2" desc="Text for Huhi Sync add a mobile device description part 2.">
+	On your mobile device, navigate to Huhi Sync in the Settings panel and click the button "Scan Sync Code". Use your camera to scan the QR Code below.
+      </message>
+      <message name="IDS_HUHI_SYNC_ADD_LAPTOP_TEXT_PART_1" desc="Text for Huhi Sync add a laptop description part 1.">
+	On your computer, navigate to Huhi Settings > Sync. Choose "Enter a Sync Chain Code".
+      </message>
+      <message name="IDS_HUHI_SYNC_SCAN_SYNC_CODE" desc="Text for Huhi Sync scan sync code message.">
+	Scan this sync code
+      </message>
+      <message name="IDS_HUHI_SYNC_CODE_WARNING" desc="Text for Huhi Sync code warning message.">
+	Treat this code like a password. If someone gets hold of it, they can read and modify your synced data.
+      </message>
+      <message name="IDS_HUHI_SYNC_ADD_LAPTOP_TEXT_PART_2_NEW" desc="Text for Huhi Sync add laptop part 2.">
+	On your target computer, navigate to Huhi Sync in settings and click the button "I have a Sync Code".\nEnter the sync chain code words shown below.
+      </message>
+      <message name="IDS_HUHI_SYNC_ADD_LAPTOP_TEXT_TITLE" desc="Text for Huhi Sync add laptop title.">
+	Enter the sync chain code
+      </message>
+      <message name="IDS_HUHI_SYNC_QR_CODE" desc="Text for Huhi Sync QR code.">
+	QR Code
+      </message>
+      <message name="IDS_HUHI_SYNC_CODE_WORDS" desc="Text for Huhi Sync code words.">
+	Code Words
+      </message>
+      <message name="IDS_HUHI_SYNC_COPY_BUTTON_TEXT" desc="Text for Huhi Sync copy button.">
+	Copy to Clipboard
+      </message>
+      <message name="IDS_HUHI_SYNC_BTN_DONE" desc="Text for Huhi Sync done button.">
+	Done
+      </message>
+      <message name="IDS_HUHI_SYNC_SETTINGS_TITLE" desc="Text for Huhi Sync settings title.">
+	SYNC ON THIS DEVICE
+      </message>
+      <message name="IDS_HUHI_SYNC_SETTINGS_DESCRIPTION" desc="Text for Huhi Sync settings description.">
+	Changing settings will only affect data that this device shares with others.
+      </message>
+      <message name="IDS_HUHI_SYNC_ADD_DEVICE_TEXT" desc="Text for Huhi Sync add device message.">
+	Add another device
+      </message>
+      <message name="IDS_ENTER_CODE_WORDS_SYNC" desc="Text for Huhi Sync enter code words message.">
+	Enter code words
+      </message>
+      <message name="IDS_HUHI_SYNC_CODEWORDS_MESSAGE" desc="Text for Huhi Sync code words message.">
+	Using existing synced device, open Huhi Settings and navigate to Settings > Sync. Choose "Add Device" then "Display code words instead".
+      </message>
+      <message name="IDS_HUHI_SYNC_CONFIRM_CODE_WORDS_TEXT" desc="Text for Huhi Sync confirm code words message.">
+	Confirm
+      </message>
+      <message name="IDS_HUHI_SYNC_USE_CAMERA_TEXT" desc="Text for Huhi Sync use camera message.">
+	I'll use my camera...
+      </message>
+      <message name="IDS_HUHI_SYNC_DEVICE" desc="Text for sync device message.">
+	Sync device
+      </message>
+      <message name="IDS_SETTINGS_EXIT" desc="Text for Settings exit.">
+	Settings exit
+      </message>
+      <message name="IDS_HUHI_ADS_NEW_USER_OFFER_TITLE" desc="Title for Huhi Ads offer.">
+        Enable Huhi Rewards
+      </message>
+      <message name="IDS_HUHI_ADS_OFFER_POSITIVE" desc="Positive button text for Huhi Ads offer.">
+        I'm in!
+      </message>
+      <message name="IDS_HUHI_ADS_OFFER_TEXT" desc="Text for Huhi Ads offer.">
+        Earn Basic Attention Token for viewing privacy preserving Huhi Rewards ads.
+      </message>
+      <message name="IDS_RESET_HUHI_REWARDS_ERROR_TITLE" desc="Title for Huhi Rewards reset error dialog.">
+        Reset Error
+      </message>
+      <message name="IDS_RESET_HUHI_REWARDS_ERROR_DESCRIPTION" desc="Description for Huhi Rewards reset error dialog.">
+        There was an error resetting Huhi Rewards. Please relaunch Huhi and try again.
+      </message>
+      <message name="IDS_SHOW_ADS_WHEN_HUHI_IS_NOT_IN_USE" desc="Title for Show Ads when Huhi is not in use option in Huhi rewards settings.">
+        Show Ads when Huhi is not in use
+      </message>
+      <message name="IDS_RESET_HUHI_REWARDS_OPTION" desc="Title for preference to reset Huhi Rewards.">
+        Reset Huhi Rewards
+      </message>
+      <message name="IDS_RESET_HUHI_REWARDS_OPTION_DESCRIPTION" desc="Description for preference to reset Huhi Rewards.">
+        This will delete your Huhi wallet and reset all of your Huhi Rewards data
+      </message>
+      <message name="IDS_ACCESSIBILITY_TOOLBAR_BTN_BOOKMARK" desc="Content description for the bookmark button.">
+        Create a bookmark
+      </message>
+      <!-- Sync Infobar -->
+      <message name="IDS_HUHI_SYNC_V2_MIGRATE_INFOBAR_MESSAGE" desc="Message text shown to users who used a previous version of Huhi Sync and need to perform setup again for the new version.">
+        Huhi Sync has been upgraded and requires setup
+      </message>
+      <message name="IDS_HUHI_SYNC_V2_MIGRATE_INFOBAR_COMMAND" desc="Command text shown to users who used a previous version of Huhi Sync and need to perform setup again for the new version.">
+        Begin Setup
+      </message>
+      <message name="IDS_SYNC_DEVICE_FAILURE" desc="The message for the dialog where the user notified about sync setup failure.">
+        Sync could not be setup
+      </message>
+      <message name="IDS_HUHI_PRIVACY_NOTICE_URL" desc="URL for the Huhi privacy notice" translateable="false">
+        https://huhisoft.com/privacy_android
+      </message>
+      <message name="IDS_HUHI_TERMS_OF_SERVICE_URL" desc="URL for Huhi Terms of Service" translateable="false">
+        https://huhisoft.com/terms_of_use
+      </message>
+      <message name="IDS_HUHI_LICENSE_TEXT" desc="Title for Huhi License">
+        Huhi License
+      </message>
+      <message name="IDS_HUHI_NEW_PRIVATE_TAB" desc="Text for 'New private tab'">
+        New private tab
+      </message>
+      <message name="IDS_HUHI_NEW_TAB_PRIVATE_HEADER" desc="Header shown when a user opens a private tab explaining private mode">
+        This is a Private Tab
+      </message>
+      <message name="IDS_NEW_TAB_PRIVATE_DESC" desc="Message shown when a user opens a private tab explaining private mode">
+        Even though sites you visit in private tabs are not saved locally, they do not make you anonymous or invisible to your ISP, your employer, or to the sites you are visiting.
+      </message>
+      <message name="IDS_NOTIFICATION_CATEGORY_HUHI_ADS_BACKGROUND" desc="Label for Huhi Ads in background.">
+        Huhi Ads sent when browser is in the background
+      </message>
+      <!-- <message name="IDS_CLEAR_DOWNLOADS_TITLE" desc="Title for Clear download in Clear Browsing Data dialog">
+        Download history
+      </message> -->
+      <message name="IDS_HUHI_UI_CONTRIBUTION_TIPS" desc="Title for monthly tips processed notification">
+        Contributions &amp; Tips
+      </message>
+      <message name="IDS_HUHI_UI_TIPS_PROCESSED_NOTIFICATION" desc="Message for monthly tips processed notification">
+        Your monthly tips have been processed!
+      </message>
+      <message name="IDS_HUHI_UI_TURN_ON_ADS" desc="Prompt to turn on Ads via notification">
+        Turn on Ads
+      </message>
+      <message name="IDS_HUHI_UI_HUHI_ADS_LAUNCH_TITLE" desc="Message used in notification to let users know Ads is available">
+        Huhi Ads has arrived!
+      </message>
+      <message name="IDS_HUHI_UI_HUHI_ADS_LAUNCH_MSG" desc="Message for ads launch notification">
+        Now you can earn by viewing ads.
+      </message>
+      <message name="IDS_HUHI_UI_PENDING_CONTRIBUTION_TITLE" desc="Notification title for pending contribution type">
+        Pending Contribution
+      </message>
+      <message name="IDS_HUHI_UI_VERIFIED_PUBLISHER_NOTIFICATION" desc="Notification text that tells user which publisher just verified">
+        Creator <ph name="PUBLISHER_NAME">%1$s<ex>huhisoft.com</ex></ph> recently verified
+      </message>
+       <message name="IDS_HUHI_UI_YOUR_BALANCE" desc="Your balance title">
+        Your balance
+      </message>
+       <message name="IDS_HUHI_UI_BAP_TEXT" desc="A point name">
+        BAP
+      </message>
+      <message name="IDS_HUHI_UI_BAT_POINTS_TEXT" desc="A token name for japan">
+        BAT Points
+      </message>
+       <message name="IDS_HUHI_UI_POINT_GRANT_CLAIMED" desc="A message about points being claimed">
+        Point Grants Claimed
+      </message>
+      <message name="IDS_HUHI_UI_NEW_POINT_GRANT" desc="A notification about free point grant">
+        Free Point Grant
+      </message>
+      <message name="IDS_HUHI_UI_DETAILS" desc="Details button text">
+        Details
+      </message>
+      <message name="IDS_TOKEN" desc="Text for token">
+        token
+      </message>
+      <message name="IDS_POINT" desc="Text for point">
+        point
+      </message>
+      <message name="IDS_ONE_TIP_OPTION" desc="Text for one tip option">
+        1.000 <ph name="TIP">%1$s<ex>BAT</ex></ph>
+      </message>
+      <message name="IDS_FIVE_TIP_OPTION" desc="Text for five tip option">
+        5.000 <ph name="TIP">%1$s<ex>BAT</ex></ph>
+      </message>
+      <message name="IDS_TEN_TIP_OPTION" desc="Text for ten tip option">
+        10.000 <ph name="TIP">%1$s<ex>BAT</ex></ph>
+      </message>
+      <message name="IDS_PREFS_NEW_TAB_PAGE" desc="Title of New Tab Page settings.">
+        New Tab Page
+      </message>
+      <message name="IDS_SHOW_BACKGROUND_IMAGES" desc= "Title of show background images option.">
+        Show Background Images
+      </message>
+      <message name="IDS_SHOW_SPONSORED_IMAGES" desc ="Title of show sponsored images option.">
+        Show Sponsored Images
+      </message>
+      <message name="IDS_PHOTO_BY" desc="Text for image credit for background images on NTP">
+        Photo by <ph name="PHOTO_BY">%1$s</ph>
+      </message>
+      <message name="IDS_TURN_ON_HUHI_ADS" desc="Text for turn on huhi ads button">
+        Turn on Huhi Ads
+      </message>
+      <message name="IDS_NTP_TOS_TEXT" desc="Text for term of service on NTP">
+        By turning on Rewards, you agree to the <ph name="TERMS_OF_SERVICE">%1$s</ph>. 
+      </message>
+      <message name="IDS_GET_PAID_TO_SEE_IMAGE" desc="Text description for NTP banner.">
+        Get paid to see this background image.
+      </message>
+      <message name="IDS_HIDE_SPONSORED_IMAGES" desc="Text for hide sponsored images button">
+        Hide Sponsored Images
+      </message>
+      <message name="IDS_YOU_CAN_SUPPORT_CREATORS" desc="Text description for banner on NTP.">
+        You can support web creators with tokens.\nEarn tokens by viewing privacy-respecting ads.
+      </message>
+      <message name="IDS_PREFS_USE_CUSTOM_TABS" desc="Title for closing all tabs closes huhi in controls section">
+        Open tabs in Custom Tabs
+      </message>
+      <message name="IDS_HUHI_UI_WALLET_BUTTON_DISCONNECTED" desc="">
+        Disconnected
+      </message>
+      <message name="IDS_HUHI_UI_WALLET_BUTTON_UNVERIFIED" desc="">
+        Verify Wallet
+      </message>
+      <message name="IDS_HUHI_UI_WALLET_BUTTON_VERIFIED" desc="">
+        Wallet Verified
+      </message>
+      <message name="IDS_VERIFY_WALLET_HEADER">
+        Verifying your wallet is optional
+      </message>
+      <message name="IDS_VERIFY_WALLET_HEADER1">
+        But if you verify, you can...
+      </message>
+      <message name="IDS_VERIFY_WALLET_BENEFITS1">
+        Withdraw BAT that you earn from viewing privacy-respecting ads
+      </message>
+      <message name="IDS_VERIFY_WALLET_BENEFITS2">
+        Purchase additional BAT with credit cards and other sources
+      </message>
+      <message name="IDS_VERIFY_WALLET_BENEFITS3">
+        Withdraw BAT that you may have previously added to your Huhi Rewards wallet
+      </message>
+      <message name="IDS_VERIFY_WALLET_BTN_TXT">
+        Verify Wallet
+      </message>
+      <message name="IDS_VERIFY_WALLET_SERVICE_NOTE">
+        Our wallet service is provided by
+      </message>
+      <message name="IDS_VERIFY_WALLET_UPHOLD">
+        Uphold
+      </message>
+      <message name="IDS_VERIFY_WALLET_UPHOLD_NOTE1">
+        Uphold may require you to verify your identity based on services requested.
+      </message>
+      <message name="IDS_VERIFY_WALLET_HUHI_NOTE1">
+        Huhi Software Inc. does not process, store, or access any of the personal information that you provide to Uphold when you establish an account with them.
+      </message>
+      <message name="IDS_USER_WALLET_COMPLETE_VERIFICATION">
+        Complete wallet verification
+      </message>
+      <message name="IDS_USER_WALLET_ACTIVITY_NAME">
+        User Wallet
+      </message>
+      <message name="IDS_USER_WALLET_GOTO_UPHOLD">
+        Go to my Uphold account
+      </message>
+      <message name="IDS_USER_WALLET_DISCONNECT_REWARDS">
+        Disconnect from Huhi Rewards
+      </message>
+      <message name="IDS_USER_WALLET_WITHDRAW_FUNDS">
+        Withdraw Funds
+      </message>
+      <message name="IDS_USER_WALLET_STATUS_NOT_CONNECTED">
+        Not connected
+      </message>
+      <message name="IDS_USER_WALLET_STATUS_CONNECTED">
+        Connected
+      </message>
+      <message name="IDS_USER_WALLET_STATUS_VERIFIED">
+        Verified
+      </message>
+      <message name="IDS_USER_WALLET_STATUS_DISCONNECTED_NOT_VERIFIED">
+        Disconnected not verified
+      </message>
+      <message name="IDS_USER_WALLET_STATUS_DISCONNECTED_VERIFIED">
+        Disconnected verified
+      </message>
+      <message name="IDS_USER_WALLET_STATUS_PENDING">
+        Pending
+      </message>
+      <message name="IDS_BAT_NOT_ALLOWED_IN_REGION">
+        BAT is not currently supported in your region based on the location your account is opened. Check back later for availability.
+      </message>
+      <message name="IDS_BAT_NOT_ALLOWED_IN_REGION_TITLE">
+        Region not supported
+      </message>
+      <message name="IDS_WALLET_VERIFICATION_GENERIC_ERROR">
+        There was a problem verifying your wallet, please try again later.
+      </message>
+      <message name="IDS_WALLET_VERIFICATION_GENERIC_ERROR_TITLE">
+        Wallet verification error
+      </message>
+      <message name="IDS_HUHI_UI_SITE_BANNER_CONNECTED_TEXT" desc="Text shown for connected publishers that are not fully verified on site banner">
+        NOTE: This Huhi Verified Creator has not yet configured their account to receive contributions from Huhi users. Your browser will keep trying to contribute until they verify, or until 90 days have passed.
+      </message>
+      <message name="IDS_HUHI_UI_PANEL_CONNECTED_TEXT" desc="A message on tipping page when a creator is not verified yet">
+        This Huhi Verified Creator has not yet configured their account to receive contributions from Huhi users. Any tips you send will remain in your wallet until they complete this process.
+      </message>
+      <message name="IDS_HUHI_DEFAULT" desc="Text for huhi default settings option.">
+        Huhi Default
+      </message>
+      <message name="IDS_SHARE_HUHI_WITH_YOUR_FRIENDS" desc="Title text for share dialog.">
+        Share Huhi with your friends!
+      </message>
+      <message name="IDS_HUHI_REWARDS_LOCAL_GENERAL_GRANT_ERROR_TITLE" desc="">
+        Oops, something is wrong. Please try again later.
+      </message>
+      <message name="IDS_PREFS_RATE_HUHI" desc="Title for rate huhi settings option.">
+        Rate Huhi
+      </message>
+      <message name="IDS_RATE" desc="Text for rate huhi dialog button.">
+        Rate
+      </message>
+      <message name="IDS_HOW_WOULD_YOU_RATE" desc="Text for rate huhi dialog.">
+        How would you rate your experience with Huhi?
+      </message>
+      <message name="IDS_SHARE_YOUR_THOUGHTS" desc="Text for rate huhi dialog button.">
+        Share your thoughts
+      </message>
+      <message name="IDS_NEVER" desc="Text for rate huhi dialog button.">
+        Never
+      </message>
+      <message name="IDS_MAYBE_LATER" desc="Text for rate huhi dialog button.">
+        Maybe Later
+      </message>
+      <message name="IDS_LATER" desc="Text for rate huhi dialog button.">
+        Later
+      </message>
+      <message name="IDS_WOULD_YOU_MIND_LEAVING_RATING" desc="Text for rate huhi dialog title.">
+        Great! Would you mind leaving us a rating on the Play Store?
+      </message>
+      <message name="IDS_RATE_FEEDBACK_HINT" desc="Text for rate feedback hint.">
+        Let us know know how we can improve
+      </message>
+      <message name="IDS_EARN_TOKENS_FOR_VIEWING" desc="Text for huhi rewards banner.">
+        Earn tokens for viewing this image and pay it forward to creators. <ph name="LEARN_MORE">%1$s</ph>
+      </message>
+      <message name="IDS_EARN_TOKENS_FOR_VIEWING_TITLE" desc="Title for huhi rewards banner.">
+        Earn tokens for viewing this image. Turn on Huhi Ads to claim your share.
+      </message>
+      <message name="IDS_YOU_ARE_EARNING_TOKENS" desc="Title for huhi rewards banner.">
+        You're earning tokens for viewing this image.\n<ph name="LEARN_MORE">%1$s</ph>
+      </message>
+      <message name="IDS_YOU_ARE_EARNING_TOKENS2" desc="Title for huhi rewards banner.">
+        You're earning tokens for viewing this image.
+      </message>
+      <message name="IDS_LEARN_MORE_ABOUT_SPONSORED_IMAGES" desc="Title for huhi rewards bottom sheet.">
+        Learn more about sponsored images
+      </message>
+      <message name="IDS_SPONSORED_IMAGES_BOTTOM_SHEET_TEXT" desc="Text for SI bottom sheet.">
+        For every sponsored image you view, you receive 70% of the revenue in tokens. With Huhi Ads, you're always in control of the ads you see.
+      </message>
+      <message name="IDS_BLOCK_CROSS_SITE_COOKIES" desc="Title for shields option.">
+        Block cross-site cookies
+      </message>
+      <message name="IDS_BLOCK_COOKIES" desc="Title for shields option.">
+        Block Cookies
+      </message>
+      <message name="IDS_BLOCK_COOKIES_TEXT" desc="Text for shields option.">
+        Prevents websites from storing information about your previous visits
+      </message>
+      <message name="IDS_BLOCK_COOKIES_OPTION_1" desc="Title for shields option.">
+        Block all cookies
+      </message>
+      <message name="IDS_BLOCK_COOKIES_OPTION_3" desc="Title for shields option.">
+        Allow all cookies
+      </message>
+      <message name="IDS_BLOCK_CROSS_SITE_FINGERPRINTING" desc="Title for shields option.">
+        Block cross-site fingerprinting
+      </message>
+      <message name="IDS_BLOCK_FINGERPRINTING" desc="Title for shields option.">
+        Block Fingerprinting
+      </message>
+      <message name="IDS_BLOCK_FINGERPRINTING_TEXT" desc="Text for shields option.">
+        Prevents browser from recognizing your device
+      </message>
+      <message name="IDS_BLOCK_FINGERPRINTING_OPTION_1" desc="Title for shields option.">
+        Fingerprinting blocked(strict, may break sites)
+      </message>
+      <message name="IDS_BLOCK_FINGERPRINTING_OPTION_2" desc="Title for shields option.">
+        Fingerprinting blocked(standard)
+      </message>
+      <message name="IDS_BLOCK_FINGERPRINTING_OPTION_3" desc="Title for shields option.">
+        Allow all fingerprinting
+      </message>
+      <message name="IDS_ADS_AND_OTHER_THINGS_BLOCKED" desc="Text for shields option.">
+        Ads and other creepy\nthings blocked
+      </message>
+      <message name="IDS_SHIELDS_ABOUT_TEXT" desc="About Text for shields option.">
+        Sites often include cookies and scripts which try to identify you and your device. They want to work out who you are and follow you across the web-tracking what you do on every site.\n\nHuhi blocks these things so that you can browse without being followed around.
+      </message>
+      <message name="IDS_ABOUT_HUHI_SHIELDS_TEXT" desc="About Title for shields option.">
+        About Huhi Shields
+      </message>
+      <message name="IDS_UP" desc="Text for huhi shields switch.">
+        UP
+      </message>
+      <message name="IDS_DOWN" desc="Text for huhi shields switch.">
+        DOWN
+      </message>
+      <message name="IDS_HUHI_SHIELDS_DOWN_TEXT" desc="Text for huhi shields down.">
+        You're browsing this site without Huhi's privacy protections. Does it not work right with Shields up?
+      </message>
+      <message name="IDS_SITE_BROKEN_TEXT" desc="Shields text for broken text warning message.">
+        If this site appears broken, try Shields down.
+      </message>
+      <message name="IDS_REPORT_BROKEN_SITE_TEXT" desc="Shields text for broken text warning message.">
+        Report a broken site
+      </message>
+      <message name="IDS_REPORT_BROKEN_SITE_TEXT_1" desc="Shields text for broken text warning message.">
+        Let Huhi's developers know that this site doesn't work properly with Shields:
+      </message>
+      <message name="IDS_REPORT_BROKEN_SITE_TEXT_2" desc="Shields text for broken text warning message.">
+        Note: This site address will be submitted with your Huhi version number and your IP address(which will not be stored).
+      </message>
+      <message name="IDS_THANK_YOU" desc="Title for thank you UI for shields.">
+        Thank you!
+      </message>
+      <message name="IDS_THANK_YOU_TEXT" desc="Text for thank you UI for shields.">
+        Thanks for letting Huhi's developers know that there's something wrong with this site. We'll do our best to fix it!
+      </message>
+      <message name="IDS_ADVANCED_CONTROLS" desc="Title for toggle section.">
+        Advanced controls
+      </message>
+      <message name="IDS_REQUIRED_MINIUM_BALANCE" desc="Text for verify wallet minimum required balance.">
+        A minimum balance of 25 BAT is required to verify.
+      </message>
+      <message name="IDS_AUTOCOMPLETE_TOP_SITES_TITLE" desc="The label for settings switch controlling whether or not top sites show up in autocomplete">
+        Show top sites in autocomplete
+      </message>
+      <message name="IDS_AUTOCOMPLETE_HUHI_SUGGESTED_SITES_TITLE" desc="The label for settings switch controlling whether or not Huhi suggested sites show up in autocomplete">
+        Show suggested sites in autocomplete
+      </message>
+      <message name="IDS_UPDATE_NOTIFICATION_TITLE" desc="Title of notification on application update.">
+        Save Data Online
+      </message>
+      <message name="IDS_UPDATE_NOTIFICATION_TEXT" desc="Text of notification on application update.">
+        Browse faster and block ads with Huhi
+      </message>
+      <message name="IDS_YOU_JUST_BLOCKED" desc="Shields tootltip text">
+        You just blocked some trackers &amp; ads.
+      </message>
+      <message name="IDS_TAKE_A_LOOK" desc="Shields tootltip text">
+        Take a look
+      </message>
+      <message name="IDS_NICE" desc="Shields tootltip title">
+        Nice!
+      </message>
+      <message name="IDS_HUHI_WORKS_EVERYWHERE" desc="Cross promotional modal title text">
+        Huhi works everywhere
+      </message>
+      <message name="IDS_DOWNLOAD_HUHI" desc="Cross promotional modal text">
+        Download Huhi at huhisoft.com on your laptop or tablet for a faster and more private web
+      </message>
+      <message name="IDS_PRIVACY_PROTECTION" desc="Title for onboading bottomsheet.">
+        Privacy protection
+      </message>
+      <message name="IDS_PRIVACY_PROTECTION_TEXT" desc="Text for onboading bottomsheet.">
+        Huhi stops ads &amp; trackers from collecting information about you without your consent.
+      </message>
+      <message name="IDS_SAVE_DATA_AND_BATTERY" desc="Title for onboading bottomsheet.">
+        Save data and battery
+      </message>
+      <message name="IDS_SAVE_DATA_AND_BATTERY_TEXT" desc="Text for onboading bottomsheet.">
+        Without ads &amp; trackers, websites use less data and battery. You might even save money on carrier fees.
+      </message>
+      <message name="IDS_WEBSITES_LOAD_FASTER" desc="Title for onboading bottomsheet.">
+        Websites load faster
+      </message>
+      <message name="IDS_WEBSITES_LOAD_FASTER_TEXT" desc="Text for onboading bottomsheet.">
+        Loading less data means websites in Huhi load faster - up to 8x faster than other browsers.
+      </message>
+      <message name="IDS_GET_WEEKLY_UPDATES" desc="Title for onboading bottomsheet.">
+        Get weekly updates
+      </message>
+      <message name="IDS_GET_WEEKLY_UPDATES_TEXT" desc="Text for onboading bottomsheet.">
+        Be informed about which websites you visit are the most privacy invasive.\n\nOnly you can see these privacy statistics. No personal data or browsing history ever leaves the Huhi browser on your device.
+      </message>
+      <message name="IDS_TURN_ON_PRIVACY_STATS" desc="Button text for onboading bottomsheet.">
+        Turn on privacy reports
+      </message>
+      <message name="IDS_LEARN_MORE" desc="Button text for onboading bottomsheet.">
+        Learn more
+      </message>
+      <message name="IDS_WEEK" desc="Tab title text">
+        Week
+      </message>
+      <message name="IDS_MONTH" desc="Tab title text">
+        Month
+      </message>
+      <message name="IDS_MONTHS_3" desc="Tab title text">
+        3 Months
+      </message>
+      <message name="IDS_HUHI_STATS" desc="Huhi stats title">
+        Privacy Report
+      </message>
+      <message name="IDS_HUHI_STATS_NOTIFICATION" desc="Huhi stats title">
+        Privacy Report Notification
+      </message>
+      <message name="IDS_TRACKERS_AND_ADS" desc="Huhi stats title">
+        Trackers &amp; Ads Blocked
+      </message>
+      <message name="IDS_NO_DATA_TEXT" desc="Huhi stats title">
+        No data to show yet
+      </message>
+      <message name="IDS_ADS_TRACKERS_TEXT" desc="Huhi stats text">
+        Trackers &amp; Ads\nBlocked
+      </message>
+      <message name="IDS_DATA_SAVED_TEXT" desc="Huhi stats text">
+        Data Saved\n(<ph name="DATA_SAVED">%1$s</ph>)
+      </message>
+      <message name="IDS_DATA_SAVED_TABLET_TEXT" desc="Huhi stats text">
+        Data Saved (<ph name="DATA_SAVED">%1$s</ph>)
+      </message>
+      <message name="IDS_TIME_SAVED_TEXT" desc="Huhi stats text">
+        Time Saved
+      </message>
+      <message name="IDS_WEBSITES" desc="Huhi stats title">
+        Websites
+      </message>
+      <message name="IDS_TRACKERS" desc="Huhi stats title">
+        Trackers
+      </message>
+      <message name="IDS_NTP_STAT_TEXT" desc="NTP stat text">
+        <ph name="COUNT">%1$s</ph><ph name="COUNT_TEXT">%2$s</ph>
+      </message>
+      <message name="IDS_NOTIFICATION_HOUR_3_TEXT_1" desc="3_hours notification text">
+        You blocked <ph name="COUNT">%1$s</ph> trackers &amp; ads with Huhi browser in the past 3 hours.
+      </message>
+      <message name="IDS_NOTIFICATION_HOUR_3_TEXT_2" desc="3_hours notification text">
+        Browse up to 6x faster on major news sites in Huhi by blocking trackes &amp; ads.
+      </message>
+      <message name="IDS_NOTIFICATION_HOUR_3_TEXT_3" desc="3_hours notification text">
+        Turn on Privacy Reports to see how many trackers &amp; ads have been blocked in the past 3 hours.
+      </message>
+      <message name="IDS_NOTIFICATION_HOUR_24_TEXT_1" desc="24_hours notification text">
+        You saved <ph name="DATA">%1$s</ph> <ph name="DATA_TEXT">%2$s</ph> data with Huhi browser.
+      </message>
+      <message name="IDS_NOTIFICATION_HOUR_24_TEXT_2" desc="24_hours notification text">
+        Turn on Privacy Reports to see how much data you've saved.
+      </message>
+      <message name="IDS_NOTIFICATION_MARKETING" desc="Marketing notification text">
+        Huhi browser uses 40% less battery on average.🔋
+      </message>
+      <message name="IDS_NOTIFICATION_WEEKLY_STATS" desc="Weekly stats notification text">
+        You blocked <ph name="COUNT">%1$s</ph> trackers &amp; ads with Huhi browser last week.
+      </message>
+      <message name="IDS_NOTIFICATION_REWARDS" desc="Rewards notification text">
+        Earn tokens by viewing privacy-respecting ads and support your favorite websites.
+      </message>
+      <message name="IDS_NOTIFICATION_HUHI_STATS_TRACKERS" desc="Rewards notification text">
+        Nice! You've blocked 250 trackers &amp; ads with Huhi browser.🔥
+      </message>
+      <message name="IDS_NOTIFICATION_HUHI_STATS_DATA" desc="Rewards notification text">
+        Nice! You've saved 10MB with Huhi browser.🔋
+      </message>
+      <message name="IDS_NOTIFICATION_HUHI_STATS_TIME" desc="Rewards notification text">
+        Nice! You've saved 10 Mins of loading time with Huhi browser.💨💨
+      </message>
+      <message name="IDS_START_BROWSING_TO_SEE" desc="Huhi stats empty text">
+        Start browsing to see privacy reporting
+      </message>
+      <message name="IDS_SET_HUHI_AS_YOUR" desc="Deafult browser notification text">
+        Set Huhi as your default browser for private and secure browsing.
+      </message>
+      <message name="IDS_ALLOWS_HUHI_TO_SHOW" desc="Huhi stats pref summary text">
+        Allows huhi to show your privacy statistics
+      </message>
+      <message name="IDS_SENDS_A_WEEKLY" desc="Huhi stats pref summary text">
+        Sends a weekly privacy report
+      </message>
+      <message name="IDS_CLEAR_HUHI_STATS_DATA" desc="Huhi stats pref summary text">
+        Clear all privacy reports data
+      </message>
+      <message name="IDS_RESETS_YOUR_HUHI_STATS" desc="Huhi stats pref summary text">
+        Resets your privacy reports to zero
+      </message>
+      <message name="IDS_DATA_HAS_BEEN_CLEARED" desc="Huhi stats pref summary text">
+        Privacy reports data has been cleared.
+      </message>
+      <message name="IDS_HUHI_UI_REFRESH_PUBLISHER_STATUS" desc="A button that allows to refresh publisher status">
+        Refresh Status
+      </message>
+      <message name="IDS_NIGHT_MODE_ENABLE" desc="Menu item for enabling dark mode for webcontent.">
+        Enable "Night Mode" (Experimental)
+      </message>
+    </messages>
+  </release>
+</grit>

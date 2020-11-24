@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig",
+  "include": [
+    "./components/**/*"
+  ],
+  "exclude": [
+    "./components/huhi_sync/extension"
+  ]
+}
