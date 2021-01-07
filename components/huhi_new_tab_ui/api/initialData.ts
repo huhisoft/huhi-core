@@ -1,30 +1,30 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
 import * as preferencesAPI from './preferences'
 import * as statsAPI from './stats'
 import * as privateTabDataAPI from './privateTabData'
-import * as topSitesAPI from './topSites'
+import * as torTabDataAPI from './torTabData'
 import * as brandedWallpaper from './brandedWallpaper'
 
 export type InitialData = {
   preferences: preferencesAPI.Preferences
   stats: statsAPI.Stats
   privateTabData: privateTabDataAPI.PrivateTabData
-  topSites: chrome.topSites.MostVisitedURL[]
-  defaultSuperReferralTopSites: undefined | NewTab.DefaultSuperReferralTopSite[]
+  torTabData: torTabDataAPI.TorTabData
   brandedWallpaperData: undefined | NewTab.BrandedWallpaper
   togetherSupported: boolean
   geminiSupported: boolean
+  binanceSupported: boolean
   bitcoinDotComSupported: boolean
+  cryptoDotComSupported: boolean
 }
 
 export type PreInitialRewardsData = {
   enabledAds: boolean
   adsSupported: boolean
-  enabledMain: boolean
 }
 
 export type InitialRewardsData = {
@@ -44,22 +44,23 @@ export async function getInitialData (): Promise<InitialData> {
       preferences,
       stats,
       privateTabData,
-      topSites,
-      defaultSuperReferralTopSites,
+      torTabData,
       brandedWallpaperData,
       togetherSupported,
       geminiSupported,
-      bitcoinDotComSupported
+      bitcoinDotComSupported,
+      cryptoDotComSupported,
+      binanceSupported
     ] = await Promise.all([
       preferencesAPI.getPreferences(),
       statsAPI.getStats(),
       privateTabDataAPI.getPrivateTabData(),
-      topSitesAPI.getTopSites(),
-      !isIncognito ? brandedWallpaper.getDefaultSuperReferralTopSites() : Promise.resolve(undefined),
+      torTabDataAPI.getTorTabData(),
       !isIncognito ? brandedWallpaper.getBrandedWallpaper() : Promise.resolve(undefined),
       new Promise((resolve) => {
         if (!('huhiTogether' in chrome)) {
           resolve(false)
+          return
         }
 
         chrome.huhiTogether.isSupported((supported: boolean) => {
@@ -72,7 +73,15 @@ export async function getInitialData (): Promise<InitialData> {
         })
       }),
       new Promise((resolve) => {
-        chrome.moonpay.isBitcoinDotComSupported((supported: boolean) => {
+        resolve(false)
+      }),
+      new Promise((resolve) => {
+        chrome.cryptoDotCom.isSupported((supported: boolean) => {
+          resolve(supported)
+        })
+      }),
+      new Promise((resolve) => {
+        chrome.binance.isSupportedRegion((supported: boolean) => {
           resolve(supported)
         })
       })
@@ -82,12 +91,13 @@ export async function getInitialData (): Promise<InitialData> {
       preferences,
       stats,
       privateTabData,
-      topSites,
-      defaultSuperReferralTopSites,
+      torTabData,
       brandedWallpaperData,
       togetherSupported,
       geminiSupported,
-      bitcoinDotComSupported
+      bitcoinDotComSupported,
+      cryptoDotComSupported,
+      binanceSupported
     } as InitialData
   } catch (e) {
     console.error(e)
@@ -95,49 +105,22 @@ export async function getInitialData (): Promise<InitialData> {
   }
 }
 
-export async function getBinanceBlackList (): Promise<any> {
-  try {
-    const [
-      onlyAnonWallet,
-      isSupportedRegion
-    ] = await Promise.all([
-      new Promise(resolve => chrome.huhiRewards.onlyAnonWallet((onlyAnonWallet: boolean) => {
-        resolve(!!onlyAnonWallet)
-      })),
-      new Promise(resolve => chrome.binance.isSupportedRegion((supported: boolean) => {
-        resolve(!!supported)
-      }))
-    ])
-    return {
-      isSupportedRegion,
-      onlyAnonWallet
-    }
-  } catch (err) {
-    throw Error(err)
-  }
-}
-
 export async function getRewardsPreInitialData (): Promise<PreInitialRewardsData> {
   try {
     const [
       enabledAds,
-      adsSupported,
-      enabledMain
+      adsSupported
     ] = await Promise.all([
       new Promise(resolve => chrome.huhiRewards.getAdsEnabled((enabledAds: boolean) => {
         resolve(enabledAds)
       })),
       new Promise(resolve => chrome.huhiRewards.getAdsSupported((adsSupported: boolean) => {
         resolve(adsSupported)
-      })),
-      new Promise(resolve => chrome.huhiRewards.getRewardsMainEnabled((enabledMain: boolean) => {
-        resolve(enabledMain)
       }))
     ])
     return {
       enabledAds,
-      adsSupported,
-      enabledMain
+      adsSupported
     } as PreInitialRewardsData
   } catch (err) {
     throw Error(err)

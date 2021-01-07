@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -8,14 +8,20 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import Theme from 'huhi-ui/theme/huhi-default'
 import DarkTheme from 'huhi-ui/theme/huhi-dark'
+import '../common/defaultTrustedTypesPolicy'
 import HuhiCoreThemeProvider from '../common/HuhiCoreThemeProvider'
 import { wireApiEventsToStore } from './apiEventsToStore'
+import * as topSitesAPI from './api/topSites'
+import { init } from './actions/new_tab_actions'
 
 // Components
 import App from './containers/app'
 
 // Utils
 import store from './store'
+
+// Let things handle 'init'
+store.dispatch(init())
 
 function initialize () {
   console.timeStamp('loaded')
@@ -48,3 +54,10 @@ wireApiEventsToStore()
 
 // Perform DOM-dependent initialization when ready
 document.addEventListener('DOMContentLoaded', initialize)
+
+// Update topsite tiles when NTP gets visible.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    topSitesAPI.updateMostVisitedInfo()
+  }
+})

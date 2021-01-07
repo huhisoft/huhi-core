@@ -1,5 +1,5 @@
 /* Copyright (c) 2019 The Huhi Software Team. Distributed under the MPL2
- * license. This Source Code Form is subject to the terms of the Huhi Software
+ * license. This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,7 +17,7 @@
 using huhi::ResponseCallback;
 
 TEST(HuhiAdBlockTPNetworkDelegateHelperTest, NoChangeURL) {
-  const GURL url("https://bradhatesprimes.huhisoft.com/composite_numbers_ftw");
+  const GURL url("https://hnq.vn");
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
   int rc =
       OnBeforeURLRequest_AdBlockTPPreWork(ResponseCallback(), request_info);

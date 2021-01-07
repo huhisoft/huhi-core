@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -103,7 +103,7 @@ public class SafetyNetCheck {
                     return true;
                 }
                 byte[] nonce = nonceData.isEmpty() ? getRequestNonce() : nonceData.getBytes();
-                SafetyNetClient client = SafetyNet.getClient(activity);
+                SafetyNetClient client = SafetyNet.getClient(ContextUtils.getApplicationContext());
                 Task<SafetyNetApi.AttestationResponse> attestTask = client.attest(nonce, apiKey);
                 attestTask.addOnSuccessListener(activity,
                     new OnSuccessListener<SafetyNetApi.AttestationResponse>() {

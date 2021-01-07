@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -106,18 +106,14 @@ int OnBeforeURLRequest_StaticRedirectWorkForGURL(
   }
 
   if (safebrowsingfilecheck_pattern.MatchesHost(request_url)) {
-    // TODO(@fmarier): Re-enable download protection once we have
-    // truncated the list of metadata that it sends to the server
-    // (huhi/huhi-browser#6267).
-    //
-    // replacements.SetHostStr(kHuhiSafeBrowsingFileCheckProxy);
-    // *new_url = request_url.ReplaceComponents(replacements);
+    replacements.SetHostStr(kHuhiSafeBrowsingFileCheckProxy);
+    *new_url = request_url.ReplaceComponents(replacements);
     return net::OK;
   }
 
   if (crxDownload_pattern.MatchesURL(request_url)) {
     replacements.SetSchemeStr("https");
-    replacements.SetHostStr("crxdownload.huhisoft.com");
+    replacements.SetHostStr("crxdownload.hnq.vn");
     *new_url = request_url.ReplaceComponents(replacements);
     return net::OK;
   }
@@ -131,28 +127,28 @@ int OnBeforeURLRequest_StaticRedirectWorkForGURL(
 
   if (crlSet_pattern1.MatchesURL(request_url)) {
     replacements.SetSchemeStr("https");
-    replacements.SetHostStr("crlsets.huhisoft.com");
+    replacements.SetHostStr("crlsets.hnq.vn");
     *new_url = request_url.ReplaceComponents(replacements);
     return net::OK;
   }
 
   if (crlSet_pattern2.MatchesURL(request_url)) {
     replacements.SetSchemeStr("https");
-    replacements.SetHostStr("crlsets.huhisoft.com");
+    replacements.SetHostStr("crlsets.hnq.vn");
     *new_url = request_url.ReplaceComponents(replacements);
     return net::OK;
   }
 
   if (crlSet_pattern3.MatchesURL(request_url)) {
     replacements.SetSchemeStr("https");
-    replacements.SetHostStr("crlsets.huhisoft.com");
+    replacements.SetHostStr("crlsets.hnq.vn");
     *new_url = request_url.ReplaceComponents(replacements);
     return net::OK;
   }
 
   if (crlSet_pattern4.MatchesURL(request_url)) {
     replacements.SetSchemeStr("https");
-    replacements.SetHostStr("crlsets.huhisoft.com");
+    replacements.SetHostStr("crlsets.hnq.vn");
     *new_url = request_url.ReplaceComponents(replacements);
     return net::OK;
   }

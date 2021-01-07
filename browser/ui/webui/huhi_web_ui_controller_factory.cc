@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,18 +15,19 @@
 #include "huhi/common/pref_names.h"
 #include "huhi/common/webui_url_constants.h"
 #include "huhi/components/huhi_rewards/browser/buildflags/buildflags.h"
-#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
-#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
-#include "huhi/components/ipfs/browser/features.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
+#include "huhi/components/ipfs/features.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/common/url_constants.h"
 #include "components/prefs/pref_service.h"
+#include "content/public/browser/web_contents.h"
 #include "url/gurl.h"
 
 #if !defined(OS_ANDROID)
-#include "huhi/browser/ui/webui/huhi_new_tab_ui.h"
 #include "huhi/browser/ui/webui/huhi_settings_ui.h"
 #include "huhi/browser/ui/webui/huhi_welcome_ui.h"
+#include "huhi/browser/ui/webui/new_tab_page/huhi_new_tab_ui.h"
 #endif
 
 #if BUILDFLAG(HUHI_REWARDS_ENABLED)
@@ -40,6 +41,7 @@
 #endif
 
 #if BUILDFLAG(IPFS_ENABLED)
+#include "huhi/browser/ipfs/ipfs_service_factory.h"
 #include "huhi/browser/ui/webui/ipfs_ui.h"
 #endif
 
@@ -68,7 +70,8 @@ WebUIController* NewWebUI<BasicUI>(WebUI* web_ui, const GURL& url) {
     return new WebcompatReporterUI(web_ui, url.host());
 #if BUILDFLAG(IPFS_ENABLED)
   } else if (host == kIPFSHost &&
-      base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature)) {
+             ipfs::IpfsServiceFactory::IsIpfsEnabled(
+                 web_ui->GetWebContents()->GetBrowserContext())) {
     return new IPFSUI(web_ui, url.host());
 #endif  // BUILDFLAG(IPFS_ENABLED)
 #if BUILDFLAG(HUHI_WALLET_ENABLED)

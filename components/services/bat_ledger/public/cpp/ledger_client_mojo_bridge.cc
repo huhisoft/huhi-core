@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -242,16 +242,9 @@ void LedgerClientMojoBridge::OnContributeUnverifiedPublishers(
       publisher_name);
 }
 
-void LedgerClientMojoBridge::GetExternalWallets(
-    GetExternalWalletsCallback callback) {
-  std::move(callback).Run(
-      base::MapToFlatMap(ledger_client_->GetExternalWallets()));
-}
-
-void LedgerClientMojoBridge::SaveExternalWallet(
-    const std::string& wallet_type,
-    ledger::type::ExternalWalletPtr wallet) {
-  ledger_client_->SaveExternalWallet(wallet_type, std::move(wallet));
+void LedgerClientMojoBridge::GetLegacyWallet(
+    GetLegacyWalletCallback callback) {
+  std::move(callback).Run(ledger_client_->GetLegacyWallet());
 }
 
 // static
@@ -277,25 +270,6 @@ void LedgerClientMojoBridge::ShowNotification(
       std::bind(LedgerClientMojoBridge::OnShowNotification,
                 holder,
                 _1));
-}
-
-void LedgerClientMojoBridge::GetTransferFees(
-    const std::string& wallet_type,
-    GetTransferFeesCallback callback) {
-  auto list = ledger_client_->GetTransferFees(wallet_type);
-  std::move(callback).Run(base::MapToFlatMap(std::move(list)));
-}
-
-void LedgerClientMojoBridge::SetTransferFee(
-    const std::string& wallet_type,
-    ledger::type::TransferFeePtr transfer_fee) {
-  ledger_client_->SetTransferFee(wallet_type, std::move(transfer_fee));
-}
-
-void LedgerClientMojoBridge::RemoveTransferFee(
-    const std::string& wallet_type,
-    const std::string& id) {
-  ledger_client_->RemoveTransferFee(wallet_type, id);
 }
 
 void LedgerClientMojoBridge::GetClientInfo(
@@ -401,6 +375,19 @@ void LedgerClientMojoBridge::DeleteLog(DeleteLogCallback callback) {
       std::bind(LedgerClientMojoBridge::OnDeleteLog,
                 holder,
                 _1));
+}
+
+void LedgerClientMojoBridge::SetEncryptedStringState(
+    const std::string& name,
+    const std::string& value,
+    SetEncryptedStringStateCallback callback) {
+  std::move(callback).Run(ledger_client_->SetEncryptedStringState(name, value));
+}
+
+void LedgerClientMojoBridge::GetEncryptedStringState(
+    const std::string& name,
+    GetEncryptedStringStateCallback callback) {
+  std::move(callback).Run(ledger_client_->GetEncryptedStringState(name));
 }
 
 }  // namespace bat_ledger

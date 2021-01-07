@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -309,17 +309,17 @@ bool ParseJSON(base::StringPiece json,
     ],
     "entries": [
       // Huhi
-      { "name": "download.huhisoft.com", "mode": "force-https", "policy": "custom", "pins": "huhi"},
-      { "name": "laptop-updates.huhisoft.com", "mode": "force-https", "policy": "custom", "pins": "huhi"},
+      { "name": "download.hnq.vn", "mode": "force-https", "policy": "custom", "pins": "huhi"},
+      { "name": "updates.hnq.vn", "mode": "force-https", "policy": "custom", "pins": "huhi"},
       // TODO(darkdh): remove sync v1 endpoints when Android migrates to v2
-      { "name": "sync.huhisoft.com", "mode": "force-https", "policy": "custom", "pins": "huhi"},
-      { "name": "sync-staging.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "sync-v2.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "sync-v2.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "sync.hnq.vn", "mode": "force-https", "policy": "custom", "pins": "huhi"},
+      { "name": "sync-staging.hnq.vn", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "sync-v2.hnq.vn", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "sync-v2.huhisoftware.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
       { "name": "sync-v2.huhi.software", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "p3a.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "p3a.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "p3a-dev.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "p3a.hnq.vn", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "p3a.huhisoftware.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "p3a-dev.huhisoftware.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
 
       // Rewards
       { "name": "ledger.mercury.basicattentiontoken.org", "policy": "custom", "mode": "force-https", "pins": "huhi"},
@@ -331,14 +331,14 @@ bool ParseJSON(base::StringPiece json,
       { "name": "publishers-distro.basicattentiontoken.org", "policy": "custom", "mode": "force-https", "pins": "huhi"},
       { "name": "publishers-staging-distro.basicattentiontoken.org", "policy": "custom", "mode": "force-https", "pins": "huhi"},
       { "name": "creators-distro.huhi.software", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "grant.rewards.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "grant.rewards.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "grant.rewards.hnq.vn", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "grant.rewards.huhisoftware.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
       { "name": "grant.rewards.huhi.software", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "payment.rewards.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "payment.rewards.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "payment.rewards.hnq.vn", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "payment.rewards.huhisoftware.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
       { "name": "payment.rewards.huhi.software", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "api.rewards.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
-      { "name": "api.rewards.huhisoft.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "api.rewards.hnq.vn", "policy": "custom", "mode": "force-https", "pins": "huhi"},
+      { "name": "api.rewards.huhisoftware.com", "policy": "custom", "mode": "force-https", "pins": "huhi"},
       { "name": "api.rewards.huhi.software", "policy": "custom", "mode": "force-https", "pins": "huhi"}
     ]})huhi_json";
 

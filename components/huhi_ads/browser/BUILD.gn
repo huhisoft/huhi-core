@@ -38,7 +38,6 @@ source_set("browser") {
     # for profile.h
     "//components/domain_reliability",
     "//content/public/browser",
-    "//content/public/common",
   ]
 
   if (huhi_ads_enabled) {
@@ -55,9 +54,12 @@ source_set("browser") {
       "background_helper.h",
       "notification_helper.cc",
       "notification_helper.h",
+      "prefs_util.cc",
+      "prefs_util.h",
     ]
 
     deps += [
+      "//huhi/app:huhi_generated_resources_grit",
       "//huhi/vendor/bat-native-ads",
       "//huhi/components/huhi_ads/resources",
       "//huhi/components/services/bat_ads/public/cpp",
@@ -120,13 +122,12 @@ source_set("browser") {
 }
 
 source_set("testutil") {
-  # Remove when https://github.com/huhisoft/huhi-browser/issues/10650 is resolved
-  check_includes = false
   testonly = true
 
   deps = [
     ":browser",
     "//base",
+    "//huhi/components/huhi_rewards/browser:browser",
     "//content/public/browser",
     "//chrome/test:test_support",
     "//testing/gtest",

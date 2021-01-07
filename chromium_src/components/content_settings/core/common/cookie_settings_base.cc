@@ -1,15 +1,17 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "components/content_settings/core/common/cookie_settings_base.h"
 
+#include "base/feature_list.h"
 #include "base/no_destructor.h"
 #include "base/optional.h"
-#include "net/base/registry_controlled_domains/registry_controlled_domain.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/content_settings/core/common/content_settings_pattern.h"
+#include "components/content_settings/core/common/features.h"
+#include "net/base/registry_controlled_domains/registry_controlled_domain.h"
 #include "url/gurl.h"
 #include "url/origin.h"
 
@@ -32,6 +34,9 @@ constexpr char kAexp[] = "https://[*.]aexp-static.com/*";
 constexpr char kSony[] = "https://[*.]sony.com/*";
 constexpr char kGoogle[] = "https://[*.]google.com/*";
 constexpr char kGoogleusercontent[] = "https://[*.]googleusercontent.com/*";
+constexpr char kBitbucket[] = "https://[*.]bitbucket.org/*";
+constexpr char kAtlassiannet[] = "https://[*.]atlassian.net/*";
+constexpr char kAtlassiancom[] = "https://[*.]atlassian.com/*";
 
 bool HuhiIsAllowedThirdParty(
     const GURL& url,
@@ -96,6 +101,22 @@ bool HuhiIsAllowedThirdParty(
           {
             ContentSettingsPattern::FromString(kTwitch),
             ContentSettingsPattern::FromString(kDiscord)
+          },
+          {
+            ContentSettingsPattern::FromString(kBitbucket),
+            ContentSettingsPattern::FromString(kAtlassiancom)
+          },
+          {
+            ContentSettingsPattern::FromString(kAtlassiancom),
+            ContentSettingsPattern::FromString(kBitbucket)
+          },
+          {
+            ContentSettingsPattern::FromString(kAtlassiancom),
+            ContentSettingsPattern::FromString(kAtlassiannet)
+          },
+          {
+            ContentSettingsPattern::FromString(kAtlassiannet),
+            ContentSettingsPattern::FromString(kAtlassiancom)
           }
       });
 

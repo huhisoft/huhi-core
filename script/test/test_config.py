@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# This Source Code Form is subject to the terms of the Huhi Software
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -24,6 +24,9 @@ class TestConfig(unittest.TestCase):
 
     def test_output_dir_darwin_x64(self):
         self.assertEquals(config.output_dir('darwin', 'x64').endswith('Release'), True)
+
+    def test_output_dir_darwin_x64(self):
+        self.assertEquals(config.output_dir('darwin', 'arm64').endswith('Release_arm64'), True)
 
     def test_output_dir_linux_x64(self):
         self.assertEquals(config.output_dir('linux', 'x64').endswith('Release'), True)

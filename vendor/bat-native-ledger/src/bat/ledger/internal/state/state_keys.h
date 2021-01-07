@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,7 +11,6 @@
 namespace ledger {
 namespace state {
 
-const char kEnabled[] = "enabled";
 const char kServerPublisherListStamp[] = "publisher_prefix_list_stamp";
 const char kUpholdAnonAddress[] = "uphold_anon_address";  // DEPRECATED
 const char kPromotionLastFetchStamp[] = "promotion_last_fetch_stamp";
@@ -19,8 +18,6 @@ const char kPromotionCorruptedMigrated[] =
     "promotion_corrupted_migrated2";
 const char kAnonTransferChecked[] = "anon_transfer_checked";
 const char kVersion[] = "version";
-
-// Auto contributions
 const char kMinVisitTime[] = "ac.min_visit_time";
 const char kMinVisits[] = "ac.min_visits";
 const char kAllowNonVerified[] = "ac.allow_non_verified";
@@ -31,8 +28,8 @@ const char kAutoContributeEnabled[] = "ac.enabled";
 const char kAutoContributeAmount[] = "ac.amount";
 const char kNextReconcileStamp[] = "ac.next_reconcile_stamp";
 const char kCreationStamp[] = "creation_stamp";
-const char kRecoverySeed[] = "wallet.seed";
-const char kPaymentId[] = "wallet.payment_id";
+const char kRecoverySeed[] = "wallet.seed";  // DEPRECATED
+const char kPaymentId[] = "wallet.payment_id";  // DEPRECATED
 const char kInlineTipRedditEnabled[] = "inline_tip.reddit";
 const char kInlineTipTwitterEnabled[] = "inline_tip.twitter";
 const char kInlineTipGithubEnabled[] = "inline_tip.github";
@@ -43,7 +40,9 @@ const char kParametersTipChoices[] = "parameters.tip.choices";
 const char kParametersMonthlyTipChoices[] =
     "parameters.tip.monthly_choices";
 const char kFetchOldBalance[] = "fetch_old_balance";
-const char kEmptyBalanceChecked[] ="empty_balance_checked";
+const char kEmptyBalanceChecked[] = "empty_balance_checked";
+const char kWalletHuhi[]  ="wallets.huhi";
+const char kWalletUphold[] = "wallets.uphold";
 
 }  // namespace state
 }  // namespace ledger

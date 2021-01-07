@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -25,51 +25,6 @@ ExtensionRewardsServiceObserver::ExtensionRewardsServiceObserver(
 ExtensionRewardsServiceObserver::~ExtensionRewardsServiceObserver() {
 }
 
-void ExtensionRewardsServiceObserver::OnWalletInitialized(
-    RewardsService* rewards_service,
-    const ledger::type::Result result) {
-  auto* event_router = extensions::EventRouter::Get(profile_);
-
-  if (!event_router) {
-    return;
-  }
-
-  if (result == ledger::type::Result::WALLET_CREATED) {
-    auto args = std::make_unique<base::ListValue>();
-    std::unique_ptr<extensions::Event> event(new extensions::Event(
-        extensions::events::HUHI_START,
-        extensions::api::huhi_rewards::WalletCreated::kEventName,
-        std::move(args)));
-    event_router->BroadcastEvent(std::move(event));
-    return;
-  }
-
-  if (result != ledger::type::Result::NO_LEDGER_STATE &&
-      result != ledger::type::Result::LEDGER_OK) {
-    // Report back all errors except when ledger_state is missing
-    std::unique_ptr<base::ListValue> args(
-        extensions::api::huhi_rewards::WalletCreationFailed::Create(
-          static_cast<int>(result)).release());
-
-    std::unique_ptr<extensions::Event> event(new extensions::Event(
-        extensions::events::HUHI_START,
-        extensions::api::huhi_rewards::WalletCreationFailed::kEventName,
-        std::move(args)));
-    event_router->BroadcastEvent(std::move(event));
-    return;
-  }
-
-  std::unique_ptr<base::ListValue> args(
-      extensions::api::huhi_rewards::Initialized::Create(
-        static_cast<int>(result)).release());
-
-  std::unique_ptr<extensions::Event> event(new extensions::Event(
-      extensions::events::HUHI_START,
-      extensions::api::huhi_rewards::Initialized::kEventName,
-      std::move(args)));
-  event_router->BroadcastEvent(std::move(event));
-}
-
 void ExtensionRewardsServiceObserver::OnPanelPublisherInfo(
     RewardsService* rewards_service,
     const ledger::type::Result result,
@@ -89,7 +44,7 @@ void ExtensionRewardsServiceObserver::OnPanelPublisherInfo(
   publisher.name = info->name;
   publisher.url = info->url;
   publisher.provider = info->provider;
-  publisher.favicon_url = info->favicon_url;
+  publisher.fav_icon_url = info->favicon_url;
   publisher.publisher_key = info->id;
   std::unique_ptr<base::ListValue> args(
       extensions::api::huhi_rewards::OnPublisherData::Create(windowId,
@@ -181,24 +136,6 @@ void ExtensionRewardsServiceObserver::OnAdsEnabled(
   std::unique_ptr<extensions::Event> event(new extensions::Event(
       extensions::events::HUHI_START,
       extensions::api::huhi_rewards::OnAdsEnabled::kEventName,
-      std::move(args)));
-  event_router->BroadcastEvent(std::move(event));
-}
-
-void ExtensionRewardsServiceObserver::OnRewardsMainEnabled(
-    RewardsService* rewards_service,
-    bool rewards_main_enabled) {
-  auto* event_router = extensions::EventRouter::Get(profile_);
-  if (!event_router) {
-    return;
-  }
-
-  std::unique_ptr<base::ListValue> args(
-      extensions::api::huhi_rewards::OnEnabledMain::Create(
-          rewards_main_enabled).release());
-  std::unique_ptr<extensions::Event> event(new extensions::Event(
-      extensions::events::HUHI_START,
-      extensions::api::huhi_rewards::OnEnabledMain::kEventName,
       std::move(args)));
   event_router->BroadcastEvent(std::move(event));
 }

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/post_bat_loss/post_bat_loss.h"
@@ -26,10 +26,15 @@ PostBatLoss::PostBatLoss(LedgerImpl* ledger):
 PostBatLoss::~PostBatLoss() = default;
 
 std::string PostBatLoss::GetUrl(const int32_t version) {
-  const std::string payment_id = ledger_->state()->GetPaymentId();
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    return "";
+  }
+
   const std::string& path = base::StringPrintf(
       "/v1/wallets/%s/events/batloss/%d",
-      payment_id.c_str(),
+      wallet->payment_id.c_str(),
       version);
 
   return GetServerUrl(path);
@@ -56,19 +61,24 @@ void PostBatLoss::Request(
     const double amount,
     const int32_t version,
     PostBatLossCallback callback) {
-  const std::string payment_id = ledger_->state()->GetPaymentId();
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    callback(type::Result::LEDGER_ERROR);
+    return;
+  }
+
   const std::string payload = GeneratePayload(amount);
 
   const std::string header_url = base::StringPrintf(
       "post /v1/wallets/%s/events/batloss/%d",
-      payment_id.c_str(),
+      wallet->payment_id.c_str(),
       version);
 
   const auto headers = util::BuildSignHeaders(
       header_url,
       payload,
-      payment_id,
-      ledger_->state()->GetRecoverySeed());
+      wallet->payment_id,
+      wallet->recovery_seed);
 
   auto url_callback = std::bind(&PostBatLoss::OnRequest,
       this,

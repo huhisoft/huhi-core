@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -40,6 +40,12 @@ std::string PostTransactionAnon::GeneratePayload(
     const double amount,
     const std::string& order_id,
     const std::string& destination) {
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    return "";
+  }
+
   base::Value denomination(base::Value::Type::DICTIONARY);
   denomination.SetStringKey("amount", base::StringPrintf("%g", amount));
   denomination.SetStringKey("currency", "BAT");
@@ -55,7 +61,7 @@ std::string PostTransactionAnon::GeneratePayload(
       order_id,
       octets_json,
       "primary",
-      ledger_->state()->GetRecoverySeed(),
+      wallet->recovery_seed,
       true);
 
   base::Value headers(base::Value::Type::DICTIONARY);
@@ -73,7 +79,7 @@ std::string PostTransactionAnon::GeneratePayload(
   base::Base64Encode(transaction_json, &transaction_base64);
 
   base::Value body(base::Value::Type::DICTIONARY);
-  body.SetStringKey("paymentId", ledger_->state()->GetPaymentId());
+  body.SetStringKey("paymentId", wallet->payment_id);
   body.SetStringKey("kind", "anonymous-card");
   body.SetStringKey("transaction", transaction_base64);
 

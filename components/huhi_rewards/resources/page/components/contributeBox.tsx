@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -37,15 +37,6 @@ class ContributeBox extends React.Component<Props, State> {
       modalContribute: false,
       settings: false,
       activeTabId: 0
-    }
-  }
-
-  componentDidUpdate (prevProps: Props) {
-    if (
-      prevProps.rewardsData.enabledMain &&
-      !this.props.rewardsData.enabledMain
-    ) {
-      this.setState({ settings: false })
     }
   }
 
@@ -151,14 +142,10 @@ class ContributeBox extends React.Component<Props, State> {
       contributionNonVerified,
       contributionVideos,
       contributionMonthly,
-      enabledMain,
       ui
     } = this.props.rewardsData
-    const { onlyAnonWallet } = ui
 
-    if (!enabledMain) {
-      return null
-    }
+    const { onlyAnonWallet } = ui
 
     return (
       <Grid columns={1} customStyle={{ margin: '0 auto' }}>
@@ -222,7 +209,6 @@ class ContributeBox extends React.Component<Props, State> {
   render () {
     const {
       firstLoad,
-      enabledMain,
       parameters,
       contributionMonthly,
       enabledContribute,
@@ -238,7 +224,7 @@ class ContributeBox extends React.Component<Props, State> {
     const numRows = contributeRows && contributeRows.length
     const numExcludedRows = excludedRows && excludedRows.length
     const allSites = !(excludedRows.length > 0 || numRows > 5)
-    const showDisabled = firstLoad !== false || !enabledMain || !enabledContribute
+    const showDisabled = firstLoad !== false || !enabledContribute
     const { onlyAnonWallet } = ui
 
     return (
@@ -246,8 +232,8 @@ class ContributeBox extends React.Component<Props, State> {
         title={getLocale('contributionTitle')}
         type={'contribute'}
         description={getLocale('contributionDesc')}
-        toggle={enabledMain}
-        checked={enabledMain ? enabledContribute : false}
+        toggle={true}
+        checked={enabledContribute}
         settingsChild={this.contributeSettings(monthlyList)}
         disabledContent={showDisabled ? this.contributeDisabled() : null}
         onToggle={this.onToggleContribution}

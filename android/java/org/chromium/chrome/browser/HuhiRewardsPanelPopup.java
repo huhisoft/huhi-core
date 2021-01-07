@@ -1,5 +1,5 @@
-/** Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-  * This Source Code Form is subject to the terms of the Huhi Software
+/** Copyright (c) 2020 The Huhi Authors. All rights reserved.
+  * This Source Code Form is subject to the terms of the Mozilla Public
   * License, v. 2.0. If a copy of the MPL was not distributed with this file,
   * You can obtain one at http://mozilla.org/MPL/2.0/.
   */
@@ -7,17 +7,23 @@
 package org.chromium.chrome.browser;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.PorterDuff;
-import android.os.Handler;
 import android.os.Build;
+import android.os.Handler;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,8 +36,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -40,39 +46,53 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.content.Intent;
 import android.widget.Toast;
-import android.view.MotionEvent;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
+
+import org.json.JSONException;
 
 import org.chromium.base.ContextUtils;
 import org.chromium.base.Log;
 import org.chromium.base.SysUtils;
+import org.chromium.chrome.R;
 import org.chromium.chrome.browser.HuhiAdsNativeHelper;
+import org.chromium.chrome.browser.HuhiFeatureList;
+import org.chromium.chrome.browser.HuhiRewardsBalance;
 import org.chromium.chrome.browser.HuhiRewardsExternalWallet;
 import org.chromium.chrome.browser.HuhiRewardsExternalWallet.WalletStatus;
 import org.chromium.chrome.browser.HuhiRewardsHelper;
 import org.chromium.chrome.browser.HuhiRewardsObserver;
-import org.chromium.chrome.browser.HuhiRewardsBalance;
 import org.chromium.chrome.browser.HuhiRewardsPublisher.PublisherStatus;
 import org.chromium.chrome.browser.ChromeTabbedActivity;
 import org.chromium.chrome.browser.app.HuhiActivity;
+import org.chromium.chrome.browser.custom_layout.HeightWrappingViewPager;
+import org.chromium.chrome.browser.customtabs.CustomTabActivity;
+import org.chromium.chrome.browser.flags.ChromeFeatureList;
+import org.chromium.chrome.browser.preferences.HuhiPreferenceKeys;
+import org.chromium.chrome.browser.preferences.SharedPreferencesManager;
 import org.chromium.chrome.browser.profiles.Profile;
 import org.chromium.chrome.browser.tab.Tab;
 import org.chromium.chrome.browser.tab.TabLaunchType;
 import org.chromium.chrome.browser.tabmodel.TabModelSelectorImpl;
-import org.chromium.chrome.R;
+import org.chromium.chrome.browser.util.PackageUtils;
 import org.chromium.content_public.browser.LoadUrlParams;
 
-import org.json.JSONException;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHelper.LargeIconReadyCallback {
     private static final String TAG = "HuhiRewards";
@@ -118,9 +138,9 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
     private final ChromeTabbedActivity mActivity;
     private final HuhiActivity mHuhiActivity;
     private View root;
-    private Button btJoinRewards;
     private Button btAddFunds;
     private Button btRewardsSettings;
+    private Button btSendATip;
     private Switch btAutoContribute;
     private TextView tvLearnMore;
     private TextView tvYourWalletTitle;
@@ -138,7 +158,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
     private TextView tvPublisherNotVerifiedSummary;
     private boolean walletDetailsReceived;      //flag: wallet details received
     private boolean showRewardsSummary;        //flag: we don't want OnGetCurrentBalanceReport always opens up Rewards Summary window
-    private AnimationDrawable wallet_init_animation;
     private HuhiRewardsHelper mIconFetcher;
 
     private DonationsAdapter mTip_amount_spinner_data_adapter; //data adapter for mTip_amount_spinner (Spinner)
@@ -152,18 +171,23 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
     private static final int WALLET_BALANCE_LIMIT = 25;
 
     private boolean mClaimInProcess;
-    private boolean mWalletCreateInProcess;
 
     private boolean mAutoContributeEnabled;
     private boolean mPubInReccuredDonation;
 
-    private String batText;
     private String batPointsText;
-    private boolean isAnonWallet;
 
     private HuhiRewardsExternalWallet mExternal_wallet;
 
     private double walletBalance = .0;
+
+    private View huhiRewardsOnboardingModalView;
+    private View huhiRewardsOptInView;
+
+    private HuhiRewardsOnboardingPagerAdapter huhiRewardsOnboardingPagerAdapter;
+    private HeightWrappingViewPager huhiRewardsViewPager;
+    private View huhiRewardsOnboardingView;
+    private View huhiRewardsWelcomeView;
 
     private boolean isVerifyWalletEnabled() {
         SharedPreferences sharedPreferences = ContextUtils.getAppSharedPreferences();
@@ -251,85 +275,37 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         }, 0, UPDATE_BALANCE_INTERVAL);
     }
 
-    protected void onCreate() {
-        LayoutInflater inflater =
-            (LayoutInflater) this.anchor.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.huhi_rewards_panel, null);
-
-        isAnonWallet = HuhiRewardsHelper.isAnonWallet();
-
-        batText = isAnonWallet ? root.getResources().getString(R.string.huhi_ui_bap_text) : root.getResources().getString(R.string.huhi_ui_bat_text);
-        batPointsText = isAnonWallet ? root.getResources().getString(R.string.huhi_ui_bat_points_text) : root.getResources().getString(R.string.huhi_ui_bat_text);
-
-        setContentView(root);
-
-        ((TextView)root.findViewById(R.id.get_paid_id)).setText(String.format(root.getResources().getString(R.string.huhi_ui_welcome_desc_two), isAnonWallet ? root.getResources().getString(R.string.point) : root.getResources().getString(R.string.token)));
-
+    private void initViews(ViewGroup root) {
         tvPublisherNotVerifiedSummary = (TextView)root.findViewById(R.id.publisher_not_verified_summary);
-        tvPublisherNotVerifiedSummary.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    int offset = tvPublisherNotVerifiedSummary.getOffsetForPosition(
-                                     motionEvent.getX(), motionEvent.getY());
-
-                    String learn_more = HuhiRewardsPanelPopup.this.root.getResources().getString(R.string.learn_more);
-                    if (HuhiRewardsHelper.subtextAtOffset(tvPublisherNotVerifiedSummary.getText().toString(), learn_more, offset) ) {
-                        mHuhiActivity.openNewOrSelectExistingTab (HuhiActivity.REWARDS_LEARN_MORE_URL);
-                        dismiss();
-                    }
-                }
-                return false;
-            }
-        });
-
-
-        btJoinRewards = (Button)root.findViewById(R.id.join_rewards_id);
-        if (mHuhiRewardsNativeWorker != null) {
-            //check if 'CreateWallet' request has been sent
-            mWalletCreateInProcess = mHuhiRewardsNativeWorker.IsCreateWalletInProcess();
-            if (mWalletCreateInProcess) {
-                startJoinRewardsAnimation();
-            } else {
-                btJoinRewards.setEnabled(true);
-            }
-
-            mHuhiRewardsNativeWorker.GetRewardsMainEnabled();
-        }
-
-        String huhiRewardsTitle = root.getResources().getString(R.string.huhi_ui_huhi_rewards) + COPYRIGHT_SPECIAL;
-        ((TextView)root.findViewById(R.id.huhi_rewards_id)).setText(huhiRewardsTitle);
-        Context context = ContextUtils.getApplicationContext();
-        if (btJoinRewards != null) {
-            btJoinRewards.setOnClickListener((new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mHuhiRewardsNativeWorker != null && false == mWalletCreateInProcess) {
-                        mHuhiRewardsNativeWorker.CreateWallet();
-                        mWalletCreateInProcess = true;
-                        startJoinRewardsAnimation();
-                    }
-                }
-            }));
-        }
-        tvLearnMore = (TextView)root.findViewById(R.id.learn_more_id);
-        if (tvLearnMore != null) {
-            tvLearnMore.setOnClickListener((new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mHuhiActivity.openNewOrSelectExistingTab(HuhiActivity.REWARDS_SETTINGS_URL);
-                    dismiss();
-                }
-            }));
-        }
-
         tvYourWalletTitle = (TextView)root.findViewById(R.id.your_wallet_title);
-        tvYourWalletTitle.setText(isAnonWallet ? root.getResources().getString(R.string.huhi_ui_your_balance) : root.getResources().getString(R.string.huhi_ui_your_wallet));
-
-        ((TextView)root.findViewById(R.id.br_bat)).setText(batPointsText);
-
         btRewardsSettings = (Button)root.findViewById(R.id.br_rewards_settings);
+        btAutoContribute = (Switch)root.findViewById(R.id.huhi_ui_auto_contribute);
+        btRewardsSummary = (Button)root.findViewById(R.id.rewards_summary);
+        btSendATip = (Button)root.findViewById(R.id.send_a_tip);
+        tvPublisherNotVerified = (TextView)root.findViewById(R.id.publisher_not_verified);
+        mTip_amount_spinner = root.findViewById(R.id.auto_tip_amount);
+    }
+
+    private void initViewActionEvents() {
+        if (tvPublisherNotVerifiedSummary != null) {
+            tvPublisherNotVerifiedSummary.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                        int offset = tvPublisherNotVerifiedSummary.getOffsetForPosition(
+                                         motionEvent.getX(), motionEvent.getY());
+
+                        String learn_more = HuhiRewardsPanelPopup.this.root.getResources().getString(R.string.learn_more);
+                        if (HuhiRewardsHelper.subtextAtOffset(tvPublisherNotVerifiedSummary.getText().toString(), learn_more, offset) ) {
+                            mHuhiActivity.openNewOrSelectExistingTab (HuhiActivity.REWARDS_LEARN_MORE_URL);
+                            dismiss();
+                        }
+                    }
+                    return false;
+                }
+            });
+        }
+
         if (btRewardsSettings != null) {
             btRewardsSettings.setOnClickListener((new View.OnClickListener() {
                 @Override
@@ -339,8 +315,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
                 }
             }));
         }
-
-        btAutoContribute = (Switch)root.findViewById(R.id.huhi_ui_auto_contribute);
 
         if (btAutoContribute != null) {
             autoContributeSwitchListener = new OnCheckedChangeListener() {
@@ -353,9 +327,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
             btAutoContribute.setOnCheckedChangeListener(autoContributeSwitchListener);
         }
 
-        btRewardsSummary = (Button)root.findViewById(R.id.rewards_summary);
-        //btRewardsSummary.setBackgroundColor(Color.parseColor("#e9ebff"));
-        btRewardsSummary.getBackground().setColorFilter(Color.parseColor("#e9ebff"), PorterDuff.Mode.SRC);
         if (btRewardsSummary != null) {
             btRewardsSummary.setOnClickListener((new View.OnClickListener() {
                 @Override
@@ -397,9 +368,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
             }));
         }
 
-        SetRewardsSummaryMonthYear();
-        // Starts Send a tip Activity
-        Button btSendATip = (Button)root.findViewById(R.id.send_a_tip);
         if (btSendATip != null) {
             btSendATip.setOnClickListener((new View.OnClickListener() {
                 @Override
@@ -424,87 +392,379 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
                 }
             }));
         }
-        tvPublisherNotVerified = (TextView)root.findViewById(R.id.publisher_not_verified);
-        tvPublisherNotVerified.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    int offset = tvPublisherNotVerified.getOffsetForPosition(
-                                     motionEvent.getX(), motionEvent.getY());
 
-                    String learn_more = HuhiRewardsPanelPopup.this.root.getResources().getString(R.string.learn_more);
-                    if (HuhiRewardsHelper.subtextAtOffset(tvPublisherNotVerified.getText().toString(), learn_more, offset) ) {
-                        mHuhiActivity.openNewOrSelectExistingTab(HuhiActivity.REWARDS_LEARN_MORE_URL);
-                        dismiss();
+        if (tvPublisherNotVerified != null) {
+            tvPublisherNotVerified.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                        int offset = tvPublisherNotVerified.getOffsetForPosition(
+                                         motionEvent.getX(), motionEvent.getY());
+
+                        String learn_more = HuhiRewardsPanelPopup.this.root.getResources().getString(R.string.learn_more);
+                        if (HuhiRewardsHelper.subtextAtOffset(tvPublisherNotVerified.getText().toString(), learn_more, offset) ) {
+                            mHuhiActivity.openNewOrSelectExistingTab(HuhiActivity.REWARDS_LEARN_MORE_URL);
+                            dismiss();
+                        }
+                    }
+                    return false;
+                }
+            });
+        }
+
+        if (mTip_amount_spinner != null) {
+            mTip_amount_spinner.setOnItemSelectedListener(
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(
+                    AdapterView<?> parent, View view, int position, long id) {
+                    if (mTip_amount_spinner_auto_select) { //do nothing
+                        mTip_amount_spinner_auto_select = false;
+                        return;
+                    }
+
+                    Integer intObj = (Integer)mTip_amount_spinner_data_adapter.getItem (position);
+                    if (null == intObj) {
+                        Log.e(TAG, "Wrong position at Recurrent Donations Spinner");
+                        return;
+                    }
+                    int tipValue = (int)intObj;
+                    String pubId = mHuhiRewardsNativeWorker.GetPublisherId(currentTabId);
+                    if (0 == tipValue) {
+                        //remove recurrent donation for this publisher
+                        mHuhiRewardsNativeWorker.RemoveRecurring(pubId);
+                    } else {
+                        //update recurrent donation amount for this publisher
+                        mHuhiRewardsNativeWorker.Donate(pubId, tipValue, true);
                     }
                 }
-                return false;
-            }
-        });
 
-        Button btEnableRewards = (Button)root.findViewById(R.id.enable_rewards_id);
-        if (btEnableRewards != null) {
-            btEnableRewards.setOnClickListener((new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    thisObject.mHuhiRewardsNativeWorker.SetRewardsMainEnabled(true);
-                    thisObject.mHuhiRewardsNativeWorker.GetRewardsMainEnabled();
+                public void onNothingSelected(AdapterView<?> parent) {
+                    //Do nothing
                 }
-            }));
+            });
         }
+    }
+
+    protected void onCreate() {
+        LayoutInflater inflater =
+            (LayoutInflater) this.anchor.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.huhi_rewards_panel, null);
+        initViews(root);
+        setContentView(root);
+        initViewActionEvents();
+
+        //setting Recurrent Donations spinner
+        mTip_amount_spinner_data_adapter = new DonationsAdapter(ContextUtils.getApplicationContext());
+        mTip_amount_spinner.setAdapter(mTip_amount_spinner_data_adapter);
+
+        boolean isAnonWallet = HuhiRewardsHelper.isAnonWallet();
+        tvYourWalletTitle.setText(isAnonWallet ? root.getResources().getString(R.string.huhi_ui_your_balance) : root.getResources().getString(R.string.huhi_ui_your_wallet));
+
+        batPointsText = isAnonWallet ? root.getResources().getString(R.string.huhi_ui_bat_points_text) : root.getResources().getString(R.string.huhi_ui_bat_text);
+
+        btRewardsSummary.getBackground().setColorFilter(Color.parseColor("#e9ebff"), PorterDuff.Mode.SRC);
+        SetRewardsSummaryMonthYear();
 
         SetupNotificationsControls();
 
-        //setting Recurrent Donations spinner
-        mTip_amount_spinner = root.findViewById(R.id.auto_tip_amount);
-        mTip_amount_spinner_data_adapter = new DonationsAdapter(ContextUtils.getApplicationContext());
-        mTip_amount_spinner.setAdapter(mTip_amount_spinner_data_adapter);
-        mTip_amount_spinner.setOnItemSelectedListener(
-        new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(
-                AdapterView<?> parent, View view, int position, long id) {
-                if (mTip_amount_spinner_auto_select) { //do nothing
-                    mTip_amount_spinner_auto_select = false;
-                    return;
-                }
+        ShowWebSiteView();
+        mHuhiRewardsNativeWorker.GetRewardsParameters();
 
-                Integer intObj = (Integer)mTip_amount_spinner_data_adapter.getItem (position);
-                if (null == intObj) {
-                    Log.e(TAG, "Wrong position at Recurrent Donations Spinner");
-                    return;
-                }
-                int tipValue = (int)intObj;
-                String pubId = mHuhiRewardsNativeWorker.GetPublisherId(currentTabId);
-                if (0 == tipValue) {
-                    //remove recurrent donation for this publisher
-                    mHuhiRewardsNativeWorker.RemoveRecurring(pubId);
+        mHuhiRewardsNativeWorker.GetExternalWallet();
+    }
+
+    private void showHuhiRewardsOptInLayout(View root) {
+        huhiRewardsOptInView = root.findViewById(R.id.huhi_rewards_opt_in_layout_id);
+        huhiRewardsOptInView.setVisibility(View.VISIBLE);
+        TextView optInText= huhiRewardsOptInView.findViewById(R.id.huhi_rewards_opt_in_text);
+
+        String optInString = String.format(mActivity.getResources().getString(R.string.huhi_rewards_opt_in_text, mActivity.getResources().getString(R.string.quick_tour)));
+        int quickTourIndex = optInString.indexOf(mActivity.getResources().getString(R.string.quick_tour));
+        Spanned optInTextSpanned = HuhiRewardsHelper.spannedFromHtmlString(optInString);
+        SpannableString optInTextSS = new SpannableString(optInTextSpanned.toString());
+
+        ClickableSpan optInClickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                huhiRewardsOptInView.setVisibility(View.GONE);
+                showHuhiRewardsOnboarding(root, false);
+            }
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        optInTextSS.setSpan(optInClickableSpan, quickTourIndex, quickTourIndex + mActivity.getResources().getString(R.string.quick_tour).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        optInTextSS.setSpan(new ForegroundColorSpan(mActivity.getResources().getColor(R.color.huhi_rewards_modal_theme_color)), quickTourIndex, quickTourIndex + mActivity.getResources().getString(R.string.quick_tour).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        optInText.setMovementMethod(LinkMovementMethod.getInstance());
+        optInText.setText(optInTextSS);
+
+        Button btnOptIn = root.findViewById(R.id.btn_opt_in);
+        btnOptIn.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                huhiRewardsOptInView.setVisibility(View.GONE);
+                HuhiAdsNativeHelper.nativeSetAdsEnabled(Profile.getLastUsedRegularProfile());
+                HuhiRewardsNativeWorker.getInstance().SetAutoContributeEnabled(true);
+                if (mHuhiActivity != null)
+                    mHuhiActivity.openNewOrSelectExistingTab(HuhiActivity.REWARDS_SETTINGS_URL);
+            }
+        }));
+
+        String tosText = String.format(mActivity.getResources().getString(R.string.huhi_rewards_tos_text), mActivity.getResources().getString(R.string.terms_of_service), mActivity.getResources().getString(R.string.privacy_policy));
+        int termsOfServiceIndex = tosText.indexOf(mActivity.getResources().getString(R.string.terms_of_service));
+        Spanned tosTextSpanned = HuhiRewardsHelper.spannedFromHtmlString(tosText);
+        SpannableString tosTextSS = new SpannableString(tosTextSpanned.toString());
+
+        ClickableSpan tosClickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                CustomTabActivity.showInfoPage(mActivity, HuhiActivity.HUHI_TERMS_PAGE);
+            }
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        tosTextSS.setSpan(tosClickableSpan, termsOfServiceIndex, termsOfServiceIndex + mActivity.getResources().getString(R.string.terms_of_service).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tosTextSS.setSpan(new ForegroundColorSpan(mActivity.getResources().getColor(R.color.huhi_rewards_modal_theme_color)), termsOfServiceIndex, termsOfServiceIndex + mActivity.getResources().getString(R.string.terms_of_service).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        ClickableSpan privacyProtectionClickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                CustomTabActivity.showInfoPage(mActivity, HuhiActivity.HUHI_PRIVACY_POLICY);
+            }
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        int privacyPolicyIndex = tosText.indexOf(mActivity.getResources().getString(R.string.privacy_policy));
+        tosTextSS.setSpan(privacyProtectionClickableSpan, privacyPolicyIndex, privacyPolicyIndex + mActivity.getResources().getString(R.string.privacy_policy).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tosTextSS.setSpan(new ForegroundColorSpan(mActivity.getResources().getColor(R.color.huhi_rewards_modal_theme_color)), privacyPolicyIndex, privacyPolicyIndex + mActivity.getResources().getString(R.string.privacy_policy).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        TextView tosAndPpText = huhiRewardsOptInView.findViewById(R.id.tos_pp_text);
+        tosAndPpText.setMovementMethod(LinkMovementMethod.getInstance());
+        tosAndPpText.setText(tosTextSS);
+
+        AppCompatImageView modalCloseButton = huhiRewardsOptInView.findViewById(R.id.modal_close);
+        modalCloseButton.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                huhiRewardsOptInView.setVisibility(View.GONE);
+            }
+        }));
+    }
+
+    private void showHuhiRewardsOnboardingModal(View root) {
+        huhiRewardsOnboardingModalView = root.findViewById(R.id.huhi_rewards_onboarding_modal_id);
+        huhiRewardsOnboardingModalView.setVisibility(View.VISIBLE);
+
+        String tosText = String.format(mActivity.getResources().getString(R.string.huhi_rewards_tos_text), mActivity.getResources().getString(R.string.terms_of_service), mActivity.getResources().getString(R.string.privacy_policy));
+        int termsOfServiceIndex = tosText.indexOf(mActivity.getResources().getString(R.string.terms_of_service));
+        Spanned tosTextSpanned = HuhiRewardsHelper.spannedFromHtmlString(tosText);
+        SpannableString tosTextSS = new SpannableString(tosTextSpanned.toString());
+
+        ClickableSpan tosClickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                CustomTabActivity.showInfoPage(mActivity, HuhiActivity.HUHI_TERMS_PAGE);
+            }
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        tosTextSS.setSpan(tosClickableSpan, termsOfServiceIndex, termsOfServiceIndex + mActivity.getResources().getString(R.string.terms_of_service).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tosTextSS.setSpan(new ForegroundColorSpan(mActivity.getResources().getColor(R.color.huhi_rewards_modal_theme_color)), termsOfServiceIndex, termsOfServiceIndex + mActivity.getResources().getString(R.string.terms_of_service).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        ClickableSpan privacyProtectionClickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View textView) {
+                CustomTabActivity.showInfoPage(mActivity, HuhiActivity.HUHI_PRIVACY_POLICY);
+            }
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        int privacyPolicyIndex = tosText.indexOf(mActivity.getResources().getString(R.string.privacy_policy));
+        tosTextSS.setSpan(privacyProtectionClickableSpan, privacyPolicyIndex, privacyPolicyIndex + mActivity.getResources().getString(R.string.privacy_policy).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tosTextSS.setSpan(new ForegroundColorSpan(mActivity.getResources().getColor(R.color.huhi_rewards_modal_theme_color)), privacyPolicyIndex, privacyPolicyIndex + mActivity.getResources().getString(R.string.privacy_policy).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        TextView tosAndPpText = huhiRewardsOnboardingModalView.findViewById(R.id.tos_pp_text);
+        tosAndPpText.setMovementMethod(LinkMovementMethod.getInstance());
+        tosAndPpText.setText(tosTextSS);
+
+        TextView takeQuickTourButton = root.findViewById(R.id.take_quick_tour_button);
+        takeQuickTourButton.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                huhiRewardsOnboardingModalView.setVisibility(View.GONE);
+                showHuhiRewardsOnboarding(root, false);
+            }
+        }));
+        Button btnHuhiRewards = root.findViewById(R.id.btn_huhi_rewards);
+        btnHuhiRewards.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                huhiRewardsOnboardingModalView.setVisibility(View.GONE);
+                HuhiAdsNativeHelper.nativeSetAdsEnabled(Profile.getLastUsedRegularProfile());
+                HuhiRewardsNativeWorker.getInstance().SetAutoContributeEnabled(true);
+                showHuhiRewardsOnboarding(root, true);
+            }
+        }));
+        AppCompatImageView modalCloseButton = huhiRewardsOnboardingModalView.findViewById(R.id.modal_close);
+        modalCloseButton.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showHuhiRewardsOptInLayout(root);
+                huhiRewardsOnboardingModalView.setVisibility(View.GONE);
+            }
+        }));
+    }
+
+    private void showHuhiRewardsOnboarding(View root, boolean shouldShowMoreOption) {
+        huhiRewardsOnboardingView = root.findViewById(R.id.huhi_rewards_onboarding_layout_id);
+        huhiRewardsOnboardingView.setVisibility(View.VISIBLE);
+        final Button btnNext = huhiRewardsOnboardingView.findViewById(R.id.btn_next);
+        btnNext.setOnClickListener(huhiRewardsOnboardingClickListener);
+        huhiRewardsOnboardingView.findViewById(R.id.btn_go_back).setOnClickListener(huhiRewardsOnboardingClickListener);
+        huhiRewardsOnboardingView.findViewById(R.id.btn_skip).setOnClickListener(huhiRewardsOnboardingClickListener);
+        huhiRewardsOnboardingView.findViewById(R.id.btn_start_quick_tour).setOnClickListener(huhiRewardsOnboardingClickListener);
+
+        huhiRewardsViewPager = huhiRewardsOnboardingView.findViewById(R.id.huhi_rewards_view_pager);
+        huhiRewardsViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(
+                    int position, float positionOffset, int positionOffsetPixels) {
+                if (positionOffset == 0 
+                    && positionOffsetPixels == 0
+                    && position == 0){
+                    huhiRewardsOnboardingView.findViewById(R.id.onboarding_first_screen_layout).setVisibility(View.VISIBLE);
+                    huhiRewardsOnboardingView.findViewById(R.id.onboarding_action_layout).setVisibility(View.GONE);
                 } else {
-                    //update recurrent donation amount for this publisher
-                    mHuhiRewardsNativeWorker.Donate(pubId, tipValue, true);
+                    huhiRewardsOnboardingView.findViewById(R.id.onboarding_action_layout).setVisibility(View.VISIBLE);
+                    huhiRewardsOnboardingView.findViewById(R.id.onboarding_first_screen_layout).setVisibility(View.GONE);
                 }
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                //Do nothing
+            public void onPageSelected(int position) {
+                if (huhiRewardsOnboardingPagerAdapter != null
+                    && position == huhiRewardsOnboardingPagerAdapter.getCount()-1) {
+                    btnNext.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    btnNext.setText(mActivity.getResources().getString(R.string.done));
+                } else {
+                    btnNext.setText(mActivity.getResources().getString(R.string.next));
+                    btnNext.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_chevron_right, 0);
+                }
             }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
         });
-
-        mHuhiRewardsNativeWorker.GetExternalWallet(
-            HuhiRewardsBalance.WALLET_UPHOLD);
+        huhiRewardsOnboardingPagerAdapter = new HuhiRewardsOnboardingPagerAdapter();
+        huhiRewardsOnboardingPagerAdapter.setOnboardingType(shouldShowMoreOption);
+        huhiRewardsViewPager.setAdapter(huhiRewardsOnboardingPagerAdapter);
+        TabLayout huhiRewardsTabLayout = huhiRewardsOnboardingView.findViewById(R.id.huhi_rewards_tab_layout);
+        huhiRewardsTabLayout.setupWithViewPager(huhiRewardsViewPager, true);
+        AppCompatImageView modalCloseButton = huhiRewardsOnboardingView.findViewById(R.id.modal_close);
+        modalCloseButton.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                huhiRewardsOnboardingView.setVisibility(View.GONE);
+            }
+        }));
+        huhiRewardsOnboardingView.findViewById(R.id.onboarding_first_screen_layout).setVisibility(View.VISIBLE);
+        huhiRewardsOnboardingView.findViewById(R.id.onboarding_action_layout).setVisibility(View.GONE);
     }
 
-    private void startJoinRewardsAnimation() {
-        Button btJoinRewards = (Button)root.findViewById(R.id.join_rewards_id);
-        btJoinRewards.setEnabled(false);
-        btJoinRewards.setText(root.getResources().getString(R.string.huhi_ui_rewards_creating_text));
-        btJoinRewards.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.huhi_rewards_loader, 0);
-        wallet_init_animation = (AnimationDrawable)btJoinRewards.getCompoundDrawables()[2];
-        if (wallet_init_animation != null) {
-            wallet_init_animation.start();
+    private void showHuhiRewardsWelcomeLayout(View root) {
+        huhiRewardsWelcomeView = root.findViewById(R.id.huhi_rewards_welcome_layout_id);
+        huhiRewardsWelcomeView.setVisibility(View.VISIBLE);
+        TextView payoutDateText = huhiRewardsWelcomeView.findViewById(R.id.payout_date_text);
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("MMM. d'th' yyyy", Locale.getDefault());
+
+        Date currentTime = new Date();
+        cal.setTime(currentTime);
+        cal.add(Calendar.MONTH, 1);
+        cal.set(Calendar.DAY_OF_MONTH, 5);
+        payoutDateText.setText(dateFormat.format(cal.getTime()));
+        TextView btnQuickRefresherTour =
+                huhiRewardsWelcomeView.findViewById(R.id.quick_refresher_tour_button);
+        btnQuickRefresherTour.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                huhiRewardsWelcomeView.setVisibility(View.GONE);
+                showHuhiRewardsOnboarding(root, false);
+            }
+        }));
+        AppCompatImageView modalCloseButton =
+                huhiRewardsWelcomeView.findViewById(R.id.modal_close);
+        modalCloseButton.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                huhiRewardsWelcomeView.setVisibility(View.GONE);
+            }
+        }));
+    }
+
+    View.OnClickListener huhiRewardsOnboardingClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            int viewId = view.getId();
+            if (viewId == R.id.btn_start_quick_tour) {
+                if (huhiRewardsViewPager != null
+                    && huhiRewardsViewPager.getCurrentItem() == 0) {
+                    huhiRewardsViewPager.setCurrentItem(huhiRewardsViewPager.getCurrentItem() + 1);
+                }
+            }
+
+            if (viewId == R.id.btn_next) {
+                if (huhiRewardsViewPager != null
+                    && huhiRewardsOnboardingPagerAdapter != null) {
+                    if(huhiRewardsViewPager.getCurrentItem() == huhiRewardsOnboardingPagerAdapter.getCount()-1) {
+                        if (huhiRewardsOnboardingView != null) {
+                            huhiRewardsOnboardingView.setVisibility(View.GONE);
+                        }
+                        if (HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(Profile.getLastUsedRegularProfile())) {
+                            showHuhiRewardsWelcomeLayout(root);
+                        } else {
+                            showHuhiRewardsOptInLayout(root);
+                        }
+                    } else {
+                        huhiRewardsViewPager.setCurrentItem(huhiRewardsViewPager.getCurrentItem() + 1);
+                    }
+                }
+            }
+
+            if (viewId == R.id.btn_skip
+                && huhiRewardsOnboardingView != null) {
+                huhiRewardsViewPager.setCurrentItem(
+                        huhiRewardsOnboardingPagerAdapter.getCount() - 1);
+            }
+
+            if (viewId == R.id.btn_go_back 
+                && huhiRewardsViewPager != null) {
+                huhiRewardsViewPager.setCurrentItem(huhiRewardsViewPager.getCurrentItem() - 1);
+            }
         }
-    }
+    };
 
     private void SetupNotificationsControls() {
         // Check for notifications
@@ -542,6 +802,11 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
                                             currentYear);
         btRewardsSummary.setText(rewardsText);
         btRewardsSummary.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.slide_down, 0);
+        if (huhiRewardsWelcomeView != null && huhiRewardsWelcomeView.isShown()) {
+            huhiRewardsWelcomeView.setBackground(
+                    ContextUtils.getApplicationContext().getResources().getDrawable(
+                            R.drawable.bat_rewards_summary_gradient));
+        }
     }
 
     private void RemoveRewardsSummaryMonthYear() {
@@ -550,6 +815,11 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         }
         btRewardsSummary.setText(this.root.getResources().getString(R.string.huhi_ui_rewards_summary));
         btRewardsSummary.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.slide_up, 0);
+        if (huhiRewardsWelcomeView != null && huhiRewardsWelcomeView.isShown()) {
+            huhiRewardsWelcomeView.setBackgroundColor(
+                    ContextUtils.getApplicationContext().getResources().getColor(
+                            android.R.color.white));
+        }
     }
 
     protected void onShow() {}
@@ -574,6 +844,35 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
 
     public void showLikePopDownMenu() {
         this.showLikePopDownMenu(0, 0);
+        HuhiRewardsNativeWorker.getInstance().StartProcess();
+    }
+
+    @Override
+    public void OnStartProcess() {
+        if (root != null && PackageUtils.isFirstInstall(mActivity)
+                && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS)) {
+            if (HuhiRewardsHelper.shouldShowHuhiRewardsOnboardingOnce()) {
+                showHuhiRewardsOnboarding(root, false);
+                HuhiRewardsHelper.setShowHuhiRewardsOnboardingOnce(false);
+            } else if (HuhiRewardsHelper.getHuhiRewardsAppOpenCount() == 0
+                    && HuhiRewardsHelper.shouldShowHuhiRewardsOnboardingModal()
+                    && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(
+                        Profile.getLastUsedRegularProfile())) {
+                showHuhiRewardsOnboardingModal(root);
+                HuhiRewardsHelper.updateHuhiRewardsAppOpenCount();
+                HuhiRewardsHelper.setShowHuhiRewardsOnboardingModal(false);
+            } else if (SharedPreferencesManager.getInstance().readInt(
+                               HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT)
+                            > HuhiRewardsHelper.getHuhiRewardsAppOpenCount()
+                    && HuhiRewardsHelper.shouldShowMiniOnboardingModal()) {
+                if (HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(Profile.getLastUsedRegularProfile())) {
+                    showHuhiRewardsWelcomeLayout(root);
+                } else {
+                    showHuhiRewardsOptInLayout(root);
+                }
+                HuhiRewardsHelper.setShowMiniOnboardingModal(false);
+            }
+        }
     }
 
     public void showLikePopDownMenu(int xOffset, int yOffset) {
@@ -612,37 +911,28 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         }
     }
 
-    public void ShowWebSiteView(boolean returning_to_rewards) {
+    public void ShowWebSiteView() {
         ((TextView)this.root.findViewById(R.id.br_bat_wallet)).setText(String.format(Locale.getDefault(), "%.3f", 0.0));
         String usdText = String.format(this.root.getResources().getString(R.string.huhi_ui_usd), "0.00");
         ((TextView)this.root.findViewById(R.id.br_usd_wallet)).setText(usdText);
-
-        ScrollView sv = (ScrollView)this.root.findViewById(R.id.activity_huhi_rewards_panel);
-        sv.setVisibility(View.GONE);
         CreateUpdateBalanceTask();
         ScrollView sv_new = (ScrollView)this.root.findViewById(R.id.sv_no_website);
         sv_new.setVisibility(View.VISIBLE);
-        if (!returning_to_rewards) {
-            ((LinearLayout)this.root.findViewById(R.id.website_summary)).setVisibility(View.VISIBLE);
-            ((LinearLayout)this.root.findViewById(R.id.rewards_welcome_back)).setVisibility(View.GONE);
-            ShowRewardsSummary();
-            Tab currentActiveTab = HuhiRewardsHelper.currentActiveChromeTabbedActivityTab();
-            if (currentActiveTab != null && !currentActiveTab.isIncognito()) {
-                String url = currentActiveTab.getUrlString();
-                if (URLUtil.isValidUrl(url)) {
-                    mHuhiRewardsNativeWorker.GetPublisherInfo(currentActiveTab.getId(), url);
-                    mPublisherFetcher = new Timer();
-                    mPublisherFetcher.schedule(new PublisherFetchTimer(currentActiveTab.getId(), url),
-                                               PUBLISHER_INFO_FETCH_RETRY, PUBLISHER_INFO_FETCH_RETRY);
-                } else {
-                    btRewardsSummary.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                    btRewardsSummary.setClickable(false);
-                }
+        ShowRewardsSummary();
+        ((LinearLayout)this.root.findViewById(R.id.website_summary)).setVisibility(View.VISIBLE);
+        EnableWalletDetails(true);
+        Tab currentActiveTab = HuhiRewardsHelper.currentActiveChromeTabbedActivityTab();
+        if (currentActiveTab != null && !currentActiveTab.isIncognito()) {
+            String url = currentActiveTab.getUrlString();
+            if (URLUtil.isValidUrl(url)) {
+                mHuhiRewardsNativeWorker.GetPublisherInfo(currentActiveTab.getId(), url);
+                mPublisherFetcher = new Timer();
+                mPublisherFetcher.schedule(new PublisherFetchTimer(currentActiveTab.getId(), url),
+                                           PUBLISHER_INFO_FETCH_RETRY, PUBLISHER_INFO_FETCH_RETRY);
+            } else {
+                btRewardsSummary.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                btRewardsSummary.setClickable(false);
             }
-        } else {
-            HideNotifications();
-            ((LinearLayout)this.root.findViewById(R.id.website_summary)).setVisibility(View.GONE);
-            ((LinearLayout)this.root.findViewById(R.id.rewards_welcome_back)).setVisibility(View.VISIBLE);
         }
     }
 
@@ -783,6 +1073,7 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
 
     private void ShowNotification(String id, int type, long timestamp,
                                   String[] args) {
+        boolean isAnonWallet = HuhiRewardsHelper.isAnonWallet();
         if (mHuhiRewardsNativeWorker == null) {
             return;
         }
@@ -930,7 +1221,7 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         case HuhiRewardsNativeWorker.REWARDS_NOTIFICATION_ADS_ONBOARDING:
             btClaimOk.setText(root.getResources().getString(R.string.huhi_ui_turn_on_ads));
             title = root.getResources().getString(R.string.huhi_ui_huhi_ads_launch_title);
-            description = root.getResources().getString(R.string.huhi_ui_huhi_ads_launch_msg);
+            description = ""; //TODO verify the text
             notification_icon.setImageResource(R.drawable.notification_icon);
             break;
         case HuhiRewardsNativeWorker.REWARDS_NOTIFICATION_VERIFIED_PUBLISHER:
@@ -1004,7 +1295,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
                     //disable and hide CLAIM button
                     btClaimOk.setEnabled(false);
 
-                    //btClaimOk.setEnabled(false) sometimes not fast enough, so block multiple 'Claim' clicks
                     if (mClaimInProcess || currentNotificationId.isEmpty()) {
                         return;
                     }
@@ -1058,31 +1348,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         gl.setVisibility(View.VISIBLE);
         ll = (LinearLayout)root.findViewById(R.id.notification_info_layout);
         ll.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void OnWalletInitialized(int error_code) {
-        if (HuhiRewardsNativeWorker.WALLET_CREATED == error_code) {
-            HuhiAdsNativeHelper.nativeSetAdsEnabled(Profile.getLastUsedRegularProfile());
-            ShowWebSiteView(false);
-        } else if (HuhiRewardsNativeWorker.SAFETYNET_ATTESTATION_FAILED == error_code) {
-            dismiss();
-        } else if (HuhiRewardsNativeWorker.LEDGER_OK != error_code) {
-            Button btJoinRewards = (Button)HuhiRewardsPanelPopup.this.root.findViewById(R.id.join_rewards_id);
-            btJoinRewards.setText(HuhiRewardsPanelPopup.this.root.getResources().getString(R.string.huhi_ui_welcome_button_text_two));
-            btJoinRewards.setClickable(true);
-            btJoinRewards.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            if (wallet_init_animation != null) {
-                wallet_init_animation.stop();
-            }
-
-            Context context = ContextUtils.getApplicationContext();
-            Toast toast = Toast.makeText(context, root.getResources().getString(R.string.huhi_ui_error_init_wallet), Toast.LENGTH_SHORT);
-            toast.show();
-
-        }
-        wallet_init_animation = null;
-        mWalletCreateInProcess = false;
     }
 
     /**
@@ -1168,7 +1433,7 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         }
 
         UpdatePublisherStatus(
-                thisObject.mHuhiRewardsNativeWorker.GetPublisherStatus(currentTabId));
+            thisObject.mHuhiRewardsNativeWorker.GetPublisherStatus(currentTabId));
 
         tv = (TextView)root.findViewById(R.id.br_no_activities_yet);
         gl = (GridLayout)thisObject.root.findViewById(R.id.br_activities);
@@ -1183,7 +1448,12 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
 
     @Override
     public void OnGetCurrentBalanceReport(double[] report) {
+        if (report == null) {
+            return;
+        }
         boolean no_activity = true;
+        boolean isAnonWallet = HuhiRewardsHelper.isAnonWallet();
+        String batText = isAnonWallet ? root.getResources().getString(R.string.huhi_ui_bap_text) : root.getResources().getString(R.string.huhi_ui_bat_text);
         for (int i = 0; i < report.length; i++) {
             TextView tvTitle = null;
             TextView tv = null;
@@ -1194,7 +1464,7 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
             double  probiDouble = report[i];
             boolean hideControls = (probiDouble == 0);
             String value = Double.isNaN(probiDouble) ? ERROR_CONVERT_PROBI : String.format(Locale.getDefault(), "%.3f", probiDouble);
- 
+
             String usdValue = ERROR_CONVERT_PROBI;
             if (! Double.isNaN(probiDouble)) {
                 double usdValueDouble = probiDouble * mHuhiRewardsNativeWorker.GetWalletRate();
@@ -1305,19 +1575,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
     }
 
     @Override
-    public void OnIsWalletCreated(boolean created) {
-        if (created) {
-            ShowWebSiteView(false);
-            mHuhiRewardsNativeWorker.FetchGrants();
-        } else {
-            //wallet hasn't been created yet: show 'Join Rewards' button
-            View fadein  = root.findViewById(R.id.join_rewards_id);
-            View fadeout  = root.findViewById(R.id.progress_join_rewards);
-            HuhiRewardsHelper.crossfade(fadeout, fadein, View.GONE, .5f, HuhiRewardsHelper.CROSS_FADE_DURATION);
-        }
-    }
-
-    @Override
     public void OnGetPendingContributionsTotal(double amount) {
         if (amount > 0.0) {
             String non_verified_summary =
@@ -1334,28 +1591,16 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
     }
 
     @Override
-    public void OnGetRewardsMainEnabled(boolean enabled) {
-        SharedPreferences sharedPreferences = ContextUtils.getAppSharedPreferences();
-        boolean wasTurnedOn = sharedPreferences.getBoolean(
-                                  PREF_WAS_HUHI_REWARDS_TURNED_ON, false);
-        if (!enabled && wasTurnedOn) {
-            ShowWebSiteView(true);
-        } else {
-            mHuhiRewardsNativeWorker.WalletExist();
-        }
-        if (enabled) {
-            mHuhiRewardsNativeWorker.GetRewardsParameters();
-        }
-    }
-
-    @Override
     public void OnGetAutoContributeProperties() {
         mAutoContributeEnabled  = mHuhiRewardsNativeWorker.IsAutoContributeEnabled();
         mHuhiRewardsNativeWorker.GetRecurringDonations();
     }
 
     @Override
-    public void OnGetReconcileStamp(long timestamp) {}
+    public void OnOneTimeTip() {
+        //TODO add logic for refresh balance
+        // mHuhiRewardsNativeWorker.GetExternalWallet();
+    }
 
 
     /**
@@ -1396,9 +1641,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
     public void OnResetTheWholeState(boolean success) {}
 
     @Override
-    public void OnRewardsMainEnabled(boolean enabled) {}
-
-    @Override
     public void OnRewardsParameters(int errorCode) {
         boolean former_walletDetailsReceived = walletDetailsReceived;
         if (errorCode == HuhiRewardsNativeWorker.LEDGER_OK) {
@@ -1407,6 +1649,10 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
                 HuhiRewardsBalance balance_obj = mHuhiRewardsNativeWorker.GetWalletBalance();
                 if (balance_obj != null) {
                     walletBalance = balance_obj.mTotal;
+                }
+
+                if (walletBalance > 0 && huhiRewardsWelcomeView != null) {
+                    huhiRewardsWelcomeView.setVisibility(View.GONE);
                 }
 
                 DecimalFormat df = new DecimalFormat("#.###");
@@ -1468,7 +1714,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         boolean annonwallet = HuhiRewardsHelper.isAnonWallet();
         SharedPreferences sharedPref = ContextUtils.getAppSharedPreferences();
         SharedPreferences.Editor editor = sharedPref.edit();
-        if (!annonwallet) {
             int rightDrawable = 0;
             int leftDrawable = 0;
             int text = 0;
@@ -1524,7 +1769,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
             btnVerifyWallet.setText(root.getResources().getString(text));
             SetVerifyWalletBtnClickHandler(status);
             SetAddFundsBtnClickHandler(status);
-        }
     }
 
     private void SetAddFundsBtnClickHandler(@WalletStatus final int status) {
@@ -1610,7 +1854,6 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         intent.putExtra(HuhiRewardsExternalWallet.ADDRESS, mExternal_wallet.mAddress);
         intent.putExtra(HuhiRewardsExternalWallet.STATUS, mExternal_wallet.mStatus);
         intent.putExtra(HuhiRewardsExternalWallet.TOKEN, mExternal_wallet.mToken);
-        intent.putExtra(HuhiRewardsExternalWallet.TYPE, mExternal_wallet.mType);
         intent.putExtra(HuhiRewardsExternalWallet.USER_NAME, mExternal_wallet.mUser_name);
         intent.putExtra(HuhiRewardsExternalWallet.VERIFY_URL, mExternal_wallet.mVerify_url);
         intent.putExtra(HuhiRewardsExternalWallet.WITHDRAW_URL, mExternal_wallet.mWithdraw_url);
@@ -1619,13 +1862,17 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
 
     @Override
     public void OnGetExternalWallet(int error_code, String external_wallet) {
-        try {
-            mExternal_wallet = new HuhiRewardsExternalWallet(external_wallet);
-            SetVerifyWalletControl(mExternal_wallet.mStatus);
-        } catch (JSONException e) {
-            Log.e (TAG, "Error parsing external wallet status");
-            mExternal_wallet = null;
+        int walletStatus = HuhiRewardsExternalWallet.NOT_CONNECTED;
+        if(!TextUtils.isEmpty(external_wallet)) {
+            try {
+                mExternal_wallet = new HuhiRewardsExternalWallet(external_wallet);
+                walletStatus = mExternal_wallet.mStatus;
+            } catch (JSONException e) {
+                Log.e (TAG, "Error parsing external wallet status");
+                mExternal_wallet = null;
+            }
         }
+        SetVerifyWalletControl(walletStatus);
     }
 
     /**
@@ -1637,7 +1884,11 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
         if (error_code != HuhiRewardsNativeWorker.LEDGER_OK) {
             String args[] = {};
             ShowNotification(REWARDS_PROMOTION_CLAIM_ERROR_ID, REWARDS_PROMOTION_CLAIM_ERROR, 0, args);
-        }
+        } 
+        //TODO add logic for balance refresh
+        // else if (error_code == HuhiRewardsNativeWorker.LEDGER_OK) {
+        //     mHuhiRewardsNativeWorker.GetExternalWallet();
+        // }
     }
 
     private void UpdatePublisherStatus(int pubStatus) {
@@ -1669,13 +1920,13 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
                 || pubStatus == HuhiRewardsPublisher.VERIFIED) {
             verified_text = root.getResources().getString(R.string.huhi_ui_verified_publisher);
             publisherVerified.setCompoundDrawablesWithIntrinsicBounds(
-                    R.drawable.bat_verified, 0, 0, 0);
+                R.drawable.bat_verified, 0, 0, 0);
             publisherDelimiter.setVisibility(View.GONE);
             refreshPublisher.setVisibility(View.GONE);
         } else {
             verified_text = root.getResources().getString(R.string.huhi_ui_not_verified_publisher);
             publisherVerified.setCompoundDrawablesWithIntrinsicBounds(
-                    R.drawable.bat_unverified, 0, 0, 0);
+                R.drawable.bat_unverified, 0, 0, 0);
             publisherDelimiter.setVisibility(View.VISIBLE);
             refreshPublisher.setVisibility(View.VISIBLE);
         }
@@ -1690,31 +1941,31 @@ public class HuhiRewardsPanelPopup implements HuhiRewardsObserver, HuhiRewardsHe
             HuhiRewardsBalance balance_obj = mHuhiRewardsNativeWorker.GetWalletBalance();
             if (balance_obj != null) {
                 double huhiFunds =
-                        ((balance_obj.mWallets.containsKey(HuhiRewardsBalance.WALLET_ANONYMOUS)
-                                 && balance_obj.mWallets.get(HuhiRewardsBalance.WALLET_ANONYMOUS)
-                                         != null)
-                                        ? balance_obj.mWallets.get(
-                                                HuhiRewardsBalance.WALLET_ANONYMOUS)
-                                        : .0)
-                        + ((balance_obj.mWallets.containsKey(HuhiRewardsBalance.WALLET_BLINDED)
-                                   && balance_obj.mWallets.get(HuhiRewardsBalance.WALLET_BLINDED)
-                                           != null)
-                                        ? balance_obj.mWallets.get(
-                                                HuhiRewardsBalance.WALLET_BLINDED)
-                                        : .0);
+                    ((balance_obj.mWallets.containsKey(HuhiRewardsBalance.WALLET_ANONYMOUS)
+                      && balance_obj.mWallets.get(HuhiRewardsBalance.WALLET_ANONYMOUS)
+                      != null)
+                     ? balance_obj.mWallets.get(
+                         HuhiRewardsBalance.WALLET_ANONYMOUS)
+                     : .0)
+                    + ((balance_obj.mWallets.containsKey(HuhiRewardsBalance.WALLET_BLINDED)
+                        && balance_obj.mWallets.get(HuhiRewardsBalance.WALLET_BLINDED)
+                        != null)
+                       ? balance_obj.mWallets.get(
+                           HuhiRewardsBalance.WALLET_BLINDED)
+                       : .0);
                 if (huhiFunds <= 0) {
                     verified_description =
-                            root.getResources().getString(R.string.huhi_ui_panel_connected_text);
+                        root.getResources().getString(R.string.huhi_ui_panel_connected_text);
                 }
             }
         } else if (pubStatus == HuhiRewardsPublisher.NOT_VERIFIED) {
             verified_description = root.getResources().getString(
-                    R.string.huhi_ui_not_verified_publisher_description);
+                                       R.string.huhi_ui_not_verified_publisher_description);
         }
 
         if (!TextUtils.isEmpty(verified_description)) {
             verified_description += "<br/><font color=#73CBFF>"
-                    + root.getResources().getString(R.string.learn_more) + ".</font>";
+                                    + root.getResources().getString(R.string.learn_more) + ".</font>";
             Spanned toInsert = HuhiRewardsHelper.spannedFromHtmlString(verified_description);
             TextView tv_note = (TextView) root.findViewById(R.id.publisher_not_verified);
             tv_note.setText(toInsert);

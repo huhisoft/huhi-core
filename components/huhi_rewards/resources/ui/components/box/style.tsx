@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License. v. 2.0. If a copy of the MPL was not distributed with this file.
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -6,6 +6,7 @@ import * as React from 'react'
 import styled from 'huhi-ui/theme'
 import { Type } from './index'
 import Card, { CardProps } from 'huhi-ui/components/layout/card'
+import TOSAndPP, { Props as TOSProps } from '../TOSAndPP'
 
 interface StyleProps {
   open?: boolean
@@ -30,6 +31,7 @@ const CustomCard: React.FC<CardProps> = (props) =>
 
 export const StyledCard = styled(CustomCard)`
   font-size: 14px;
+  box-shadow: 0 0;
 `
 
 export const StyledFlip = styled<StyleProps, 'div'>('div')`
@@ -119,4 +121,11 @@ export const StyledSettingsText = styled<{}, 'div'>('div')`
   color: ${p => p.theme.color.text};
   display: flex;
   align-items: center;
+`
+
+export const StyledTOS = styled(TOSAndPP as React.ComponentType<TOSProps>)`
+  color: ${p => p.theme.palette.grey800};
+  margin: 20px -32px 0;
+  padding: 0 0 15px 32px;
+  border-bottom: 1px solid rgba(184, 185, 196, 0.4);
 `

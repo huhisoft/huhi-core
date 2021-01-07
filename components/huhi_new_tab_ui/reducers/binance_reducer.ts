@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -91,8 +91,7 @@ const binanceReducer: Reducer<NewTab.State | undefined> = (state: NewTab.State, 
     case types.DISCONNECT_BINANCE:
       state = { ...state }
       state.binanceState = {
-        ...storage.defaultState.binanceState,
-        binanceSupported: true
+        ...storage.defaultState.binanceState
       }
       break
 
@@ -211,6 +210,14 @@ const binanceReducer: Reducer<NewTab.State | undefined> = (state: NewTab.State, 
       state.binanceState = {
         ...state.binanceState,
         selectedView: view
+      }
+      break
+
+    case types.SET_DEPOSIT_INFO_SAVED:
+      state = { ...state }
+      state.binanceState = {
+        ...state.binanceState,
+        depositInfoSaved: true
       }
       break
 

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,18 +12,22 @@
 
 #include "base/bind.h"
 #include "base/strings/string_number_conversions.h"
+#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "huhi/browser/huhi_rewards/tip_dialog.h"
 #include "huhi/browser/extensions/api/huhi_action_api.h"
+#include "huhi/browser/extensions/huhi_component_loader.h"
+#include "huhi/browser/profiles/profile_util.h"
 #include "huhi/common/extensions/api/huhi_rewards.h"
 #include "huhi/components/huhi_ads/browser/ads_service.h"
 #include "huhi/components/huhi_ads/browser/ads_service_factory.h"
 #include "huhi/components/huhi_rewards/browser/rewards_service.h"
-#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "chrome/browser/extensions/api/tabs/tabs_constants.h"
 #include "chrome/browser/extensions/chrome_extension_function_details.h"
+#include "chrome/browser/extensions/extension_service.h"
 #include "chrome/browser/extensions/extension_tab_util.h"
 #include "chrome/browser/profiles/profile.h"
 #include "content/public/browser/web_contents.h"
+#include "extensions/browser/extension_system.h"
 #include "extensions/common/constants.h"
 
 using huhi_ads::AdsService;
@@ -33,29 +37,6 @@ using huhi_rewards::RewardsServiceFactory;
 
 namespace extensions {
 namespace api {
-
-HuhiRewardsCreateWalletFunction::HuhiRewardsCreateWalletFunction()
-    : weak_factory_(this) {
-}
-
-HuhiRewardsCreateWalletFunction::~HuhiRewardsCreateWalletFunction() {
-}
-
-void HuhiRewardsCreateWalletFunction::OnCreateWallet(
-    const ledger::type::Result result) {
-}
-
-ExtensionFunction::ResponseAction HuhiRewardsCreateWalletFunction::Run() {
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  auto* rewards_service = RewardsServiceFactory::GetForProfile(profile);
-  if (rewards_service) {
-    rewards_service->CreateWallet(
-        base::Bind(
-            &HuhiRewardsCreateWalletFunction::OnCreateWallet,
-            weak_factory_.GetWeakPtr()));
-  }
-  return RespondNow(NoArguments());
-}
 
 HuhiRewardsOpenBrowserActionUIFunction::
 ~HuhiRewardsOpenBrowserActionUIFunction() {
@@ -76,6 +57,173 @@ HuhiRewardsOpenBrowserActionUIFunction::Run() {
   return RespondNow(NoArguments());
 }
 
+HuhiRewardsUpdateMediaDurationFunction::
+    ~HuhiRewardsUpdateMediaDurationFunction() {}
+
+ExtensionFunction::ResponseAction
+HuhiRewardsUpdateMediaDurationFunction::Run() {
+  std::unique_ptr<huhi_rewards::UpdateMediaDuration::Params> params(
+      huhi_rewards::UpdateMediaDuration::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  RewardsService* rewards_service =
+      RewardsServiceFactory::GetForProfile(profile);
+
+  if (!rewards_service) {
+    return RespondNow(NoArguments());
+  }
+
+  rewards_service->UpdateMediaDuration(
+      params->window_id,
+      params->publisher_key,
+      params->duration,
+      params->first_visit);
+
+  return RespondNow(NoArguments());
+}
+
+HuhiRewardsGetPublisherInfoFunction::
+~HuhiRewardsGetPublisherInfoFunction() {
+}
+
+ExtensionFunction::ResponseAction
+HuhiRewardsGetPublisherInfoFunction::Run() {
+  std::unique_ptr<huhi_rewards::GetPublisherInfo::Params> params(
+      huhi_rewards::GetPublisherInfo::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  RewardsService* rewards_service =
+      RewardsServiceFactory::GetForProfile(profile);
+
+  if (!rewards_service) {
+    return RespondNow(Error("Rewards service is not initialized"));
+  }
+
+  rewards_service->GetPublisherInfo(
+      params->publisher_key,
+      base::Bind(
+          &HuhiRewardsGetPublisherInfoFunction::OnGetPublisherInfo,
+          this));
+
+  return RespondLater();
+}
+
+void HuhiRewardsGetPublisherInfoFunction::OnGetPublisherInfo(
+    const ledger::type::Result result,
+    ledger::type::PublisherInfoPtr info) {
+  if (!info) {
+    Respond(
+        OneArgument(std::make_unique<base::Value>(static_cast<int>(result))));
+    return;
+  }
+
+  auto dict = std::make_unique<base::Value>(base::Value::Type::DICTIONARY);
+  dict->SetStringKey("publisherKey", info->id);
+  dict->SetStringKey("name", info->name);
+  dict->SetIntKey("percentage", info->percent);
+  dict->SetIntKey("status", static_cast<int>(info->status));
+  dict->SetIntKey("excluded", static_cast<int>(info->excluded));
+  dict->SetStringKey("url", info->url);
+  dict->SetStringKey("provider", info->provider);
+  dict->SetStringKey("favIconUrl", info->favicon_url);
+
+  Respond(TwoArguments(
+      std::make_unique<base::Value>(static_cast<int>(result)),
+      std::move(dict)));
+}
+
+HuhiRewardsGetPublisherPanelInfoFunction::
+    ~HuhiRewardsGetPublisherPanelInfoFunction() {}
+
+ExtensionFunction::ResponseAction
+HuhiRewardsGetPublisherPanelInfoFunction::Run() {
+  std::unique_ptr<huhi_rewards::GetPublisherPanelInfo::Params> params(
+      huhi_rewards::GetPublisherPanelInfo::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  RewardsService* rewards_service =
+      RewardsServiceFactory::GetForProfile(profile);
+
+  if (!rewards_service) {
+    return RespondNow(NoArguments());
+  }
+
+  rewards_service->GetPublisherPanelInfo(
+      params->publisher_key,
+      base::Bind(
+          &HuhiRewardsGetPublisherPanelInfoFunction::OnGetPublisherPanelInfo,
+          this));
+
+  return RespondLater();
+}
+
+void HuhiRewardsGetPublisherPanelInfoFunction::OnGetPublisherPanelInfo(
+    const ledger::type::Result result,
+    ledger::type::PublisherInfoPtr info) {
+  if (!info) {
+    Respond(
+        OneArgument(std::make_unique<base::Value>(static_cast<int>(result))));
+    return;
+  }
+
+  auto dict = std::make_unique<base::Value>(base::Value::Type::DICTIONARY);
+  dict->SetStringKey("publisherKey", info->id);
+  dict->SetStringKey("name", info->name);
+  dict->SetIntKey("percentage", info->percent);
+  dict->SetIntKey("status", static_cast<int>(info->status));
+  dict->SetIntKey("excluded", static_cast<int>(info->excluded));
+  dict->SetStringKey("url", info->url);
+  dict->SetStringKey("provider", info->provider);
+  dict->SetStringKey("favIconUrl", info->favicon_url);
+
+  Respond(TwoArguments(
+      std::make_unique<base::Value>(static_cast<int>(result)),
+      std::move(dict)));
+}
+
+HuhiRewardsSavePublisherInfoFunction::
+    ~HuhiRewardsSavePublisherInfoFunction() {}
+
+ExtensionFunction::ResponseAction
+HuhiRewardsSavePublisherInfoFunction::Run() {
+  std::unique_ptr<huhi_rewards::SavePublisherInfo::Params>
+      params(huhi_rewards::SavePublisherInfo::Params::Create(
+          *args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  RewardsService* rewards_service =
+      RewardsServiceFactory::GetForProfile(profile);
+
+  if (!rewards_service) {
+    return RespondNow(NoArguments());
+  }
+
+  auto publisher_info = ledger::type::PublisherInfo::New();
+  publisher_info->id = params->publisher_key;
+  publisher_info->name = params->publisher_name;
+  publisher_info->url = params->url;
+  publisher_info->provider = params->media_type;
+  publisher_info->favicon_url = params->fav_icon_url;
+
+  rewards_service->SavePublisherInfo(
+      params->window_id,
+      std::move(publisher_info),
+      base::Bind(
+          &HuhiRewardsSavePublisherInfoFunction::OnSavePublisherInfo,
+          this));
+
+  return RespondLater();
+}
+
+void HuhiRewardsSavePublisherInfoFunction::OnSavePublisherInfo(
+    const ledger::type::Result result) {
+  Respond(OneArgument(std::make_unique<base::Value>(static_cast<int>(result))));
+}
+
 HuhiRewardsTipSiteFunction::~HuhiRewardsTipSiteFunction() {
 }
 
@@ -86,8 +234,7 @@ ExtensionFunction::ResponseAction HuhiRewardsTipSiteFunction::Run() {
 
   // Sanity check: don't allow tips in private / tor contexts,
   // although the command should not have been enabled in the first place.
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  if (profile->IsOffTheRecord()) {
+  if (!huhi::IsRegularProfile(browser_context())) {
     return RespondNow(Error("Cannot tip to site in a private context"));
   }
 
@@ -95,7 +242,7 @@ ExtensionFunction::ResponseAction HuhiRewardsTipSiteFunction::Run() {
   content::WebContents* contents = nullptr;
   if (!ExtensionTabUtil::GetTabById(
         params->tab_id,
-        profile,
+        Profile::FromBrowserContext(browser_context()),
         false,
         nullptr,
         nullptr,
@@ -107,7 +254,7 @@ ExtensionFunction::ResponseAction HuhiRewardsTipSiteFunction::Run() {
 
   auto params_dict = std::make_unique<base::DictionaryValue>();
   params_dict->SetString("publisherKey", params->publisher_key);
-  params_dict->SetBoolean("monthly", params->monthly);
+  params_dict->SetString("entryPoint", params->entry_point);
   params_dict->SetString(
       "url", contents ? contents->GetLastCommittedURL().spec() : std::string());
   ::huhi_rewards::OpenTipDialog(contents, std::move(params_dict));
@@ -115,136 +262,128 @@ ExtensionFunction::ResponseAction HuhiRewardsTipSiteFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-HuhiRewardsTipTwitterUserFunction::HuhiRewardsTipTwitterUserFunction()
+HuhiRewardsTipUserFunction::HuhiRewardsTipUserFunction()
     : weak_factory_(this) {
 }
 
-HuhiRewardsTipTwitterUserFunction::~HuhiRewardsTipTwitterUserFunction() {
+HuhiRewardsTipUserFunction::~HuhiRewardsTipUserFunction() {
 }
 
-ExtensionFunction::ResponseAction
-HuhiRewardsTipTwitterUserFunction::Run() {
-  std::unique_ptr<huhi_rewards::TipTwitterUser::Params> params(
-      huhi_rewards::TipTwitterUser::Params::Create(*args_));
+ExtensionFunction::ResponseAction HuhiRewardsTipUserFunction::Run() {
+  std::unique_ptr<huhi_rewards::TipUser::Params> params(
+      huhi_rewards::TipUser::Params::Create(*args_));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   // Sanity check: don't allow tips in private / tor contexts,
   // although the command should not have been enabled in the first place.
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  if (profile->IsOffTheRecord()) {
-    return RespondNow(
-        Error("Cannot tip Twitter user in a private context"));
+  if (!huhi::IsRegularProfile(browser_context())) {
+    return RespondNow(Error("Cannot tip user in a private context"));
   }
 
+  Profile* profile = Profile::FromBrowserContext(browser_context());
   auto* rewards_service = RewardsServiceFactory::GetForProfile(profile);
-  if (rewards_service) {
-    AddRef();
-    std::map<std::string, std::string> args;
-    args["user_id"] = params->media_meta_data.user_id;
-    args["twitter_name"] = params->media_meta_data.twitter_name;
-    args["screen_name"] = params->media_meta_data.screen_name;
-    rewards_service->SaveInlineMediaInfo(
-        params->media_meta_data.media_type,
-        args,
-        base::Bind(&HuhiRewardsTipTwitterUserFunction::
-                   OnTwitterPublisherInfoSaved,
-                   weak_factory_.GetWeakPtr()));
+  if (!rewards_service) {
+    return RespondNow(Error("Rewards service is not initialized"));
   }
+
+  extensions::ExtensionService* extension_service =
+      extensions::ExtensionSystem::Get(profile)->extension_service();
+  if (!extension_service) {
+    return RespondNow(Error("Extension service is not initialized"));
+  }
+
+  AddRef();
+
+  extensions::ComponentLoader* component_loader =
+      extension_service->component_loader();
+  static_cast<extensions::HuhiComponentLoader*>(component_loader)
+      ->AddRewardsExtension();
+
+  rewards_service->StartProcess(
+      base::BindOnce(
+          &HuhiRewardsTipUserFunction::OnTipUserStartProcess,
+          this,
+          params->publisher_key));
 
   return RespondNow(NoArguments());
 }
 
-HuhiRewardsTipRedditUserFunction::HuhiRewardsTipRedditUserFunction()
-    : weak_factory_(this) {
-}
-
-HuhiRewardsTipRedditUserFunction::~HuhiRewardsTipRedditUserFunction() {
-}
-
-ExtensionFunction::ResponseAction HuhiRewardsTipRedditUserFunction::Run() {
-  std::unique_ptr<huhi_rewards::TipRedditUser::Params> params(
-      huhi_rewards::TipRedditUser::Params::Create(*args_));
-  EXTENSION_FUNCTION_VALIDATE(params.get());
-
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  if (profile->IsOffTheRecord()) {
-    return RespondNow(
-        Error("Cannot tip Reddit user in a private context"));
-  }
-
-  RewardsService* rewards_service = RewardsServiceFactory::GetForProfile(
-      profile);
-
-  if (rewards_service) {
-    AddRef();
-    std::map<std::string, std::string> args;
-    args["user_name"] = params->media_meta_data.user_name;
-    args["post_text"] = params->media_meta_data.post_text;
-    args["post_rel_date"] = params->media_meta_data.post_rel_date;
-    rewards_service->SaveInlineMediaInfo(
-        params->media_meta_data.media_type,
-        args,
-        base::Bind(
-            &HuhiRewardsTipRedditUserFunction::OnRedditPublisherInfoSaved,
-            weak_factory_.GetWeakPtr()));
-  }
-
-  return RespondNow(NoArguments());
-}
-
-void HuhiRewardsTipRedditUserFunction::OnRedditPublisherInfoSaved(
-    ledger::type::PublisherInfoPtr publisher) {
-  std::unique_ptr<huhi_rewards::TipRedditUser::Params> params(
-      huhi_rewards::TipRedditUser::Params::Create(*args_));
-
-  if (!publisher) {
+void HuhiRewardsTipUserFunction::OnTipUserStartProcess(
+    const std::string& publisher_key,
+    ledger::type::Result result) {
+  if (result != ledger::type::Result::LEDGER_OK) {
     Release();
     return;
   }
 
-  content::WebContents* contents = nullptr;
-  if (!ExtensionTabUtil::GetTabById(
-          params->tab_id,
-          Profile::FromBrowserContext(browser_context()),
-          false,
-          nullptr,
-          nullptr,
-          &contents,
-          nullptr)) {
-      return;
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  auto* rewards_service = RewardsServiceFactory::GetForProfile(profile);
+  if (!rewards_service) {
+    Release();
+    return;
   }
 
-  std::unique_ptr<base::DictionaryValue> params_dict =
-      std::make_unique<base::DictionaryValue>();
-  params_dict->SetStringKey("publisherKey", publisher->id);
-  params_dict->SetStringKey("url", publisher->url);
+  rewards_service->GetPublisherInfo(
+      publisher_key,
+      base::Bind(&HuhiRewardsTipUserFunction::OnTipUserGetPublisherInfo,
+                 this));
+}
 
-  base::Value media_meta_data_dict(base::Value::Type::DICTIONARY);
-  media_meta_data_dict.SetStringKey("name", publisher->name);
-  media_meta_data_dict.SetStringKey(
-      "userName", params->media_meta_data.user_name);
-  media_meta_data_dict.SetStringKey(
-      "postText", params->media_meta_data.post_text);
-  media_meta_data_dict.SetStringKey(
-      "postRelDate", params->media_meta_data.post_rel_date);
-  media_meta_data_dict.SetStringKey(
-      "mediaType", params->media_meta_data.media_type);
-  params_dict->SetPath(
-      "mediaMetaData", std::move(media_meta_data_dict));
+void HuhiRewardsTipUserFunction::OnTipUserGetPublisherInfo(
+    const ledger::type::Result result,
+    ledger::type::PublisherInfoPtr info) {
+  if (result != ledger::type::Result::LEDGER_OK &&
+      result != ledger::type::Result::NOT_FOUND) {
+    Release();
+    return;
+  }
 
-  ::huhi_rewards::OpenTipDialog(
-      contents, std::move(params_dict));
+  if (result == ledger::type::Result::LEDGER_OK) {
+    ShowTipDialog();
+    Release();
+    return;
+  }
 
+  std::unique_ptr<huhi_rewards::TipUser::Params> params(
+      huhi_rewards::TipUser::Params::Create(*args_));
+
+  auto publisher_info = ledger::type::PublisherInfo::New();
+  publisher_info->id = params->publisher_key;
+  publisher_info->name = params->publisher_name;
+  publisher_info->url = params->url;
+  publisher_info->provider = params->media_type;
+  publisher_info->favicon_url = params->fav_icon_url;
+
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  auto* rewards_service = RewardsServiceFactory::GetForProfile(profile);
+  if (!rewards_service) {
+    Release();
+    return;
+  }
+
+  rewards_service->SavePublisherInfo(
+      0,
+      std::move(publisher_info),
+      base::Bind(&HuhiRewardsTipUserFunction::
+                 OnTipUserSavePublisherInfo,
+                 weak_factory_.GetWeakPtr()));
+}
+
+void HuhiRewardsTipUserFunction::OnTipUserSavePublisherInfo(
+    const ledger::type::Result result) {
+  if (result != ledger::type::Result::LEDGER_OK) {
+    Release();
+    return;
+  }
+
+  ShowTipDialog();
   Release();
 }
 
-void HuhiRewardsTipTwitterUserFunction::OnTwitterPublisherInfoSaved(
-    ledger::type::PublisherInfoPtr publisher) {
-  std::unique_ptr<huhi_rewards::TipTwitterUser::Params> params(
-      huhi_rewards::TipTwitterUser::Params::Create(*args_));
-
-  if (!publisher) {
-    // TODO(nejczdovc): what should we do in this case?
+void HuhiRewardsTipUserFunction::ShowTipDialog() {
+  std::unique_ptr<huhi_rewards::TipUser::Params> params(
+      huhi_rewards::TipUser::Params::Create(*args_));
+  if (!params) {
     Release();
     return;
   }
@@ -259,116 +398,28 @@ void HuhiRewardsTipTwitterUserFunction::OnTwitterPublisherInfoSaved(
         nullptr,
         &contents,
         nullptr)) {
+    Release();
     return;
   }
 
-  auto params_dict = std::make_unique<base::DictionaryValue>();
-  params_dict->SetString("publisherKey", publisher->id);
-  params_dict->SetString("url", publisher->url);
-
   base::Value media_meta_data_dict(base::Value::Type::DICTIONARY);
-  media_meta_data_dict.SetStringKey("twitter_name", publisher->name);
-  media_meta_data_dict.SetStringKey("mediaType",
-                                  params->media_meta_data.media_type);
-  media_meta_data_dict.SetStringKey("screenName",
-                                  params->media_meta_data.screen_name);
-  media_meta_data_dict.SetStringKey("userId", params->media_meta_data.user_id);
-  media_meta_data_dict.SetStringKey("tweetId",
-                                  params->media_meta_data.tweet_id);
-  media_meta_data_dict.SetDoubleKey("tweetTimestamp",
-                                  params->media_meta_data.tweet_timestamp);
-  media_meta_data_dict.SetStringKey("tweetText",
-                                  params->media_meta_data.tweet_text);
+  media_meta_data_dict.SetStringKey("mediaType", params->media_type);
+  media_meta_data_dict.SetStringKey("publisherKey", params->publisher_key);
+  media_meta_data_dict.SetStringKey("publisherName", params->publisher_name);
+  media_meta_data_dict.SetStringKey(
+      "publisherScreenName",
+      params->publisher_screen_name);
+  media_meta_data_dict.SetStringKey("postId", params->post_id);
+  media_meta_data_dict.SetStringKey("postTimestamp", params->post_timestamp);
+  media_meta_data_dict.SetStringKey("postText", params->post_text);
+
+  auto params_dict = std::make_unique<base::DictionaryValue>();
+  params_dict->SetString("publisherKey", params->publisher_key);
+  params_dict->SetString("url", params->url);
   params_dict->SetPath("mediaMetaData", std::move(media_meta_data_dict));
 
   ::huhi_rewards::OpenTipDialog(contents, std::move(params_dict));
-
-  Release();
 }
-///////////////////////////////////////////////////
-HuhiRewardsTipGitHubUserFunction::HuhiRewardsTipGitHubUserFunction()
-    : weak_factory_(this) {
-}
-
-HuhiRewardsTipGitHubUserFunction::~HuhiRewardsTipGitHubUserFunction() {
-}
-
-ExtensionFunction::ResponseAction
-HuhiRewardsTipGitHubUserFunction::Run() {
-  std::unique_ptr<huhi_rewards::TipGitHubUser::Params> params(
-      huhi_rewards::TipGitHubUser::Params::Create(*args_));
-  EXTENSION_FUNCTION_VALIDATE(params.get());
-
-  // Sanity check: don't allow tips in private / tor contexts,
-  // although the command should not have been enabled in the first place.
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  if (profile->IsOffTheRecord()) {
-    return RespondNow(
-        Error("Cannot tip Twitter user in a private context"));
-  }
-
-  auto* rewards_service = RewardsServiceFactory::GetForProfile(profile);
-  if (rewards_service) {
-    AddRef();
-    std::map<std::string, std::string> args;
-    args["user_name"] = params->media_meta_data.user_name;
-    if (args["user_name"].empty()) {
-      LOG(ERROR) << "Cannot tip user without username";
-    } else {
-      rewards_service->SaveInlineMediaInfo(
-          params->media_meta_data.media_type,
-          args,
-          base::Bind(&HuhiRewardsTipGitHubUserFunction::
-                     OnGitHubPublisherInfoSaved,
-                     weak_factory_.GetWeakPtr()));
-    }
-  }
-  return RespondNow(NoArguments());
-}
-
-
-void HuhiRewardsTipGitHubUserFunction::OnGitHubPublisherInfoSaved(
-    ledger::type::PublisherInfoPtr publisher) {
-  std::unique_ptr<huhi_rewards::TipGitHubUser::Params> params(
-      huhi_rewards::TipGitHubUser::Params::Create(*args_));
-
-  if (!publisher) {
-    // TODO(nejczdovc): what should we do in this case?
-    Release();
-    return;
-  }
-
-  // Get web contents for this tab
-  content::WebContents* contents = nullptr;
-  if (!ExtensionTabUtil::GetTabById(
-        params->tab_id,
-        Profile::FromBrowserContext(browser_context()),
-        false,
-        nullptr,
-        nullptr,
-        &contents,
-        nullptr)) {
-    return;
-  }
-
-  auto params_dict = std::make_unique<base::DictionaryValue>();
-  params_dict->SetString("publisherKey", publisher->id);
-  params_dict->SetString("url", publisher->url);
-
-  base::Value media_meta_data_dict(base::Value::Type::DICTIONARY);
-  media_meta_data_dict.SetStringKey("mediaType",
-                                  params->media_meta_data.media_type);
-  media_meta_data_dict.SetStringKey("name", publisher->name);
-  media_meta_data_dict.SetStringKey("userName",
-                                  params->media_meta_data.user_name);
-  params_dict->SetPath("mediaMetaData",
-                       std::move(media_meta_data_dict));
-
-  ::huhi_rewards::OpenTipDialog(contents, std::move(params_dict));
-
-  Release();
-}
-//////////////////
 
 HuhiRewardsGetPublisherDataFunction::~HuhiRewardsGetPublisherDataFunction() {
 }
@@ -524,7 +575,6 @@ void HuhiRewardsClaimPromotionFunction::OnClaimPromotion(
     const std::string& captcha_image,
     const std::string& hint,
     const std::string& captcha_id) {
-
   auto data = std::make_unique<base::Value>(base::Value::Type::DICTIONARY);
   data->SetIntKey("result", static_cast<int>(result));
   data->SetStringKey("promotionId", promotion_id);
@@ -604,31 +654,6 @@ void HuhiRewardsGetPendingContributionsTotalFunction::OnGetPendingTotal(
   Respond(OneArgument(std::make_unique<base::Value>(amount)));
 }
 
-HuhiRewardsGetRewardsMainEnabledFunction::
-~HuhiRewardsGetRewardsMainEnabledFunction() {
-}
-
-ExtensionFunction::ResponseAction
-HuhiRewardsGetRewardsMainEnabledFunction::Run() {
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  RewardsService* rewards_service =
-    RewardsServiceFactory::GetForProfile(profile);
-
-  if (!rewards_service) {
-    return RespondNow(Error("Rewards service is not initialized"));
-  }
-
-  rewards_service->GetRewardsMainEnabled(base::Bind(
-        &HuhiRewardsGetRewardsMainEnabledFunction::OnGetRewardsMainEnabled,
-        this));
-  return RespondLater();
-}
-
-void HuhiRewardsGetRewardsMainEnabledFunction::OnGetRewardsMainEnabled(
-    bool enabled) {
-  Respond(OneArgument(std::make_unique<base::Value>(enabled)));
-}
-
 HuhiRewardsSaveAdsSettingFunction::~HuhiRewardsSaveAdsSettingFunction() {
 }
 
@@ -636,14 +661,40 @@ ExtensionFunction::ResponseAction HuhiRewardsSaveAdsSettingFunction::Run() {
   std::unique_ptr<huhi_rewards::SaveAdsSetting::Params> params(
       huhi_rewards::SaveAdsSetting::Params::Create(*args_));
   Profile* profile = Profile::FromBrowserContext(browser_context());
+  RewardsService* rewards_service =
+      RewardsServiceFactory::GetForProfile(profile);
   AdsService* ads_service_ = AdsServiceFactory::GetForProfile(profile);
-  if (ads_service_) {
-    if (params->key == "adsEnabled") {
-      const auto is_enabled =
-          params->value == "true" && ads_service_->IsSupportedLocale();
-      ads_service_->SetEnabled(is_enabled);
-    }
+
+  if (!rewards_service || !ads_service_) {
+    return RespondNow(Error("Service is not initialized"));
   }
+
+  if (params->key == "adsEnabled") {
+    const auto is_enabled =
+        params->value == "true" && ads_service_->IsSupportedLocale();
+    rewards_service->SetAdsEnabled(is_enabled);
+  }
+
+  return RespondNow(NoArguments());
+}
+
+HuhiRewardsSetAutoContributeEnabledFunction::
+~HuhiRewardsSetAutoContributeEnabledFunction() {
+}
+
+ExtensionFunction::ResponseAction
+HuhiRewardsSetAutoContributeEnabledFunction::Run() {
+  std::unique_ptr<huhi_rewards::SetAutoContributeEnabled::Params> params(
+      huhi_rewards::SetAutoContributeEnabled::Params::Create(*args_));
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  RewardsService* rewards_service =
+      RewardsServiceFactory::GetForProfile(profile);
+
+  if (!rewards_service) {
+    return RespondNow(Error("Rewards service is not initialized"));
+  }
+
+  rewards_service->SetAutoContributeEnabled(params->enabled);
   return RespondNow(NoArguments());
 }
 
@@ -669,27 +720,6 @@ HuhiRewardsGetACEnabledFunction::Run() {
 
 void HuhiRewardsGetACEnabledFunction::OnGetACEnabled(bool enabled) {
   Respond(OneArgument(std::make_unique<base::Value>(enabled)));
-}
-
-HuhiRewardsSaveSettingFunction::~HuhiRewardsSaveSettingFunction() {
-}
-
-ExtensionFunction::ResponseAction HuhiRewardsSaveSettingFunction::Run() {
-  std::unique_ptr<huhi_rewards::SaveSetting::Params> params(
-      huhi_rewards::SaveSetting::Params::Create(*args_));
-
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  RewardsService* rewards_service =
-    RewardsServiceFactory::GetForProfile(profile);
-
-  if (rewards_service) {
-    if (params->key == "enabledMain") {
-      rewards_service->SetRewardsMainEnabled(
-          std::stoi(params->value.c_str()));
-    }
-  }
-
-  return RespondNow(NoArguments());
 }
 
 HuhiRewardsSaveRecurringTipFunction::
@@ -999,32 +1029,32 @@ HuhiRewardsGetExternalWalletFunction::Run() {
   std::unique_ptr<huhi_rewards::GetExternalWallet::Params> params(
     huhi_rewards::GetExternalWallet::Params::Create(*args_));
 
-  rewards_service->GetExternalWallet(
-      params->type,
+  rewards_service->GetUpholdWallet(
       base::BindOnce(
-          &HuhiRewardsGetExternalWalletFunction::OnExternalWalet,
+          &HuhiRewardsGetExternalWalletFunction::OnGetUpholdWallet,
           this));
   return RespondLater();
 }
 
-void HuhiRewardsGetExternalWalletFunction::OnExternalWalet(
+void HuhiRewardsGetExternalWalletFunction::OnGetUpholdWallet(
     const ledger::type::Result result,
-    ledger::type::ExternalWalletPtr wallet) {
-  auto data = std::make_unique<base::Value>(
-      base::Value::Type::DICTIONARY);
-
-  if (wallet) {
-    data->SetStringKey("token", wallet->token);
-    data->SetStringKey("address", wallet->address);
-    data->SetIntKey("status", static_cast<int>(wallet->status));
-    data->SetStringKey("type", wallet->type);
-    data->SetStringKey("verifyUrl", wallet->verify_url);
-    data->SetStringKey("addUrl", wallet->add_url);
-    data->SetStringKey("withdrawUrl", wallet->withdraw_url);
-    data->SetStringKey("userName", wallet->user_name);
-    data->SetStringKey("accountUrl", wallet->account_url);
-    data->SetStringKey("loginUrl", wallet->login_url);
+    ledger::type::UpholdWalletPtr wallet) {
+  if (!wallet) {
+    Respond(OneArgument(
+        std::make_unique<base::Value>(static_cast<int>(result))));
+    return;
   }
+
+  auto data = std::make_unique<base::Value>(base::Value::Type::DICTIONARY);
+  data->SetStringKey("token", wallet->token);
+  data->SetStringKey("address", wallet->address);
+  data->SetIntKey("status", static_cast<int>(wallet->status));
+  data->SetStringKey("verifyUrl", wallet->verify_url);
+  data->SetStringKey("addUrl", wallet->add_url);
+  data->SetStringKey("withdrawUrl", wallet->withdraw_url);
+  data->SetStringKey("userName", wallet->user_name);
+  data->SetStringKey("accountUrl", wallet->account_url);
+  data->SetStringKey("loginUrl", wallet->login_url);
 
   Respond(TwoArguments(
         std::make_unique<base::Value>(static_cast<int>(result)),
@@ -1116,31 +1146,6 @@ void HuhiRewardsGetAdsEstimatedEarningsFunction::OnAdsEstimatedEarnings(
       std::make_unique<base::Value>(estimated_pending_rewards)));
 }
 
-HuhiRewardsGetWalletExistsFunction::
-~HuhiRewardsGetWalletExistsFunction() {
-}
-
-ExtensionFunction::ResponseAction
-HuhiRewardsGetWalletExistsFunction::Run() {
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  RewardsService* rewards_service =
-    RewardsServiceFactory::GetForProfile(profile);
-
-  if (!rewards_service) {
-    return RespondNow(Error("Rewards service is not initialized"));
-  }
-
-  rewards_service->IsWalletCreated(base::Bind(
-        &HuhiRewardsGetWalletExistsFunction::OnGetWalletExists,
-        this));
-  return RespondLater();
-}
-
-void HuhiRewardsGetWalletExistsFunction::OnGetWalletExists(
-    const bool exists) {
-  Respond(OneArgument(std::make_unique<base::Value>(exists)));
-}
-
 HuhiRewardsGetAdsSupportedFunction::
 ~HuhiRewardsGetAdsSupportedFunction() {
 }
@@ -1200,6 +1205,50 @@ HuhiRewardsIsInitializedFunction::Run() {
   const bool initialized = rewards_service->IsInitialized();
   return RespondNow(
       OneArgument(std::make_unique<base::Value>(initialized)));
+}
+
+HuhiRewardsShouldShowOnboardingFunction::
+~HuhiRewardsShouldShowOnboardingFunction() = default;
+
+ExtensionFunction::ResponseAction
+HuhiRewardsShouldShowOnboardingFunction::Run() {
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  auto* rewards_service = RewardsServiceFactory::GetForProfile(profile);
+  if (!rewards_service) {
+    return RespondNow(Error("Rewards service is not initialized"));
+  }
+
+  const bool should_show = rewards_service->ShouldShowOnboarding();
+  return RespondNow(
+      OneArgument(std::make_unique<base::Value>(should_show)));
+}
+
+HuhiRewardsSaveOnboardingResultFunction::
+~HuhiRewardsSaveOnboardingResultFunction() = default;
+
+ExtensionFunction::ResponseAction
+HuhiRewardsSaveOnboardingResultFunction::Run() {
+  using ::huhi_rewards::OnboardingResult;
+
+  std::unique_ptr<huhi_rewards::SaveOnboardingResult::Params> params(
+      huhi_rewards::SaveOnboardingResult::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  auto* rewards_service = RewardsServiceFactory::GetForProfile(profile);
+  if (!rewards_service) {
+    return RespondNow(Error("Rewards service is not initialized"));
+  }
+
+  if (params->result == "opted-in") {
+    rewards_service->SaveOnboardingResult(OnboardingResult::kOptedIn);
+  } else if (params->result == "dismissed") {
+    rewards_service->SaveOnboardingResult(OnboardingResult::kDismissed);
+  } else {
+    NOTREACHED();
+  }
+
+  return RespondNow(NoArguments());
 }
 
 }  // namespace api

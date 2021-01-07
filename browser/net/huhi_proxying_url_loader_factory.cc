@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -143,10 +143,9 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::RestartInternal() {
       base::BindRepeating(&InProgressRequest::ContinueToBeforeSendHeaders,
                           weak_factory_.GetWeakPtr());
   redirect_url_ = GURL();
-  ctx_ = std::make_shared<huhi::HuhiRequestInfo>();
-  huhi::HuhiRequestInfo::FillCTX(request_, render_process_id_,
-                                   frame_tree_node_id_, request_id_,
-                                   browser_context_, ctx_);
+  ctx_ = huhi::HuhiRequestInfo::MakeCTX(request_, render_process_id_,
+                                          frame_tree_node_id_, request_id_,
+                                          browser_context_, ctx_);
   int result = factory_->request_handler_->OnBeforeURLRequest(
       ctx_, continuation, &redirect_url_);
 
@@ -222,6 +221,7 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::
 void HuhiProxyingURLLoaderFactory::InProgressRequest::OnReceiveResponse(
     network::mojom::URLResponseHeadPtr head) {
   current_response_ = std::move(head);
+  ctx_->internal_redirect = false;
   HandleResponseOrRedirectHeaders(
       base::BindRepeating(&InProgressRequest::ContinueToResponseStarted,
                           weak_factory_.GetWeakPtr()));
@@ -231,6 +231,8 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::OnReceiveRedirect(
     const net::RedirectInfo& redirect_info,
     network::mojom::URLResponseHeadPtr head) {
   current_response_ = std::move(head);
+  DCHECK(ctx_);
+  ctx_->internal_redirect = false;
   HandleResponseOrRedirectHeaders(
       base::BindRepeating(&InProgressRequest::ContinueToBeforeRedirect,
                           weak_factory_.GetWeakPtr(), redirect_info));
@@ -301,42 +303,26 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::
       "Non-Authoritative-Reason: WebRequest API\n\n",
       kInternalRedirectStatusCode, redirect_url_.spec().c_str());
 
-  if (base::FeatureList::IsEnabled(network::features::kOutOfBlinkCors)) {
-    // Cross-origin requests need to modify the Origin header to 'null'. Since
-    // CorsURLLoader sets |request_initiator| to the Origin request header in
-    // NetworkService, we need to modify |request_initiator| here to craft the
-    // Origin header indirectly.
-    // Following checks implement the step 10 of "4.4. HTTP-redirect fetch",
-    // https://fetch.spec.whatwg.org/#http-redirect-fetch
-    if (request_.request_initiator &&
-        (!url::Origin::Create(redirect_url_)
-              .IsSameOriginWith(url::Origin::Create(request_.url)) &&
-         !request_.request_initiator->IsSameOriginWith(
-             url::Origin::Create(request_.url)))) {
-      // Reset the initiator to pretend tainted origin flag of the spec is set.
-      request_.request_initiator = url::Origin();
-    }
-  } else {
-    // If this redirect is used in a cross-origin request, add CORS headers to
-    // make sure that the redirect gets through the Blink CORS. Note that the
-    // destination URL is still subject to the usual CORS policy, i.e. the
-    // resource will only be available to web pages if the server serves the
-    // response with the required CORS response headers. Matches the behavior in
-    // url_request_redirect_job.cc.
-    std::string http_origin;
-    if (request_.headers.GetHeader("Origin", &http_origin)) {
-      headers += base::StringPrintf(
-          "\n"
-          "Access-Control-Allow-Origin: %s\n"
-          "Access-Control-Allow-Credentials: true",
-          http_origin.c_str());
-    }
+  // Cross-origin requests need to modify the Origin header to 'null'. Since
+  // CorsURLLoader sets |request_initiator| to the Origin request header in
+  // NetworkService, we need to modify |request_initiator| here to craft the
+  // Origin header indirectly.
+  // Following checks implement the step 10 of "4.4. HTTP-redirect fetch",
+  // https://fetch.spec.whatwg.org/#http-redirect-fetch
+  if (request_.request_initiator &&
+      (!url::Origin::Create(redirect_url_)
+            .IsSameOriginWith(url::Origin::Create(request_.url)) &&
+       !request_.request_initiator->IsSameOriginWith(
+           url::Origin::Create(request_.url)))) {
+    // Reset the initiator to pretend tainted origin flag of the spec is set.
+    request_.request_initiator = url::Origin();
   }
   head->headers = base::MakeRefCounted<net::HttpResponseHeaders>(
       net::HttpUtil::AssembleRawHeaders(headers));
   head->encoded_data_length = 0;
 
   current_response_ = std::move(head);
+  ctx_->internal_redirect = true;
   ContinueToBeforeRedirect(redirect_info, net::OK);
 }
 
@@ -362,10 +348,12 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::
 
   // TODO(iefremov): Shorten
   if (ctx_->blocked_by != huhi::kNotBlocked) {
-    if (ctx_->cancel_request_explicitly) {
-      OnRequestError(network::URLLoaderCompletionStatus(net::ERR_ABORTED));
+    if (!ctx_->ShouldMockRequest()) {
+      OnRequestError(
+          network::URLLoaderCompletionStatus(net::ERR_BLOCKED_BY_CLIENT));
       return;
     }
+
     auto response = network::mojom::URLResponseHead::New();
     std::string response_data;
     huhi_shields::MakeStubResponse(ctx_->mock_data_url, request_, &response,
@@ -404,10 +392,9 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::
     auto continuation = base::BindRepeating(
         &InProgressRequest::ContinueToSendHeaders, weak_factory_.GetWeakPtr());
 
-    ctx_ = std::make_shared<huhi::HuhiRequestInfo>();
-    huhi::HuhiRequestInfo::FillCTX(request_, render_process_id_,
-                                     frame_tree_node_id_, request_id_,
-                                     browser_context_, ctx_);
+    ctx_ = huhi::HuhiRequestInfo::MakeCTX(request_, render_process_id_,
+                                            frame_tree_node_id_, request_id_,
+                                            browser_context_, ctx_);
     int result = factory_->request_handler_->OnBeforeStartTransaction(
         ctx_, continuation, &request_.headers);
 
@@ -530,6 +517,7 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::
     proxied_client_receiver_.reset();
     target_loader_.reset();
 
+    ctx_->internal_redirect = true;
     ContinueToBeforeRedirect(redirect_info, net::OK);
     return;
   }
@@ -549,6 +537,11 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::ContinueToBeforeRedirect(
   if (proxied_client_receiver_.is_bound())
     proxied_client_receiver_.Resume();
 
+  if (ctx_->internal_redirect) {
+    ctx_->redirect_source = GURL();
+  } else {
+    ctx_->redirect_source = request_.url;
+  }
   target_client_->OnReceiveRedirect(redirect_info,
                                     std::move(current_response_));
   request_.url = redirect_info.new_url;
@@ -579,10 +572,9 @@ void HuhiProxyingURLLoaderFactory::InProgressRequest::
   net::CompletionRepeatingCallback copyable_callback =
       base::AdaptCallbackForRepeating(std::move(continuation));
   if (request_.url.SchemeIsHTTPOrHTTPS()) {
-    ctx_ = std::make_shared<huhi::HuhiRequestInfo>();
-    huhi::HuhiRequestInfo::FillCTX(request_, render_process_id_,
-                                     frame_tree_node_id_, request_id_,
-                                     browser_context_, ctx_);
+    ctx_ = huhi::HuhiRequestInfo::MakeCTX(request_, render_process_id_,
+                                            frame_tree_node_id_, request_id_,
+                                            browser_context_, ctx_);
     int result = factory_->request_handler_->OnHeadersReceived(
         ctx_, copyable_callback, current_response_->headers.get(),
         &override_headers_, &redirect_url_);

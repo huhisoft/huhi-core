@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-# This Source Code Form is subject to the terms of the Huhi Software
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -24,6 +24,23 @@ def AddHuhiPolicies(template_file_contents):
             'tags': [],
             'desc': '''This policy allows an admin to specify that tor feature must be disabled at startup.''',
         },
+        {
+            'name': 'IPFSEnabled',
+            'type': 'main',
+            'schema': {'type': 'boolean'},
+            'supported_on': ['chrome.*:87-'],
+            'features': {
+              'dynamic_refresh': False,
+              'per_profile': False,
+              'can_be_recommended': False,
+              'can_be_mandatory': True
+            },
+            'example_value': True,
+            'id': 1,
+            'caption': '''Enable IPFS feature''',
+            'tags': [],
+            'desc': '''This policy allows an admin to specify whether IPFS feature can be enabled.''',
+        }
     ]
 
     """Our new polices are added with highest id"""

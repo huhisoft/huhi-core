@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -20,6 +20,14 @@ public class HuhiClassAdapter {
         chain = new HuhiEditUrlSuggestionProcessorClassAdapter(chain);
         chain = new HuhiSearchEngineAdapterClassAdapter(chain);
         chain = new HuhiCommandLineInitUtilClassAdapter(chain);
+        chain = new HuhiAppMenuClassAdapter(chain);
+        chain = new HuhiBottomControlsCoordinatorClassAdapter(chain);
+        chain = new HuhiToolbarManagerClassAdapter(chain);
+        chain = new HuhiTopToolbarCoordinatorClassAdapter(chain);
+        chain = new HuhiTabSwitcherModeTTCoordinatorPhoneClassAdapter(chain);
+        chain = new HuhiTabSwitcherModeTTPhoneClassAdapter(chain);
+        chain = new HuhiToolbarLayoutClassAdapter(chain);
+        chain = new HuhiTileViewClassAdapter(chain);
         return chain;
     }
 }

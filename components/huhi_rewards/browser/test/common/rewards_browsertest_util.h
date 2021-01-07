@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,11 +17,9 @@
 
 namespace rewards_browsertest_util {
 
-enum class ContributionType { OneTimeTip, MonthlyTip };
+enum class TipAction { OneTime, SetMonthly, ChangeMonthly, ClearMonthly };
 
 void GetTestDataDir(base::FilePath* test_data_dir);
-
-double IsRewardsEnabled(Browser* browser, const bool private_window = false);
 
 GURL GetRewardsUrl();
 
@@ -29,9 +27,7 @@ GURL GetRewardsInternalsUrl();
 
 GURL GetNewTabUrl();
 
-void EnableRewardsViaCode(
-    Browser* browser,
-    huhi_rewards::RewardsServiceImpl* rewards_service);
+void StartProcess(huhi_rewards::RewardsServiceImpl* rewards_service);
 
 GURL GetUrl(
     net::EmbeddedTestServer* https_server,
@@ -51,6 +47,10 @@ void NavigateToPublisherPage(
     const std::string& path = "");
 
 void WaitForLedgerStop(huhi_rewards::RewardsServiceImpl* rewards_service);
+
+void CreateWallet(huhi_rewards::RewardsServiceImpl* rewards_service);
+
+void SetOnboardingBypassed(Browser* browser, bool bypassed = true);
 
 }  // namespace rewards_browsertest_util
 

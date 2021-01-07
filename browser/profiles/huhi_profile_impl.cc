@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,10 +15,6 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/notification_source.h"
 
-#if !defined(OS_ANDROID)
-#include "chrome/browser/first_run/first_run.h"
-#endif
-
 HuhiProfileImpl::HuhiProfileImpl(
     const base::FilePath& path,
     Delegate* delegate,
@@ -27,17 +23,6 @@ HuhiProfileImpl::HuhiProfileImpl(
     scoped_refptr<base::SequencedTaskRunner> io_task_runner)
     : ProfileImpl(path, delegate, create_mode, creation_time, io_task_runner),
       weak_ptr_factory_(this) {
-#if !defined(OS_ANDROID)
-  const PrefService::Preference* pref =
-      GetPrefs()->FindPreference(kShieldsAdvancedViewEnabled);
-  if (!pref->HasUserSetting()) {
-    // advanced view is defaulted to true for EXISTING users; false for new.
-    // preference needs to be explicitly set to hold its value
-    const bool default_value = !first_run::IsChromeFirstRun();
-    GetPrefs()->SetBoolean(kShieldsAdvancedViewEnabled, default_value);
-  }
-#endif
-
   // In sessions profiles, prefs are created from the original profile like how
   // incognito profile works. By the time chromium start to observe prefs
   // initialization in ProfileImpl constructor for the async creation case,

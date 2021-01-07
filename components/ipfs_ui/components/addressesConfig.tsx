@@ -1,9 +1,11 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import * as React from 'react'
+
+import { getLocale } from '../../common/locale'
 
 import { Section, Title } from '../style'
 
@@ -20,16 +22,16 @@ export class AddressesConfig extends React.Component<Props, {}> {
     return (
       <Section>
         <Title>
-          <span i18n-content='addressesConfigTitle'/>
+          {getLocale('addressesConfigTitle')}
         </Title>
         <div>
-          <span i18n-content='api'/>: {this.props.addressesConfig.api}
+          {getLocale('api')}: {this.props.addressesConfig.api}
         </div>
         <div>
-          <span i18n-content='gateway'/>: {this.props.addressesConfig.gateway}
+          {getLocale('gateway')}: {this.props.addressesConfig.gateway}
         </div>
         <div>
-          <span i18n-content='swarm'/>: {this.props.addressesConfig.swarm.toString()}
+          {getLocale('swarm')}: {this.props.addressesConfig.swarm.toString()}
         </div>
       </Section>
     )

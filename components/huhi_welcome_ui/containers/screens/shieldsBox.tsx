@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -20,6 +20,8 @@ interface Props {
 
 export default class ShieldsBox extends React.PureComponent<Props> {
   render () {
+    const text = getLocale('privacyDesc').split('$1')
+
     const { index, currentScreen } = this.props
     return (
       <Content
@@ -30,9 +32,25 @@ export default class ShieldsBox extends React.PureComponent<Props> {
       >
         <WelcomeShieldsImage />
         <Title>{getLocale('privacyTitle')}</Title>
-        <Paragraph
-          dangerouslySetInnerHTML={{ __html: getLocale('privacyDesc') }}
-        />
+        <Paragraph>
+          {text[0]}
+          <a
+            href='https://hnq.vn/p3a'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            {text[1]}
+          </a>
+          {text[2]}
+          <a
+            href='chrome://settings/privacy'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            {text[3]}
+          </a>
+          {text[4]}
+        </Paragraph>
       </Content>
     )
   }

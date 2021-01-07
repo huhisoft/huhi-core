@@ -1,0 +1,29 @@
+import("//huhi/build/config.gni")
+import("//huhi/components/huhi_wallet/buildflags/buildflags.gni")
+
+assert(huhi_wallet_enabled)
+
+source_set("huhi_wallet") {
+  public_deps = [ "buildflags" ]
+
+  sources = [
+    "huhi_wallet_constants.cc",
+    "huhi_wallet_constants.h",
+    "huhi_wallet_delegate.h",
+    "huhi_wallet_service.cc",
+    "huhi_wallet_service.h",
+    "pref_names.cc",
+    "pref_names.h",
+  ]
+
+  deps = [
+    "//base",
+    "//components/keyed_service/content",
+    "//components/keyed_service/core",
+    "//components/prefs",
+    "//components/user_prefs",
+    "//content/public/browser",
+    "//extensions/browser",
+    "//extensions/common:common_constants",
+  ]
+}

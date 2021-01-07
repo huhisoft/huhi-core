@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
@@ -40,7 +40,7 @@ void ContentSettingsRegistry::HuhiInit() {
            ContentSettingsInfo::EPHEMERAL,
            ContentSettingsInfo::EXCEPTIONS_ON_SECURE_AND_INSECURE_ORIGINS);
 
-  // Disable background sync by default (huhi/huhi-browser#4709)
+  // Disable background sync by default (huhisoft/huhi-browser#4709)
   content_settings_info_.erase(ContentSettingsType::BACKGROUND_SYNC);
   website_settings_registry_->UnRegister(ContentSettingsType::BACKGROUND_SYNC);
   Register(ContentSettingsType::BACKGROUND_SYNC, "background-sync",
@@ -54,7 +54,7 @@ void ContentSettingsRegistry::HuhiInit() {
            ContentSettingsInfo::PERSISTENT,
            ContentSettingsInfo::EXCEPTIONS_ON_SECURE_ORIGINS_ONLY);
 
-  // Disable motion sensors by default (huhi/huhi-browser#4789)
+  // Disable motion sensors by default (huhisoft/huhi-browser#4789)
   content_settings_info_.erase(ContentSettingsType::SENSORS);
   website_settings_registry_->UnRegister(ContentSettingsType::SENSORS);
   Register(ContentSettingsType::SENSORS, "sensors", CONTENT_SETTING_BLOCK,

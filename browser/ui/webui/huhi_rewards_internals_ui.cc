@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,11 +12,8 @@
 
 #include "huhi/components/huhi_rewards/browser/rewards_service.h"
 #include "huhi/browser/huhi_rewards/rewards_service_factory.h"
-#include "huhi/components/huhi_rewards/common/pref_names.h"
 #include "huhi/components/huhi_rewards/resources/grit/huhi_rewards_internals_generated_map.h"
 #include "chrome/browser/profiles/profile.h"
-#include "components/prefs/pref_change_registrar.h"
-#include "components/prefs/pref_service.h"
 #include "content/public/browser/web_ui.h"
 #include "content/public/browser/web_ui_message_handler.h"
 #include "bat/ledger/mojom_structs.h"
@@ -43,11 +40,8 @@ class RewardsInternalsDOMHandler : public content::WebUIMessageHandler {
   void RegisterMessages() override;
 
  private:
-  bool IsRewardsEnabled() const;
-  void HandleGetRewardsEnabled(const base::ListValue* args);
   void HandleGetRewardsInternalsInfo(const base::ListValue* args);
   void OnGetRewardsInternalsInfo(ledger::type::RewardsInternalsInfoPtr info);
-  void OnPreferenceChanged();
   void GetBalance(const base::ListValue* args);
   void OnGetBalance(
     const ledger::type::Result result,
@@ -62,16 +56,15 @@ class RewardsInternalsDOMHandler : public content::WebUIMessageHandler {
   void OnGetFulllLog(const std::string& log);
   void ClearLog(const base::ListValue* args);
   void OnClearLog(const bool success);
-  void GetExternalWallet(const base::ListValue* args);
-  void OnGetExternalWallet(
+  void GetUpholdWallet(const base::ListValue* args);
+  void OnGetUpholdWallet(
       const ledger::type::Result result,
-      ledger::type::ExternalWalletPtr wallet);
+      ledger::type::UpholdWalletPtr wallet);
   void GetEventLogs(const base::ListValue* args);
   void OnGetEventLogs(ledger::type::EventLogs logs);
 
   huhi_rewards::RewardsService* rewards_service_;  // NOT OWNED
   Profile* profile_;
-  std::unique_ptr<PrefChangeRegistrar> pref_change_registrar_;
   base::WeakPtrFactory<RewardsInternalsDOMHandler> weak_ptr_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(RewardsInternalsDOMHandler);
@@ -83,10 +76,6 @@ RewardsInternalsDOMHandler::RewardsInternalsDOMHandler()
 RewardsInternalsDOMHandler::~RewardsInternalsDOMHandler() {}
 
 void RewardsInternalsDOMHandler::RegisterMessages() {
-  web_ui()->RegisterMessageCallback(
-      "huhi_rewards_internals.getRewardsEnabled",
-      base::BindRepeating(&RewardsInternalsDOMHandler::HandleGetRewardsEnabled,
-                          base::Unretained(this)));
   web_ui()->RegisterMessageCallback(
       "huhi_rewards_internals.getRewardsInternalsInfo",
       base::BindRepeating(
@@ -125,7 +114,7 @@ void RewardsInternalsDOMHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback(
       "huhi_rewards_internals.getExternalWallet",
       base::BindRepeating(
-          &RewardsInternalsDOMHandler::GetExternalWallet,
+          &RewardsInternalsDOMHandler::GetUpholdWallet,
           base::Unretained(this)));
   web_ui()->RegisterMessageCallback(
       "huhi_rewards_internals.getEventLogs",
@@ -138,28 +127,7 @@ void RewardsInternalsDOMHandler::Init() {
   profile_ = Profile::FromWebUI(web_ui());
   rewards_service_ =
       huhi_rewards::RewardsServiceFactory::GetForProfile(profile_);
-  PrefService* prefs = profile_->GetPrefs();
-  pref_change_registrar_ = std::make_unique<PrefChangeRegistrar>();
-  pref_change_registrar_->Init(prefs);
-  pref_change_registrar_->Add(
-      huhi_rewards::prefs::kEnabled,
-      base::BindRepeating(&RewardsInternalsDOMHandler::OnPreferenceChanged,
-                          base::Unretained(this)));
-}
-
-bool RewardsInternalsDOMHandler::IsRewardsEnabled() const {
-  DCHECK(profile_);
-  return profile_->GetPrefs()->GetBoolean(
-      huhi_rewards::prefs::kEnabled);
-}
-
-void RewardsInternalsDOMHandler::HandleGetRewardsEnabled(
-    const base::ListValue* args) {
-  if (!web_ui()->CanCallJavascript())
-    return;
-  web_ui()->CallJavascriptFunctionUnsafe(
-      "huhi_rewards_internals.onGetRewardsEnabled",
-      base::Value(IsRewardsEnabled()));
+  rewards_service_->StartProcess(base::DoNothing());
 }
 
 void RewardsInternalsDOMHandler::HandleGetRewardsInternalsInfo(
@@ -167,14 +135,6 @@ void RewardsInternalsDOMHandler::HandleGetRewardsInternalsInfo(
   rewards_service_->GetRewardsInternalsInfo(
       base::BindOnce(&RewardsInternalsDOMHandler::OnGetRewardsInternalsInfo,
                      weak_ptr_factory_.GetWeakPtr()));
-}
-
-void RewardsInternalsDOMHandler::OnPreferenceChanged() {
-  if (!web_ui()->CanCallJavascript())
-    return;
-  web_ui()->CallJavascriptFunctionUnsafe(
-      "huhi_rewards_internals.onGetRewardsEnabled",
-      base::Value(IsRewardsEnabled()));
 }
 
 void RewardsInternalsDOMHandler::OnGetRewardsInternalsInfo(
@@ -379,24 +339,20 @@ void RewardsInternalsDOMHandler::OnClearLog(const bool success) {
       base::Value(""));
 }
 
-void RewardsInternalsDOMHandler::GetExternalWallet(
-    const base::ListValue* args) {
-  CHECK_EQ(1U, args->GetSize());
+void RewardsInternalsDOMHandler::GetUpholdWallet(const base::ListValue* args) {
   if (!rewards_service_) {
     return;
   }
 
-  const std::string wallet_type = args->GetList()[0].GetString();
-  rewards_service_->GetExternalWallet(
-      wallet_type,
+  rewards_service_->GetUpholdWallet(
       base::BindOnce(
-          &RewardsInternalsDOMHandler::OnGetExternalWallet,
+          &RewardsInternalsDOMHandler::OnGetUpholdWallet,
           weak_ptr_factory_.GetWeakPtr()));
 }
 
-void RewardsInternalsDOMHandler::OnGetExternalWallet(
+void RewardsInternalsDOMHandler::OnGetUpholdWallet(
     const ledger::type::Result result,
-    ledger::type::ExternalWalletPtr wallet) {
+    ledger::type::UpholdWalletPtr wallet) {
   if (!web_ui()->CanCallJavascript()) {
     return;
   }

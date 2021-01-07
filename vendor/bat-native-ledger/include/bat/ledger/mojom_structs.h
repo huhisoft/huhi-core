@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -35,6 +35,9 @@ using BalanceReportInfo = mojom::BalanceReportInfo;
 using BalanceReportInfoPtr = mojom::BalanceReportInfoPtr;
 using BalanceReportInfoList =
     std::vector<mojom::BalanceReportInfoPtr>;
+
+using HuhiWallet = mojom::HuhiWallet;
+using HuhiWalletPtr = mojom::HuhiWalletPtr;
 
 using ClientInfo = mojom::ClientInfo;
 using ClientInfoPtr = mojom::ClientInfoPtr;
@@ -80,8 +83,8 @@ using Environment = mojom::Environment;
 
 using ExcludeFilter = mojom::ExcludeFilter;
 
-using ExternalWallet = mojom::ExternalWallet;
-using ExternalWalletPtr = mojom::ExternalWalletPtr;
+using UpholdWallet = mojom::UpholdWallet;
+using UpholdWalletPtr = mojom::UpholdWalletPtr;
 
 using InlineTipsPlatforms = mojom::InlineTipsPlatforms;
 
@@ -158,10 +161,6 @@ using SKUTransactionPtr = mojom::SKUTransactionPtr;
 using SKUTransactionStatus = mojom::SKUTransactionStatus;
 
 using SKUTransactionType = mojom::SKUTransactionType;
-
-using TransferFee = mojom::TransferFee;
-using TransferFeePtr = mojom::TransferFeePtr;
-using TransferFeeList = std::map<std::string, TransferFeePtr>;
 
 using TransactionReportInfo = mojom::TransactionReportInfo;
 using TransactionReportInfoPtr = mojom::TransactionReportInfoPtr;

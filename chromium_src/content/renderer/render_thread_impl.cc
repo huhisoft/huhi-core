@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
@@ -17,6 +17,12 @@
   WebString gemini_scheme(WebString::FromASCII(kGeminiScheme)); \
   WebSecurityPolicy::RegisterURLSchemeAsDisplayIsolated(gemini_scheme); \
   WebSecurityPolicy::RegisterURLSchemeAsNotAllowingJavascriptURLs( \
-      gemini_scheme);
+      gemini_scheme); \
+                      \
+  WebString ipfs_scheme(WebString::FromASCII("ipfs")); \
+  WebSecurityPolicy::RegisterURLSchemeAsSupportingFetchAPI(ipfs_scheme); \
+                    \
+  WebString ipns_scheme(WebString::FromASCII("ipns")); \
+  WebSecurityPolicy::RegisterURLSchemeAsSupportingFetchAPI(ipns_scheme);
 
 #include "../../../../content/renderer/render_thread_impl.cc"

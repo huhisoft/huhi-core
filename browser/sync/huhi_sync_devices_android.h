@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -13,6 +13,10 @@
 #include "base/values.h"
 #include "chrome/browser/sync/profile_sync_service_android.h"
 #include "components/sync_device_info/device_info_tracker.h"
+
+namespace syncer {
+class HuhiProfileSyncService;
+}
 
 namespace chrome {
 namespace android {
@@ -30,11 +34,17 @@ class HuhiSyncDevicesAndroid : public syncer::DeviceInfoTracker::Observer {
       JNIEnv* env,
       const base::android::JavaParamRef<jobject>& jcaller);
 
+  void DeleteDevice(JNIEnv* env,
+                    const base::android::JavaParamRef<jobject>& jcaller,
+                    const base::android::JavaParamRef<jstring>& device_guid);
+
  private:
   // syncer::DeviceInfoTracker::Observer
   void OnDeviceInfoChange() override;
 
   base::Value GetSyncDeviceList();
+
+  syncer::HuhiProfileSyncService* GetSyncService() const;
 
   ScopedObserver<syncer::DeviceInfoTracker, syncer::DeviceInfoTracker::Observer>
       device_info_tracker_observer_{this};

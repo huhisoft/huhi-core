@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,8 +11,8 @@ import { shallow } from 'enzyme'
 const fakeProps: Props = {
   enabled: false,
   favicon: '',
-  origin: 'https://huhisoft.com',
-  hostname: 'huhisoft.com',
+  origin: 'https://hnq.vn',
+  hostname: 'hnq.vn',
   isBlockedListOpen: true,
   shieldsToggled: (setting: BlockOptions) => ({ type: actionTypes.SHIELDS_TOGGLED, setting }),
   adsBlocked: 0,

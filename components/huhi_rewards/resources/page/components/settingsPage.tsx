@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,7 +9,6 @@ import { connect } from 'react-redux'
 // Components
 import { Column, Grid } from 'huhi-ui/components'
 import {
-  DisabledBox,
   MainToggle,
   SettingsPage as Page,
   ModalRedirect,
@@ -20,6 +19,7 @@ import AdsBox from './adsBox'
 import ContributeBox from './contributeBox'
 import TipBox from './tipsBox'
 import MonthlyContributionBox from './monthlyContributionBox'
+import QRBox from './qrBox'
 
 // Utils
 import * as rewardsActions from '../actions/rewards_actions'
@@ -44,10 +44,6 @@ class SettingsPage extends React.Component<Props, State> {
     }
   }
 
-  onToggle = () => {
-    this.actions.toggleEnableMain(!this.props.rewardsData.enabledMain)
-  }
-
   get actions () {
     return this.props.actions
   }
@@ -65,8 +61,6 @@ class SettingsPage extends React.Component<Props, State> {
   }
 
   componentDidMount () {
-    this.actions.getRewardsMainEnabled()
-
     if (this.props.rewardsData.firstLoad === null) {
       // First load ever
       this.actions.onSettingSave('firstLoad', true, false)
@@ -75,26 +69,17 @@ class SettingsPage extends React.Component<Props, State> {
       this.actions.onSettingSave('firstLoad', false, false)
     }
 
-    if (this.props.rewardsData.enabledMain &&
-        !this.props.rewardsData.initializing) {
+    if (!this.props.rewardsData.initializing) {
       this.startRewards()
     }
   }
 
   componentDidUpdate (prevProps: Props, prevState: State) {
     if (
-      this.props.rewardsData.enabledMain &&
       prevProps.rewardsData.initializing &&
       !this.props.rewardsData.initializing
     ) {
       this.startRewards()
-    }
-
-    if (
-      prevProps.rewardsData.enabledMain &&
-      !this.props.rewardsData.enabledMain
-    ) {
-      this.stopRewards()
     }
 
     if (
@@ -121,6 +106,13 @@ class SettingsPage extends React.Component<Props, State> {
         redirectModalDisplayed: 'show'
       })
     }
+
+    if (
+      prevProps.rewardsData.externalWallet &&
+      !this.props.rewardsData.externalWallet
+    ) {
+      this.actions.getExternalWallet('uphold')
+    }
   }
 
   stopRewards () {
@@ -130,8 +122,10 @@ class SettingsPage extends React.Component<Props, State> {
 
   startRewards () {
     if (this.props.rewardsData.firstLoad) {
+      this.actions.getBalanceReport(new Date().getMonth() + 1, new Date().getFullYear())
       this.actions.getAdsData()
-      this.actions.getWalletPassphrase()
+      this.actions.getPendingContributions()
+      this.actions.getCountryCode()
     } else {
       // normal load
       this.refreshActions()
@@ -146,8 +140,8 @@ class SettingsPage extends React.Component<Props, State> {
     }, 60000)
 
     this.actions.fetchPromotions()
-    this.actions.updateAdsRewards()
     this.actions.getExternalWallet('uphold')
+    this.actions.getOnboardingStatus()
 
     if (window.location.pathname.length > 1) {
       const pathElements = window.location.pathname.split('/')
@@ -162,7 +156,7 @@ class SettingsPage extends React.Component<Props, State> {
   }
 
   openPrivacyPolicy () {
-    window.open('https://huhisoft.com/privacy#rewards', '_blank')
+    window.open('https://hnq.vn/privacy#rewards', '_blank')
   }
 
   onDismissPromo = (promo: PromoType, event: React.MouseEvent<HTMLDivElement>) => {
@@ -224,7 +218,7 @@ class SettingsPage extends React.Component<Props, State> {
       return (
         <ModalRedirect
           id={'redirect-modal-not-allowed'}
-          errorText={{ __html: getLocale('redirectModalNotAllowed') }}
+          errorText={getLocale('redirectModalNotAllowed')}
           titleText={getLocale('redirectModalErrorWallet')}
           buttonText={getLocale('redirectModalClose')}
           onClick={this.actions.hideRedirectModal}
@@ -237,7 +231,7 @@ class SettingsPage extends React.Component<Props, State> {
         <ModalRedirect
           id={'redirect-modal-bat-limit'}
           titleText={getLocale('redirectModalBatLimitTitle')}
-          errorText={{ __html: getLocale('redirectModalBatLimitText') }}
+          errorText={getLocale('redirectModalBatLimitText')}
           buttonText={getLocale('redirectModalClose')}
           onClick={this.actions.hideRedirectModal}
         />
@@ -248,7 +242,7 @@ class SettingsPage extends React.Component<Props, State> {
       return (
         <ModalRedirect
           id={'redirect-modal-error'}
-          errorText={{ __html: getLocale('redirectModalError') }}
+          errorText={getLocale('redirectModalError')}
           buttonText={getLocale('processingRequestButton')}
           titleText={getLocale('processingRequest')}
           onClick={this.onRedirectError}
@@ -291,40 +285,24 @@ class SettingsPage extends React.Component<Props, State> {
   }
 
   render () {
-    const { enabledMain } = this.props.rewardsData
-
     return (
       <Page>
         <Grid columns={3} customStyle={{ gridGap: '32px' }}>
           <Column size={2} customStyle={{ justifyContent: 'center', flexWrap: 'wrap' }}>
-            {
-              enabledMain
-              ? this.getRedirectModal()
-              : null
-            }
+            {this.getRedirectModal()}
             <MainToggle
-              onToggle={this.onToggle}
-              enabled={enabledMain}
-              testId={'enableMain'}
+              testId={'mainToggle'}
               onTOSClick={this.openTOS}
               onPrivacyClick={this.openPrivacyPolicy}
             />
-            {
-              !enabledMain
-              ? <DisabledBox />
-              : null
-            }
+            <QRBox />
             <AdsBox />
             <ContributeBox />
             <MonthlyContributionBox />
             <TipBox />
           </Column>
           <Column size={1} customStyle={{ justifyContent: 'center', flexWrap: 'wrap' }}>
-            {
-              enabledMain
-              ? this.getPromotionsClaims()
-              : null
-            }
+            {this.getPromotionsClaims()}
             <PageWallet />
             {this.renderPromos()}
           </Column>

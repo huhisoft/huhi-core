@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -19,6 +19,7 @@
 #include "huhi/components/huhi_shields/browser/huhi_shields_util.h"
 #include "content/public/common/referrer.h"
 #include "extensions/common/url_pattern.h"
+#include "net/base/registry_controlled_domains/registry_controlled_domain.h"
 #include "net/url_request/url_request.h"
 #include "third_party/blink/public/common/loader/network_utils.h"
 #include "third_party/blink/public/common/loader/referrer_utils.h"
@@ -35,6 +36,12 @@ const std::string& GetQueryStringTrackers() {
            "fbclid", "gclid", "msclkid", "mc_eid",
            // https://github.com/huhisoft/huhi-browser/issues/9879
            "dclid",
+           // https://github.com/huhisoft/huhi-browser/issues/11579
+           "_openstat",
+           // https://github.com/huhisoft/huhi-browser/issues/11817
+           "vero_conv", "vero_id",
+           // https://github.com/huhisoft/huhi-browser/issues/11578
+           "yclid",
            // https://github.com/huhisoft/huhi-browser/issues/9019
            "_hsenc", "__hssc", "__hstc", "__hsfp", "hsCtaTracking"}),
       "|"));
@@ -71,11 +78,31 @@ DECLARE_LAZY_MATCHER(tracker_appended_matcher,
 
 #undef DECLARE_LAZY_MATCHER
 
-void ApplyPotentialQueryStringFilter(const GURL& request_url,
-                                     std::string* new_url_spec) {
-  DCHECK(new_url_spec);
+void ApplyPotentialQueryStringFilter(std::shared_ptr<HuhiRequestInfo> ctx) {
   SCOPED_UMA_HISTOGRAM_TIMER("Huhi.SiteHacks.QueryFilter");
-  std::string new_query = request_url.query();
+
+  if (ctx->redirect_source.is_valid()) {
+    if (ctx->internal_redirect) {
+      // Ignore internal redirects since we trigger them.
+      return;
+    }
+
+    if (net::registry_controlled_domains::SameDomainOrHost(
+            ctx->redirect_source, ctx->request_url,
+            net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES)) {
+      // Same-site redirects are exempted.
+      return;
+    }
+  } else if (ctx->initiator_url.is_valid() &&
+             net::registry_controlled_domains::SameDomainOrHost(
+                 ctx->initiator_url, ctx->request_url,
+                 net::registry_controlled_domains::
+                     INCLUDE_PRIVATE_REGISTRIES)) {
+    // Same-site requests are exempted.
+    return;
+  }
+
+  std::string new_query = ctx->request_url.query();
   // Note: the ordering of these replacements is important.
   const int replacement_count =
       re2::RE2::GlobalReplace(&new_query, tracker_appended_matcher.Get(), "") +
@@ -90,7 +117,7 @@ void ApplyPotentialQueryStringFilter(const GURL& request_url,
       replacements.SetQuery(new_query.c_str(),
                             url::Component(0, new_query.size()));
     }
-    *new_url_spec = request_url.ReplaceComponents(replacements).spec();
+    ctx->new_url_spec = ctx->request_url.ReplaceComponents(replacements).spec();
   }
 }
 
@@ -101,14 +128,14 @@ bool ApplyPotentialReferrerBlock(std::shared_ptr<HuhiRequestInfo> ctx) {
 
   if (ctx->resource_type == blink::mojom::ResourceType::kMainFrame ||
       ctx->resource_type == blink::mojom::ResourceType::kSubFrame) {
-    // Frame navigations are handled in NavigationRequest.
+    // Frame navigations are handled in content::NavigationRequest.
     return false;
   }
 
   content::Referrer new_referrer;
   if (huhi_shields::MaybeChangeReferrer(
-          ctx->allow_referrers, ctx->allow_huhi_shields, GURL(ctx->referrer),
-          ctx->tab_origin, ctx->request_url,
+          ctx->allow_referrers, ctx->allow_huhi_shields,
+          GURL(ctx->referrer), ctx->request_url,
           blink::ReferrerUtils::NetToMojoReferrerPolicy(ctx->referrer_policy),
           &new_referrer)) {
     ctx->new_referrer = new_referrer.url;
@@ -123,7 +150,7 @@ int OnBeforeURLRequest_SiteHacksWork(const ResponseCallback& next_callback,
                                      std::shared_ptr<HuhiRequestInfo> ctx) {
   ApplyPotentialReferrerBlock(ctx);
   if (ctx->request_url.has_query()) {
-    ApplyPotentialQueryStringFilter(ctx->request_url, &ctx->new_url_spec);
+    ApplyPotentialQueryStringFilter(ctx);
   }
   return net::OK;
 }
@@ -145,7 +172,24 @@ int OnBeforeStartTransaction_SiteHacksWork(
       }
     }
   }
+
+  // Special case for handling top-level redirects. There is no other way to
+  // normally change referrer in net::URLRequest during redirects
+  // (except using network::mojom::TrustedURLLoaderHeaderClient, which
+  // will affect performance).
+  // Note that this code only affects "Referer" header sent via network - we
+  // handle document.referer in content::NavigationRequest (see also
+  // HuhiContentBrowserClient::MaybeHideReferrer).
+  if (!ctx->allow_referrers && ctx->allow_huhi_shields &&
+      ctx->redirect_source.is_valid() &&
+      ctx->resource_type == blink::mojom::ResourceType::kMainFrame &&
+      huhi_shields::ShouldCleanReferrerForTopLevelNavigation(
+          ctx->method, ctx->redirect_source, ctx->request_url)) {
+    // This is hack that notifies the patched code in net::URLRequest.
+    ctx->removed_headers.insert("X-Huhi-Clear-Referer");
+  }
   return net::OK;
 }
+
 
 }  // namespace huhi

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,7 +12,6 @@
 #include "huhi/common/pref_names.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/profiles/profile.h"
-#include "chrome/common/pref_names.h"
 #include "components/gcm_driver/gcm_buildflags.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/browser/web_ui.h"
@@ -44,15 +43,6 @@ HuhiPrivacyHandler::~HuhiPrivacyHandler() {
 void HuhiPrivacyHandler::RegisterMessages() {
   profile_ = Profile::FromWebUI(web_ui());
 
-  web_ui()->RegisterMessageCallback(
-      "getWebRTCPolicy",
-      base::BindRepeating(&HuhiPrivacyHandler::GetWebRTCPolicy,
-                          base::Unretained(this)));
-  web_ui()->RegisterMessageCallback(
-      "setWebRTCPolicy",
-      base::BindRepeating(&HuhiPrivacyHandler::SetWebRTCPolicy,
-                          base::Unretained(this)));
-
 #if BUILDFLAG(HUHI_P3A_ENABLED)
   web_ui()->RegisterMessageCallback(
       "setP3AEnabled", base::BindRepeating(&HuhiPrivacyHandler::SetP3AEnabled,
@@ -77,26 +67,6 @@ void HuhiPrivacyHandler::AddLoadTimeData(content::WebUIDataSource* data_source,
   data_source->AddBoolean("pushMessagingEnabledAtStartup",
                           gcm_channel_status->IsGCMEnabled());
 #endif
-}
-
-void HuhiPrivacyHandler::SetWebRTCPolicy(const base::ListValue* args) {
-  CHECK_EQ(args->GetSize(), 1U);
-  CHECK(profile_);
-
-  std::string policy;
-  args->GetString(0, &policy);
-  profile_->GetPrefs()->SetString(prefs::kWebRTCIPHandlingPolicy, policy);
-}
-
-void HuhiPrivacyHandler::GetWebRTCPolicy(const base::ListValue* args) {
-  CHECK_EQ(args->GetSize(), 1U);
-  CHECK(profile_);
-
-  std::string policy =
-      profile_->GetPrefs()->GetString(prefs::kWebRTCIPHandlingPolicy);
-
-  AllowJavascript();
-  ResolveJavascriptCallback(args->GetList()[0].Clone(), base::Value(policy));
 }
 
 #if BUILDFLAG(HUHI_P3A_ENABLED)

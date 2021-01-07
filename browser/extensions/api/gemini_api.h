@@ -1,15 +1,15 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef HUHI_BROWSER_EXTENSIONS_API_GEMINI_API_H_
 #define HUHI_BROWSER_EXTENSIONS_API_GEMINI_API_H_
 
-#include <map>
 #include <string>
 #include <vector>
 
+#include "huhi/components/gemini/browser/gemini_service.h"
 #include "extensions/browser/extension_function.h"
 
 class Profile;
@@ -71,7 +71,7 @@ class GeminiGetAccountBalancesFunction :
  protected:
   ~GeminiGetAccountBalancesFunction() override {}
   void OnGetAccountBalances(
-    const std::map<std::string, std::string>& balances,
+    const GeminiAccountBalances& balances,
     bool auth_invalid);
 
   ResponseAction Run() override;

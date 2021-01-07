@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "huhi/browser/ui/huhi_actions/huhi_action_icon_with_badge_image_source.h"
+#include "huhi/browser/profiles/profile_util.h"
 #include "chrome/browser/extensions/extension_view_host.h"
 #include "chrome/browser/extensions/extension_view_host_factory.h"
 #include "chrome/browser/profiles/profile.h"
@@ -31,7 +32,7 @@ bool HuhiActionViewController::IsEnabled(
     content::WebContents* web_contents) const {
   bool is_enabled = ExtensionActionViewController::IsEnabled(web_contents);
   if (is_enabled && extension_->id() == huhi_rewards_extension_id &&
-      browser_->profile()->IsOffTheRecord())
+      !huhi::IsRegularProfile(browser_->profile()))
     is_enabled = false;
   return is_enabled;
 }

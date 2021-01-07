@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 
+#include "bat/ledger/internal/endpoint/promotion/promotion_server.h"
 #include "bat/ledger/internal/wallet/wallet_balance.h"
 #include "bat/ledger/internal/wallet/wallet_claim.h"
 #include "bat/ledger/internal/wallet/wallet_create.h"
@@ -34,13 +35,9 @@ class Wallet {
       const std::string& pass_phrase,
       ledger::ResultCallback callback);
 
-  std::string GetWalletPassphrase() const;
+  std::string GetWalletPassphrase(type::HuhiWalletPtr wallet);
 
   void FetchBalance(ledger::FetchBalanceCallback callback);
-
-  void GetExternalWallet(
-      const std::string& wallet_type,
-      ledger::ExternalWalletCallback callback);
 
   void ExternalWalletAuthorization(
       const std::string& wallet_type,
@@ -57,13 +54,26 @@ class Wallet {
 
   void DisconnectAllWallets(ledger::ResultCallback callback);
 
+  type::HuhiWalletPtr GetWallet();
+
+  bool SetWallet(type::HuhiWalletPtr wallet);
+
+  void LinkHuhiWallet(
+    const std::string& destination_payment_id,
+    ledger::ResultCallback callback);
+
  private:
+  void AuthorizeWallet(
+      const std::string& wallet_type,
+      const std::map<std::string, std::string>& args,
+      ledger::ExternalWalletAuthorizationCallback callback);
+
   LedgerImpl* ledger_;  // NOT OWNED
   std::unique_ptr<WalletCreate> create_;
   std::unique_ptr<WalletRecover> recover_;
   std::unique_ptr<WalletBalance> balance_;
   std::unique_ptr<WalletClaim> claim_;
-  std::unique_ptr<uphold::Uphold> uphold_;
+  std::unique_ptr<endpoint::PromotionServer> promotion_server_;
 };
 
 }  // namespace wallet

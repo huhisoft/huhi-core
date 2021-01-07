@@ -5,8 +5,8 @@ import re
 
 # Strings we want to replace but that we also replace automatically for XTB files
 branding_replacements = [
-    (r'The Chromium Authors. All rights reserved.', r'The Huhi Software Authors. All rights reserved.'),
-    (r'Google LLC. All rights reserved.', r'The Huhi Software Authors. All rights reserved.'),
+    (r'The Chromium Authors. All rights reserved.', r'The Huhi Authors. All rights reserved.'),
+    (r'Google LLC. All rights reserved.', r'The Huhi Authors. All rights reserved.'),
     (r'The Chromium Authors', r'Huhi Software Inc'),
     (r'Google Chrome', r'Huhi'),
     (r'(Google)(?! Play)', r'Huhi'),

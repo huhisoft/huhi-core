@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -19,9 +19,9 @@ describe('cosmeticFilterEvents events', () => {
   describe('when runtime.onMessage is received', () => {
     describe('contextMenuOpened', () => {
       it('assigns the base URI', () => {
-        chrome.runtime.sendMessage({ type: 'contextMenuOpened', baseURI: 'huhisoft.com' },
+        chrome.runtime.sendMessage({ type: 'contextMenuOpened', baseURI: 'hnq.vn' },
         () => {
-          expect(cosmeticFilterEvents.rule.host).toBe('huhisoft.com')
+          expect(cosmeticFilterEvents.rule.host).toBe('hnq.vn')
         })
       })
     })
@@ -47,7 +47,7 @@ describe('cosmeticFilterEvents events', () => {
 
     describe('addBlockElement', function () {
       it('triggers addBlockElement action (query call)', function () {
-        const info: chrome.contextMenus.OnClickData = { menuItemId: 'addBlockElement', editable: false, pageUrl: 'huhisoft.com' }
+        const info: chrome.contextMenus.OnClickData = { menuItemId: 'addBlockElement', editable: false, pageUrl: 'hnq.vn' }
         // calls query
         const tab: chrome.tabs.Tab = {
           id: 3,
@@ -84,7 +84,7 @@ describe('cosmeticFilterEvents events', () => {
     })
     describe('resetSiteFilterSettings', function () {
       it('triggers `siteCosmeticFilterRemoved` action', function () {
-        const info: chrome.contextMenus.OnClickData = { menuItemId: 'resetSiteFilterSettings', editable: false, pageUrl: 'huhisoft.com' }
+        const info: chrome.contextMenus.OnClickData = { menuItemId: 'resetSiteFilterSettings', editable: false, pageUrl: 'hnq.vn' }
         const tab: chrome.tabs.Tab = {
           id: 3,
           index: 0,
@@ -103,7 +103,7 @@ describe('cosmeticFilterEvents events', () => {
     })
     describe('resetAllFilterSettings', function () {
       it('triggers `allCosmeticFiltersRemoved` action', function () {
-        const info: chrome.contextMenus.OnClickData = { menuItemId: 'resetAllFilterSettings', editable: false, pageUrl: 'huhisoft.com' }
+        const info: chrome.contextMenus.OnClickData = { menuItemId: 'resetAllFilterSettings', editable: false, pageUrl: 'hnq.vn' }
         const tab: chrome.tabs.Tab = {
           id: 3,
           index: 0,

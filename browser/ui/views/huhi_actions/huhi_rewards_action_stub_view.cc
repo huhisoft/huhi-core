@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -58,9 +58,9 @@ HuhiRewardsActionStubView::HuhiRewardsActionStubView(Profile* profile,
       profile_(profile),
       delegate_(delegate) {
   SetInkDropMode(InkDropMode::ON);
-  set_has_ink_drop_action_on_click(true);
+  SetHasInkDropActionOnClick(true);
   SetHorizontalAlignment(gfx::ALIGN_CENTER);
-  set_ink_drop_visible_opacity(kToolbarInkDropVisibleOpacity);
+  SetInkDropVisibleOpacity(kToolbarInkDropVisibleOpacity);
   // Create badge-and-image source like an extension icon would
   auto preferred_size = GetPreferredSize();
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();

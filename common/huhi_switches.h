@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,8 +15,6 @@ extern const char kDisableHuhiExtension[];
 extern const char kDisableHuhiRewardsExtension[];
 
 extern const char kDisableHuhiUpdate[];
-
-extern const char kDisableTorClientUpdaterExtension[];
 
 extern const char kDisableWebTorrentExtension[];
 
@@ -37,8 +35,6 @@ extern const char kFastWidevineBundleUpdate[];
 extern const char kComponentUpdateIntervalInSec[];
 
 extern const char kDisableDnsOverHttps[];
-
-extern const char kDisableIpfsClientUpdaterExtension[];
 
 }  // namespace switches
 

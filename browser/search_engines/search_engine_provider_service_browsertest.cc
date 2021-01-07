@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,9 +10,9 @@
 #include "huhi/browser/search_engines/guest_window_search_engine_provider_service.h"
 #include "huhi/browser/search_engines/search_engine_provider_service_factory.h"
 #include "huhi/browser/search_engines/search_engine_provider_util.h"
-#include "huhi/browser/tor/buildflags.h"
 #include "huhi/browser/ui/browser_commands.h"
 #include "huhi/components/search_engines/huhi_prepopulated_engines.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_window.h"
 #include "chrome/browser/search_engines/template_url_service_factory.h"
@@ -27,8 +27,8 @@
 #include "content/public/test/test_utils.h"
 
 #if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/extensions/huhi_tor_client_updater.h"
-#include "huhi/browser/tor/tor_launcher_factory.h"
+#include "huhi/components/tor/huhi_tor_client_updater.h"
+#include "huhi/components/tor/tor_launcher_factory.h"
 #endif
 
 class SearchEngineProviderServiceTest : public InProcessBrowserTest {
@@ -54,7 +54,7 @@ TemplateURLData CreateTestSearchEngine() {
 IN_PROC_BROWSER_TEST_F(SearchEngineProviderServiceTest,
                        PrivateWindowPrefTestWithNonQwantRegion) {
   Profile* profile = browser()->profile();
-  Profile* incognito_profile = profile->GetOffTheRecordProfile();
+  Profile* incognito_profile = profile->GetPrimaryOTRProfile();
 
   // This test case is only for non-qwant region.
   if (huhi::IsRegionForQwant(profile))
@@ -103,7 +103,7 @@ IN_PROC_BROWSER_TEST_F(SearchEngineProviderServiceTest,
 IN_PROC_BROWSER_TEST_F(SearchEngineProviderServiceTest,
                        PrivateWindowTestWithQwantRegion) {
   Profile* profile = browser()->profile();
-  Profile* incognito_profile = profile->GetOffTheRecordProfile();
+  Profile* incognito_profile = profile->GetPrimaryOTRProfile();
 
   // This test case is only for qwant region.
   if (!huhi::IsRegionForQwant(profile))

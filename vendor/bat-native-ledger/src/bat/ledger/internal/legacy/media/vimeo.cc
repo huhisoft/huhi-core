@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -642,7 +642,7 @@ void Vimeo::SavePublisherInfo(
     const std::string& publisher_favicon) {
   if (user_id.empty() && publisher_key.empty()) {
     OnMediaActivityError(window_id);
-    BLOG(0, "User id is missing for: " << media_key);
+    BLOG(0, "User id is missing");
     return;
   }
 
@@ -653,7 +653,7 @@ void Vimeo::SavePublisherInfo(
 
   if (key.empty()) {
     OnMediaActivityError(window_id);
-    BLOG(0, "Publisher key is missing for: " << media_key);
+    BLOG(0, "Publisher key is missing");
     return;
   }
 
@@ -672,6 +672,7 @@ void Vimeo::SavePublisherInfo(
       key,
       visit_data,
       duration,
+      true,
       window_id,
       [](ledger::type::Result, ledger::type::PublisherInfoPtr) {});
 

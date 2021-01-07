@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -20,6 +20,7 @@
 #include "bat/ads/internal/frequency_capping/frequency_capping_unittest_util.h"
 #include "bat/ads/internal/platform/platform_helper_mock.h"
 #include "bat/ads/internal/unittest_util.h"
+#include "bat/ads/pref_names.h"
 
 // npm run test -- huhi_unit_tests --filter=BatAds*
 
@@ -68,12 +69,6 @@ class BatAdsSubdivisionTargetingFrequencyCapTest : public ::testing::Test {
     ASSERT_TRUE(temp_dir_.CreateUniqueTempDir());
     const base::FilePath path = temp_dir_.GetPath();
 
-    ON_CALL(*ads_client_mock_, IsEnabled())
-        .WillByDefault(Return(true));
-
-    ON_CALL(*ads_client_mock_, ShouldAllowAdConversionTracking())
-        .WillByDefault(Return(true));
-
     SetBuildChannel(false, "test");
 
     ON_CALL(*locale_helper_mock_, GetLocale())
@@ -88,6 +83,8 @@ class BatAdsSubdivisionTargetingFrequencyCapTest : public ::testing::Test {
     MockLoadUserModelForId(ads_client_mock_);
     MockLoadResourceForId(ads_client_mock_);
     MockSave(ads_client_mock_);
+
+    MockPrefs(ads_client_mock_);
 
     database_ = std::make_unique<Database>(path.AppendASCII("database.sqlite"));
     MockRunDBTransaction(ads_client_mock_, database_);
@@ -115,14 +112,12 @@ class BatAdsSubdivisionTargetingFrequencyCapTest : public ::testing::Test {
 };
 
 TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
-    AllowAdIfSubdivisionTargetingIsSupportedAndAutomaticallyDetected) {
+    AllowAdIfSubdivisionTargetingIsSupportedAndAutoDetected) {
   // Arrange
-  ON_CALL(*ads_client_mock_,
-      GetAutomaticallyDetectedAdsSubdivisionTargetingCode())
-          .WillByDefault(Return("US-FL"));
+  ads_client_mock_->SetStringPref(
+      prefs::kAutoDetectedAdsSubdivisionTargetingCode, "US-FL");
 
-  ON_CALL(*ads_client_mock_, GetAdsSubdivisionTargetingCode())
-      .WillByDefault(Return("AUTO"));
+  ads_client_mock_->SetStringPref(prefs::kAdsSubdivisionTargetingCode, "AUTO");
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -136,14 +131,12 @@ TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
 }
 
 TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
-    AllowAdIfSubdivisionTargetingIsSupportedAndAutomaticallyDetectedForNonSubdivisionGeoTarget) {  // NOLINT
+    AllowAdIfSubdivisionTargetingIsSupportedAndAutoDetectedForNonSubdivisionGeoTarget) {  // NOLINT
   // Arrange
-  ON_CALL(*ads_client_mock_,
-      GetAutomaticallyDetectedAdsSubdivisionTargetingCode())
-          .WillByDefault(Return("US-FL"));
+  ads_client_mock_->SetStringPref(
+      prefs::kAutoDetectedAdsSubdivisionTargetingCode, "US-FL");
 
-  ON_CALL(*ads_client_mock_, GetAdsSubdivisionTargetingCode())
-      .WillByDefault(Return("AUTO"));
+  ads_client_mock_->SetStringPref(prefs::kAdsSubdivisionTargetingCode, "AUTO");
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -159,8 +152,7 @@ TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
 TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
     AllowAdIfSubdivisionTargetingIsSupportedAndManuallySelected) {
   // Arrange
-  ON_CALL(*ads_client_mock_, GetAdsSubdivisionTargetingCode())
-      .WillByDefault(Return("US-FL"));
+  ads_client_mock_->SetStringPref(prefs::kAdsSubdivisionTargetingCode, "US-FL");
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -176,8 +168,7 @@ TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
 TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
     AllowAdIfSubdivisionTargetingIsSupportedAndManuallySelectedForNonSubdivisionGeoTarget) {  // NOLINT
   // Arrange
-  ON_CALL(*ads_client_mock_, GetAdsSubdivisionTargetingCode())
-      .WillByDefault(Return("US-FL"));
+  ads_client_mock_->SetStringPref(prefs::kAdsSubdivisionTargetingCode, "US-FL");
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -191,10 +182,28 @@ TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
 }
 
 TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
+    DoNotAllowAdIfSubdivisionTargetingIsSupportedAndNotInitialized) {
+  // Arrange
+  ads_client_mock_->SetStringPref(
+      prefs::kAutoDetectedAdsSubdivisionTargetingCode, "");
+
+  ads_client_mock_->SetStringPref(prefs::kAdsSubdivisionTargetingCode, "AUTO");
+
+  CreativeAdInfo ad;
+  ad.creative_set_id = kCreativeSetId;
+  ad.geo_targets = { "US-FL" };
+
+  // Act
+  const bool should_exclude = frequency_cap_->ShouldExclude(ad);
+
+  // Assert
+  EXPECT_TRUE(should_exclude);
+}
+
+TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
     DoNotAllowAdIfSubdivisionTargetingIsSupportedForUnsupportedGeoTarget) {
   // Arrange
-  ON_CALL(*ads_client_mock_, GetAdsSubdivisionTargetingCode())
-      .WillByDefault(Return("US-FL"));
+  ads_client_mock_->SetStringPref(prefs::kAdsSubdivisionTargetingCode, "US-FL");
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -244,8 +253,8 @@ TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
 TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
     DoNotAllowAdIfSubdivisionTargetingIsDisabledForSubdivisionGeoTarget) {
   // Arrange
-  ON_CALL(*ads_client_mock_, GetAdsSubdivisionTargetingCode())
-      .WillByDefault(Return("DISABLED"));
+  ads_client_mock_->SetStringPref(
+      prefs::kAdsSubdivisionTargetingCode, "DISABLED");
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -261,8 +270,8 @@ TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
 TEST_F(BatAdsSubdivisionTargetingFrequencyCapTest,
     AllowAdIfSubdivisionTargetingIsDisabledForNonSubdivisionGeoTarget) {
   // Arrange
-  ON_CALL(*ads_client_mock_, GetAdsSubdivisionTargetingCode())
-      .WillByDefault(Return("DISABLED"));
+  ads_client_mock_->SetStringPref(
+      prefs::kAdsSubdivisionTargetingCode, "DISABLED");
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;

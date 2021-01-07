@@ -1,11 +1,12 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "huhi/common/extensions/whitelist.h"
 
 #include "huhi/components/huhi_component_updater/browser/local_data_files_service.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
 #include "extensions/common/constants.h"
 
 // This is a hardcoded list of vetted extensions, mostly
@@ -18,10 +19,11 @@ const std::vector<std::string> kVettedExtensions{
     huhi_rewards_extension_id,
     huhi_webtorrent_extension_id,
     crl_set_extension_id,
-    ethereum_remote_client_extension_id,
     hangouts_extension_id,
     widevine_extension_id,
     huhi_component_updater::kLocalDataFilesComponentId,
+    // Ethereum remote client
+    "odbfpeeihdkbihmopkbjmoonfanlbfcl",
     // Web Store
     "ahfgeienlihckogmohjhadlkjgocpleb",
     // Huhi Automation Extension

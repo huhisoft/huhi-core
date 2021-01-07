@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -197,8 +197,7 @@ bool TrackingProtectionService::ShouldStartRequest(
     const GURL& url,
     blink::mojom::ResourceType resource_type,
     const std::string& tab_host,
-    bool* matching_exception_filter,
-    bool* cancel_request_explicitly) {
+    bool* matching_exception_filter) {
   DCHECK_CURRENTLY_ON(BrowserThread::IO);
   // There are no exceptions in the TP service, but exceptions are
   // combined with huhi/ad-block.

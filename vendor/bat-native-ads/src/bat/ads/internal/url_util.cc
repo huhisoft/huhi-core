@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -36,9 +36,19 @@ bool UrlHasScheme(
   return GURL(url).SchemeIsHTTPOrHTTPS();
 }
 
+std::string GetUrlHost(
+    const std::string& url) {
+  GURL gurl(url);
+  if (!gurl.is_valid()) {
+    return "";
+  }
+
+  return gurl.host();
+}
+
 bool SameSite(
-      const std::string& url1,
-      const std::string& url2) {
+    const std::string& url1,
+    const std::string& url2) {
   return net::registry_controlled_domains::SameDomainOrHost(GURL(url1),
       GURL(url2), net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES);
 }

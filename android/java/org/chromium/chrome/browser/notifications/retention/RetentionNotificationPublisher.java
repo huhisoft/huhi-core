@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -56,7 +56,9 @@ public class RetentionNotificationPublisher extends BroadcastReceiver {
                 case RetentionNotificationUtil.HUHI_STATS_ADS_TRACKERS:
                 case RetentionNotificationUtil.HUHI_STATS_DATA:
                 case RetentionNotificationUtil.HUHI_STATS_TIME:
-                    if (!NewTabPage.isNTPUrl(huhiActivity.getActivityTab().getUrlString())) {
+                    if (huhiActivity.getActivityTab() != null
+                        && huhiActivity.getActivityTab().getUrlString() != null
+                        && !NewTabPage.isNTPUrl(huhiActivity.getActivityTab().getUrlString())) {
                         huhiActivity.getTabCreator(false).launchUrl(UrlConstants.NTP_URL, TabLaunchType.FROM_CHROME_UI);
                     }
                     break;
@@ -91,8 +93,9 @@ public class RetentionNotificationPublisher extends BroadcastReceiver {
             case RetentionNotificationUtil.DAY_35:
                 // Can't check for rewards code in background
                 if (huhiActivity != null
-                        && (ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS) && !UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.ENABLED))
-                        && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(Profile.getLastUsedRegularProfile())) {
+                        && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(
+                                Profile.getLastUsedRegularProfile())
+                        && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS)) {
                     createNotification(context, intent);
                 }
                 break;

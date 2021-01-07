@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -278,25 +278,14 @@ void BatLedgerClientMojoBridge::OnContributeUnverifiedPublishers(
       publisher_name);
 }
 
-std::map<std::string, ledger::type::ExternalWalletPtr>
-BatLedgerClientMojoBridge::GetExternalWallets() {
-  base::flat_map<std::string, ledger::type::ExternalWalletPtr> wallets;
+std::string BatLedgerClientMojoBridge::GetLegacyWallet() {
   if (!Connected()) {
-    return {};
+    return "";
   }
 
-  bat_ledger_client_->GetExternalWallets(&wallets);
-  return base::FlatMapToMap(std::move(wallets));
-}
-
-void BatLedgerClientMojoBridge::SaveExternalWallet(
-    const std::string& wallet_type,
-    ledger::type::ExternalWalletPtr wallet) {
-  if (!Connected()) {
-    return;
-  }
-
-  bat_ledger_client_->SaveExternalWallet(wallet_type, std::move(wallet));
+  std::string wallet;
+  bat_ledger_client_->GetLegacyWallet(&wallet);
+  return wallet;
 }
 
 void OnShowNotification(
@@ -313,25 +302,6 @@ void BatLedgerClientMojoBridge::ShowNotification(
       type,
       args,
       base::BindOnce(&OnShowNotification, std::move(callback)));
-}
-
-void BatLedgerClientMojoBridge::SetTransferFee(
-    const std::string& wallet_type,
-    ledger::type::TransferFeePtr transfer_fee) {
-  bat_ledger_client_->SetTransferFee(wallet_type, std::move(transfer_fee));
-}
-
-ledger::type::TransferFeeList BatLedgerClientMojoBridge::GetTransferFees(
-    const std::string& wallet_type) {
-  base::flat_map<std::string, ledger::type::TransferFeePtr> list;
-  bat_ledger_client_->GetTransferFees(wallet_type, &list);
-  return base::FlatMapToMap(std::move(list));
-}
-
-void BatLedgerClientMojoBridge::RemoveTransferFee(
-    const std::string& wallet_type,
-    const std::string& id) {
-  bat_ledger_client_->RemoveTransferFee(wallet_type, id);
 }
 
 ledger::type::ClientInfoPtr BatLedgerClientMojoBridge::GetClientInfo() {
@@ -399,6 +369,21 @@ void BatLedgerClientMojoBridge::DeleteLog(
     ledger::client::ResultCallback callback) {
   bat_ledger_client_->DeleteLog(
       base::BindOnce(&OnDeleteLog, std::move(callback)));
+}
+
+bool BatLedgerClientMojoBridge::SetEncryptedStringState(
+    const std::string& name,
+    const std::string& value) {
+  bool success;
+  bat_ledger_client_->SetEncryptedStringState(name, value, &success);
+  return success;
+}
+
+std::string BatLedgerClientMojoBridge::GetEncryptedStringState(
+    const std::string& name) {
+  std::string value;
+  bat_ledger_client_->GetEncryptedStringState(name, &value);
+  return value;
 }
 
 }  // namespace bat_ledger

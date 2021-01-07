@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -36,13 +36,12 @@ export default class TorrentViewerHeader extends React.PureComponent<
   }
 
   downloadListener = (item: chrome.downloads.DownloadItem) => {
-    if (!item || !item.url || item.referrer !== 'about:client' ||
-        item.url !== this.props.torrentId) {
+    if (!item || !item.url || item.url !== this.props.torrentId) {
       // Only listen for downloads initiated by Webtorrent.
       this.removeDownloadListener()
       return
     }
-    const url = new URL(item.url)
+    const url = new URL(item.finalUrl || item.url)
     if (!url || !remoteProtocols.includes(url.protocol) ||
         url.hostname === '127.0.0.1') {
       // Non-remote files are trusted.

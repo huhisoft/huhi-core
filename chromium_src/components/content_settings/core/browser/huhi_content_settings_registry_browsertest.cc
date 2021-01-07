@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -13,7 +13,7 @@
 #include "content/public/test/browser_test.h"
 
 const GURL& GetHuhiURL() {
-  static const GURL kHuhiURL("https://www.huhisoft.com");
+  static const GURL kHuhiURL("https://www.hnq.vn");
   return kHuhiURL;
 }
 
@@ -27,7 +27,7 @@ class HuhiContentSettingsRegistryBrowserTest : public InProcessBrowserTest {
 
   HostContentSettingsMap* private_content_settings() {
     return HostContentSettingsMapFactory::GetForProfile(
-        browser()->profile()->GetOffTheRecordProfile());
+        browser()->profile()->GetPrimaryOTRProfile());
   }
 
  private:

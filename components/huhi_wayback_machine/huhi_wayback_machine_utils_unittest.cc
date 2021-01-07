@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,5 +17,5 @@ TEST(HuhiWaybackMachineUtilsTest, LocalHostDisabledTest) {
       GURL("http://127.0045.1.2:8080/index.html")));
   EXPECT_FALSE(IsWaybackMachineDisabledFor(GURL("http://www.local-news.com")));
   EXPECT_FALSE(IsWaybackMachineDisabledFor(GURL("http://www.onion-news.com")));
-  EXPECT_FALSE(IsWaybackMachineDisabledFor(GURL("http://www.huhisoft.com")));
+  EXPECT_FALSE(IsWaybackMachineDisabledFor(GURL("http://www.hnq.vn")));
 }

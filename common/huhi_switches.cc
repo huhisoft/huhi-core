@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -20,20 +20,12 @@ const char kDisableHuhiRewardsExtension[] = "disable-huhi-rewards-extension";
 // This switch disables update module(Sparkle).
 const char kDisableHuhiUpdate[] = "disable-huhi-update";
 
-// Allows disabling the Tor client updater extension.
-const char kDisableTorClientUpdaterExtension[] =
-    "disable-tor-client-updater-extension";
-
 // Allows disabling the WebTorrent extension.
 const char kDisableWebTorrentExtension[] = "disable-webtorrent-extension";
 
 // Allows disabling the Wayback Machine extension.
 const char kDisableHuhiWaybackMachineExtension[] =
     "disable-huhi-wayback-machine-extension";
-
-// Allows disabling the Ipfs client updater extension.
-const char kDisableIpfsClientUpdaterExtension[] =
-    "disable-ipfs-client-updater-extension";
 
 // Specifies overriding the built-in dark mode setting.
 // Valid values are: "dark" | "light".

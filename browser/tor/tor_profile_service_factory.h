@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,8 +9,6 @@
 #include "base/memory/singleton.h"
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"
 
-class Profile;
-
 namespace tor {
 class TorProfileService;
 }  // namespace tor
@@ -19,13 +17,18 @@ class TorProfileService;
 // Profiles.
 class TorProfileServiceFactory : public BrowserContextKeyedServiceFactory {
  public:
-  static tor::TorProfileService* GetForProfile(Profile* profile);
+  static tor::TorProfileService* GetForContext(
+      content::BrowserContext* context);
   static TorProfileServiceFactory* GetInstance();
+
+  static void SetTorDisabled(bool disabled);
+  static bool IsTorDisabled();
 
  private:
   friend struct base::DefaultSingletonTraits<TorProfileServiceFactory>;
 
-  static tor::TorProfileService* GetForProfile(Profile* profile, bool create);
+  static tor::TorProfileService* GetForContext(content::BrowserContext* context,
+                                               bool create);
 
   TorProfileServiceFactory();
   ~TorProfileServiceFactory() override;

@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -29,7 +29,8 @@ content::WebUIDataSource* CreateBasicUIHTMLSource(
     const std::string& name,
     const GritResourceMap* resource_map,
     size_t resouece_map_size,
-    int html_resource_id);
+    int html_resource_id,
+    bool disable_trusted_types_csp = false);
 
 class BasicUI : public content::WebUIController {
  public:
@@ -37,7 +38,8 @@ class BasicUI : public content::WebUIController {
           const std::string& host,
           const GritResourceMap* resource_map,
           size_t resouece_map_size,
-          int html_resource_id);
+          int html_resource_id,
+          bool disable_trusted_types_csp = false);
   ~BasicUI() override;
 
   // Called when subclass can set its webui properties.

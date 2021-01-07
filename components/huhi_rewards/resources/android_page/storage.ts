@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,13 +9,10 @@ const keyName = 'rewards-data'
 
 export const defaultState: Rewards.State = {
   createdTimestamp: null,
-  enabledMain: false,
   enabledAds: true,
   enabledAdsMigrated: false,
   enabledContribute: true,
   firstLoad: null,
-  walletCreated: false,
-  walletCreateFailed: false,
   contributionMinTime: 8,
   contributionMinVisits: 1,
   contributionMonthly: 10,
@@ -23,17 +20,15 @@ export const defaultState: Rewards.State = {
   contributionVideos: true,
   donationAbilityYT: true,
   donationAbilityTwitter: true,
-  recoveryKey: '',
   reconcileStamp: 0,
   ui: {
     emptyWallet: true,
     modalBackup: false,
     modalRedirect: 'hide',
     paymentIdCheck: true,
-    walletCorrupted: false,
     walletRecoveryStatus: null,
     walletServerProblem: false,
-    onBoardingDisplayed: false
+    verifyOnboardingDisplayed: false
   },
   autoContributeList: [],
   safetyNetFailed: false,
@@ -79,7 +74,9 @@ export const defaultState: Rewards.State = {
     autoContributeChoices: [],
     rate: 0
   },
-  initializing: true
+  initializing: true,
+  paymentId: '',
+  recoveryKey: ''
 }
 
 const cleanData = (state: Rewards.State) => {

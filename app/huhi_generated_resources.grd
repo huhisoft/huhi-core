@@ -191,10 +191,16 @@
         Ask when a site wants to install Widevine on your computer.
       </message>
       <message name="IDS_SETTINGS_ENABLE_TOR_TITLE" desc="Text fragment for enabling tor component">
-        Private Window with Tor
+        Private window with Tor
       </message>
       <message name="IDS_SETTINGS_ENABLE_TOR_DESC" desc="Text fragment for enabling tor component">
         Tor hides your IP address from the sites you visit.
+      </message>
+      <message name="IDS_SETTINGS_AUTO_ONION_LOCATION_TITLE" desc="Text fragment for onion site component">
+        Automatically redirect .onion sites
+      </message>
+      <message name="IDS_SETTINGS_AUTO_ONION_LOCATION_DESC" desc="Text fragment for onion site component">
+        Huhi will open onion service of the website in Tor window when available
       </message>
       <if expr="is_linux">
         <message name="IDS_WIDEVINE_PERMISSION_REQUEST_TEXT_FRAGMENT_INSTALL" desc="Text fragment for Widevine permission request. 'Widevine' is the name of a plugin and should not be translated.">
@@ -224,7 +230,7 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       </message>
       <!-- Extensions -->
       <message name="IDS_UNVETTED_EXTENSION_INSTALL_PROMPT_TITLE" desc="Titlebar of the extension or app installation prompt which was not vetted by Huhi. Asks the user if they want to install a particular extension or app.">
-        Huhi has not reviewed this extension for security and safety. Only install this extension if you trust the developer.
+        Huhi does not review extensions for security and safety. Only install this extension if you trust the developer.
       </message>
       <!-- Settings / Get Started -->
       <message name="IDS_SETTINGS_HUHI_EDIT_PROFILE" desc="Title to edit the profile user name and picture">
@@ -246,11 +252,11 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <message name="IDS_SETTINGS_HIDE_HUHI_REWARDS_BUTTON_LABEL" desc="The label for settings switch controlling the visibility of Huhi Rewards button">
         Hide Huhi Rewards button
       </message>
-      <message name="IDS_SETTINGS_HIDE_HUHI_REWARDS_BUTTON_DESC" desc="The description for settings switch controlling the visibility of Huhi Rewards button">
-        Hides the Huhi Rewards button in the location bar when Huhi Rewards is not enabled
-      </message>
       <message name="IDS_SETTINGS_ALWAYS_SHOW_BOOKMARK_BAR_ON_NTP" desc="The label for settings switch controlling the visibility of bookmarks bar on NTP">
-        Always show bookmarks on New Tab page
+        Always show bookmarks on new tab page
+      </message>
+      <message name="IDS_SETTINGS_HUHI_MRU_CYCLING_LABEL" desc="The label to activate MRU cycling with Ctrl-tab">
+        Cycle through the most recently used tabs with Ctrl-Tab
       </message>
       <message name="IDS_SETTINGS_APPEARANCE_SETTINGS_SHOW_AUTOCOMPLETE_IN_ADDRESS_BAR" desc="The label for settings switch controlling the showing of autocomplete in address bar">
         Show autocomplete in address bar
@@ -275,9 +281,6 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <!-- New Tab Page -->
       <message name="IDS_SETTINGS_NEW_TAB" desc="The text label for the New Tab settings page">
        New Tab Page
-      </message>
-      <message name="IDS_SETTINGS_NEW_TAB_CUSTOMIZE_HUHI_DASHBOARD" desc="The description label for Dashboard Customization">
-        Customize your Huhi Dashboard
       </message>
       <message name="IDS_SETTINGS_NEW_TAB_BACKGROUND_IMAGES" desc="The label for Background images show/hide feature toggle">
         Background images
@@ -306,6 +309,18 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <message name="IDS_SETTINGS_NEW_TAB_CLOCK" desc="The label for Clock show/hide feature toggle">
         Clock
       </message>
+      <message name="IDS_SETTINGS_NEW_TAB_NEW_TAB_PAGE_SHOWS" desc="The label for New Tab Page shows customization">
+        New tab page shows
+      </message>
+      <message name="IDS_SETTINGS_NEW_TAB_NEW_TAB_PAGE_SHOWS_DASHBOARD" desc="The label for dashboard option">
+        Dashboard
+      </message>
+      <message name="IDS_SETTINGS_NEW_TAB_NEW_TAB_PAGE_SHOWS_HOMEPAGE" desc="The label for homepage option">
+        Homepage
+      </message>
+      <message name="IDS_SETTINGS_NEW_TAB_NEW_TAB_PAGE_SHOWS_BLANKPAGE" desc="The label for blank page option">
+        Blank page
+      </message>
       <!-- Tor -->
       <message name="IDS_NEW_TOR_IDENTITY" desc="The text label of a menu item for requesting new Tor identity">
         New Tor Identity
@@ -321,6 +336,12 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       </message>
       <message name="IDS_PROFILES_OPEN_TOR_PROFILE_BUTTON" desc="Button in the avatar menu bubble view to open a Tor window.">
         Open Tor Window
+      </message>
+      <message name="IDS_LOCATION_BAR_OPEN_IN_TOR" desc="Button in location bar to open onion available site in tor window.">
+        Open in Tor
+      </message>
+      <message name="IDS_LOCATION_BAR_ONION_AVAILABLE" desc="Button in location bar to indicate onion available site to open a new tab in tor window.">
+        Onion Available
       </message>
       <if expr="use_titlecase">
         <message name="IDS_NEW_OFFTHERECORD_WINDOW_TOR" desc="Title case: The text label of a menu item to open a new off-the-record window with Tor.">
@@ -347,17 +368,11 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <message name="IDS_PROFILES_TOR_PROFILE_NAME" desc="Name of the Tor profile.">
         Tor
       </message>
-      <message name="IDS_UTILITY_PROCESS_TOR_LAUNCHER_NAME" desc="The utility process which launch Tor">
-        Tor Launcher
-      </message>
       <message name="IDS_SERVICE_BAT_ADS" desc="The bat ads utility process">
         Bat Ads Service
       </message>
       <message name="IDS_UTILITY_PROCESS_LEDGER_NAME" desc="The utility process running ledger">
         Bat Ledger Service
-      </message>
-      <message name="IDS_UTILITY_PROCESS_IPFS_NAME" desc="The utility process which manages IPFS daemon">
-        IPFS Service
       </message>
       <message name="IDS_SETTINGS_HUHI_GET_STARTED_TITLE" desc="The title for the Get Started section in settings">
         Get started
@@ -409,7 +424,7 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
         Block scripts
       </message>
       <message name="IDS_SETTINGS_HUHI_SHIELDS_LOOK_AND_FEEL_TITLE" desc="The title the settings section with interface options such as showing the resources blocked badge">
-        Look &amp; Feel
+        Look &amp; feel
       </message>
       <message name="IDS_SETTINGS_HUHI_SHIELDS_SHOW_STATS_BLOCKED_BADGE_LABEL" desc="Default Huhi show stats blocked badge control setting label">
         Show the number of blocked items on the Shields icon
@@ -455,7 +470,7 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       </message>
       <!-- WebRTC Policy Setting -->
       <message name="IDS_SETTINGS_WEBRTC_POLICY_LABEL" desc="WebRTC policy setting label">
-        WebRTC IP Handling Policy
+        WebRTC IP handling policy
       </message>
       <message name="IDS_SETTINGS_WEBRTC_POLICY_SUB_LABEL" desc="WebRTC policy setting sub-label">
         Learn more
@@ -474,7 +489,7 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       </message>
       <!-- Push Messaging -->
       <message name="IDS_SETTINGS_PUSH_MESSAGING" desc="Select value">
-        Use Google Services for Push Messaging
+        Use Google services for push messaging
       </message>
       <!-- Huhi Sync Settings -->
       <message name="IDS_SETTINGS_HUHI_SYNC_TITLE" desc="The title for Huhi Sync in settings">
@@ -515,6 +530,9 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       </message>
       <message name="IDS_SETTINGS_HUHI_SYNC_DEVICE_LIST_LAST_ACTIVE_COLUMN" desc="Huhi Sync device list table column title for last active date">
         Last Active
+      </message>
+      <message name="IDS_SETTINGS_HUHI_SYNC_DEVICE_LIST_REMOVE_COLUMN" desc="Huhi Sync device list table column title for remove other device buttons">
+        Remove
       </message>
       <message name="IDS_HUHI_SYNC_SETUP_TITLE" desc="The Huhi Sync title.">
         Sync Setup
@@ -571,7 +589,10 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
         “I have a Sync Code”.
       </message>
       <message name="IDS_HUHI_SYNC_VIEW_CODE_DESCRIPTION_PARTIAL_3" desc="The Sync instructions for the `view sync code` modal partial phrase (3)">
-        Enter the sync chain code words shown below. Treat this code like a password. If someone gets ahold of it, they can read and modify your synced data.
+        Enter the sync chain code words shown below.
+      </message>
+      <message name="IDS_HUHI_SYNC_CODE_WARNING" desc="The warning for the user to keep their sync code private and secure.">
+        Treat this code like a password. If someone gets ahold of it, they can read and modify your synced data.
       </message>
       <message name="IDS_HUHI_SYNC_VIEW_CODE_QR_CODE_BUTTON" desc="The Sync description suggesting where to go with the current sync code">
         View QR Code
@@ -600,6 +621,9 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <message name="IDS_HUHI_SYNC_RESET_CONFIRMATION" desc="Confirmation message prompt to make sure the user is ok with leaving sync">
         If you reset Sync, you will have to re-enter a sync code from another device in order to sync with it. Are you sure you want to proceed?
       </message>
+      <message name="IDS_HUHI_SYNC_DELETE_DEVICE_CONFIRMATION" desc="Confirmation message prompt to make sure the user is ok to delete other device from the chain">
+        Are you sure you want to delete selected device from sync chain?
+      </message>
       <!-- Sync Infobar -->
       <message name="IDS_HUHI_SYNC_V2_MIGRATE_INFOBAR_MESSAGE" desc="Message text shown to users who used a previous version of Huhi Sync and need to perform setup again for the new version.">
         Huhi Sync has been upgraded and requires setup
@@ -607,9 +631,9 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <message name="IDS_HUHI_SYNC_V2_MIGRATE_INFOBAR_COMMAND" desc="Command text shown to users who used a previous version of Huhi Sync and need to perform setup again for the new version.">
         Begin Setup
       </message>
-      <!-- Help Tips Page -->
-      <message name="IDS_SETTINGS_HELP_TIPS" desc="Title for an item in the 'Help Tips' section of Huhi Settings">
-        Help Tips
+      <!-- Help tips Page -->
+      <message name="IDS_SETTINGS_HELP_TIPS" desc="Title for an item in the 'Help tips' section of Huhi Settings">
+        Help tips
       </message>
       <message name="IDS_SETTINGS_HELP_TIPS_SHOW_HUHI_WAYBACK_MACHINE_PROMPT" desc="The label describing the 'wayback machine' toggle option">
         Show Wayback Machine prompt on 404 pages
@@ -662,7 +686,7 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
         MetaMask
       </message>
       <message name="IDS_SETTINGS_HUHI_WEB3_PROVIDER_DESC" desc="The description for Huhi web3 provider select control in settings">
-        Web3 provider for using Dapps
+        Ethereum provider for using Dapps
       </message>
       <message name="IDS_SETTINGS_LOAD_CRYPTO_WALLETS_ON_STARTUP" desc="The description for always loading the Crypto Wallets extension on startup">
         Load Crypto Wallets on startup
@@ -673,6 +697,9 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <message name="IDS_SETTINGS_RESOLVE_IPFS_URLS_DESC" desc="The description for how to handle IPFS URIs">
         Method to resolve IPFS locations
       </message>
+      <message name="IDS_IPFS_RESOLVE_OPTION_ASK" desc="Select control value for which IPFS resolve method to use">
+        Ask
+      </message>
       <message name="IDS_IPFS_RESOLVE_OPTION_GATEWAY" desc="Select control value for which IPFS resolve method to use">
         Gateway
       </message>
@@ -681,6 +708,12 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       </message>
       <message name="IDS_IPFS_RESOLVE_OPTION_DISABLED" desc="Select control value for which IPFS resolve method to use">
         Disabled
+      </message>
+      <message name="IDS_SETTINGS_IPFS_AUTO_FALLBACK_TO_GATEWAY_LABEL" desc="The text label for IPFS public gateway fallback switch">
+        IPFS public gateway fallback
+      </message>
+      <message name="IDS_SETTINGS_IPFS_AUTO_FALLBACK_TO_GATEWAY_DESC" desc="The description for the switch of automatically fallback to IPFS public gateway">
+        Automatically fallback to IPFS public gateway when the local node cannot be accessed.
       </message>
      <message name="IDS_SETTINGS_HANGOUTS_ENABLED_DESC" desc="The description for Hangouts switch in settings">
         Uses Hangouts component to enable screen sharing and other features in the browser.
@@ -878,11 +911,8 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
         This anonymous info only lets Huhi estimate the overall usage of certain features.
       </message>
       <!-- Web3 detection -->
-      <message name="IDS_HUHI_CRYPTO_WALLETS_METAMASK_INFOBAR_TEXT" desc="Text that shows on the info bar when a Dapp is detected">
-        Would you like to use Huhi's Crypto Wallets or MetaMask for Dapps?
-      </message>
       <message name="IDS_HUHI_CRYPTO_WALLETS_LAZY_LOAD_TEXT" desc="Text that shows on the info bar when a Dapp is detected">
-        Would you like to start Crypto Wallets for web3 support on this page?
+        Would you like to start Crypto Wallets for Ethereum support?
       </message>
       <message name="IDS_HUHI_CRYPTO_WALLETS_INFOBAR_TEXT" desc="Text that shows on the info bar when a Dapp is detected">
         Set up Crypto Wallets to interact with this app and others like it.
@@ -890,17 +920,14 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <message name="IDS_HUHI_CRYPTO_WALLETS_SETUP_CRYPTO_WALLETS" desc="Setup Crypto Wallets">
         Setup Crypto Wallets
       </message>
-      <message name="IDS_HUHI_CRYPTO_WALLETS_USE_METAMASK" desc="Use MetaMask and don't use Crypto Wallets">
-        Use MetaMask
-      </message>
-      <message name="IDS_HUHI_CRYPTO_WALLETS_SETUP" desc="Use Crypto Wallets">
-        SETUP
-      </message>
        <message name="IDS_HUHI_CRYPTO_WALLETS_START_AND_RELOAD" desc="Start Crypto Wallets and reload">
         Start Crypto Wallets and reload
       </message>
       <message name="IDS_HUHI_CRYPTO_WALLETS_SETTINGS" desc="Open Crypto Wallets settings">
         Settings
+      </message>
+      <message name="IDS_HUHI_CRYPTO_WALLETS_DONT_ASK" desc="Sets provider to none">
+        Don't ask again
       </message>
       <!-- IPFS -->
       <message name="IDS_HUHI_IPFS_INSTALL" desc="Install IPFS daemon infobar text">
@@ -909,8 +936,11 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       <message name="IDS_HUHI_IPFS_SETTINGS" desc="Open IPFS settings">
         Settings
       </message>
-      <message name="IDS_HUHI_IPFS_ENABLE_IPFS" desc="Instal or Enable IPFS">
+      <message name="IDS_HUHI_IPFS_ENABLE_IPFS" desc="Install and Enable IPFS">
         Enable IPFS
+      </message>
+      <message name="IDS_HUHI_IPFS_LEARN_MORE">
+        Learn more about privacy consequences
       </message>
       <!-- Huhi Wayback Machine -->
       <message name="IDS_HUHI_WAYBACK_MACHINE_INFOBAR_PAGE_MISSING_TEXT" desc="The label for sorry message when page is not available on infobar">
@@ -927,8 +957,8 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
       </message>
       <!-- Huhi's copyright statement -->
       <message name="IDS_HUHI_VERSION_UI_LICENSE" desc="The label below the copyright message, containing the URLs.">
-        Huhi is made available to you under the <ph name="BEGIN_LINK_MPL">&lt;a target="_blank" href="$1"&gt;</ph>Mozilla Public License 2.0<ph name="END_LINK_MPL">&lt;/a&gt;</ph> (MPL) and includes <ph name="BEGIN_LINK_OSS">&lt;a target="_blank" href="$2"&gt;</ph>open source software<ph name="END_LINK_OSS">&lt;/a&gt;</ph> under a variety of other licenses.
-        You can read <ph name="BEGIN_LINK_BUILD_INSTRUCTIONS">&lt;a target="_blank" href="$3"&gt;</ph>instructions on how to download and build for yourself<ph name="END_LINK_BUILD_INSTRUCTIONS">&lt;/a&gt;</ph> the specific <ph name="BEGIN_LINK_SOURCE_CODE">&lt;a target="_blank" href="$4"&gt;</ph>source code used to create this copy<ph name="END_LINK_SOURCE_CODE">&lt;/a&gt;</ph>.
+        Huhi is made available to you under the <ph name="BEGIN_LINK_MPL">&lt;a target="_blank" rel="noopener noreferrer" href="$1"&gt;</ph>Mozilla Public License 2.0<ph name="END_LINK_MPL">&lt;/a&gt;</ph> (MPL) and includes <ph name="BEGIN_LINK_OSS">&lt;a target="_blank" rel="noopener noreferrer" href="$2"&gt;</ph>open source software<ph name="END_LINK_OSS">&lt;/a&gt;</ph> under a variety of other licenses.
+        You can read <ph name="BEGIN_LINK_BUILD_INSTRUCTIONS">&lt;a target="_blank" rel="noopener noreferrer" href="$3"&gt;</ph>instructions on how to download and build for yourself<ph name="END_LINK_BUILD_INSTRUCTIONS">&lt;/a&gt;</ph> the specific <ph name="BEGIN_LINK_SOURCE_CODE">&lt;a target="_blank" rel="noopener noreferrer" href="$4"&gt;</ph>source code used to create this copy<ph name="END_LINK_SOURCE_CODE">&lt;/a&gt;</ph>.
       </message>
       <if expr="not use_titlecase">
         <message name="IDS_TAB_CXMENU_BOOKMARK_ALL_TABS" desc="The label of the tab context menu item for creating a bookmark folder containing an entry for each open tab.">
@@ -947,7 +977,7 @@ By installing this extension, you are agreeing to the Google Widevine Terms of U
         Full Disk Access required
       </message>
       <message name="IDS_FULL_DISK_ACCESS_CONFIRM_DIALOG_MESSAGE" desc="The label for full disk access dialog message">
-        Huhi needs Full Disk Access to import your Bookmarks and History from Safari.
+        Huhi needs Full Disk Access to import your Bookmarks from Safari.
       </message>
       <message name="IDS_FULL_DISK_ACCESS_CONFIRM_DIALOG_LINK_TEXT" desc="The label for full disk access dialog link text">
         Learn how to grant Full Disk Access from your System Preferences.

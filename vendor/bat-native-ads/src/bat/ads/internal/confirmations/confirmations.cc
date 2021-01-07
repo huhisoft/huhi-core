@@ -1,16 +1,18 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "bat/ads/internal/confirmations/confirmations.h"
 
+#include <stdint.h>
+
 #include <functional>
 
 #include "bat/ads/internal/ads_impl.h"
 #include "bat/ads/internal/logging.h"
-#include "bat/ads/internal/reports/reports.h"
-#include "bat/ads/internal/server/redeem_unblinded_token/redeem_unblinded_token.h"
+#include "bat/ads/internal/privacy/unblinded_tokens/unblinded_tokens.h"
+#include "bat/ads/internal/tokens/redeem_unblinded_token/redeem_unblinded_token.h"
 
 namespace ads {
 
@@ -83,42 +85,13 @@ void Confirmations::set_next_token_redemption_date(
 }
 
 void Confirmations::ConfirmAd(
-    const AdInfo& ad,
+    const std::string& creative_instance_id,
     const ConfirmationType confirmation_type) {
-  std::string log_message = "Confirm ad:\n";
+  BLOG(1, "Confirming " << std::string(confirmation_type) << " ad for "
+      "creative instance id " << creative_instance_id);
 
-  log_message += "  creativeInstanceId: ";
-  log_message += ad.creative_instance_id;
-  log_message += "\n";
-
-  log_message += "  creativeSetId: ";
-  log_message += ad.creative_set_id;
-  log_message += "\n";
-
-  if (!ad.category.empty()) {
-    log_message += "  category: ";
-    log_message += ad.category;
-    log_message += "\n";
-  }
-
-  if (!ad.target_url.empty()) {
-    log_message += "  targetUrl: ";
-    log_message += ad.target_url;
-    log_message += "\n";
-  }
-
-  if (!ad.geo_target.empty()) {
-    log_message += "  geoTarget: ";
-    log_message += ad.geo_target;
-    log_message += "\n";
-  }
-
-  log_message += "  confirmationType: ";
-  log_message += std::string(confirmation_type);
-
-  BLOG(1, log_message);
-
-  ads_->get_redeem_unblinded_token()->Redeem(ad, confirmation_type);
+  ads_->get_redeem_unblinded_token()->Redeem(
+      creative_instance_id, confirmation_type);
 }
 
 void Confirmations::RetryFailedConfirmationsAfterDelay() {
@@ -143,8 +116,7 @@ void Confirmations::AppendTransaction(
     const ConfirmationType confirmation_type) {
   TransactionInfo transaction;
 
-  transaction.timestamp_in_seconds =
-      static_cast<uint64_t>(base::Time::Now().ToDoubleT());
+  transaction.timestamp = static_cast<int64_t>(base::Time::Now().ToDoubleT());
   transaction.estimated_redemption_value = estimated_redemption_value;
   transaction.confirmation_type = std::string(confirmation_type);
 

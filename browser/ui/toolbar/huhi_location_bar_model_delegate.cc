@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,13 +7,13 @@
 
 #include "base/strings/utf_string_conversions.h"
 #include "huhi/common/url_constants.h"
-#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
 #include "extensions/buildflags/buildflags.h"
 
-#if BUILDFLAG(ENABLE_EXTENSIONS)
-#include "extensions/common/constants.h"
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
 #endif
 
 HuhiLocationBarModelDelegate::HuhiLocationBarModelDelegate(Browser* browser) :

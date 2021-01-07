@@ -1,7 +1,9 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * You can obtain one at http://mozilla.org/MPL/2.0/.
+ Todo HNQ huhi_static_redirect_network_delegate_helper
+ */
 
 #include "huhi/browser/net/huhi_static_redirect_network_delegate_helper.h"
 
@@ -11,7 +13,6 @@
 #include "base/strings/string_util.h"
 #include "huhi/browser/net/url_context.h"
 #include "huhi/browser/translate/buildflags/buildflags.h"
-#include "huhi/common/network_constants.h"
 #include "huhi/common/translate_network_constants.h"
 #include "components/component_updater/component_updater_url_constants.h"
 #include "net/base/net_errors.h"
@@ -22,7 +23,7 @@
 using huhi::ResponseCallback;
 
 TEST(HuhiStaticRedirectNetworkDelegateHelperTest, NoModifyTypicalURL) {
-  const GURL url("https://bradhatesprimes.huhisoft.com/composite_numbers_ftw");
+  const GURL url("https://hnq.vn");
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
   int rc =
       OnBeforeURLRequest_StaticRedirectWork(ResponseCallback(), request_info);
@@ -47,8 +48,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyCRLSet1) {
       "https://dl.google.com/release2/chrome_component/AJ4r388iQSJq_4819/"
       "4819_all_crl-set-5934829738003798040.data.crx3");
   const GURL expected_url(
-      "https://crlsets.huhisoft.com/release2/chrome_component/"
-      "AJ4r388iQSJq_4819/4819_all_crl-set-5934829738003798040.data.crx3");
+      "https://crlsets.hnq.vn/release2/chrome_component/AJ4r388iQSJq_4819/4819_all_crl-set-5934829738003798040.data.crx3");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
   int rc =
@@ -63,7 +63,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyCRLSet2) {
       "chrome_component/AJ4r388iQSJq_4819/4819_all_crl-set-5934829738003798040"
       ".data.crx3");
   const GURL expected_url(
-      "https://crlsets.huhisoft.com/edgedl/release2/chrome_compone"
+      "https://crlsets.hnq.vn/edgedl/release2/chrome_compone"
       "nt/AJ4r388iQSJq_4819/4819_all_crl-set-5934829738003798040.data.crx3");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
@@ -78,7 +78,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyCRLSet3) {
       "https://www.google.com/dl/release2/chrome_component/LLjIBPPmveI_4988/"
       "4988_all_crl-set-6296993568184466307.data.crx3");
   const GURL expected_url(
-      "https://crlsets.huhisoft.com/dl/release2/chrome_component/LLjIBPPmveI_4988/"
+      "https://crlsets.hnq.vn/dl/release2/chrome_component/LLjIBPPmveI_4988/"
       "4988_all_crl-set-6296993568184466307.data.crx3");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
@@ -97,7 +97,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyCRXDownload) {
       "extension_2_0_67"
       "3_0.crx");
   const GURL expected_url(
-      "https://crxdownload.huhisoft.com/crx/blobs/QgAAAC6"
+      "https://crxdownload.hnq.vn/crx/blobs/QgAAAC6"
       "zw0qH2DJtnXe8Z7rUJP1RM6lX7kVcwkQ56ujmG3AWYOAkxoNnIdnEBUz_"
       "3z4keVhjzzAF10sr"
       "saL7lrntfBIflcYIrTziwX3SUS9i_P-CAMZSmuV5tdQl-Roo6cnVC_GRzKsnZSKm1Q/"
@@ -116,7 +116,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyCRLSet1_http) {
       "http://dl.google.com/release2/chrome_component/AJ4r388iQSJq_4819/"
       "4819_all_crl-set-5934829738003798040.data.crx3");
   const GURL expected_url(
-      "https://crlsets.huhisoft.com/release2/chrome_component/"
+      "https://crlsets.hnq.vn/release2/chrome_component/"
       "AJ4r388iQSJq_4819/4819_all_crl-set-5934829738003798040.data.crx3");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
@@ -132,7 +132,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyCRLSet2_http) {
       "chrome_component/AJ4r388iQSJq_4819/4819_all_crl-set-5934829738003798040"
       ".data.crx3");
   const GURL expected_url(
-      "https://crlsets.huhisoft.com/edgedl/release2/chrome_compone"
+      "https://crlsets.hnq.vn/edgedl/release2/chrome_compone"
       "nt/AJ4r388iQSJq_4819/4819_all_crl-set-5934829738003798040.data.crx3");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
@@ -147,7 +147,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyCRLSet3_http) {
       "http://www.google.com/dl/release2/chrome_component/LLjIBPPmveI_4988/"
       "4988_all_crl-set-6296993568184466307.data.crx3");
   const GURL expected_url(
-      "https://crlsets.huhisoft.com/dl/release2/chrome_component/LLjIBPPmveI_4988/"
+      "https://crlsets.hnq.vn/dl/release2/chrome_component/LLjIBPPmveI_4988/"
       "4988_all_crl-set-6296993568184466307.data.crx3");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
@@ -166,7 +166,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyCRXDownload_http) {
       "extension_2_0_67"
       "3_0.crx");
   const GURL expected_url(
-      "https://crxdownload.huhisoft.com/crx/blobs/QgAAAC6"
+      "https://crxdownload.hnq.vn/crx/blobs/QgAAAC6"
       "zw0qH2DJtnXe8Z7rUJP1RM6lX7kVcwkQ56ujmG3AWYOAkxoNnIdnEBUz_"
       "3z4keVhjzzAF10sr"
       "saL7lrntfBIflcYIrTziwX3SUS9i_P-CAMZSmuV5tdQl-Roo6cnVC_GRzKsnZSKm1Q/"
@@ -217,7 +217,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyGvt1) {
       "http://redirector.gvt1.com/edgedl/release2/"
       "NfaZYtcKdtFc0LUvFkcNFA_0.3/AKveSIjhHAm2K09XAMovFEQ");
   const GURL expected_url(
-      "https://redirector.huhisoft.com/edgedl/release2/"
+      "https://redirector.hnq.vn/edgedl/release2/"
       "NfaZYtcKdtFc0LUvFkcNFA_0.3/AKveSIjhHAm2K09XAMovFEQ");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
@@ -232,7 +232,7 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest, ModifyGoogleDl) {
       "http://dl.google.com/release2/"
       "NfaZYtcKdtFc0LUvFkcNFA_0.3/AKveSIjhHAm2K09XAMovFEQ");
   const GURL expected_url(
-      "https://redirector.huhisoft.com/release2/"
+      "https://redirector.hnq.vn/release2/"
       "NfaZYtcKdtFc0LUvFkcNFA_0.3/AKveSIjhHAm2K09XAMovFEQ");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
@@ -269,17 +269,13 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest,
   EXPECT_EQ(rc, net::OK);
 }
 
-// TODO(@fmarier): Re-enable download protection once we have
-// truncated the list of metadata that it sends to the server
-// (huhi/huhi-browser#6267).
-#if 0
 TEST(HuhiStaticRedirectNetworkDelegateHelperTest,
      ModifySafeBrowsingFileCheckURL) {
   const GURL url(
       "https://sb-ssl.google.com/safebrowsing/clientreport/download?"
       "key=DUMMY_KEY");
   GURL expected_url(
-      "https://sb-ssl.huhisoft.com/safebrowsing/clientreport/download?"
+      "https://sb-ssl.hnq.vn/safebrowsing/clientreport/download?"
       "key=DUMMY_KEY");
 
   auto request_info = std::make_shared<huhi::HuhiRequestInfo>(url);
@@ -288,7 +284,6 @@ TEST(HuhiStaticRedirectNetworkDelegateHelperTest,
   EXPECT_EQ(request_info->new_url_spec, expected_url);
   EXPECT_EQ(rc, net::OK);
 }
-#endif  // 0
 
 #if BUILDFLAG(ENABLE_HUHI_TRANSLATE_GO)
 TEST(HuhiStaticRedirectNetworkDelegateHelperTest, RedirectTranslate) {

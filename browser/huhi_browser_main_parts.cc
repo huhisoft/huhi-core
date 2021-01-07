@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,10 +7,10 @@
 
 #include "base/command_line.h"
 #include "huhi/browser/browsing_data/huhi_clear_browsing_data.h"
-#include "huhi/browser/tor/buildflags.h"
 #include "huhi/common/pref_names.h"
 #include "huhi/components/huhi_sync/buildflags/buildflags.h"
 #include "huhi/components/huhi_sync/features.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/common/chrome_features.h"
 #include "components/prefs/pref_service.h"
 #include "components/sync/driver/sync_driver_switches.h"
@@ -20,7 +20,7 @@
 #if BUILDFLAG(ENABLE_TOR)
 #include <string>
 #include "base/files/file_util.h"
-#include "huhi/common/tor/tor_constants.h"
+#include "huhi/components/tor/tor_constants.h"
 #include "chrome/browser/browser_process_impl.h"
 #include "chrome/browser/profiles/profile_attributes_storage.h"
 #include "chrome/browser/profiles/profile_manager.h"

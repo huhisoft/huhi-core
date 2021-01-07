@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -71,23 +71,19 @@ class RewardsDOMHandler : public WebUIMessageHandler,
 
  private:
   void IsInitialized(const base::ListValue* args);
-  void HandleCreateWalletRequested(const base::ListValue* args);
   void GetRewardsParameters(const base::ListValue* args);
   void GetAutoContributeProperties(const base::ListValue* args);
   void FetchPromotions(const base::ListValue* args);
   void ClaimPromotion(const base::ListValue* args);
   void AttestPromotion(const base::ListValue* args);
-  void GetWalletPassphrase(const base::ListValue* args);
   void RecoverWallet(const base::ListValue* args);
   void GetReconcileStamp(const base::ListValue* args);
   void SaveSetting(const base::ListValue* args);
-  void UpdateAdRewards(const base::ListValue* args);
-  void OnContentSiteList(ledger::type::PublisherInfoList list);
+  void OnPublisherList(ledger::type::PublisherInfoList list);
   void OnExcludedSiteList(ledger::type::PublisherInfoList list);
   void ExcludePublisher(const base::ListValue* args);
   void RestorePublishers(const base::ListValue* args);
   void RestorePublisher(const base::ListValue* args);
-  void WalletExists(const base::ListValue* args);
   void GetAutoContributionAmount(const base::ListValue* args);
   void RemoveRecurringTip(const base::ListValue* args);
   void GetRecurringTips(const base::ListValue* args);
@@ -122,21 +118,15 @@ class RewardsDOMHandler : public WebUIMessageHandler,
       const bool flagged);
   void SaveAdsSetting(const base::ListValue* args);
   void SetBackupCompleted(const base::ListValue* args);
-  void OnGetWalletPassphrase(const std::string& pass);
   void OnGetContributionAmount(double amount);
   void OnGetAutoContributeProperties(
       ledger::type::AutoContributePropertiesPtr properties);
   void OnGetReconcileStamp(uint64_t reconcile_stamp);
   void OnAutoContributePropsReady(
       ledger::type::AutoContributePropertiesPtr properties);
-  void OnIsWalletCreated(bool created);
   void GetPendingContributionsTotal(const base::ListValue* args);
   void OnGetPendingContributionsTotal(double amount);
-  void OnContentSiteUpdated(
-      huhi_rewards::RewardsService* rewards_service) override;
   void GetTransactionHistory(const base::ListValue* args);
-  void GetRewardsMainEnabled(const base::ListValue* args);
-  void OnGetRewardsMainEnabled(bool enabled);
   void GetExcludedSites(const base::ListValue* args);
 
   void OnGetTransactionHistory(
@@ -161,10 +151,10 @@ class RewardsDOMHandler : public WebUIMessageHandler,
     const ledger::type::Result result,
     ledger::type::BalancePtr balance);
 
-  void GetExternalWallet(const base::ListValue* args);
-  void OnGetExternalWallet(
+  void GetUpholdWallet(const base::ListValue* args);
+  void OnGetUpholdWallet(
       const ledger::type::Result result,
-      ledger::type::ExternalWalletPtr wallet);
+      ledger::type::UpholdWalletPtr wallet);
   void ProcessRewardsPageUrl(const base::ListValue* args);
 
   void OnProcessRewardsPageUrl(
@@ -201,10 +191,20 @@ class RewardsDOMHandler : public WebUIMessageHandler,
 
   void CompleteReset(const base::ListValue* args);
 
+  void GetPaymentId(const base::ListValue* args);
+
+  void OnWalletCreatedForPaymentId(ledger::type::Result result);
+
+  void OnGetPaymentId(ledger::type::HuhiWalletPtr wallet);
+
+  void GetWalletPassphrase(const base::ListValue* args);
+
+  void OnGetWalletPassphrase(const std::string& pass);
+
+  void GetOnboardingStatus(const base::ListValue* args);
+  void SaveOnboardingResult(const base::ListValue* args);
+
   // RewardsServiceObserver implementation
-  void OnWalletInitialized(
-      huhi_rewards::RewardsService* rewards_service,
-      const ledger::type::Result result) override;
   void OnFetchPromotions(
       huhi_rewards::RewardsService* rewards_service,
       const ledger::type::Result result,
@@ -231,10 +231,6 @@ class RewardsDOMHandler : public WebUIMessageHandler,
   void OnPendingContributionSaved(
       huhi_rewards::RewardsService* rewards_service,
       const ledger::type::Result result) override;
-
-  void OnRewardsMainEnabled(
-      huhi_rewards::RewardsService* rewards_service,
-      bool rewards_main_enabled) override;
 
   void OnPublisherListNormalized(
       huhi_rewards::RewardsService* rewards_service,
@@ -320,7 +316,7 @@ const int kDaysOfAdsHistory = 7;
 const char kShouldAllowAdsSubdivisionTargeting[] =
     "shouldAllowAdsSubdivisionTargeting";
 const char kAdsSubdivisionTargeting[] = "adsSubdivisionTargeting";
-const char kAutomaticallyDetectedAdsSubdivisionTargeting[] =
+const char kAutoDetectedAdsSubdivisionTargeting[] =
     "automaticallyDetectedAdsSubdivisionTargeting";
 
 }  // namespace
@@ -349,9 +345,6 @@ void RewardsDOMHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback("huhi_rewards.isInitialized",
       base::BindRepeating(&RewardsDOMHandler::IsInitialized,
       base::Unretained(this)));
-  web_ui()->RegisterMessageCallback("huhi_rewards.createWalletRequested",
-      base::BindRepeating(&RewardsDOMHandler::HandleCreateWalletRequested,
-      base::Unretained(this)));
   web_ui()->RegisterMessageCallback("huhi_rewards.getRewardsParameters",
       base::BindRepeating(&RewardsDOMHandler::GetRewardsParameters,
       base::Unretained(this)));
@@ -367,9 +360,6 @@ void RewardsDOMHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback("huhi_rewards.attestPromotion",
       base::BindRepeating(&RewardsDOMHandler::AttestPromotion,
       base::Unretained(this)));
-  web_ui()->RegisterMessageCallback("huhi_rewards.getWalletPassphrase",
-      base::BindRepeating(&RewardsDOMHandler::GetWalletPassphrase,
-      base::Unretained(this)));
   web_ui()->RegisterMessageCallback("huhi_rewards.recoverWallet",
       base::BindRepeating(&RewardsDOMHandler::RecoverWallet,
       base::Unretained(this)));
@@ -379,9 +369,6 @@ void RewardsDOMHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback("huhi_rewards.saveSetting",
       base::BindRepeating(&RewardsDOMHandler::SaveSetting,
       base::Unretained(this)));
-  web_ui()->RegisterMessageCallback("huhi_rewards.updateAdRewards",
-      base::BindRepeating(&RewardsDOMHandler::UpdateAdRewards,
-      base::Unretained(this)));
   web_ui()->RegisterMessageCallback("huhi_rewards.excludePublisher",
       base::BindRepeating(&RewardsDOMHandler::ExcludePublisher,
       base::Unretained(this)));
@@ -390,9 +377,6 @@ void RewardsDOMHandler::RegisterMessages() {
       base::Unretained(this)));
   web_ui()->RegisterMessageCallback("huhi_rewards.restorePublisher",
       base::BindRepeating(&RewardsDOMHandler::RestorePublisher,
-      base::Unretained(this)));
-  web_ui()->RegisterMessageCallback("huhi_rewards.checkWalletExistence",
-      base::BindRepeating(&RewardsDOMHandler::WalletExists,
       base::Unretained(this)));
   web_ui()->RegisterMessageCallback("huhi_rewards.getContributionAmount",
       base::BindRepeating(&RewardsDOMHandler::GetAutoContributionAmount,
@@ -448,9 +432,6 @@ void RewardsDOMHandler::RegisterMessages() {
       "huhi_rewards.getTransactionHistory",
       base::BindRepeating(&RewardsDOMHandler::GetTransactionHistory,
       base::Unretained(this)));
-  web_ui()->RegisterMessageCallback("huhi_rewards.getRewardsMainEnabled",
-      base::BindRepeating(&RewardsDOMHandler::GetRewardsMainEnabled,
-      base::Unretained(this)));
   web_ui()->RegisterMessageCallback(
       "huhi_rewards.setInlineTippingPlatformEnabled",
       base::BindRepeating(&RewardsDOMHandler::SetInlineTippingPlatformEnabled,
@@ -472,7 +453,7 @@ void RewardsDOMHandler::RegisterMessages() {
       base::BindRepeating(&RewardsDOMHandler::FetchBalance,
       base::Unretained(this)));
   web_ui()->RegisterMessageCallback("huhi_rewards.getExternalWallet",
-      base::BindRepeating(&RewardsDOMHandler::GetExternalWallet,
+      base::BindRepeating(&RewardsDOMHandler::GetUpholdWallet,
       base::Unretained(this)));
   web_ui()->RegisterMessageCallback("huhi_rewards.processRewardsPageUrl",
       base::BindRepeating(&RewardsDOMHandler::ProcessRewardsPageUrl,
@@ -498,6 +479,18 @@ void RewardsDOMHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback("huhi_rewards.completeReset",
       base::BindRepeating(&RewardsDOMHandler::CompleteReset,
       base::Unretained(this)));
+  web_ui()->RegisterMessageCallback("huhi_rewards.getPaymentId",
+      base::BindRepeating(&RewardsDOMHandler::GetPaymentId,
+      base::Unretained(this)));
+  web_ui()->RegisterMessageCallback("huhi_rewards.getWalletPassphrase",
+      base::BindRepeating(&RewardsDOMHandler::GetWalletPassphrase,
+      base::Unretained(this)));
+  web_ui()->RegisterMessageCallback("huhi_rewards.getOnboardingStatus",
+      base::BindRepeating(&RewardsDOMHandler::GetOnboardingStatus,
+      base::Unretained(this)));
+  web_ui()->RegisterMessageCallback("huhi_rewards.saveOnboardingResult",
+      base::BindRepeating(&RewardsDOMHandler::SaveOnboardingResult,
+      base::Unretained(this)));
 }
 
 void RewardsDOMHandler::Init() {
@@ -505,6 +498,7 @@ void RewardsDOMHandler::Init() {
 
   rewards_service_ =
       huhi_rewards::RewardsServiceFactory::GetForProfile(profile);
+  rewards_service_->StartProcess(base::DoNothing());
   if (rewards_service_) {
     rewards_service_->AddObserver(this);
   }
@@ -526,17 +520,6 @@ void RewardsDOMHandler::IsInitialized(
         "huhi_rewards.initialized",
         base::Value(0));
   }
-}
-
-void RewardsDOMHandler::HandleCreateWalletRequested(
-    const base::ListValue* args) {
-  if (!rewards_service_)
-    return;
-
-  rewards_service_->CreateWallet(
-      base::BindOnce(&RewardsDOMHandler::OnWalletInitialized,
-                     weak_factory_.GetWeakPtr(),
-                     rewards_service_));
 }
 
 void RewardsDOMHandler::GetRewardsParameters(const base::ListValue* args) {
@@ -567,29 +550,6 @@ void RewardsDOMHandler::OnGetRewardsParameters(
   }
   web_ui()->CallJavascriptFunctionUnsafe(
         "huhi_rewards.rewardsParameters", data);
-}
-
-void RewardsDOMHandler::OnWalletInitialized(
-    huhi_rewards::RewardsService* rewards_service,
-    const ledger::type::Result result) {
-  if (!web_ui()->CanCallJavascript())
-    return;
-
-  if (result == ledger::type::Result::WALLET_CREATED) {
-    web_ui()->CallJavascriptFunctionUnsafe("huhi_rewards.walletCreated");
-    return;
-  }
-
-  if (result != ledger::type::Result::NO_LEDGER_STATE &&
-      result != ledger::type::Result::LEDGER_OK) {
-    // Report back all errors except when ledger_state is missing
-    web_ui()->CallJavascriptFunctionUnsafe("huhi_rewards.walletCreateFailed");
-    return;
-  }
-
-  web_ui()->CallJavascriptFunctionUnsafe(
-      "huhi_rewards.initialized",
-      base::Value(static_cast<int>(result)));
 }
 
 void RewardsDOMHandler::GetAutoContributeProperties(
@@ -759,21 +719,6 @@ void RewardsDOMHandler::OnPromotionFinished(
       promotion->Clone());
 }
 
-void RewardsDOMHandler::OnGetWalletPassphrase(const std::string& pass) {
-  if (web_ui()->CanCallJavascript()) {
-    web_ui()->CallJavascriptFunctionUnsafe("huhi_rewards.walletPassphrase",
-        base::Value(pass));
-  }
-}
-
-void RewardsDOMHandler::GetWalletPassphrase(const base::ListValue* args) {
-  if (rewards_service_) {
-    rewards_service_->GetWalletPassphrase(
-        base::Bind(&RewardsDOMHandler::OnGetWalletPassphrase,
-          weak_factory_.GetWeakPtr()));
-  }
-}
-
 void RewardsDOMHandler::RecoverWallet(const base::ListValue *args) {
   CHECK_EQ(1U, args->GetSize());
   if (rewards_service_) {
@@ -811,22 +756,24 @@ void RewardsDOMHandler::GetReconcileStamp(const base::ListValue* args) {
 
 void RewardsDOMHandler::OnAutoContributePropsReady(
     ledger::type::AutoContributePropertiesPtr properties) {
-  rewards_service_->GetContentSiteList(
-      0,
-      0,
-      properties->contribution_min_time,
-      properties->reconcile_stamp,
-      properties->contribution_non_verified,
-      properties->contribution_min_visits,
-      base::Bind(&RewardsDOMHandler::OnContentSiteList,
-                 weak_factory_.GetWeakPtr()));
-}
+  auto filter = ledger::type::ActivityInfoFilter::New();
+  auto pair = ledger::type::ActivityInfoFilterOrderPair::New(
+      "ai.percent",
+      false);
+  filter->order_by.push_back(std::move(pair));
+  filter->min_duration = properties->contribution_min_time;
+  filter->reconcile_stamp = properties->reconcile_stamp;
+  filter->excluded = ledger::type::ExcludeFilter::FILTER_ALL_EXCEPT_EXCLUDED;
+  filter->percent = 1;
+  filter->non_verified = properties->contribution_non_verified;
+  filter->min_visits = properties->contribution_min_visits;
 
-void RewardsDOMHandler::OnContentSiteUpdated(
-    huhi_rewards::RewardsService* rewards_service) {
-  rewards_service_->GetAutoContributeProperties(
-      base::Bind(&RewardsDOMHandler::OnAutoContributePropsReady,
-        weak_factory_.GetWeakPtr()));
+  rewards_service_->GetActivityInfoList(
+      0,
+      0,
+      std::move(filter),
+      base::Bind(&RewardsDOMHandler::OnPublisherList,
+                 weak_factory_.GetWeakPtr()));
 }
 
 void RewardsDOMHandler::GetExcludedSites(const base::ListValue* args) {
@@ -888,10 +835,6 @@ void RewardsDOMHandler::SaveSetting(const base::ListValue* args) {
     const std::string key = args->GetList()[0].GetString();
     const std::string value = args->GetList()[1].GetString();
 
-    if (key == "enabledMain") {
-      rewards_service_->SetRewardsMainEnabled(value == "true");
-    }
-
     if (key == "contributionMonthly") {
       rewards_service_->SetAutoContributionAmount(std::stod(value));
     }
@@ -930,14 +873,6 @@ void RewardsDOMHandler::SaveSetting(const base::ListValue* args) {
   }
 }
 
-void RewardsDOMHandler::UpdateAdRewards(const base::ListValue* args) {
-  if (!ads_service_) {
-    return;
-  }
-
-  ads_service_->UpdateAdRewards(/*should_reconcile*/false);
-}
-
 void RewardsDOMHandler::ExcludePublisher(const base::ListValue *args) {
   CHECK_EQ(1U, args->GetSize());
   if (!rewards_service_) {
@@ -966,8 +901,7 @@ void RewardsDOMHandler::RestorePublisher(const base::ListValue *args) {
   rewards_service_->SetPublisherExclude(publisherKey, false);
 }
 
-void RewardsDOMHandler::OnContentSiteList(
-    ledger::type::PublisherInfoList list) {
+void RewardsDOMHandler::OnPublisherList(ledger::type::PublisherInfoList list) {
   if (!web_ui()->CanCallJavascript()) {
     return;
   }
@@ -1013,19 +947,6 @@ void RewardsDOMHandler::OnExcludedSiteList(
   web_ui()->CallJavascriptFunctionUnsafe(
       "huhi_rewards.excludedList",
       *publishers);
-}
-
-void RewardsDOMHandler::OnIsWalletCreated(bool created) {
-  if (web_ui()->CanCallJavascript())
-    web_ui()->CallJavascriptFunctionUnsafe("huhi_rewards.walletExists",
-        base::Value(created));
-}
-
-void RewardsDOMHandler::WalletExists(const base::ListValue* args) {
-  if (rewards_service_)
-    rewards_service_->IsWalletCreated(
-        base::Bind(&RewardsDOMHandler::OnIsWalletCreated,
-          weak_factory_.GetWeakPtr()));
 }
 
 void RewardsDOMHandler::OnGetContributionAmount(double amount) {
@@ -1140,9 +1061,13 @@ void RewardsDOMHandler::GetOneTimeTips(const base::ListValue *args) {
 }
 
 void RewardsDOMHandler::GetContributionList(const base::ListValue *args) {
-  if (rewards_service_) {
-    OnContentSiteUpdated(rewards_service_);
+  if (!rewards_service_) {
+    return;
   }
+
+  rewards_service_->GetAutoContributeProperties(
+      base::Bind(&RewardsDOMHandler::OnAutoContributePropsReady,
+        weak_factory_.GetWeakPtr()));
 }
 
 void RewardsDOMHandler::GetAdsData(const base::ListValue *args) {
@@ -1165,10 +1090,10 @@ void RewardsDOMHandler::GetAdsData(const base::ListValue *args) {
       ads_service_->GetAdsSubdivisionTargetingCode();
   ads_data.SetString(kAdsSubdivisionTargeting, subdivision_targeting_code);
 
-  const std::string automatically_detected_subdivision_targeting_code =
-      ads_service_->GetAutomaticallyDetectedAdsSubdivisionTargetingCode();
-  ads_data.SetString(kAutomaticallyDetectedAdsSubdivisionTargeting,
-      automatically_detected_subdivision_targeting_code);
+  const std::string auto_detected_subdivision_targeting_code =
+      ads_service_->GetAutoDetectedAdsSubdivisionTargetingCode();
+  ads_data.SetString(kAutoDetectedAdsSubdivisionTargeting,
+      auto_detected_subdivision_targeting_code);
 
   const bool should_allow_subdivision_ad_targeting =
       ads_service_->ShouldAllowAdsSubdivisionTargeting();
@@ -1391,13 +1316,13 @@ void RewardsDOMHandler::SaveAdsSetting(const base::ListValue* args) {
   if (key == "adsEnabled") {
     const auto is_enabled =
         value == "true" && ads_service_->IsSupportedLocale();
-    ads_service_->SetEnabled(is_enabled);
+    rewards_service_->SetAdsEnabled(is_enabled);
   } else if (key == "adsPerHour") {
     ads_service_->SetAdsPerHour(std::stoull(value));
   } else if (key == kAdsSubdivisionTargeting) {
     ads_service_->SetAdsSubdivisionTargetingCode(value);
-  } else if (key == kAutomaticallyDetectedAdsSubdivisionTargeting) {
-    ads_service_->SetAutomaticallyDetectedAdsSubdivisionTargetingCode(value);
+  } else if (key == kAutoDetectedAdsSubdivisionTargeting) {
+    ads_service_->SetAutoDetectedAdsSubdivisionTargetingCode(value);
   }
 
   base::ListValue* emptyArgs = nullptr;
@@ -1437,20 +1362,10 @@ void RewardsDOMHandler::OnPendingContributionSaved(
       base::Value(static_cast<int>(result)));
 }
 
-void RewardsDOMHandler::OnRewardsMainEnabled(
-    huhi_rewards::RewardsService* rewards_service,
-    bool rewards_main_enabled) {
-  if (web_ui()->CanCallJavascript()) {
-    web_ui()->CallJavascriptFunctionUnsafe("huhi_rewards.rewardsEnabled",
-        base::Value(rewards_main_enabled));
-  }
-}
-
-
 void RewardsDOMHandler::OnPublisherListNormalized(
     huhi_rewards::RewardsService* rewards_service,
     ledger::type::PublisherInfoList list) {
-  OnContentSiteList(std::move(list));
+  OnPublisherList(std::move(list));
 }
 
 void RewardsDOMHandler::GetTransactionHistory(
@@ -1506,21 +1421,6 @@ void RewardsDOMHandler::OnAdRewardsChanged() {
   ads_service_->GetTransactionHistory(base::Bind(
       &RewardsDOMHandler::OnGetTransactionHistory,
       weak_factory_.GetWeakPtr()));
-}
-
-void RewardsDOMHandler::GetRewardsMainEnabled(
-    const base::ListValue* args) {
-  rewards_service_->GetRewardsMainEnabled(base::Bind(
-      &RewardsDOMHandler::OnGetRewardsMainEnabled,
-      weak_factory_.GetWeakPtr()));
-}
-
-void RewardsDOMHandler::OnGetRewardsMainEnabled(
-    bool enabled) {
-  if (web_ui()->CanCallJavascript()) {
-    web_ui()->CallJavascriptFunctionUnsafe("huhi_rewards.rewardsEnabled",
-        base::Value(enabled));
-  }
 }
 
 void RewardsDOMHandler::OnRecurringTipSaved(
@@ -1663,22 +1563,19 @@ void RewardsDOMHandler::FetchBalance(const base::ListValue* args) {
   }
 }
 
-void RewardsDOMHandler::GetExternalWallet(const base::ListValue* args) {
-  CHECK_EQ(1U, args->GetSize());
+void RewardsDOMHandler::GetUpholdWallet(const base::ListValue* args) {
   if (!rewards_service_) {
     return;
   }
 
-  const std::string wallet_type = args->GetList()[0].GetString();
-  rewards_service_->GetExternalWallet(
-      wallet_type,
-      base::BindOnce(&RewardsDOMHandler::OnGetExternalWallet,
+  rewards_service_->GetUpholdWallet(
+      base::BindOnce(&RewardsDOMHandler::OnGetUpholdWallet,
                      weak_factory_.GetWeakPtr()));
 }
 
-void RewardsDOMHandler::OnGetExternalWallet(
+void RewardsDOMHandler::OnGetUpholdWallet(
     const ledger::type::Result result,
-    ledger::type::ExternalWalletPtr wallet) {
+    ledger::type::UpholdWalletPtr wallet) {
   if (web_ui()->CanCallJavascript()) {
     base::Value data(base::Value::Type::DICTIONARY);
 
@@ -1689,7 +1586,6 @@ void RewardsDOMHandler::OnGetExternalWallet(
       wallet_dict.SetStringKey("token", wallet->token);
       wallet_dict.SetStringKey("address", wallet->address);
       wallet_dict.SetIntKey("status", static_cast<int>(wallet->status));
-      wallet_dict.SetStringKey("type", wallet->type);
       wallet_dict.SetStringKey("verifyUrl", wallet->verify_url);
       wallet_dict.SetStringKey("addUrl", wallet->add_url);
       wallet_dict.SetStringKey("withdrawUrl", wallet->withdraw_url);
@@ -1992,6 +1888,89 @@ void RewardsDOMHandler::OnCompleteReset(const bool success) {
       "huhi_rewards.completeReset", base::Value(success));
 }
 
+void RewardsDOMHandler::GetPaymentId(const base::ListValue* args) {
+  if (!rewards_service_) {
+    return;
+  }
+
+  // Ensure that a wallet has been created for the user before attempting
+  // to retrieve a payment ID.
+  rewards_service_->CreateWallet(
+      base::BindOnce(&RewardsDOMHandler::OnWalletCreatedForPaymentId,
+          weak_factory_.GetWeakPtr()));
+}
+
+void RewardsDOMHandler::OnWalletCreatedForPaymentId(
+    ledger::type::Result result) {
+  rewards_service_->GetHuhiWallet(
+      base::BindOnce(&RewardsDOMHandler::OnGetPaymentId,
+          weak_factory_.GetWeakPtr()));
+}
+
+void RewardsDOMHandler::OnGetPaymentId(ledger::type::HuhiWalletPtr wallet) {
+  if (!web_ui()->CanCallJavascript()) {
+    return;
+  }
+
+  std::string payment_id;
+  if (wallet) {
+    payment_id = wallet->payment_id;
+  }
+
+  web_ui()->CallJavascriptFunctionUnsafe(
+      "huhi_rewards.paymentId",
+      base::Value(payment_id));
+}
+
+void RewardsDOMHandler::GetWalletPassphrase(const base::ListValue* args) {
+  if (!rewards_service_) {
+    return;
+  }
+
+  rewards_service_->GetWalletPassphrase(
+      base::Bind(&RewardsDOMHandler::OnGetWalletPassphrase,
+          weak_factory_.GetWeakPtr()));
+}
+
+void RewardsDOMHandler::OnGetWalletPassphrase(const std::string& passphrase) {
+  if (!web_ui()->CanCallJavascript()) {
+    return;
+  }
+
+  web_ui()->CallJavascriptFunctionUnsafe(
+      "huhi_rewards.walletPassphrase",
+      base::Value(passphrase));
+}
+
+void RewardsDOMHandler::GetOnboardingStatus(const base::ListValue* args) {
+  if (!rewards_service_ || !web_ui()->CanCallJavascript()) {
+    return;
+  }
+  base::Value data(base::Value::Type::DICTIONARY);
+  data.SetBoolKey("showOnboarding", rewards_service_->ShouldShowOnboarding());
+  web_ui()->CallJavascriptFunctionUnsafe(
+      "huhi_rewards.onboardingStatus",
+      data);
+}
+
+void RewardsDOMHandler::SaveOnboardingResult(const base::ListValue* args) {
+  using huhi_rewards::OnboardingResult;
+
+  CHECK_EQ(1U, args->GetSize());
+  if (!rewards_service_) {
+    return;
+  }
+
+  const std::string result_type = args->GetList()[0].GetString();
+  if (result_type == "opted-in") {
+    rewards_service_->SaveOnboardingResult(OnboardingResult::kOptedIn);
+  } else if (result_type == "dismissed") {
+    rewards_service_->SaveOnboardingResult(OnboardingResult::kDismissed);
+  } else {
+    NOTREACHED();
+  }
+}
+
 }  // namespace
 
 HuhiRewardsPageUI::HuhiRewardsPageUI(content::WebUI* web_ui,
@@ -2006,10 +1985,11 @@ HuhiRewardsPageUI::HuhiRewardsPageUI(content::WebUI* web_ui,
               kHuhiRewardsSettingsGeneratedSize,
 #endif
 #if defined(OS_ANDROID)
-              IDR_HUHI_REWARDS_ANDROID_PAGE_HTML) {
+              IDR_HUHI_REWARDS_ANDROID_PAGE_HTML,
 #else
-              IDR_HUHI_REWARDS_PAGE_HTML) {
+              IDR_HUHI_REWARDS_PAGE_HTML,
 #endif
+              /*disable_trusted_types_csp=*/true) {
   auto handler_owner = std::make_unique<RewardsDOMHandler>();
   RewardsDOMHandler * handler = handler_owner.get();
   web_ui->AddMessageHandler(std::move(handler_owner));

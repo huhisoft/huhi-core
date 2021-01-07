@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -26,8 +26,7 @@ class NTPBackgroundImagesSourceTest : public testing::Test {
     auto* registry = local_pref_.registry();
     NTPBackgroundImagesService::RegisterLocalStatePrefs(registry);
     huhi::RegisterPrefsForHuhiReferralsService(registry);
-    service_.reset(new NTPBackgroundImagesService(
-        nullptr, &local_pref_, base::FilePath()));
+    service_.reset(new NTPBackgroundImagesService(nullptr, &local_pref_));
     source_.reset(new NTPBackgroundImagesSource(service_.get()));
     local_pref_.Set(prefs::kNewTabPageCachedSuperReferralComponentInfo,
                     base::Value(base::Value::Type::DICTIONARY));
@@ -45,9 +44,9 @@ TEST_F(NTPBackgroundImagesSourceTest, BasicTest) {
         "schemaVersion": 1,
         "logo": {
           "imageUrl": "logo.png",
-          "alt": "Huhisoftware: Hú hí software",
-          "companyName": "Huhisoftware",
-          "destinationUrl": "https://www.huhisoft.com/?from-super-referreer-demo"
+          "alt": "Technikke: For music lovers",
+          "companyName": "Technikke",
+          "destinationUrl": "https://www.hnq.vn"
         },
         "wallpapers": [
           {
@@ -87,12 +86,12 @@ TEST_F(NTPBackgroundImagesSourceTest, BasicSuperReferralDataTest) {
   const std::string test_json_string_referral = R"(
       {
         "schemaVersion": 1,
-        "themeName": "Huhisoftware",
+        "themeName": "Technikke",
         "logo": {
           "imageUrl": "logo.png",
-          "alt": "Huhisoftware: Hú hí software",
-          "companyName": "Huhisoftware",
-          "destinationUrl": "https://www.huhisoft.com/?from-super-referreer-demo"
+          "alt": "Technikke: For music lovers",
+          "companyName": "Technikke",
+          "destinationUrl": "https://www.hnq.vn"
         },
         "wallpapers": [
           {
@@ -110,7 +109,7 @@ TEST_F(NTPBackgroundImagesSourceTest, BasicSuperReferralDataTest) {
         "topSites": [
           {
             "name": "Huhi",
-            "destinationUrl": "https://huhisoft.com/",
+            "destinationUrl": "https://hnq.vn/",
             "iconUrl": "huhi.png"
           },
           {

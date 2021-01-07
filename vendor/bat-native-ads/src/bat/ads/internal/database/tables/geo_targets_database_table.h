@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,7 +8,8 @@
 
 #include <string>
 
-#include "bat/ads/internal/bundle/creative_ad_notification_info.h"
+#include "bat/ads/ads_client.h"
+#include "bat/ads/internal/bundle/creative_ad_info.h"
 #include "bat/ads/internal/database/database_table.h"
 
 namespace ads {
@@ -27,7 +28,10 @@ class GeoTargets : public Table {
 
   void InsertOrUpdate(
       DBTransaction* transaction,
-      const CreativeAdNotificationList& creative_ad_notifications);
+      const CreativeAdList& creative_ads);
+
+  void Delete(
+      ResultCallback callback);
 
   std::string get_table_name() const override;
 
@@ -38,17 +42,24 @@ class GeoTargets : public Table {
  private:
   int BindParameters(
       DBCommand* command,
-      const CreativeAdNotificationList& creative_ad_notifications);
+      const CreativeAdList& creative_ads);
 
   std::string BuildInsertOrUpdateQuery(
       DBCommand* command,
-      const CreativeAdNotificationList& creative_ad_notifications);
+      const CreativeAdList& creative_ads);
 
   void CreateTableV1(
       DBTransaction* transaction);
   void CreateIndexV1(
       DBTransaction* transaction);
   void MigrateToV1(
+      DBTransaction* transaction);
+
+  void CreateTableV3(
+      DBTransaction* transaction);
+  void CreateIndexV3(
+      DBTransaction* transaction);
+  void MigrateToV3(
       DBTransaction* transaction);
 
   AdsImpl* ads_;  // NOT OWNED

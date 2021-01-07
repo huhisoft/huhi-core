@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,8 +11,7 @@ import { AlertWallet } from '../../ui/components/walletWrapper'
 import {
   WalletSummary,
   WalletWrapper,
-  WalletEmpty,
-  WalletOff
+  WalletEmpty
 } from '../../ui/components'
 import { CloseStrokeIcon } from 'huhi-ui/components/icons'
 import { StyledWalletClose, StyledWalletOverlay, StyledWalletWrapper } from './style'
@@ -89,7 +88,6 @@ class PageWallet extends React.Component<Props, State> {
   render () {
     const { visible, toggleAction } = this.props
     const {
-      enabledMain,
       balance,
       ui,
       pendingContributionTotal
@@ -126,16 +124,14 @@ class PageWallet extends React.Component<Props, State> {
               onlyAnonWallet={onlyAnonWallet}
             >
               {
-                enabledMain
-                ? emptyWallet
-                  ? <WalletEmpty hideAddFundsText={true} />
-                  : <WalletSummary
-                    reservedAmount={pendingTotal}
-                    onlyAnonWallet={onlyAnonWallet}
-                    reservedMoreLink={'https://huhisoft.com/faq-rewards/#unclaimed-funds'}
-                    {...this.getWalletSummary()}
-                  />
-                : <WalletOff/>
+                emptyWallet
+                ? <WalletEmpty hideAddFundsText={true} />
+                : <WalletSummary
+                  reservedAmount={pendingTotal}
+                  onlyAnonWallet={onlyAnonWallet}
+                  reservedMoreLink={'https://hnq.vn/faq-rewards/#unclaimed-funds'}
+                  {...this.getWalletSummary()}
+                />
               }
             </WalletWrapper>
           </StyledWalletWrapper>

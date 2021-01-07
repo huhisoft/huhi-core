@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -55,7 +55,7 @@ class HuhiBrowsingDataRemoverDelegateTest : public testing::Test {
 };
 
 TEST_F(HuhiBrowsingDataRemoverDelegateTest, ShieldsSettingsClearTest) {
-  const GURL kHuhiURL("https://www.huhisoft.com");
+  const GURL kHuhiURL("https://www.hnq.vn");
   const GURL kBatURL("https://basicattentiontoken.org");
   const GURL kGoogleURL("https://www.google.com");
   const GURL kAbcURL("https://www.abc.com");

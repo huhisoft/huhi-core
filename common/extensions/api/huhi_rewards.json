@@ -1,4 +1,4 @@
-// This Source Code Form is subject to the terms of the Huhi Software
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -10,22 +10,6 @@
       "implemented_in": "huhi/browser/extensions/api/huhi_rewards_api.h"
     },
     "events": [
-      {
-        "name": "walletCreated",
-        "type": "function",
-        "description": "Fired when wallet is created",
-        "parameters": []
-      },
-      {
-        "name": "walletCreationFailed",
-        "type": "function",
-        "description": "Fired when wallet creation failed",
-        "parameters": [{
-            "name": "result",
-            "type": "integer"
-          }
-        ]
-      },
       {
         "name": "initialized",
         "type": "function",
@@ -138,11 +122,11 @@
                 "type": "string",
                 "description": "provider (if media publisher) for this publisher"
               },
-              "favicon_url": {
+              "favIconUrl": {
                 "type": "string",
                 "description": "publisher image url"
               },
-              "publisher_key": {
+              "publisherKey": {
                 "type": "string",
                 "description": "publisher key, unique identifier"
               },
@@ -174,17 +158,6 @@
         ]
       },
       {
-        "name": "onEnabledMain",
-        "type": "function",
-        "description": "",
-        "parameters": [
-          {
-            "name": "enabledMain",
-            "type": "boolean"
-          }
-        ]
-      },
-      {
         "name": "onPendingContributionSaved",
         "type": "function",
         "description": "",
@@ -206,7 +179,7 @@
             "items": {
               "type": "object",
               "properties": {
-                "publisher_key": {
+                "publisherKey": {
                   "type": "string",
                   "description": "publisher key, unique identifier"
                 },
@@ -232,7 +205,7 @@
             "name": "properties",
             "type": "object",
             "properties": {
-              "publisher_key": {
+              "publisherKey": {
                 "type": "string",
                 "description": "publisher key, unique identifier"
               },
@@ -364,10 +337,180 @@
         ]
       },
       {
-        "name": "createWallet",
+        "name": "updateMediaDuration",
         "type": "function",
-        "description": "Creates new wallet",
-        "parameters": []
+        "description": "Update the media duration for a given resource",
+        "parameters": [
+          {
+            "name": "windowId",
+            "type": "number"
+          },
+          {
+            "name": "publisherKey",
+            "type": "string"
+          },
+          {
+            "name": "duration",
+            "type": "integer"
+          },
+          {
+            "name": "firstVisit",
+            "type": "boolean"
+          }
+        ]
+      },
+      {
+        "name": "getPublisherInfo",
+        "type": "function",
+        "description": "Get the details for a particular publisher",
+        "parameters": [
+          {
+            "name": "publisherKey",
+            "type": "string"
+          },
+          {
+            "type": "function",
+            "name": "callback",
+            "parameters": [
+              {
+                "name": "result",
+                "type": "integer"
+              },
+              {
+                "name": "properties",
+                "type": "object",
+                "optional": true,
+                "properties": {
+                  "publisherKey": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "percentage": {
+                    "type": "number"
+                  },
+                  "status": {
+                    "type": "number"
+                  },
+                  "excluded": {
+                    "type": "number"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string"
+                  },
+                  "favIconUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "getPublisherPanelInfo",
+        "type": "function",
+        "description": "Get the panel info for a particular publisher",
+        "parameters": [
+          {
+            "name": "publisherKey",
+            "type": "string"
+          },
+          {
+            "type": "function",
+            "name": "callback",
+            "parameters": [
+              {
+                "name": "result",
+                "type": "integer"
+              },
+              {
+                "name": "publisher",
+                "type": "object",
+                "optional": true,
+                "properties": {
+                  "percentage": {
+                    "type": "integer",
+                    "description": "publisher attention score"
+                  },
+                  "excluded": {
+                    "type": "number",
+                    "description": "is site excluded from auto contribute"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "description": "provider (if media publisher) for this publisher"
+                  },
+                  "favIconUrl": {
+                    "type": "string",
+                    "description": "publisher image url"
+                  },
+                  "publisherKey": {
+                    "type": "string",
+                    "description": "publisher key, unique identifier"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "publisher name"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "url of the current tab"
+                  },
+                  "status": {
+                    "type": "integer",
+                    "description": "publisher status"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "savePublisherInfo",
+        "type": "function",
+        "description": "Save the publisher info when visiting a site",
+        "parameters": [
+          {
+            "name": "windowId",
+            "type": "number"
+          },
+          {
+            "name": "mediaType",
+            "type": "string"
+          },
+          {
+            "name": "url",
+            "type": "string"
+          },
+          {
+            "name": "publisherKey",
+            "type": "string"
+          },
+          {
+            "name": "publisherName",
+            "type": "string"
+          },
+          {
+            "name": "favIconUrl",
+            "type": "string"
+          },
+          {
+            "type": "function",
+            "name": "callback",
+            "parameters": [
+              {
+                "name": "result",
+                "type": "integer"
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "tipSite",
@@ -383,111 +526,55 @@
             "type": "string"
           },
           {
-            "name": "monthly",
-            "type": "boolean"
+            "name": "entryPoint",
+            "type": "string"
           }
         ]
       },
       {
-        "name": "tipTwitterUser",
+        "name": "tipUser",
         "type": "function",
-        "description": "Allow the user to perform a donation to a Twitter user",
+        "description": "Allow the user to tip a user on a particular site",
         "parameters": [
           {
-            "name": "tabID",
-            "type": "integer"
+            "name": "tabId",
+            "type": "number"
           },
           {
-            "name": "mediaMetaData",
-            "type": "object",
-            "properties": {
-              "mediaType": {
-                "type": "string",
-                "description": "description used in UI to identify the media type"
-              },
-              "userId": {
-                "type": "string",
-                "description": "User ID of tweet author"
-              },
-              "twitterName": {
-                "type": "string",
-                "description": "Name of tweet author"
-              },
-              "screenName": {
-                "type": "string",
-                "description": "Twitter handle of tweet author"
-              },
-              "tweetId": {
-                "type": "string",
-                "description": "Unique tweet ID"
-              },
-              "tweetTimestamp": {
-                "type": "number",
-                "description": "Timestamp (in milliseconds) of tweet"
-              },
-              "tweetText": {
-                "type": "string",
-                "description": "Textual contents of tweet"
-              }
-            }
-          }
-        ]
-      },
-      {
-        "name": "tipRedditUser",
-        "type": "function",
-        "description": "Allow the user to perform a donation to a Reddit user",
-        "parameters": [
-          {
-            "name": "tabID",
-            "type": "integer"
+            "name": "mediaType",
+            "type": "string"
           },
           {
-            "name": "mediaMetaData",
-            "type": "object",
-            "properties": {
-              "mediaType": {
-                "type": "string",
-                "description": "description used in UI to identify the media type"
-              },
-              "userName": {
-                "type": "string",
-                "description": "User name of the Reddit post/comment author"
-              },
-              "postText": {
-                "type": "string",
-                "description": "Textual contents of comment/post"
-              },
-              "postRelDate": {
-                "type": "string",
-                "description": "Date of post relative to current date"
-              }
-            }
-          }
-        ]
-      },
-      {
-        "name": "tipGitHubUser",
-        "type": "function",
-        "description": "Allow the user to perform a donation to a GitHub user",
-        "parameters": [
-          {
-            "name": "tabID",
-            "type": "integer"
+            "name": "url",
+            "type": "string"
           },
           {
-            "name": "mediaMetaData",
-            "type": "object",
-            "properties": {
-              "mediaType": {
-                "type": "string",
-                "description": "description used in UI to identify the media type"
-              },
-              "userName": {
-                "type": "string",
-                "description": "Username of the GitHub author"
-              }
-            }
+            "name": "publisherKey",
+            "type": "string"
+          },
+          {
+            "name": "publisherName",
+            "type": "string"
+          },
+          {
+            "name": "publisherScreenName",
+            "type": "string"
+          },
+          {
+            "name": "favIconUrl",
+            "type": "string"
+          },
+          {
+            "name": "postId",
+            "type": "string"
+          },
+          {
+            "name": "postTimestamp",
+            "type": "string"
+          },
+          {
+            "name": "postText",
+            "type": "string"
           }
         ]
       },
@@ -761,40 +848,6 @@
         ]
       },
       {
-        "name": "getRewardsMainEnabled",
-        "type": "function",
-        "description": "Gets whether rewards has been enabled explicitly",
-        "parameters": [
-          {
-            "type": "function",
-            "name": "callback",
-            "parameters": [
-              {
-                "name": "enabled",
-                "type": "boolean"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "getWalletExists",
-        "type": "function",
-        "description": "Gets whether a Rewards wallet already exists",
-        "parameters": [
-          {
-            "type": "function",
-            "name": "callback",
-            "parameters": [
-              {
-                "name": "exists",
-                "type": "boolean"
-              }
-            ]
-          }
-        ]
-      },
-      {
         "name": "getACEnabled",
         "type": "function",
         "description": "Gets whether auto contribute is enabled",
@@ -827,17 +880,13 @@
         ]
       },
       {
-        "name": "saveSetting",
+        "name": "setAutoContributeEnabled",
         "type": "function",
-        "description": "Updates settings related to rewards service",
+        "description": "Updates ac enabled state",
         "parameters": [
           {
-            "name": "key",
-            "type": "string"
-          },
-          {
-            "name": "value",
-            "type": "string"
+            "name": "enabled",
+            "type": "boolean"
           }
         ]
       },
@@ -1037,6 +1086,7 @@
               {
                 "name": "wallet",
                 "type": "object",
+                "optional": true,
                 "properties": {
                   "token": {
                     "type": "any"
@@ -1045,9 +1095,6 @@
                     "type": "any"
                   },
                   "status": {
-                    "type": "any"
-                  },
-                  "type": {
                     "type": "any"
                   },
                   "verifyUrl": {
@@ -1133,6 +1180,34 @@
                 "type": "boolean"
               }
             ]
+          }
+        ]
+      },
+      {
+        "name": "shouldShowOnboarding",
+        "type": "function",
+        "description": "Gets a value indicating whether rewards onboarding should be shown to the user.",
+        "parameters": [
+          {
+            "type": "function",
+            "name": "callback",
+            "parameters": [
+              {
+                "name": "showOnboarding",
+                "type": "boolean"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "saveOnboardingResult",
+        "type": "function",
+        "description": "Saves the rewards user onboarding result.",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "result"
           }
         ]
       }

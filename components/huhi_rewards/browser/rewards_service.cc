@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -61,6 +61,7 @@ void RewardsService::RegisterProfilePrefs(PrefRegistrySimple* registry) {
 #if defined(OS_ANDROID)
   registry->RegisterBooleanPref(prefs::kUseRewardsStagingServer, false);
 #endif
+  registry->RegisterTimePref(prefs::kOnboarded, base::Time());
   registry->RegisterUint64Pref(prefs::kPromotionLastFetchStamp, 0ull);
   registry->RegisterBooleanPref(prefs::kPromotionCorruptedMigrated, false);
   registry->RegisterBooleanPref(prefs::kAnonTransferChecked, false);
@@ -77,9 +78,9 @@ void RewardsService::RegisterProfilePrefs(PrefRegistrySimple* registry) {
   registry->RegisterUint64Pref(prefs::kCreationStamp, 0ull);
   registry->RegisterStringPref(prefs::kRecoverySeed, "");
   registry->RegisterStringPref(prefs::kPaymentId, "");
-  registry->RegisterBooleanPref(prefs::kInlineTipRedditEnabled, false);
-  registry->RegisterBooleanPref(prefs::kInlineTipTwitterEnabled, false);
-  registry->RegisterBooleanPref(prefs::kInlineTipGithubEnabled, false);
+  registry->RegisterBooleanPref(prefs::kInlineTipRedditEnabled, true);
+  registry->RegisterBooleanPref(prefs::kInlineTipTwitterEnabled, true);
+  registry->RegisterBooleanPref(prefs::kInlineTipGithubEnabled, true);
   registry->RegisterDoublePref(prefs::kParametersRate, 0.0);
   registry->RegisterDoublePref(
       prefs::kParametersAutoContributeChoice,
@@ -91,6 +92,8 @@ void RewardsService::RegisterProfilePrefs(PrefRegistrySimple* registry) {
   registry->RegisterStringPref(prefs::kParametersMonthlyTipChoices, "");
   registry->RegisterBooleanPref(prefs::kFetchOldBalance, true);
   registry->RegisterBooleanPref(prefs::kEmptyBalanceChecked, false);
+  registry->RegisterStringPref(prefs::kWalletHuhi, "");
+  registry->RegisterStringPref(prefs::kWalletUphold, "");
 }
 
 }  // namespace huhi_rewards

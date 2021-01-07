@@ -1,10 +1,9 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License. v. 2.0. If a copy of the MPL was not distributed with this file.
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import styled, { css } from 'huhi-ui/theme'
 import { Props } from './index'
-import palette from 'huhi-ui/theme/colors'
 
 export const StyledCheckbox = styled<{}, 'input'>('input')`
   -webkit-appearance: none;
@@ -14,9 +13,17 @@ export const StyledCheckbox = styled<{}, 'input'>('input')`
   height: 100%;
   top: 0;
   left: 0;
-  outline-offset: -3px;
-  outline-color: ${palette.orange400};
-  outline-width: 2px;
+
+  &:active {
+    outline: none;
+  }
+
+  &:focus {
+    outline-style: solid;
+    outline-color: ${p => p.theme.color.brandHuhi};
+    outline-width: 1px;
+    outline-offset: -1px;
+  }
 `
 
 export const StyledWrapper = styled<Props, 'div'>('div')`

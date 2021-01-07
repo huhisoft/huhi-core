@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -77,7 +77,7 @@ SyncAccountInfo HuhiSyncAuthManager::DetermineAccountToUse() const {
     // data within specific width. (ex. client_version and encrypted_types)
     account_info.email =
         std::string(client_id).insert(client_id.length() / 2, 1, ' ') +
-        " @huhisoft.com";
+        " @hnq.vn";
     VLOG(1) << "huhi client id=" << client_id;
     return SyncAccountInfo(account_info, true);
   } else {

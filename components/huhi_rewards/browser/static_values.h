@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -22,7 +22,9 @@ const std::vector<std::string> kOnlyAnonWalletCountries = {
 };
 
 #if defined(OS_ANDROID)
-  const std::map<std::string, bool> kBoolOptions = {};
+  const std::map<std::string, bool> kBoolOptions = {
+      {ledger::option::kClaimUGP, false}
+  };
 
   const std::map<std::string, int> kIntegerOptions = {};
 
@@ -36,7 +38,9 @@ const std::vector<std::string> kOnlyAnonWalletCountries = {
       {ledger::option::kPublisherListRefreshInterval,
        7* base::Time::kHoursPerDay * base::Time::kSecondsPerHour}};
 #else
-  const std::map<std::string, bool> kBoolOptions = {};
+  const std::map<std::string, bool> kBoolOptions = {
+      {ledger::option::kClaimUGP, false}
+  };
 
   const std::map<std::string, int> kIntegerOptions = {};
 

@@ -1,52 +1,70 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.chromium.chrome.browser.ntp;
 
-import android.os.Bundle;
+import static org.chromium.ui.base.ViewUtils.dpToPx;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.ContextMenu;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.util.Pair;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.chromium.base.ThreadUtils;
-import org.chromium.base.ContextUtils;
+import org.json.JSONException;
+
 import org.chromium.base.Log;
-import org.chromium.chrome.browser.util.PackageUtils;
+import org.chromium.base.ThreadUtils;
 import org.chromium.base.TraceEvent;
 import org.chromium.base.supplier.Supplier;
 import org.chromium.base.task.AsyncTask;
 import org.chromium.chrome.R;
+import org.chromium.chrome.browser.HuhiAdsNativeHelper;
 import org.chromium.chrome.browser.HuhiRewardsHelper;
 import org.chromium.chrome.browser.ChromeTabbedActivity;
+import org.chromium.chrome.browser.InternetConnection;
+import org.chromium.chrome.browser.QRCodeShareDialogFragment;
 import org.chromium.chrome.browser.app.HuhiActivity;
+import org.chromium.chrome.browser.huhi_stats.HuhiStatsUtil;
 import org.chromium.chrome.browser.compositor.layouts.OverviewModeBehavior;
+import org.chromium.chrome.browser.custom_layout.VerticalViewPager;
 import org.chromium.chrome.browser.explore_sites.ExploreSitesBridge;
 import org.chromium.chrome.browser.lifecycle.ActivityLifecycleDispatcher;
 import org.chromium.chrome.browser.local_database.DatabaseHelper;
@@ -54,8 +72,11 @@ import org.chromium.chrome.browser.local_database.TopSiteTable;
 import org.chromium.chrome.browser.native_page.ContextMenuManager;
 import org.chromium.chrome.browser.night_mode.GlobalNightModeStateProviderHolder;
 import org.chromium.chrome.browser.ntp.NewTabPageLayout;
+import org.chromium.chrome.browser.ntp.widget.NTPWidgetAdapter;
+import org.chromium.chrome.browser.ntp.widget.NTPWidgetItem;
+import org.chromium.chrome.browser.ntp.widget.NTPWidgetManager;
+import org.chromium.chrome.browser.ntp.widget.NTPWidgetStackActivity;
 import org.chromium.chrome.browser.ntp_background_images.NTPBackgroundImagesBridge;
-import org.chromium.chrome.browser.ntp_background_images.SuperReferralShareDialogFragment;
 import org.chromium.chrome.browser.ntp_background_images.model.BackgroundImage;
 import org.chromium.chrome.browser.ntp_background_images.model.NTPImage;
 import org.chromium.chrome.browser.ntp_background_images.model.SponsoredTab;
@@ -68,9 +89,9 @@ import org.chromium.chrome.browser.ntp_background_images.util.SponsoredImageUtil
 import org.chromium.chrome.browser.offlinepages.DownloadUiActionFlags;
 import org.chromium.chrome.browser.offlinepages.OfflinePageBridge;
 import org.chromium.chrome.browser.offlinepages.RequestCoordinatorBridge;
+import org.chromium.chrome.browser.onboarding.OnboardingPrefManager;
 import org.chromium.chrome.browser.preferences.HuhiPref;
 import org.chromium.chrome.browser.preferences.HuhiPrefServiceBridge;
-import org.chromium.components.user_prefs.UserPrefs;
 import org.chromium.chrome.browser.profiles.Profile;
 import org.chromium.chrome.browser.suggestions.tile.SiteSection;
 import org.chromium.chrome.browser.suggestions.tile.TileGroup;
@@ -80,28 +101,30 @@ import org.chromium.chrome.browser.tab.TabAttributes;
 import org.chromium.chrome.browser.tab.TabImpl;
 import org.chromium.chrome.browser.tab.TabObserver;
 import org.chromium.chrome.browser.tabmodel.TabModel;
+import org.chromium.chrome.browser.util.PackageUtils;
+import org.chromium.chrome.browser.util.TabUtils;
+import org.chromium.chrome.browser.widget.crypto.binance.BinanceAccountBalance;
+import org.chromium.chrome.browser.widget.crypto.binance.BinanceNativeWorker;
+import org.chromium.chrome.browser.widget.crypto.binance.BinanceObserver;
+import org.chromium.chrome.browser.widget.crypto.binance.BinanceWidgetManager;
+import org.chromium.chrome.browser.widget.crypto.binance.CryptoWidgetBottomSheetDialogFragment;
 import org.chromium.components.browser_ui.widget.displaystyle.UiConfig;
-import org.chromium.chrome.browser.onboarding.OnboardingPrefManager;
-import org.chromium.chrome.browser.huhi_stats.HuhiStatsUtil;
+import org.chromium.components.user_prefs.UserPrefs;
+import org.chromium.ui.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class HuhiNewTabPageLayout extends NewTabPageLayout {
     private static final String TAG = "HuhiNewTabPageView";
+    private static final String HUHI_BINANCE = "https://hnq.vn/binance/";
+    private static final String HUHI_REF_URL = "https://hnq.vn/r/";
 
-    private static final String PREF_TRACKERS_BLOCKED_COUNT = "trackers_blocked_count";
-    private static final String PREF_ADS_BLOCKED_COUNT = "ads_blocked_count";
-    private static final String PREF_HTTPS_UPGRADES_COUNT = "https_upgrades_count";
-    public static final short MILLISECONDS_PER_ITEM = 50;
+    private View mHuhiStatsViewFallBackLayout;
 
-    private ViewGroup mHuhiStatsView;
-
-    private TextView mAdsBlockedCountTextView;
-    private TextView mDataSavedValueTextView;
-    private TextView mEstTimeSavedCountTextView;
-    private TextView mAdsBlockedTextView;
-    private TextView mDataSavedTextView;
-    private TextView mEstTimeSavedTextView;
     private ImageView bgImageView;
     private Profile mProfile;
 
@@ -117,62 +140,259 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
 
     private ViewGroup mSiteSectionView;
     private LottieAnimationView mBadgeAnimationView;
+    private VerticalViewPager ntpWidgetViewPager;
+    private NTPWidgetAdapter ntpWidgetAdapter;
 
     private Tab mTab;
     private Activity mActivity;
+    private LinearLayout indicatorLayout;
+    private LinearLayout superReferralSitesLayout;
+    private LinearLayout ntpWidgetLayout;
+    private LinearLayout bianceDisconnectLayout;
+    private LinearLayout binanceWidgetLayout;
+    private ProgressBar binanceWidgetProgress;
+    private TextView mTopsiteErrorMessage;
+
+    private BinanceNativeWorker mBinanceNativeWorker;
+    private CryptoWidgetBottomSheetDialogFragment cryptoWidgetBottomSheetDialogFragment;
+    private CountDownTimer countDownTimer;
+    private List<NTPWidgetItem> widgetList = new ArrayList<NTPWidgetItem>();
+    public static final int NTP_WIDGET_STACK_CODE = 3333;
 
     public HuhiNewTabPageLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mProfile = Profile.getLastUsedRegularProfile();
         mNTPBackgroundImagesBridge = NTPBackgroundImagesBridge.getInstance(mProfile);
+        mBinanceNativeWorker = BinanceNativeWorker.getInstance();
         mNTPBackgroundImagesBridge.setNewTabPageListener(newTabPageListener);
         mDatabaseHelper = DatabaseHelper.getInstance();
     }
 
     @Override
-    public void setSearchProviderInfo(boolean hasLogo, boolean isGoogle) {
-        super.setSearchProviderInfo(hasLogo, isGoogle);
-        // Make huhi stats visibile always on NTP.
-        // NewTabPageLayout::setSearchProviderInfo() makes it invisible.
-        // So, explicitly set it as visible.
-        mHuhiStatsView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mHuhiStatsView = (ViewGroup) findViewById(R.id.huhi_stats_layout);
 
-        mAdsBlockedCountTextView = (TextView) mHuhiStatsView.findViewById(R.id.huhi_stats_text_ads_count);
-        mDataSavedValueTextView = (TextView) mHuhiStatsView.findViewById(R.id.huhi_stats_data_saved_value);
-        mEstTimeSavedCountTextView = (TextView) mHuhiStatsView.findViewById(R.id.huhi_stats_text_time_count);
+        // mHuhiStatsViewFallBackLayout = (ViewGroup)
+        // findViewById(R.id.huhi_stats_fallback_layout);
 
-        mAdsBlockedTextView = (TextView) mHuhiStatsView.findViewById(R.id.huhi_stats_text_ads);
-        mDataSavedTextView = (TextView) mHuhiStatsView.findViewById(R.id.huhi_stats_data_saved_text);
-        mEstTimeSavedTextView = (TextView) mHuhiStatsView.findViewById(R.id.huhi_stats_text_time);
+        ntpWidgetLayout = findViewById(R.id.ntp_widget_layout);
+        indicatorLayout = findViewById(R.id.indicator_layout);
+        ntpWidgetViewPager = findViewById(R.id.ntp_widget_view_pager);
+        ntpWidgetAdapter = new NTPWidgetAdapter();
+        ntpWidgetAdapter.setNTPWidgetListener(ntpWidgetListener);
+        ntpWidgetViewPager.setAdapter(ntpWidgetAdapter);
 
-        FrameLayout mBadgeLayout = findViewById(R.id.badge_layout);
-        ImageView mBadgeImageView = findViewById(R.id.badge_image_view);
-        if (!UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.NEW_TAB_PAGE_SHOW_BACKGROUND_IMAGE)
-                || !NTPUtil.shouldEnableNTPFeature()) {
-            mBadgeImageView.setColorFilter(ContextCompat.getColor(ContextUtils.getApplicationContext(), R.color.huhi_stats_badge_tint_color), android.graphics.PorterDuff.Mode.SRC_IN);
+        ntpWidgetViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(
+                    int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                cancelTimer();
+                if (NTPWidgetManager.getInstance().getBinanceWidget() == position) {
+                    startTimer();
+                }
+                updateAndShowIndicators(position);
+                NTPWidgetManager.getInstance().setNTPWidgetOrder(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+        showWidgetBasedOnOrder();
+    }
+
+    private void showFallBackNTPLayout() {
+        if (mHuhiStatsViewFallBackLayout != null
+                && mHuhiStatsViewFallBackLayout.getParent() != null) {
+            ((ViewGroup) mHuhiStatsViewFallBackLayout.getParent())
+                    .removeView(mHuhiStatsViewFallBackLayout);
         }
-        mBadgeImageView.setOnClickListener(new View.OnClickListener() {
+        LayoutInflater inflater =
+                (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mHuhiStatsViewFallBackLayout = inflater.inflate(R.layout.huhi_stats_layout, null);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+            new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        layoutParams.setMargins(0, dpToPx(mActivity, 16), 0, dpToPx(mActivity, 16));
+        mHuhiStatsViewFallBackLayout.setLayoutParams(layoutParams);
+        mHuhiStatsViewFallBackLayout.requestLayout();
+
+        mHuhiStatsViewFallBackLayout.findViewById(R.id.huhi_stats_title_layout)
+                .setVisibility(View.GONE);
+        ((TextView) mHuhiStatsViewFallBackLayout.findViewById(R.id.huhi_stats_text_ads))
+                .setTextColor(mActivity.getResources().getColor(R.color.shield_text_color));
+        ((TextView) mHuhiStatsViewFallBackLayout.findViewById(R.id.huhi_stats_data_saved_text))
+                .setTextColor(mActivity.getResources().getColor(R.color.shield_text_color));
+        ((TextView) mHuhiStatsViewFallBackLayout.findViewById(R.id.huhi_stats_text_time))
+                .setTextColor(mActivity.getResources().getColor(R.color.shield_text_color));
+        ((TextView) mHuhiStatsViewFallBackLayout.findViewById(R.id.huhi_stats_text_time_count))
+                .setTextColor(mActivity.getResources().getColor(R.color.shield_text_color));
+        ((TextView) mHuhiStatsViewFallBackLayout.findViewById(
+                 R.id.huhi_stats_text_time_count_text))
+                .setTextColor(mActivity.getResources().getColor(R.color.shield_text_color));
+        mHuhiStatsViewFallBackLayout.setBackgroundColor(
+                mActivity.getResources().getColor(android.R.color.transparent));
+        mHuhiStatsViewFallBackLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checkForHuhiStats();
-                OnboardingPrefManager.getInstance().setShowBadgeAnimation(false);
             }
         });
+        HuhiStatsUtil.updateHuhiStatsLayout(mHuhiStatsViewFallBackLayout);
+        mainLayout.addView(mHuhiStatsViewFallBackLayout, 0);
 
-        mBadgeAnimationView = (LottieAnimationView) findViewById(R.id.badge_image);
+        int insertionPoint = mainLayout.indexOfChild(findViewById(R.id.ntp_middle_spacer)) + 1;
+        if (mSiteSectionView.getParent() != null) {
+            ((ViewGroup) mSiteSectionView.getParent()).removeView(mSiteSectionView);
+        }
+        mainLayout.addView(mSiteSectionView, insertionPoint);
+    }
 
-        mHuhiStatsView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkForHuhiStats();
+    private List<NTPWidgetItem> setWidgetList() {
+        NTPWidgetManager ntpWidgetManager = NTPWidgetManager.getInstance();
+        LayoutInflater inflater =
+                (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Map<Integer, NTPWidgetItem> ntpWidgetMap = new TreeMap<>();
+        if (mSiteSectionView != null && mSiteSectionView.getParent() != null) {
+            ((ViewGroup) mSiteSectionView.getParent()).removeView(mSiteSectionView);
+        }
+
+        for (String widget : ntpWidgetManager.getUsedWidgets()) {
+            NTPWidgetItem ntpWidgetItem = NTPWidgetManager.mWidgetsMap.get(widget);
+            if (widget.equals(NTPWidgetManager.PREF_PRIVATE_STATS)) {
+                View mHuhiStatsView = inflater.inflate(R.layout.huhi_stats_layout, null);
+                mHuhiStatsView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checkForHuhiStats();
+                    }
+                });
+                ntpWidgetItem.setWidgetView(mHuhiStatsView);
+                ntpWidgetMap.put(ntpWidgetManager.getPrivateStatsWidget(), ntpWidgetItem);
+            } else if (widget.equals(NTPWidgetManager.PREF_FAVORITES)) {
+                View mTopSitesLayout = inflater.inflate(R.layout.top_sites_layout, null);
+                FrameLayout mTopSitesGridLayout =
+                        mTopSitesLayout.findViewById(R.id.top_sites_grid_layout);
+                mTopsiteErrorMessage =
+                        mTopSitesLayout.findViewById(R.id.widget_error_title);
+
+                if (shouldShowSuperReferral() && superReferralSitesLayout != null) {
+                    if (superReferralSitesLayout.getParent() != null) {
+                        ((ViewGroup) superReferralSitesLayout.getParent())
+                                .removeView(superReferralSitesLayout);
+                    }
+                    mTopSitesGridLayout.addView(superReferralSitesLayout);
+                    ntpWidgetItem.setWidgetView(mTopSitesLayout);
+                    ntpWidgetMap.put(ntpWidgetManager.getFavoritesWidget(), ntpWidgetItem);
+                } else if (!mNTPBackgroundImagesBridge.isSuperReferral()
+                        || !NTPBackgroundImagesBridge.enableSponsoredImages()
+                        || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    boolean showPlaceholder =
+                            getTileGroup().hasReceivedData() && getTileGroup().isEmpty();
+                    if (mSiteSectionView != null && !showPlaceholder) {
+                        mTopsiteErrorMessage.setVisibility(View.GONE);
+                        if (mSiteSectionView.getLayoutParams()
+                                        instanceof ViewGroup.MarginLayoutParams) {
+                            mSiteSectionView.setPadding(0, dpToPx(mActivity, 8), 0, 0);
+                            mSiteSectionView.requestLayout();
+                        }
+                        mTopSitesGridLayout.addView(mSiteSectionView);
+                    } else {
+                        mTopsiteErrorMessage.setVisibility(View.VISIBLE);
+                    }
+                    ntpWidgetItem.setWidgetView(mTopSitesLayout);
+                    ntpWidgetMap.put(ntpWidgetManager.getFavoritesWidget(), ntpWidgetItem);
+                }
+            } else if (widget.equals(NTPWidgetManager.PREF_BINANCE)) {
+                View binanceWidgetView = inflater.inflate(R.layout.crypto_widget_layout, null);
+                binanceWidgetLayout = binanceWidgetView.findViewById(R.id.binance_widget_layout);
+                bianceDisconnectLayout =
+                        binanceWidgetView.findViewById(R.id.binance_disconnect_layout);
+                binanceWidgetProgress =
+                        binanceWidgetView.findViewById(R.id.binance_widget_progress);
+                binanceWidgetProgress.setVisibility(View.GONE);
+                binanceWidgetView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (InternetConnection.isNetworkAvailable(mActivity)) {
+                            if (BinanceWidgetManager.getInstance()
+                                            .isUserAuthenticatedForBinance()) {
+                                cancelTimer();
+                                cryptoWidgetBottomSheetDialogFragment =
+                                        new CryptoWidgetBottomSheetDialogFragment();
+                                cryptoWidgetBottomSheetDialogFragment.show(
+                                        ((HuhiActivity) mActivity).getSupportFragmentManager(),
+                                        CryptoWidgetBottomSheetDialogFragment.TAG_FRAGMENT);
+                            } else {
+                                TabUtils.openUrlInSameTab(mBinanceNativeWorker.getOAuthClientUrl());
+                                bianceDisconnectLayout.setVisibility(View.GONE);
+                                binanceWidgetProgress.setVisibility(View.VISIBLE);
+                            }
+                        } else {
+                            Toast.makeText(mActivity,
+                                         mActivity.getResources().getString(
+                                                 R.string.please_check_the_connection),
+                                         Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    }
+                });
+                Button connectButton = binanceWidgetView.findViewById(R.id.btn_connect);
+                connectButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        TabUtils.openUrlInSameTab(mBinanceNativeWorker.getOAuthClientUrl());
+                        bianceDisconnectLayout.setVisibility(View.GONE);
+                        binanceWidgetProgress.setVisibility(View.VISIBLE);
+                    }
+                });
+                ntpWidgetItem.setWidgetView(binanceWidgetView);
+                ntpWidgetMap.put(ntpWidgetManager.getBinanceWidget(), ntpWidgetItem);
             }
-        });
+        }
+
+        return new ArrayList<NTPWidgetItem>(ntpWidgetMap.values());
+    }
+
+    private boolean shouldShowSuperReferral() {
+        return mNTPBackgroundImagesBridge.isSuperReferral()
+                && NTPBackgroundImagesBridge.enableSponsoredImages()
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    private void showWidgetBasedOnOrder() {
+        if (ntpWidgetViewPager != null) {
+            int selectedOrder = NTPWidgetManager.getInstance().getNTPWidgetOrder();
+            ntpWidgetViewPager.setCurrentItem(selectedOrder, true);
+            updateAndShowIndicators(selectedOrder);
+        }
+    }
+
+    private void showWidgets() {
+        List<NTPWidgetItem> tempList = setWidgetList();
+        if (tempList.size() > 0) {
+            ntpWidgetLayout.setVisibility(View.VISIBLE);
+            if (mHuhiStatsViewFallBackLayout != null
+                    && mHuhiStatsViewFallBackLayout.getParent() != null) {
+                ((ViewGroup) mHuhiStatsViewFallBackLayout.getParent())
+                        .removeView(mHuhiStatsViewFallBackLayout);
+            }
+        } else {
+            ntpWidgetLayout.setVisibility(View.GONE);
+            if (!UserPrefs.get(Profile.getLastUsedRegularProfile())
+                            .getBoolean(HuhiPref.NEW_TAB_PAGE_SHOW_BACKGROUND_IMAGE)) {
+                showFallBackNTPLayout();
+            }
+        }
+
+        if (ntpWidgetAdapter != null) {
+            ntpWidgetAdapter.setWidgetList(tempList);
+            ntpWidgetAdapter.notifyDataSetChanged();
+            showWidgetBasedOnOrder();
+        }
     }
 
     private void checkForHuhiStats() {
@@ -197,21 +417,15 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
                     R.dimen.tile_grid_layout_vertical_spacing);
         }
         mSiteSectionView.setLayoutParams(layoutParams);
-
-        ViewGroup mHuhiStatsView = (ViewGroup) findViewById(R.id.huhi_stats_layout);
-        int insertionPoint = mainLayout.indexOfChild(mHuhiStatsView) + 1;
-        if (!mNTPBackgroundImagesBridge.isSuperReferral()
-                || !NTPBackgroundImagesBridge.enableSponsoredImages()
-                || Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-            mainLayout.addView(mSiteSectionView, insertionPoint);
     }
 
     protected int getMaxRowsForMostVisitedTiles() {
-        if (UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.NEW_TAB_PAGE_SHOW_BACKGROUND_IMAGE)
-                && NTPUtil.shouldEnableNTPFeature()) {
-            return 1;
-        } else {
+        if (NTPWidgetManager.getInstance().getUsedWidgets().size() <= 0
+                && !UserPrefs.get(Profile.getLastUsedRegularProfile())
+                            .getBoolean(HuhiPref.NEW_TAB_PAGE_SHOW_BACKGROUND_IMAGE)) {
             return 2;
+        } else {
+            return 1;
         }
     }
 
@@ -227,7 +441,7 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
         }
         checkAndShowNTPImage(false);
         mNTPBackgroundImagesBridge.addObserver(mNTPBackgroundImageServiceObserver);
-        if (PackageUtils.isFirstInstall(ContextUtils.getApplicationContext())
+        if (PackageUtils.isFirstInstall(mActivity)
                 && !OnboardingPrefManager.getInstance().isNewOnboardingShown()) {
             ((HuhiActivity)mActivity).showOnboardingV2(false);
         }
@@ -239,6 +453,15 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
                 && !OnboardingPrefManager.getInstance().shouldShowBadgeAnimation()) {
             mBadgeAnimationView.setVisibility(View.INVISIBLE);
         }
+        showWidgets();
+        if (BinanceWidgetManager.getInstance().isUserAuthenticatedForBinance()) {
+            if (binanceWidgetLayout != null) {
+                binanceWidgetLayout.setVisibility(View.GONE);
+            }
+            mBinanceNativeWorker.getAccountBalances();
+        }
+        mBinanceNativeWorker.AddObserver(mBinanaceObserver);
+        startTimer();
     }
 
     @Override
@@ -255,6 +478,8 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
             }
         }
         mNTPBackgroundImagesBridge.removeObserver(mNTPBackgroundImageServiceObserver);
+        mBinanceNativeWorker.RemoveObserver(mBinanaceObserver);
+        cancelTimer();
         super.onDetachedFromWindow();
     }
 
@@ -274,7 +499,7 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
                     sponsoredTab.setNTPImage(SponsoredImageUtil.getBackgroundImage());
                 }
             }
-            checkForNonDistruptiveBanner(ntpImage);
+            checkForNonDisruptiveBanner(ntpImage);
             super.onConfigurationChanged(newConfig);
             showNTPImage(ntpImage);
         } else {
@@ -297,50 +522,11 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
         ((HuhiActivity)mActivity).dismissShieldsTooltip();
     }
 
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        if (visibility == VISIBLE) {
-            updateHuhiStats();
-        }
-    }
-
-    /**
-     * Sets up Huhi stats.
-     */
-    private void updateHuhiStats() {
-        TraceEvent.begin(TAG + ".updateHuhiStats()");
-        long trackersBlockedCount = HuhiPrefServiceBridge.getInstance().getTrackersBlockedCount(mProfile);
-        long adsBlockedCount = HuhiPrefServiceBridge.getInstance().getAdsBlockedCount(mProfile);
-        long dataSaved = HuhiPrefServiceBridge.getInstance().getDataSaved(mProfile);
-        long estimatedMillisecondsSaved = (trackersBlockedCount + adsBlockedCount) * MILLISECONDS_PER_ITEM;
-
-        Pair<String, String> adsTrackersPair = HuhiStatsUtil.getHuhiStatsStringFormNumberPair(adsBlockedCount, false);
-        Pair<String, String> dataSavedPair = HuhiStatsUtil.getHuhiStatsStringFormNumberPair(dataSaved, true);
-
-        mAdsBlockedCountTextView.setText(String.format(getResources().getString(R.string.ntp_stat_text), adsTrackersPair.first, adsTrackersPair.second));
-        mDataSavedValueTextView.setText(String.format(getResources().getString(R.string.ntp_stat_text), dataSavedPair.first, dataSavedPair.second));
-        mEstTimeSavedCountTextView.setText(HuhiStatsUtil.getHuhiStatsStringFromTime(estimatedMillisecondsSaved / 1000));
-
-        if ((UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.NEW_TAB_PAGE_SHOW_BACKGROUND_IMAGE)
-                || NTPUtil.isReferralEnabled())
-                && sponsoredTab != null
-                && NTPUtil.shouldEnableNTPFeature()) {
-            mAdsBlockedTextView.setTextColor(
-                getResources().getColor(android.R.color.white));
-            mDataSavedTextView.setTextColor(
-                getResources().getColor(android.R.color.white));
-            mEstTimeSavedTextView.setTextColor(
-                getResources().getColor(android.R.color.white));
-            mEstTimeSavedCountTextView.setTextColor(
-                getResources().getColor(android.R.color.white));
-        }
-
-        TraceEvent.end(TAG + ".updateHuhiStats()");
-    }
-
     private void showNTPImage(NTPImage ntpImage) {
-        NTPUtil.updateOrientedUI(mActivity, this);
+        Display display = mActivity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        NTPUtil.updateOrientedUI(mActivity, this, size);
         ImageView mSponsoredLogo = (ImageView) findViewById(R.id.sponsored_logo);
         FloatingActionButton mSuperReferralLogo = (FloatingActionButton) findViewById(R.id.super_referral_logo);
         TextView mCreditText = (TextView) findViewById(R.id.credit_text);
@@ -358,11 +544,13 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
             mSuperReferralLogo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SuperReferralShareDialogFragment mSuperReferralShareDialogFragment =
-                        new SuperReferralShareDialogFragment();
-                    mSuperReferralShareDialogFragment.show(
-                        ((HuhiActivity) mActivity).getSupportFragmentManager(),
-                        "SuperReferralShareDialogFragment");
+                    QRCodeShareDialogFragment mQRCodeShareDialogFragment =
+                            new QRCodeShareDialogFragment();
+                    mQRCodeShareDialogFragment.setQRCodeText(
+                            HUHI_REF_URL + mNTPBackgroundImagesBridge.getSuperReferralCode());
+                    mQRCodeShareDialogFragment.show(
+                            ((HuhiActivity) mActivity).getSupportFragmentManager(),
+                            "QRCodeShareDialogFragment");
                 }
             });
         } else if (UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(
@@ -390,7 +578,8 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
                         @Override
                         public void onClick(View view) {
                             if (backgroundImage.getImageCredit() != null) {
-                                NTPUtil.openUrlInSameTab(backgroundImage.getImageCredit().getUrl());
+                                TabUtils.openUrlInSameTab(
+                                        backgroundImage.getImageCredit().getUrl());
                             }
                         }
                     });
@@ -415,10 +604,15 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
         });
     }
 
-    private void checkForNonDistruptiveBanner(NTPImage ntpImage) {
-        int brOption = NTPUtil.checkForNonDistruptiveBanner(ntpImage, sponsoredTab);
-        if (SponsoredImageUtil.BR_INVALID_OPTION != brOption && !NTPUtil.isReferralEnabled()) {
-            NTPUtil.showNonDistruptiveBanner((HuhiActivity) mActivity, this, brOption,
+    private void checkForNonDisruptiveBanner(NTPImage ntpImage) {
+        int brOption = NTPUtil.checkForNonDisruptiveBanner(ntpImage, sponsoredTab);
+        if (SponsoredImageUtil.BR_INVALID_OPTION != brOption && !NTPUtil.isReferralEnabled()
+                && ((!HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(
+                             Profile.getLastUsedRegularProfile())
+                            && HuhiRewardsHelper.shouldShowHuhiRewardsOnboardingModal())
+                        || HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(
+                                Profile.getLastUsedRegularProfile()))) {
+            NTPUtil.showNonDisruptiveBanner((HuhiActivity) mActivity, this, brOption,
                                              sponsoredTab, newTabPageListener);
         }
     }
@@ -433,7 +627,7 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
                 sponsoredTab.setNTPImage(SponsoredImageUtil.getBackgroundImage());
             }
         }
-        checkForNonDistruptiveBanner(ntpImage);
+        checkForNonDisruptiveBanner(ntpImage);
         showNTPImage(ntpImage);
     }
 
@@ -443,10 +637,7 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
             TabAttributes.from(getTab()).set(String.valueOf(getTabImpl().getId()), mSponsoredTab);
         }
         sponsoredTab = TabAttributes.from(getTab()).get(String.valueOf((getTabImpl()).getId()));
-        if (mNTPBackgroundImagesBridge.isSuperReferral()
-                && NTPBackgroundImagesBridge.enableSponsoredImages()
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            mNTPBackgroundImagesBridge.getTopSites();
+        if (shouldShowSuperReferral()) mNTPBackgroundImagesBridge.getTopSites();
     }
 
     private NewTabPageListener newTabPageListener = new NewTabPageListener() {
@@ -465,24 +656,23 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
 
         @Override
         public void updateTopSites(List<TopSite> topSites) {
-            new AsyncTask<Void>() {
+            new AsyncTask<List<TopSiteTable>>() {
                 @Override
-                protected Void doInBackground() {
+                protected List<TopSiteTable> doInBackground() {
                     for (TopSite topSite : topSites) {
                         mDatabaseHelper.insertTopSite(topSite);
                     }
-                    return null;
+                    return mDatabaseHelper.getAllTopSites();
                 }
 
                 @Override
-                protected void onPostExecute(Void result) {
+                protected void onPostExecute(List<TopSiteTable> topSites) {
                     assert ThreadUtils.runningOnUiThread();
                     if (isCancelled()) return;
 
-                    List<TopSiteTable> topSites = mDatabaseHelper.getAllTopSites();
                     loadTopSites(topSites);
                 }
-            } .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     };
 
@@ -491,10 +681,7 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
         public void onUpdated() {
             if (NTPUtil.isReferralEnabled()) {
                 checkAndShowNTPImage(true);
-                if (mNTPBackgroundImagesBridge.isSuperReferral()
-                        && NTPBackgroundImagesBridge.enableSponsoredImages()
-                        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    removeDefaultTopSites();
+                if (shouldShowSuperReferral()) {
                     mNTPBackgroundImagesBridge.getTopSites();
                 }
             }
@@ -520,7 +707,8 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
                     @Override
                     public void onClick(View view) {
                         if (mWallpaper.getLogoDestinationUrl() != null) {
-                            NTPUtil.openUrlInSameTab(mWallpaper.getLogoDestinationUrl());
+                            TabUtils.openUrlInSameTab(mWallpaper.getLogoDestinationUrl());
+                            mNTPBackgroundImagesBridge.wallpaperLogoClicked(mWallpaper);
                         }
                     }
                 });
@@ -529,7 +717,12 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
     };
 
     private void loadTopSites(List<TopSiteTable> topSites) {
-        LinearLayout superReferralSitesLayout = (LinearLayout) findViewById(R.id.ntp_super_referral_sites_layout);
+        superReferralSitesLayout = new LinearLayout(mActivity);
+        superReferralSitesLayout.setWeightSum(1f);
+        superReferralSitesLayout.setOrientation(LinearLayout.HORIZONTAL);
+        superReferralSitesLayout.setBackgroundColor(
+                mActivity.getResources().getColor(R.color.topsite_bg_color));
+
         LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (TopSiteTable topSite : topSites) {
@@ -537,31 +730,24 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
 
             TextView tileViewTitleTv = view.findViewById(R.id.tile_view_title);
             tileViewTitleTv.setText(topSite.getName());
-
-            if (!GlobalNightModeStateProviderHolder.getInstance().isInNightMode()
-                    && !UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.NEW_TAB_PAGE_SHOW_BACKGROUND_IMAGE)
-                    && !NTPUtil.isReferralEnabled()) {
-                tileViewTitleTv.setTextColor(getResources().getColor(android.R.color.black));
-            } else {
-                tileViewTitleTv.setTextColor(getResources().getColor(android.R.color.white));
-            }
+            tileViewTitleTv.setTextColor(getResources().getColor(android.R.color.black));
 
             ImageView iconIv = view.findViewById(R.id.tile_view_icon);
             if (NTPUtil.imageCache.get(topSite.getDestinationUrl()) == null) {
                 NTPUtil.imageCache.put(topSite.getDestinationUrl(), new java.lang.ref.SoftReference(NTPUtil.getTopSiteBitmap(topSite.getImagePath())));
             }
             iconIv.setImageBitmap(NTPUtil.imageCache.get(topSite.getDestinationUrl()).get());
+            iconIv.setBackgroundColor(mActivity.getResources().getColor(android.R.color.white));
             iconIv.setClickable(false);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    NTPUtil.openUrlInSameTab(topSite.getDestinationUrl());
+                    TabUtils.openUrlInSameTab(topSite.getDestinationUrl());
                 }
             });
 
-            int paddingTop = getResources().getDimensionPixelSize(R.dimen.tile_grid_layout_no_logo_padding_top);
-            view.setPadding(0, paddingTop, 0, view.getPaddingBottom());
+            view.setPadding(0, dpToPx(mActivity, 12), 0, 0);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParams.weight = 0.25f;
@@ -573,14 +759,14 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
                     menu.add(R.string.contextmenu_open_in_new_tab).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            NTPUtil.openNewTab(false, topSite.getDestinationUrl());
+                            TabUtils.openUrlInNewTab(false, topSite.getDestinationUrl());
                             return true;
                         }
                     });
                     menu.add(R.string.contextmenu_open_in_incognito_tab).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            NTPUtil.openNewTab(true, topSite.getDestinationUrl());
+                            TabUtils.openUrlInNewTab(true, topSite.getDestinationUrl());
                             return true;
                         }
                     });
@@ -611,16 +797,7 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
             });
             superReferralSitesLayout.addView(view);
         }
-    }
-
-    public void removeDefaultTopSites() {
-        if (mainLayout != null && hasParent(mSiteSectionView)) {
-            mainLayout.removeView(mSiteSectionView);
-        }
-    }
-
-    private boolean hasParent(View view) {
-        return view != null && view.getParent() != null;
+        showWidgets();
     }
 
     public void setTab(Tab tab) {
@@ -634,5 +811,178 @@ public class HuhiNewTabPageLayout extends NewTabPageLayout {
 
     private TabImpl getTabImpl() {
         return (TabImpl) getTab();
+    }
+
+    private void updateAndShowIndicators(int position) {
+        indicatorLayout.removeAllViews();
+        for (int i = 0; i < ntpWidgetAdapter.getCount(); i++) {
+            TextView dotTextView = new TextView(mActivity);
+            dotTextView.setText(Html.fromHtml("&#9679;"));
+            dotTextView.setTextColor(getResources().getColor(android.R.color.white));
+            dotTextView.setTextSize(8);
+            if (position == i) {
+                dotTextView.setAlpha(1.0f);
+            } else {
+                dotTextView.setAlpha(0.4f);
+            }
+            indicatorLayout.addView(dotTextView);
+        }
+    }
+
+    // NTP related methods
+    private NTPWidgetAdapter.NTPWidgetListener ntpWidgetListener =
+            new NTPWidgetAdapter.NTPWidgetListener() {
+                @Override
+                public void onMenuEdit() {
+                    cancelTimer();
+                    openWidgetStack();
+                }
+
+                @Override
+                public void onMenuRemove(int position, boolean isBinanceWidget) {
+                    if (isBinanceWidget) {
+                        mBinanceNativeWorker.revokeToken();
+                        BinanceWidgetManager.getInstance().setBinanceAccountBalance("");
+                        BinanceWidgetManager.getInstance().setUserAuthenticationForBinance(false);
+                        if (cryptoWidgetBottomSheetDialogFragment != null) {
+                            cryptoWidgetBottomSheetDialogFragment.dismiss();
+                        }
+                    }
+
+                    if (HuhiActivity.getHuhiActivity() != null
+                        && HuhiActivity.getHuhiActivity().getActivityTab() != null
+                        && !UserPrefs.get(Profile.getLastUsedRegularProfile())
+                            .getBoolean(HuhiPref.NEW_TAB_PAGE_SHOW_BACKGROUND_IMAGE)
+                        && NTPWidgetManager.getInstance().getUsedWidgets().size() <= 0) {
+                        HuhiActivity.getHuhiActivity().getActivityTab().reloadIgnoringCache();
+                    } else {
+                        showWidgets();
+                    }
+                }
+
+                @Override
+                public void onMenuLearnMore() {
+                    TabUtils.openUrlInSameTab(HUHI_BINANCE);
+                }
+
+                @Override
+                public void onMenuRefreshData() {
+                    mBinanceNativeWorker.getAccountBalances();
+                }
+
+                @Override
+                public void onMenuDisconnect() {
+                    mBinanceNativeWorker.revokeToken();
+                    BinanceWidgetManager.getInstance().setBinanceAccountBalance("");
+                    BinanceWidgetManager.getInstance().setUserAuthenticationForBinance(false);
+                    if (cryptoWidgetBottomSheetDialogFragment != null) {
+                        cryptoWidgetBottomSheetDialogFragment.dismiss();
+                    }
+                    // Reset binance widget to connect page
+                    showWidgets();
+                }
+            };
+
+    private BinanceObserver mBinanaceObserver = new BinanceObserver() {
+        @Override
+        public void OnGetAccessToken(boolean isSuccess) {
+            Log.e("NTP", "OnGetAccessToken : " + isSuccess);
+            BinanceWidgetManager.getInstance().setUserAuthenticationForBinance(isSuccess);
+            if (isSuccess) {
+                mBinanceNativeWorker.getAccountBalances();
+                if (bianceDisconnectLayout != null) {
+                    bianceDisconnectLayout.setVisibility(View.GONE);
+                }
+                if (binanceWidgetProgress != null) {
+                    binanceWidgetProgress.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
+        @Override
+        public void OnGetAccountBalances(String jsonBalances, boolean isSuccess) {
+            if (InternetConnection.isNetworkAvailable(mActivity)) {
+                if (!isSuccess) {
+                    BinanceWidgetManager.getInstance().setUserAuthenticationForBinance(isSuccess);
+                    if (cryptoWidgetBottomSheetDialogFragment != null) {
+                        cryptoWidgetBottomSheetDialogFragment.dismiss();
+                    }
+                } else {
+                    if (jsonBalances != null && !TextUtils.isEmpty(jsonBalances)) {
+                        BinanceWidgetManager.getInstance().setBinanceAccountBalance(jsonBalances);
+                    }
+                    try {
+                        BinanceWidgetManager.binanceAccountBalance = new BinanceAccountBalance(
+                                BinanceWidgetManager.getInstance().getBinanceAccountBalance());
+                    } catch (JSONException e) {
+                        Log.e("NTP", e.getMessage());
+                    }
+                }
+            }
+            // Reset binance widget to connect page
+            showWidgets();
+        };
+    };
+
+    // start timer function
+    public void startTimer() {
+        countDownTimer = new CountDownTimer(30000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {}
+            @Override
+            public void onFinish() {
+                if (BinanceWidgetManager.getInstance().isUserAuthenticatedForBinance()) {
+                    mBinanceNativeWorker.getAccountBalances();
+                }
+                if ((HuhiActivity) mActivity != null) startTimer();
+            }
+        };
+        countDownTimer.start();
+    }
+
+    // cancel timer
+    public void cancelTimer() {
+        if (countDownTimer != null) countDownTimer.cancel();
+    }
+
+    public void openWidgetStack() {
+        final FragmentManager fm = ((HuhiActivity) mActivity).getSupportFragmentManager();
+        Fragment auxiliary = new Fragment() {
+            @Override
+            public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                super.onActivityResult(requestCode, resultCode, data);
+                fm.beginTransaction().remove(this).commit();
+                if (requestCode == NTP_WIDGET_STACK_CODE) {
+                    Log.e("NTP", "Inside result");
+                    showWidgets();
+                }
+            }
+        };
+        fm.beginTransaction().add(auxiliary, "FRAGMENT_TAG").commit();
+        fm.executePendingTransactions();
+
+        Intent ntpWidgetStackActivityIntent = new Intent(mActivity, NTPWidgetStackActivity.class);
+        ntpWidgetStackActivityIntent.putExtra(NTPWidgetStackActivity.FROM_SETTINGS, false);
+        auxiliary.startActivityForResult(ntpWidgetStackActivityIntent, NTP_WIDGET_STACK_CODE);
+    }
+
+    @Override
+    public void onTileCountChanged() {
+        if (mTopsiteErrorMessage == null) {
+            return;
+        }
+
+        if (getPlaceholder() != null
+                && ((ViewGroup)getPlaceholder().getParent()) != null) {
+            ((ViewGroup)getPlaceholder().getParent()).removeView(getPlaceholder());
+        }
+
+        boolean showPlaceholder =
+            getTileGroup().hasReceivedData() && getTileGroup().isEmpty();
+        if (!showPlaceholder) {
+            mTopsiteErrorMessage.setVisibility(View.GONE);
+        } else {
+            mTopsiteErrorMessage.setVisibility(View.VISIBLE);
+        }
     }
 }

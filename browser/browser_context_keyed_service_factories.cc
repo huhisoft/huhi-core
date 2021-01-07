@@ -1,21 +1,21 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "huhi/browser/browser_context_keyed_service_factories.h"
 
+#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "huhi/browser/huhi_shields/ad_block_pref_service_factory.h"
 #include "huhi/browser/huhi_shields/cookie_pref_service_factory.h"
+#include "huhi/browser/ntp_background_images/view_counter_service_factory.h"
 #include "huhi/browser/search_engines/search_engine_provider_service_factory.h"
 #include "huhi/browser/search_engines/search_engine_tracker.h"
-#include "huhi/browser/tor/tor_profile_service_factory.h"
 #include "huhi/components/huhi_ads/browser/ads_service_factory.h"
-#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
-#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
 #include "huhi/components/greaselion/browser/buildflags/buildflags.h"
-#include "huhi/browser/ntp_background_images/view_counter_service_factory.h"
-#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 
 #if BUILDFLAG(ENABLE_GREASELION)
 #include "huhi/browser/greaselion/greaselion_service_factory.h"
@@ -35,6 +35,10 @@
 #include "huhi/browser/ipfs/ipfs_service_factory.h"
 #endif
 
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/browser/tor/tor_profile_service_factory.h"
+#endif
+
 namespace huhi {
 
 void EnsureBrowserContextKeyedServiceFactoriesBuilt() {
@@ -45,7 +49,9 @@ void EnsureBrowserContextKeyedServiceFactoriesBuilt() {
 #if BUILDFLAG(ENABLE_GREASELION)
   greaselion::GreaselionServiceFactory::GetInstance();
 #endif
+#if BUILDFLAG(ENABLE_TOR)
   TorProfileServiceFactory::GetInstance();
+#endif
   SearchEngineProviderServiceFactory::GetInstance();
   SearchEngineTrackerFactory::GetInstance();
   ntp_background_images::ViewCounterServiceFactory::GetInstance();

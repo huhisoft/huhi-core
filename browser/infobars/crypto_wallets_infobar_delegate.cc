@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,10 +10,10 @@
 
 #include "huhi/browser/huhi_wallet/huhi_wallet_service_factory.h"
 #include "huhi/browser/ui/huhi_pages.h"
-#include "huhi/common/huhi_wallet_constants.h"
-#include "huhi/common/pref_names.h"
 #include "huhi/common/url_constants.h"
-#include "huhi/components/huhi_wallet/browser/huhi_wallet_service.h"
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
+#include "huhi/components/huhi_wallet/huhi_wallet_service.h"
+#include "huhi/components/huhi_wallet/pref_names.h"
 #include "huhi/grit/huhi_generated_resources.h"
 #include "chrome/browser/infobars/infobar_service.h"
 #include "chrome/browser/ui/browser_finder.h"
@@ -27,7 +27,6 @@
 #include "extensions/common/constants.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/views/vector_icons.h"
-
 
 // static
 void CryptoWalletsInfoBarDelegate::Create(InfoBarService* infobar_service,
@@ -60,19 +59,11 @@ base::string16 CryptoWalletsInfoBarDelegate::GetMessageText() const {
   if (subtype_ == InfobarSubType::LOAD_CRYPTO_WALLETS) {
     return l10n_util::GetStringUTF16(IDS_HUHI_CRYPTO_WALLETS_LAZY_LOAD_TEXT);
   }
-  if (subtype_ == InfobarSubType::CRYPTO_WALLETS_METAMASK) {
-      return l10n_util::GetStringUTF16(
-          IDS_HUHI_CRYPTO_WALLETS_METAMASK_INFOBAR_TEXT);
-  }
   return l10n_util::GetStringUTF16(IDS_HUHI_CRYPTO_WALLETS_INFOBAR_TEXT);
 }
 
 int CryptoWalletsInfoBarDelegate::GetButtons() const {
-  if (subtype_ == InfobarSubType::LOAD_CRYPTO_WALLETS ||
-      subtype_ == InfobarSubType::CRYPTO_WALLETS_METAMASK) {
-    return BUTTON_OK | BUTTON_CANCEL;
-  }
-  return BUTTON_OK;
+  return BUTTON_OK | BUTTON_CANCEL;
 }
 
 base::string16 CryptoWalletsInfoBarDelegate::GetButtonLabel(
@@ -86,20 +77,19 @@ base::string16 CryptoWalletsInfoBarDelegate::GetButtonLabel(
   }
 
   if (button == BUTTON_CANCEL) {
-    return l10n_util::GetStringUTF16(IDS_HUHI_CRYPTO_WALLETS_USE_METAMASK);
+    return l10n_util::GetStringUTF16(IDS_HUHI_CRYPTO_WALLETS_DONT_ASK);
   }
 
-  return subtype_ == InfobarSubType::CRYPTO_WALLETS_METAMASK ?
-      l10n_util::GetStringUTF16(IDS_HUHI_CRYPTO_WALLETS_SETUP_CRYPTO_WALLETS) :
-      l10n_util::GetStringUTF16(IDS_HUHI_CRYPTO_WALLETS_SETUP);
+  return l10n_util::GetStringUTF16(
+      IDS_HUHI_CRYPTO_WALLETS_SETUP_CRYPTO_WALLETS);
 }
 
 base::string16 CryptoWalletsInfoBarDelegate::GetLinkText() const {
-  return base::string16();
+  return l10n_util::GetStringUTF16(IDS_LEARN_MORE);
 }
 
 GURL CryptoWalletsInfoBarDelegate::GetLinkURL() const {
-  return GURL();  // No learn more link for now.
+  return GURL(kCryptoWalletsLearnMoreURL);
 }
 
 bool CryptoWalletsInfoBarDelegate::Accept() {
@@ -132,22 +122,18 @@ bool CryptoWalletsInfoBarDelegate::Accept() {
 }
 
 bool CryptoWalletsInfoBarDelegate::Cancel() {
-  if (subtype_ == InfobarSubType::LOAD_CRYPTO_WALLETS) {
-    content::WebContents* web_contents =
-      InfoBarService::WebContentsFromInfoBar(infobar());
-    if (web_contents) {
-      Browser* browser = chrome::FindBrowserWithWebContents(web_contents);
-      huhi::ShowExtensionSettings(browser);
-    }
-    return true;
-  }
-
   content::WebContents* web_contents =
-      InfoBarService::WebContentsFromInfoBar(infobar());
+    InfoBarService::WebContentsFromInfoBar(infobar());
   if (web_contents) {
-    user_prefs::UserPrefs::Get(web_contents->GetBrowserContext())->
-        SetInteger(kHuhiWalletWeb3Provider,
-            static_cast<int>(HuhiWalletWeb3ProviderTypes::METAMASK));
+    if (subtype_ == InfobarSubType::GENERIC_SETUP) {
+      auto* browser_context = web_contents->GetBrowserContext();
+      user_prefs::UserPrefs::Get(browser_context)->
+          SetInteger(kHuhiWalletWeb3Provider,
+              static_cast<int>(HuhiWalletWeb3ProviderTypes::NONE));
+      return true;
+    }
+    Browser* browser = chrome::FindBrowserWithWebContents(web_contents);
+    huhi::ShowExtensionSettings(browser);
   }
   return true;
 }

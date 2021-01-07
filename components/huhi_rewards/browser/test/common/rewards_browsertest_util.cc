@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -26,19 +26,6 @@ void GetTestDataDir(base::FilePath* test_data_dir) {
   ASSERT_TRUE(base::PathExists(*test_data_dir));
 }
 
-double IsRewardsEnabled(Browser* browser, const bool private_window) {
-  DCHECK(browser);
-  auto* profile = browser->profile();
-  if (private_window) {
-    Profile* private_profile = profile->GetOffTheRecordProfile();
-    return private_profile->GetPrefs()->GetBoolean(
-      huhi_rewards::prefs::kEnabled);
-  }
-
-  return profile->GetPrefs()->GetBoolean(
-      huhi_rewards::prefs::kEnabled);
-}
-
 GURL GetRewardsUrl() {
   GURL url("huhi://rewards");
   return url;
@@ -54,22 +41,19 @@ GURL GetNewTabUrl() {
   return url;
 }
 
-void EnableRewardsViaCode(
-    Browser* browser,
-    huhi_rewards::RewardsServiceImpl* rewards_service) {
-  DCHECK(browser);
+void StartProcess(huhi_rewards::RewardsServiceImpl* rewards_service) {
+  DCHECK(rewards_service);
   base::RunLoop run_loop;
-  bool wallet_created = false;
-  rewards_service->CreateWallet(
+  bool success = false;
+  rewards_service->StartProcess(
       base::BindLambdaForTesting([&](const ledger::type::Result result) {
-        wallet_created = result == ledger::type::Result::WALLET_CREATED;
+        success = result == ledger::type::Result::LEDGER_OK;
         run_loop.Quit();
       }));
 
   run_loop.Run();
 
-  ASSERT_TRUE(wallet_created);
-  ASSERT_TRUE(IsRewardsEnabled(browser));
+  ASSERT_TRUE(success);
 }
 
 GURL GetUrl(
@@ -119,6 +103,29 @@ void WaitForLedgerStop(huhi_rewards::RewardsServiceImpl* rewards_service) {
         run_loop.Quit();
       }));
   run_loop.Run();
+}
+
+void CreateWallet(huhi_rewards::RewardsServiceImpl* rewards_service) {
+  DCHECK(rewards_service);
+  base::RunLoop run_loop;
+  bool success = false;
+  rewards_service->CreateWallet(
+      base::BindLambdaForTesting([&](const ledger::type::Result result) {
+        success = result == ledger::type::Result::WALLET_CREATED;
+        run_loop.Quit();
+      }));
+
+  run_loop.Run();
+
+  ASSERT_TRUE(success);
+}
+
+void SetOnboardingBypassed(Browser* browser, bool bypassed) {
+  DCHECK(browser);
+  // Rewards onboarding will be skipped if the legacy "enabled" pref
+  // is set to true.
+  PrefService* prefs = browser->profile()->GetPrefs();
+  prefs->SetBoolean(huhi_rewards::prefs::kEnabled, bypassed);
 }
 
 }  // namespace rewards_browsertest_util

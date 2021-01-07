@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/post_devicecheck/post_devicecheck.h"
@@ -31,10 +31,15 @@ std::string PostDevicecheck::GetUrl() {
 }
 
 std::string PostDevicecheck::GeneratePayload(const std::string& key) {
-  const std::string payment_id = ledger_->state()->GetPaymentId();
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    return "";
+  }
+
   base::Value dictionary(base::Value::Type::DICTIONARY);
   dictionary.SetStringKey("publicKeyHash", key);
-  dictionary.SetStringKey("paymentId", payment_id);
+  dictionary.SetStringKey("paymentId", wallet->payment_id);
   std::string json;
   base::JSONWriter::Write(dictionary, &json);
 

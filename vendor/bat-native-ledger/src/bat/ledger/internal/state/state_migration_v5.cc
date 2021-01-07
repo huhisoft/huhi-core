@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/state/state_migration_v5.h"
@@ -10,7 +10,6 @@
 
 #include "bat/ledger/internal/ledger_impl.h"
 #include "bat/ledger/internal/state/state_keys.h"
-#include "bat/ledger/internal/state/state_migration_v4.h"
 
 namespace ledger {
 namespace state {
@@ -51,9 +50,9 @@ void StateMigrationV5::Migrate(ledger::ResultCallback callback) {
       ledger_->ledger_client()->GetStringState(kPaymentId)));
 
   // Enabled
-  enabled = ledger_->ledger_client()->GetBooleanState(kEnabled);
+  enabled = ledger_->ledger_client()->GetBooleanState("enabled");
   events.insert(
-      std::make_pair(kEnabled, std::to_string(enabled)));
+      std::make_pair("enabled", std::to_string(enabled)));
 
   // Next reconcile
   const auto reconcile_stamp = ledger_->ledger_client()->GetUint64State(

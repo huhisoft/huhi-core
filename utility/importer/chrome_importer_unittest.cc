@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -82,7 +82,7 @@ TEST_F(ChromeImporterTest, ImportHistory) {
   importer_->StartImport(profile_, importer::HISTORY, bridge_.get());
 
   ASSERT_EQ(3u, history.size());
-  EXPECT_EQ("https://huhisoft.com/", history[0].url.spec());
+  EXPECT_EQ("https://hnq.vn/", history[0].url.spec());
   EXPECT_EQ("https://github.com/huhisoft", history[1].url.spec());
   EXPECT_EQ("https://www.nytimes.com/", history[2].url.spec());
 }
@@ -110,7 +110,7 @@ TEST_F(ChromeImporterTest, ImportBookmarks) {
   EXPECT_TRUE(bookmarks[1].is_folder);
   EXPECT_EQ(ASCIIToUTF16("Empty"), bookmarks[1].title);
 
-  EXPECT_EQ("https://huhisoft.com/", bookmarks[2].url.spec());
+  EXPECT_EQ("https://hnq.vn/", bookmarks[2].url.spec());
   EXPECT_FALSE(bookmarks[2].in_toolbar);
 }
 
@@ -129,7 +129,7 @@ TEST_F(ChromeImporterTest, ImportFavicons) {
   ASSERT_EQ(4u, favicons.size());
   EXPECT_EQ("https://www.google.com/favicon.ico",
             favicons[0].favicon_url.spec());
-  EXPECT_EQ("https://huhisoft.com/images/cropped-huhi_appicon_release-32x32.png",
+  EXPECT_EQ("https://hnq.vn/images/cropped-huhi_appicon_release-32x32.png",
             favicons[1].favicon_url.spec());
   EXPECT_EQ("https://assets-cdn.github.com/favicon.ico",
             favicons[2].favicon_url.spec());

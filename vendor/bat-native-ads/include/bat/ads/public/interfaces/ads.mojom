@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at http://mozilla.org/MPL/2.0/.
 module ads.mojom;
@@ -15,6 +15,12 @@ struct HuhiAdsBuildChannel {
   string name;
 };
 
+enum HuhiAdsAdType {
+  kUndefined = 0,
+  kAdNotification,
+  kNewTabPageAd
+};
+
 enum HuhiAdsAdNotificationEventType {
   kViewed = 0,
   kClicked,
@@ -22,10 +28,19 @@ enum HuhiAdsAdNotificationEventType {
   kTimedOut
 };
 
+enum HuhiAdsNewTabPageAdEventType {
+  kViewed = 0,
+  kClicked
+};
+
 enum HuhiAdsUrlRequestMethod {
   GET = 0,
   PUT,
   POST
+};
+
+enum HuhiAdsP2AEventType {
+  kListType = 0
 };
 
 struct HuhiAdsUrlRequest {

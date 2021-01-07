@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -49,7 +49,6 @@ import org.chromium.chrome.browser.huhi_stats.HuhiStatsUtil;
 import org.chromium.chrome.browser.local_database.HuhiStatsTable;
 import org.chromium.chrome.browser.local_database.DatabaseHelper;
 import org.chromium.chrome.browser.local_database.SavedBandwidthTable;
-import org.chromium.chrome.browser.ntp.HuhiNewTabPageLayout;
 import org.chromium.chrome.browser.onboarding.OnboardingPrefManager;
 import org.chromium.chrome.browser.util.ConfigurationUtils;
 import org.chromium.ui.base.DeviceFormFactor;
@@ -69,7 +68,6 @@ public class HuhiStatsBottomSheetDialogFragment extends BottomSheetDialogFragmen
     private static final int DAYS_7 = -7;
     private static final int DAYS_30 = -30;
     private static final int DAYS_90 = -90;
-
 
     private TextView adsTrackersCountText;
     private TextView adsTrackersText;
@@ -191,10 +189,10 @@ public class HuhiStatsBottomSheetDialogFragment extends BottomSheetDialogFragmen
 
     private void updateHuhiStatsLayoutAsync() {
         new AsyncTask<Void>() {
-            long adsTrackersCount = 0L;
-            long totalSavedBandwidth = 0L;
-            long adsTrackersCountToCheckForMonth = 0L;
-            long adsTrackersCountToCheckFor3Month = 0L;
+            long adsTrackersCount;
+            long totalSavedBandwidth;
+            long adsTrackersCountToCheckForMonth;
+            long adsTrackersCountToCheckFor3Month;
             @Override
             protected Void doInBackground() {
                 adsTrackersCount =
@@ -228,13 +226,13 @@ public class HuhiStatsBottomSheetDialogFragment extends BottomSheetDialogFragmen
                 Pair<String, String> adsTrackersPair =
                     HuhiStatsUtil.getHuhiStatsStringFormNumberPair(adsTrackersCount, false);
                 adsTrackersCountText.setText(
-                    String.format(getResources().getString(R.string.ntp_stat_text),
+                    String.format(mContext.getResources().getString(R.string.ntp_stat_text),
                                   adsTrackersPair.first, adsTrackersPair.second));
 
                 Pair<String, String> dataSavedPair =
                     HuhiStatsUtil.getHuhiStatsStringFormNumberPair(totalSavedBandwidth, true);
                 dataSavedCountText.setText(dataSavedPair.first);
-                boolean isTablet = DeviceFormFactor.isNonMultiDisplayContextOnTablet(getActivity());
+                boolean isTablet = DeviceFormFactor.isNonMultiDisplayContextOnTablet(mContext);
                 if (isTablet) {
                     adsTrackersText.setText(
                         String.format(mContext.getResources().getString(R.string.trackers_and_ads),
@@ -251,10 +249,12 @@ public class HuhiStatsBottomSheetDialogFragment extends BottomSheetDialogFragmen
                                       dataSavedPair.second));
                 }
 
-                long timeSavedCount =
-                    adsTrackersCount * HuhiNewTabPageLayout.MILLISECONDS_PER_ITEM;
+                long timeSavedCount = adsTrackersCount * HuhiStatsUtil.MILLISECONDS_PER_ITEM;
+                Pair<String, String> timeSavedPair =
+                        HuhiStatsUtil.getHuhiStatsStringFromTime(timeSavedCount / 1000);
                 timeSavedCountText.setText(
-                    HuhiStatsUtil.getHuhiStatsStringFromTime(timeSavedCount / 1000));
+                        String.format(mContext.getResources().getString(R.string.ntp_stat_text),
+                                timeSavedPair.first, timeSavedPair.second));
                 timeSavedText.setText(mContext.getResources().getString(R.string.time_saved_text));
 
                 if (adsTrackersCount > 0) {
@@ -282,12 +282,12 @@ public class HuhiStatsBottomSheetDialogFragment extends BottomSheetDialogFragmen
                 }
                 showWebsitesTrackers();
             }
-        } .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void showWebsitesTrackers() {
         new AsyncTask<Void>() {
-            List<Pair<String, Integer>> websiteTrackers = null;
+            List<Pair<String, Integer>> websiteTrackers;
             @Override
             protected Void doInBackground() {
                 if (selectedType == WEBSITES) {
@@ -331,10 +331,10 @@ public class HuhiStatsBottomSheetDialogFragment extends BottomSheetDialogFragmen
 
                         mTrackerCountText.setText(String.valueOf(statPair.second));
                         mTrackerCountText.setTextColor(
-                            getResources().getColor(R.color.huhi_stats_text_color));
+                            mContext.getResources().getColor(R.color.huhi_stats_text_color));
                         mSiteText.setText(statPair.first);
                         mSiteText.setTextColor(
-                            getResources().getColor(R.color.huhi_stats_text_color));
+                            mContext.getResources().getColor(R.color.huhi_stats_text_color));
 
                         rootView.addView(layout);
                     }
@@ -345,6 +345,6 @@ public class HuhiStatsBottomSheetDialogFragment extends BottomSheetDialogFragmen
                     huhiStatsSubSectionText.setVisibility(View.GONE);
                 }
             }
-        } .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 }

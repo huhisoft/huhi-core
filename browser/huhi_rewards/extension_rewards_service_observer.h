@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -28,9 +28,6 @@ class ExtensionRewardsServiceObserver : public RewardsServiceObserver,
   ~ExtensionRewardsServiceObserver() override;
 
   // RewardsServiceObserver implementation
-  void OnWalletInitialized(
-      RewardsService* rewards_service,
-      const ledger::type::Result result) override;
   void OnPublisherListNormalized(
       RewardsService* rewards_service,
       ledger::type::PublisherInfoList list) override;
@@ -79,9 +76,6 @@ class ExtensionRewardsServiceObserver : public RewardsServiceObserver,
       RewardsService* rewards_service,
       const ledger::type::Result result,
       ledger::type::PromotionPtr promotion) override;
-
-  void OnRewardsMainEnabled(RewardsService* rewards_service,
-                            bool rewards_main_enabled) override;
 
   void OnPendingContributionSaved(
       RewardsService* rewards_service,

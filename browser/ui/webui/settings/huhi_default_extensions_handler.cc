@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,7 +11,6 @@
 #include "base/values.h"
 #include "huhi/browser/huhi_browser_process_impl.h"
 #include "huhi/browser/extensions/huhi_component_loader.h"
-#include "huhi/browser/tor/buildflags.h"
 #include "huhi/common/pref_names.h"
 #include "huhi/components/huhi_webtorrent/grit/huhi_webtorrent_resources.h"
 #include "chrome/browser/about_flags.h"
@@ -36,8 +35,12 @@
 #include "extensions/common/feature_switch.h"
 
 #if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/tor/tor_profile_service.h"
-#include "huhi/common/tor/pref_names.h"
+#include "huhi/browser/tor/tor_profile_service_factory.h"
+#include "huhi/components/tor/pref_names.h"
+#endif
+
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
 #endif
 
 HuhiDefaultExtensionsHandler::HuhiDefaultExtensionsHandler()
@@ -53,10 +56,12 @@ void HuhiDefaultExtensionsHandler::RegisterMessages() {
       "setWebTorrentEnabled",
       base::BindRepeating(&HuhiDefaultExtensionsHandler::SetWebTorrentEnabled,
                           base::Unretained(this)));
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
   web_ui()->RegisterMessageCallback(
       "setHuhiWalletEnabled",
       base::BindRepeating(&HuhiDefaultExtensionsHandler::SetHuhiWalletEnabled,
                           base::Unretained(this)));
+#endif
   web_ui()->RegisterMessageCallback(
       "setHangoutsEnabled",
       base::BindRepeating(&HuhiDefaultExtensionsHandler::SetHangoutsEnabled,
@@ -78,7 +83,6 @@ void HuhiDefaultExtensionsHandler::RegisterMessages() {
       "getRestartNeeded",
       base::BindRepeating(&HuhiDefaultExtensionsHandler::GetRestartNeeded,
                           base::Unretained(this)));
-#if BUILDFLAG(ENABLE_TOR)
   web_ui()->RegisterMessageCallback(
       "setTorEnabled",
       base::BindRepeating(
@@ -92,7 +96,6 @@ void HuhiDefaultExtensionsHandler::RegisterMessages() {
       "isTorManaged",
       base::BindRepeating(&HuhiDefaultExtensionsHandler::IsTorManaged,
                           base::Unretained(this)));
-#endif
 
   // Can't call this in ctor because it needs to access web_ui().
   InitializePrefCallbacks();
@@ -228,13 +231,14 @@ void HuhiDefaultExtensionsHandler::SetMediaRouterEnabled(
   about_flags::SetFeatureEntryEnabled(&flags_storage, feature_name, true);
 }
 
-#if BUILDFLAG(ENABLE_TOR)
 void HuhiDefaultExtensionsHandler::SetTorEnabled(const base::ListValue* args) {
+#if BUILDFLAG(ENABLE_TOR)
   CHECK_EQ(args->GetSize(), 1U);
   bool enabled;
   args->GetBoolean(0, &enabled);
   AllowJavascript();
-  tor::TorProfileService::SetTorDisabled(!enabled);
+  TorProfileServiceFactory::SetTorDisabled(!enabled);
+#endif
 }
 
 void HuhiDefaultExtensionsHandler::IsTorEnabled(
@@ -243,14 +247,22 @@ void HuhiDefaultExtensionsHandler::IsTorEnabled(
   AllowJavascript();
   ResolveJavascriptCallback(
       args->GetList()[0],
-      base::Value(!tor::TorProfileService::IsTorDisabled()));
+#if BUILDFLAG(ENABLE_TOR)
+      base::Value(!TorProfileServiceFactory::IsTorDisabled()));
+#else
+      base::Value(false));
+#endif
 }
 
 void HuhiDefaultExtensionsHandler::OnTorEnabledChanged() {
   if (IsJavascriptAllowed()) {
     FireWebUIListener(
         "tor-enabled-changed",
-        base::Value(!tor::TorProfileService::IsTorDisabled()));
+#if BUILDFLAG(ENABLE_TOR)
+        base::Value(!TorProfileServiceFactory::IsTorDisabled()));
+#else
+        base::Value(false));
+#endif
   }
 }
 
@@ -258,13 +270,16 @@ void HuhiDefaultExtensionsHandler::IsTorManaged(
     const base::ListValue* args) {
   CHECK_EQ(args->GetSize(), 1U);
 
+#if BUILDFLAG(ENABLE_TOR)
   const bool is_managed = g_huhi_browser_process->local_state()->
       FindPreference(tor::prefs::kTorDisabled)->IsManaged();
+#else
+  const bool is_managed = false;
+#endif
 
   AllowJavascript();
   ResolveJavascriptCallback(args->GetList()[0], base::Value(is_managed));
 }
-#endif
 
 void HuhiDefaultExtensionsHandler::SetIPFSCompanionEnabled(
     const base::ListValue* args) {
@@ -299,6 +314,7 @@ void HuhiDefaultExtensionsHandler::SetIPFSCompanionEnabled(
   }
 }
 
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
 void HuhiDefaultExtensionsHandler::SetHuhiWalletEnabled(
     const base::ListValue* args) {
   CHECK_EQ(args->GetSize(), 1U);
@@ -316,3 +332,4 @@ void HuhiDefaultExtensionsHandler::SetHuhiWalletEnabled(
         extensions::disable_reason::DisableReason::DISABLE_USER_ACTION);
   }
 }
+#endif

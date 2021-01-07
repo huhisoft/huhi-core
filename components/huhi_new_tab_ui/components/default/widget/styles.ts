@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -10,6 +10,18 @@ interface WidgetPositionProps {
 }
 interface WidgetContainerProps extends WidgetPositionProps {
   textDirection: string
+}
+
+const getWidgetPadding = (type: string) => {
+  switch (type) {
+    case 'none':
+      return '0px'
+    case 'right':
+      return '24px 56px 24px 24px'
+    case 'default':
+    default:
+      return '24px'
+  }
 }
 
 export const StyledWidgetContainer = styled<WidgetContainerProps, 'div'>('div')`
@@ -23,9 +35,9 @@ export const StyledWidgetContainer = styled<WidgetContainerProps, 'div'>('div')`
   position: relative;
 `
 
-export const StyledWidgetMenuContainer = styled<{}, 'div'>('div')`
+export const StyledWidgetMenuContainer = styled<WidgetPaddingProps, 'div'>('div')`
   position: absolute;
-  top: 5px;
+  top: ${({ paddingType }) => paddingType === 'right' ? 15 : 5}px;
   right: 5px;
 `
 
@@ -37,10 +49,14 @@ interface WidgetVisibilityProps {
   isForeground?: boolean
 }
 
-export const StyledWidget = styled<WidgetVisibilityProps, 'div'>('div')`
-  padding: ${p => p.isCrypto ? 0 : 24}px;
+interface WidgetPaddingProps {
+  paddingType: 'none' | 'right' | 'default'
+}
+
+export const StyledWidget = styled<WidgetVisibilityProps & WidgetPaddingProps, 'div'>('div')`
+  padding: ${({ paddingType }) => getWidgetPadding(paddingType)};
   max-width: 100%;
-  min-width: ${p => p.isCrypto ? '284px' : 'initial'};
+  width: ${p => p.isCrypto ? '284px' : 'initial'};
   position: relative;
   transition: background 0.5s ease;
   border-radius: ${p => p.isCrypto ? '6px' : '16px'};

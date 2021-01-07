@@ -110,7 +110,6 @@ source_set("common") {
     sources += [
       "huhi_content_client.cc",
       "huhi_content_client.h",
-      "huhi_isolated_worlds.h",
     ]
 
     deps += [

@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,6 +11,7 @@ import { Provider } from '../../../ui/components/profile'
 import { NotificationType, WalletState } from '../../../ui/components/walletWrapper'
 import { RewardsNotificationType } from '../constants/rewards_panel_types'
 import { Type as AlertType } from '../../../ui/components/alert'
+import { RewardsOptInModal } from '../../../shared/components/onboarding'
 
 // Utils
 import * as rewardsPanelActions from '../actions/rewards_panel_actions'
@@ -19,7 +20,7 @@ import * as utils from '../utils'
 import { getMessage } from '../background/api/locale_api'
 
 interface Props extends RewardsExtension.ComponentProps {
-  windowId: number,
+  tabId: number,
   onlyAnonWallet: boolean
 }
 
@@ -51,7 +52,7 @@ export class Panel extends React.Component<Props, State> {
 
   componentDidMount () {
     const publisher: RewardsExtension.Publisher | undefined = this.getPublisher()
-    const newKey = publisher && publisher.publisher_key
+    const newKey = publisher && publisher.publisherKey
 
     if (newKey) {
       this.setState({
@@ -69,7 +70,7 @@ export class Panel extends React.Component<Props, State> {
 
   componentDidUpdate (prevProps: Props, prevState: State) {
     const publisher: RewardsExtension.Publisher | undefined = this.getPublisher()
-    const newKey = publisher && publisher.publisher_key
+    const newKey = publisher && publisher.publisherKey
 
     if (!prevState.publisherKey && newKey) {
       this.setState({
@@ -83,12 +84,6 @@ export class Panel extends React.Component<Props, State> {
       })
     }
 
-    if (!prevProps.rewardsPanelData.enabledMain &&
-        this.props.rewardsPanelData.enabledMain &&
-        !this.props.rewardsPanelData.initializing) {
-      this.actions.fetchPromotions()
-    }
-
     if (prevProps.rewardsPanelData.initializing &&
         !this.props.rewardsPanelData.initializing) {
       this.startRewards()
@@ -98,6 +93,10 @@ export class Panel extends React.Component<Props, State> {
   startRewards () {
     chrome.huhiRewards.getACEnabled((enabled: boolean) => {
       this.props.actions.onEnabledAC(enabled)
+    })
+
+    chrome.huhiRewards.shouldShowOnboarding((showOnboarding: boolean) => {
+      this.props.actions.onShouldShowOnboarding(showOnboarding)
     })
 
     this.actions.fetchPromotions()
@@ -134,7 +133,7 @@ export class Panel extends React.Component<Props, State> {
 
   switchAutoContribute = () => {
     const publisher: RewardsExtension.Publisher | undefined = this.getPublisher()
-    const publisherKey = publisher && publisher.publisher_key
+    const publisherKey = publisher && publisher.publisherKey
     const excluded = publisher && publisher.excluded
     if (publisherKey && publisherKey.length > 0 && excluded !== undefined) {
       this.props.actions.includeInAutoContribution(publisherKey, !excluded)
@@ -142,15 +141,15 @@ export class Panel extends React.Component<Props, State> {
   }
 
   getPublisher = () => {
-    let windowId = this.props.windowId.toString()
+    let tabKey = this.props.tabId.toString()
 
-    if (!windowId) {
+    if (!tabKey) {
       return undefined
     }
 
-    windowId = `id_${windowId}`
+    tabKey = `key_${tabKey}`
 
-    return this.props.rewardsPanelData.publishers[windowId]
+    return this.props.rewardsPanelData.publishers[tabKey]
   }
 
   onSliderToggle = () => {
@@ -285,24 +284,16 @@ export class Panel extends React.Component<Props, State> {
     utils.handleUpholdLink(balance, externalWallet)
   }
 
-  showTipSiteDetail = (monthly: boolean) => {
+  showTipSiteDetail = (entryPoint: RewardsExtension.TipDialogEntryPoint) => {
     const publisher: RewardsExtension.Publisher | undefined = this.getPublisher()
-    // TODO: why do we store windowId instead of active tab id in state?
-    chrome.tabs.query({
-      active: true,
-      windowId: chrome.windows.WINDOW_ID_CURRENT
-    }, (tabs) => {
-      if (!tabs || !tabs.length) {
-        return
-      }
-      const tabId = tabs[0].id
-      if (tabId === undefined || !publisher || !publisher.publisher_key) {
-        return
-      }
+    const tabId = this.props.tabId
 
-      chrome.huhiRewards.tipSite(tabId, publisher.publisher_key, monthly)
-      window.close()
-    })
+    if (!publisher || !publisher.publisherKey) {
+      return
+    }
+
+    chrome.huhiRewards.tipSite(tabId, publisher.publisherKey, entryPoint)
+    window.close()
   }
 
   onCloseNotification = (id: string) => {
@@ -333,9 +324,6 @@ export class Panel extends React.Component<Props, State> {
         break
       case 'backupWallet':
         clickEvent = this.onBackupWallet.bind(this, id)
-        break
-      case 'ads-launch':
-        clickEvent = this.openRewardsPage.bind(this, id)
         break
       case 'insufficientFunds':
         clickEvent = this.onAddFunds.bind(this, id)
@@ -418,10 +406,6 @@ export class Panel extends React.Component<Props, State> {
       case RewardsNotificationType.REWARDS_NOTIFICATION_TIPS_PROCESSED:
         type = 'tipsProcessed'
         text = getMessage('tipsProcessedNotification')
-        break
-      case RewardsNotificationType.REWARDS_NOTIFICATION_ADS_ONBOARDING:
-        type = 'ads-launch'
-        text = getMessage('huhiAdsLaunchMsg')
         break
       case RewardsNotificationType.REWARDS_NOTIFICATION_VERIFIED_PUBLISHER: {
         let name = ''
@@ -506,11 +490,11 @@ export class Panel extends React.Component<Props, State> {
     const newValue = parseFloat(event.target.value)
     const publisher: RewardsExtension.Publisher | undefined = this.getPublisher()
 
-    if (!publisher || !publisher.publisher_key) {
+    if (!publisher || !publisher.publisherKey) {
       return
     }
 
-    const publisherKey = publisher.publisher_key
+    const publisherKey = publisher.publisherKey
 
     if (newValue === 0) {
       this.actions.removeRecurringTip(publisherKey)
@@ -519,48 +503,17 @@ export class Panel extends React.Component<Props, State> {
     }
   }
 
-  generateAmounts = (publisher?: RewardsExtension.Publisher) => {
-    const { tipAmounts, parameters } = this.props.rewardsPanelData
-
-    const publisherKey = publisher && publisher.publisher_key
-    let publisherAmounts = null
-    if (publisherKey && tipAmounts && tipAmounts[publisherKey] && tipAmounts[publisherKey].length) {
-      publisherAmounts = tipAmounts[publisherKey]
-    }
-
-    // Prefer the publisher amounts, then the wallet's defaults. Fall back to defaultTipAmounts.
-    let initialAmounts = this.defaultTipAmounts
-    if (publisherAmounts) {
-      initialAmounts = publisherAmounts
-    } else if (parameters) {
-      const walletAmounts = parameters.monthlyTipChoices
-      if (walletAmounts.length) {
-        initialAmounts = walletAmounts
-      }
-    }
-
-    const amounts = [0, ...initialAmounts]
-
-    return amounts.map((value: number) => {
-      return {
-        tokens: value.toFixed(3),
-        converted: utils.convertBalance(value, parameters.rate),
-        selected: false
-      }
-    })
-  }
-
   getContribution = (publisher?: RewardsExtension.Publisher) => {
-    let defaultContribution = '0.000'
+    let defaultContribution = ''
     const { recurringTips } = this.props.rewardsPanelData
 
     if (!recurringTips ||
-       (!publisher || !publisher.publisher_key)) {
+       (!publisher || !publisher.publisherKey)) {
       return defaultContribution
     }
 
     recurringTips.map((tip: any) => {
-      if (tip.publisherKey === publisher.publisher_key) {
+      if (tip && tip.publisherKey === publisher.publisherKey && tip.amount > 0) {
         defaultContribution = tip.amount.toFixed(3)
       }
     })
@@ -597,7 +550,7 @@ export class Panel extends React.Component<Props, State> {
     })
     this.initiateDelayCounter()
     const publisher: RewardsExtension.Publisher | undefined = this.getPublisher()
-    const publisherKey = publisher && publisher.publisher_key
+    const publisherKey = publisher && publisher.publisherKey
     if (publisherKey) {
       chrome.huhiRewards.refreshPublisher(publisherKey, (status: number, publisherKey: string) => {
         if (publisherKey) {
@@ -692,6 +645,30 @@ export class Panel extends React.Component<Props, State> {
     return utils.getPromotion(currentPromotion[0], onlyAnonWallet)
   }
 
+  showLoginMessage = () => {
+    const { balance, externalWallet } = this.props.rewardsPanelData
+    const walletStatus = utils.getWalletStatus(externalWallet)
+
+    return (!walletStatus || walletStatus === 'unverified') && balance && balance.total < 25
+  }
+
+  showOnboarding () {
+    if (!this.props.rewardsPanelData.showOnboarding) {
+      return null
+    }
+
+    const onEnable = () => this.actions.saveOnboardingResult('opted-in')
+    const onClose = () => this.actions.saveOnboardingResult('dismissed')
+
+    return (
+      <RewardsOptInModal
+        onAddFunds={this.onAddFunds}
+        onEnable={onEnable}
+        onClose={onClose}
+      />
+    )
+  }
+
   render () {
     const { pendingContributionTotal, enabledAC, externalWallet, balance, parameters } = this.props.rewardsPanelData
     const publisher: RewardsExtension.Publisher | undefined = this.getPublisher()
@@ -703,16 +680,7 @@ export class Panel extends React.Component<Props, State> {
     const notificationClick = this.getNotificationClickEvent(notificationType, notificationId)
     const defaultContribution = this.getContribution(publisher)
     const checkmark = publisher && utils.isPublisherConnectedOrVerified(publisher.status)
-    const tipAmounts = defaultContribution !== '0.000'
-      ? this.generateAmounts(publisher)
-      : undefined
     const { onlyAnonWallet } = this.props
-
-    if (notification &&
-        notification.notification &&
-        notificationType === 'ads-launch') {
-      delete notification.notification['date']
-    }
 
     const pendingTotal = parseFloat(
       (pendingContributionTotal || 0).toFixed(3))
@@ -720,8 +688,8 @@ export class Panel extends React.Component<Props, State> {
     let faviconUrl
     if (publisher && publisher.url) {
       faviconUrl = `chrome://favicon/size/64@1x/${publisher.url}`
-      if (publisher.favicon_url && checkmark) {
-        faviconUrl = `chrome://favicon/size/64@1x/${publisher.favicon_url}`
+      if (publisher.favIconUrl && checkmark) {
+        faviconUrl = `chrome://favicon/size/64@1x/${publisher.favIconUrl}`
       }
     }
 
@@ -736,6 +704,7 @@ export class Panel extends React.Component<Props, State> {
 
     return (
       <WalletWrapper
+        id={'rewards-panel'}
         compact={true}
         contentPadding={false}
         gradientTop={this.gradientColor}
@@ -755,7 +724,7 @@ export class Panel extends React.Component<Props, State> {
         goToUphold={this.goToUphold}
         greetings={utils.getGreetings(externalWallet)}
         onlyAnonWallet={this.props.onlyAnonWallet}
-        showLoginMessage={balance.total < 25}
+        showLoginMessage={this.showLoginMessage()}
         {...notification}
       >
         <WalletSummarySlider
@@ -763,7 +732,7 @@ export class Panel extends React.Component<Props, State> {
           onToggle={this.onSliderToggle}
         >
           {
-            publisher && publisher.publisher_key
+            publisher && publisher.publisherKey
             ? <WalletPanel
               id={'wallet-panel'}
               platform={publisher.provider as Provider}
@@ -775,17 +744,16 @@ export class Panel extends React.Component<Props, State> {
               includeInAuto={!publisher.excluded}
               attentionScore={(publisher.percentage || 0).toString()}
               onToggleTips={this.doNothing}
-              donationAction={this.showTipSiteDetail.bind(this, false)}
-              onAmountChange={this.onContributionAmountChange}
+              donationAction={this.showTipSiteDetail.bind(this, 'one-time')}
               onIncludeInAuto={this.switchAutoContribute}
               showUnVerified={this.shouldShowConnectedMessage()}
               acEnabled={enabledAC}
-              donationAmounts={tipAmounts}
-              moreLink={'https://huhisoft.com/faq/#unclaimed-funds'}
+              moreLink={'https://hnq.vn/faq/#unclaimed-funds'}
               onRefreshPublisher={this.refreshPublisher}
               refreshingPublisher={this.state.refreshingPublisher}
               publisherRefreshed={this.state.publisherRefreshed}
-              setMonthlyAction={this.showTipSiteDetail.bind(this, true)}
+              setMonthlyAction={this.showTipSiteDetail.bind(this, 'set-monthly')}
+              cancelMonthlyAction={this.showTipSiteDetail.bind(this, 'clear-monthly')}
               onlyAnonWallet={onlyAnonWallet}
             />
             : null
@@ -794,10 +762,11 @@ export class Panel extends React.Component<Props, State> {
             compact={true}
             reservedAmount={pendingTotal}
             onlyAnonWallet={this.props.onlyAnonWallet}
-            reservedMoreLink={'https://huhisoft.com/faq/#unclaimed-funds'}
+            reservedMoreLink={'https://hnq.vn/faq/#unclaimed-funds'}
             {...this.getWalletSummary()}
           />
         </WalletSummarySlider>
+        {this.showOnboarding()}
       </WalletWrapper>
     )
   }

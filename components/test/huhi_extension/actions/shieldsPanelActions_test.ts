@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -18,8 +18,8 @@ const details: ShieldDetails = {
   ads: 'allow',
   trackers: 'block',
   httpUpgradableResources: 'allow',
-  origin: 'https://www.huhisoft.com',
-  hostname: 'www.huhisoft.com',
+  origin: 'https://www.hnq.vn',
+  hostname: 'www.hnq.vn',
   id: 1,
   javascript: 'allow',
   fingerprinting: 'allow',
@@ -62,7 +62,7 @@ describe('shieldsPanelActions', () => {
     const details: BlockDetails = {
       blockType: 'ads',
       tabId: 2,
-      subresource: 'https://www.huhisoft.com/test'
+      subresource: 'https://www.hnq.vn/test'
     }
     expect(actions.resourceBlocked(details)).toEqual({
       type: types.RESOURCE_BLOCKED,

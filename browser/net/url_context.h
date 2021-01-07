@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,6 +10,7 @@
 #include <set>
 #include <string>
 
+#include "net/base/network_isolation_key.h"
 #include "net/http/http_request_headers.h"
 #include "net/http/http_response_headers.h"
 #include "net/url_request/referrer_policy.h"
@@ -56,10 +57,14 @@ struct HuhiRequestInfo {
   explicit HuhiRequestInfo(const GURL& url);
 
   ~HuhiRequestInfo();
+  std::string method;
   GURL request_url;
   GURL tab_origin;
   GURL tab_url;
   GURL initiator_url;
+
+  bool internal_redirect = false;
+  GURL redirect_source;
 
   GURL referrer;
   net::ReferrerPolicy referrer_policy =
@@ -67,6 +72,7 @@ struct HuhiRequestInfo {
   base::Optional<GURL> new_referrer;
 
   std::string new_url_spec;
+  // TODO(iefremov): rename to shields_up.
   bool allow_huhi_shields = true;
   bool allow_ads = false;
   bool allow_http_upgradable_resource = false;
@@ -90,8 +96,14 @@ struct HuhiRequestInfo {
   HuhiNetworkDelegateEventType event_type = kUnknownEventType;
   const base::ListValue* referral_headers_list = nullptr;
   BlockedBy blocked_by = kNotBlocked;
-  bool cancel_request_explicitly = false;
   std::string mock_data_url;
+  bool ipfs_local = true;
+
+  bool ShouldMockRequest() const {
+    return !mock_data_url.empty();
+  }
+
+  net::NetworkIsolationKey network_isolation_key = net::NetworkIsolationKey();
 
   // Default to invalid type for resource_type, so delegate helpers
   // can properly detect that the info couldn't be obtained.
@@ -103,12 +115,13 @@ struct HuhiRequestInfo {
 
   std::string upload_data;
 
-  static void FillCTX(const network::ResourceRequest& request,
-                      int render_process_id,
-                      int frame_tree_node_id,
-                      uint64_t request_identifier,
-                      content::BrowserContext* browser_context,
-                      std::shared_ptr<huhi::HuhiRequestInfo> ctx);
+  static std::shared_ptr<huhi::HuhiRequestInfo>
+      MakeCTX(const network::ResourceRequest& request,
+              int render_process_id,
+              int frame_tree_node_id,
+              uint64_t request_identifier,
+              content::BrowserContext* browser_context,
+              std::shared_ptr<huhi::HuhiRequestInfo> old_ctx);
 
  private:
   // Please don't add any more friends here if it can be avoided.

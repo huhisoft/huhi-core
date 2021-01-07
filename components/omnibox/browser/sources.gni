@@ -1,0 +1,25 @@
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+huhi_components_omnibox_browser_sources = [
+  "//huhi/components/omnibox/browser/huhi_omnibox_client.cc",
+  "//huhi/components/omnibox/browser/huhi_omnibox_client.h",
+  "//huhi/components/omnibox/browser/constants.cc",
+  "//huhi/components/omnibox/browser/constants.h",
+  "//huhi/components/omnibox/browser/suggested_sites_match.cc",
+  "//huhi/components/omnibox/browser/suggested_sites_match.h",
+  "//huhi/components/omnibox/browser/suggested_sites_provider.cc",
+  "//huhi/components/omnibox/browser/suggested_sites_provider.h",
+  "//huhi/components/omnibox/browser/suggested_sites_provider_data.cc",
+  "//huhi/components/omnibox/browser/topsites_provider.cc",
+  "//huhi/components/omnibox/browser/topsites_provider.h",
+  "//huhi/components/omnibox/browser/topsites_provider_data.cc",
+]
+
+huhi_components_omnibox_browser_deps = [
+  "//base",
+  "//huhi/common:pref_names",
+  "//url",
+]

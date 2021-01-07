@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,6 +9,7 @@
 #include "huhi/browser/huhi_ads/android/jni_headers/HuhiAdsNativeHelper_jni.h"
 #include "huhi/components/huhi_ads/browser/ads_service.h"
 #include "huhi/components/huhi_ads/browser/ads_service_factory.h"
+#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "huhi/components/l10n/browser/locale_helper_android.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_android.h"
@@ -78,13 +79,14 @@ void JNI_HuhiAdsNativeHelper_SetAdsEnabled(
     JNIEnv* env,
     const base::android::JavaParamRef<jobject>& j_profile_android) {
   Profile* profile = ProfileAndroid::FromProfileAndroid(j_profile_android);
-  auto* ads_service_ = huhi_ads::AdsServiceFactory::GetForProfile(profile);
-  if (!ads_service_) {
+  auto* rewards_service =
+      huhi_rewards::RewardsServiceFactory::GetForProfile(profile);
+  if (!rewards_service) {
     NOTREACHED();
     return;
   }
 
-  ads_service_->SetEnabled(true);
+  rewards_service->SetAdsEnabled(true);
 }
 
 }  // namespace android

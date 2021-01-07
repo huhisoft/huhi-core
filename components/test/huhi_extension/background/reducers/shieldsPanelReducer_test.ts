@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -27,14 +27,14 @@ import { initialState } from '../../../testData'
 import * as deepFreeze from 'deep-freeze-node'
 import * as actions from '../../../../huhi_extension/extension/huhi_extension/actions/shieldsPanelActions'
 
-const origin = 'https://huhisoft.com'
+const origin = 'https://hnq.vn'
 const windowId = 1
 const tabId = 2
 
 const details: ShieldDetails = {
   id: tabId,
   origin,
-  hostname: 'huhisoft.com',
+  hostname: 'hnq.vn',
   httpUpgradableResources: 'block',
   javascript: 'block',
   trackers: 'block',
@@ -116,7 +116,7 @@ describe('huhiShieldsPanelReducer', () => {
       shieldsPanelReducer(initialState.shieldsPanel, {
         type: webNavigationTypes.ON_COMMITTED,
         tabId: tabId,
-        url: 'https://www.huhisoft.com',
+        url: 'https://www.hnq.vn',
         isMainFrame: true
       })
       expect(spy).toBeCalledTimes(1)
@@ -126,7 +126,7 @@ describe('huhiShieldsPanelReducer', () => {
       shieldsPanelReducer(initialState.shieldsPanel, {
         type: webNavigationTypes.ON_COMMITTED,
         tabId: tabId,
-        url: 'https://www.huhisoft.com',
+        url: 'https://www.hnq.vn',
         isMainFrame: false
       })
       expect(spy).not.toBeCalled()
@@ -135,18 +135,18 @@ describe('huhiShieldsPanelReducer', () => {
       shieldsPanelReducer(initialState.shieldsPanel, {
         type: webNavigationTypes.ON_COMMITTED,
         tabId: tabId,
-        url: 'https://www.huhisoft.com',
+        url: 'https://www.hnq.vn',
         isMainFrame: true
       })
       expect(resetNoScriptInfoSpy).toBeCalledTimes(1)
       expect(resetNoScriptInfoSpy.mock.calls[0][1]).toBe(tabId)
-      expect(resetNoScriptInfoSpy.mock.calls[0][2]).toBe('https://www.huhisoft.com')
+      expect(resetNoScriptInfoSpy.mock.calls[0][2]).toBe('https://www.hnq.vn')
     })
     it('does not call resetNoScriptInfo when isMainFrame is false', () => {
       shieldsPanelReducer(initialState.shieldsPanel, {
         type: webNavigationTypes.ON_COMMITTED,
         tabId: tabId,
-        url: 'https://www.huhisoft.com',
+        url: 'https://www.hnq.vn',
         isMainFrame: false
       })
       expect(resetNoScriptInfoSpy).not.toBeCalled()
@@ -155,7 +155,7 @@ describe('huhiShieldsPanelReducer', () => {
       shieldsPanelReducer(initialState.shieldsPanel, {
         type: webNavigationTypes.ON_COMMITTED,
         tabId: tabId,
-        url: 'https://www.huhisoft.com',
+        url: 'https://www.hnq.vn',
         isMainFrame: true
       })
       expect(spy).toBeCalledTimes(1)
@@ -165,7 +165,7 @@ describe('huhiShieldsPanelReducer', () => {
       shieldsPanelReducer(initialState.shieldsPanel, {
         type: webNavigationTypes.ON_COMMITTED,
         tabId: tabId,
-        url: 'https://www.huhisoft.com',
+        url: 'https://www.hnq.vn',
         isMainFrame: false
       })
       expect(spy).not.toBeCalled()
@@ -202,7 +202,7 @@ describe('huhiShieldsPanelReducer', () => {
         1: tabId
       },
       tabs: {
-        [tabId]: { url: 'https://huhisoft.com' }
+        [tabId]: { url: 'https://hnq.vn' }
       }
     })
     beforeEach(() => {
@@ -455,7 +455,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'javascript',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com/index.js'
+          subresource: 'https://test.hnq.vn/index.js'
         }
       })
 
@@ -467,7 +467,7 @@ describe('huhiShieldsPanelReducer', () => {
             ...state.tabs[2],
             javascriptBlocked: 1,
             noScriptInfo: {
-              'https://test.huhisoft.com/index.js': { actuallyBlocked: true, willBlock: true, userInteracted: false }
+              'https://test.hnq.vn/index.js': { actuallyBlocked: true, willBlock: true, userInteracted: false }
             }
           }
         }
@@ -525,7 +525,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'fingerprinting',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       })
       expect(nextState).toEqual({
@@ -535,7 +535,7 @@ describe('huhiShieldsPanelReducer', () => {
           2: {
             ...state.tabs[2],
             fingerprintingBlocked: 1,
-            fingerprintingBlockedResources: [ 'https://test.huhisoft.com' ]
+            fingerprintingBlockedResources: [ 'https://test.hnq.vn' ]
           }
         }
       })
@@ -546,7 +546,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'ads',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       })
       expect(nextState).toEqual({
@@ -556,7 +556,7 @@ describe('huhiShieldsPanelReducer', () => {
           2: {
             ...state.tabs[2],
             adsBlocked: 1,
-            adsBlockedResources: [ 'https://test.huhisoft.com' ]
+            adsBlockedResources: [ 'https://test.hnq.vn' ]
           }
         }
       })
@@ -566,7 +566,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'ads',
           tabId: 2,
-          subresource: 'https://test2.huhisoft.com'
+          subresource: 'https://test2.hnq.vn'
         }
       })
       expect(nextState).toEqual({
@@ -577,8 +577,8 @@ describe('huhiShieldsPanelReducer', () => {
             ...state.tabs[2],
             adsBlocked: 2,
             adsBlockedResources: [
-              'https://test.huhisoft.com',
-              'https://test2.huhisoft.com'
+              'https://test.hnq.vn',
+              'https://test2.hnq.vn'
             ]
           }
         }
@@ -591,11 +591,11 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'ads',
           tabId: tabId,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       })
       expect(nextState.tabs[tabId].adsBlockedResources).toEqual(
-        [ 'https://test.huhisoft.com' ]
+        [ 'https://test.hnq.vn' ]
       )
 
       nextState = shieldsPanelReducer(nextState, {
@@ -603,13 +603,13 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'ads',
           tabId: tabId,
-          subresource: 'https://test2.huhisoft.com'
+          subresource: 'https://test2.hnq.vn'
         }
       })
       expect(nextState.tabs[tabId].adsBlockedResources).toEqual(
         [
-          'https://test.huhisoft.com',
-          'https://test2.huhisoft.com'
+          'https://test.hnq.vn',
+          'https://test2.hnq.vn'
         ]
       )
 
@@ -618,13 +618,13 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'ads',
           tabId: tabId,
-          subresource: 'https://test2.huhisoft.com'
+          subresource: 'https://test2.hnq.vn'
         }
       })
       expect(nextState.tabs[tabId].adsBlockedResources).toEqual(
         [
-          'https://test.huhisoft.com',
-          'https://test2.huhisoft.com'
+          'https://test.hnq.vn',
+          'https://test2.hnq.vn'
         ]
       )
     })
@@ -634,7 +634,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'ads',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       }))
       expect(nextState).toEqual({
@@ -645,7 +645,7 @@ describe('huhiShieldsPanelReducer', () => {
             ...state.tabs[2],
             adsBlocked: 1,
             adsBlockedResources: [
-              'https://test.huhisoft.com'
+              'https://test.hnq.vn'
             ]
           }
         }
@@ -656,7 +656,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'ads',
           tabId: 3,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       })
 
@@ -667,7 +667,7 @@ describe('huhiShieldsPanelReducer', () => {
           2: {
             ...state.tabs[2],
             adsBlocked: 1,
-            adsBlockedResources: [ 'https://test.huhisoft.com' ]
+            adsBlockedResources: [ 'https://test.hnq.vn' ]
           },
           3: {
             fingerprintingBlocked: 0,
@@ -679,7 +679,7 @@ describe('huhiShieldsPanelReducer', () => {
             trackersBlocked: 0,
             trackersBlockedResources: [],
             adsBlocked: 1,
-            adsBlockedResources: [ 'https://test.huhisoft.com' ]
+            adsBlockedResources: [ 'https://test.hnq.vn' ]
           }
         }
       })
@@ -690,7 +690,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'ads',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       }))
       expect(nextState).toEqual({
@@ -700,7 +700,7 @@ describe('huhiShieldsPanelReducer', () => {
           2: {
             ...state.tabs[2],
             adsBlocked: 1,
-            adsBlockedResources: [ 'https://test.huhisoft.com' ]
+            adsBlockedResources: [ 'https://test.hnq.vn' ]
           }
         }
       })
@@ -710,7 +710,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'trackers',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       })
 
@@ -722,8 +722,8 @@ describe('huhiShieldsPanelReducer', () => {
             ...state.tabs[2],
             adsBlocked: 1,
             trackersBlocked: 1,
-            trackersBlockedResources: [ 'https://test.huhisoft.com' ],
-            adsBlockedResources: [ 'https://test.huhisoft.com' ]
+            trackersBlockedResources: [ 'https://test.hnq.vn' ],
+            adsBlockedResources: [ 'https://test.hnq.vn' ]
           }
         }
       })
@@ -733,7 +733,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'httpUpgradableResources',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       })
       expect(nextState).toEqual({
@@ -745,9 +745,9 @@ describe('huhiShieldsPanelReducer', () => {
             adsBlocked: 1,
             trackersBlocked: 1,
             httpsRedirected: 1,
-            trackersBlockedResources: [ 'https://test.huhisoft.com' ],
-            adsBlockedResources: [ 'https://test.huhisoft.com' ],
-            httpsRedirectedResources: [ 'https://test.huhisoft.com' ]
+            trackersBlockedResources: [ 'https://test.hnq.vn' ],
+            adsBlockedResources: [ 'https://test.hnq.vn' ],
+            httpsRedirectedResources: [ 'https://test.hnq.vn' ]
           }
         }
       })
@@ -756,7 +756,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'javascript',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com/index.js'
+          subresource: 'https://test.hnq.vn/index.js'
         }
       })
       expect(nextState).toEqual({
@@ -770,11 +770,11 @@ describe('huhiShieldsPanelReducer', () => {
             httpsRedirected: 1,
             javascriptBlocked: 1,
             noScriptInfo: {
-              'https://test.huhisoft.com/index.js': { actuallyBlocked: true, willBlock: true, userInteracted: false }
+              'https://test.hnq.vn/index.js': { actuallyBlocked: true, willBlock: true, userInteracted: false }
             },
-            trackersBlockedResources: [ 'https://test.huhisoft.com' ],
-            adsBlockedResources: [ 'https://test.huhisoft.com' ],
-            httpsRedirectedResources: [ 'https://test.huhisoft.com' ]
+            trackersBlockedResources: [ 'https://test.hnq.vn' ],
+            adsBlockedResources: [ 'https://test.hnq.vn' ],
+            httpsRedirectedResources: [ 'https://test.hnq.vn' ]
           }
         }
       })
@@ -783,7 +783,7 @@ describe('huhiShieldsPanelReducer', () => {
         details: {
           blockType: 'fingerprinting',
           tabId: 2,
-          subresource: 'https://test.huhisoft.com'
+          subresource: 'https://test.hnq.vn'
         }
       })
       expect(nextState).toEqual({
@@ -798,12 +798,12 @@ describe('huhiShieldsPanelReducer', () => {
             javascriptBlocked: 1,
             fingerprintingBlocked: 1,
             noScriptInfo: {
-              'https://test.huhisoft.com/index.js': { actuallyBlocked: true, willBlock: true, userInteracted: false }
+              'https://test.hnq.vn/index.js': { actuallyBlocked: true, willBlock: true, userInteracted: false }
             },
-            trackersBlockedResources: [ 'https://test.huhisoft.com' ],
-            adsBlockedResources: [ 'https://test.huhisoft.com' ],
-            fingerprintingBlockedResources: [ 'https://test.huhisoft.com' ],
-            httpsRedirectedResources: [ 'https://test.huhisoft.com' ]
+            trackersBlockedResources: [ 'https://test.hnq.vn' ],
+            adsBlockedResources: [ 'https://test.hnq.vn' ],
+            fingerprintingBlockedResources: [ 'https://test.hnq.vn' ],
+            httpsRedirectedResources: [ 'https://test.hnq.vn' ]
           }
         }
       })

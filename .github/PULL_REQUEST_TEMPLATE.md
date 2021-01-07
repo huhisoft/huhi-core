@@ -17,12 +17,13 @@ Resolves
   - [ ] Linux
   - [ ] macOS
   - [ ] Windows
-- [ ] Verified that all lint errors/warnings are resolved (`npm run lint`)
+- [ ] Verified that all lint errors/warnings are resolved (`npm run lint`, `npm run gn_check`)
 - [ ] Ran `git rebase master` (if needed).
 - [ ] Ran `git rebase -i` to squash commits (if needed).
 - [ ] Tagged reviewers and labelled the pull request as needed.
-- [ ] Request a security/privacy review as needed.
-- [ ] Add appropriate QA labels (QA/Yes or QA/No) to include the closed issue in milestone
+- [ ] Requested a security/privacy review as needed.
+- [ ] Added appropriate QA labels (`QA/Yes` or `QA/No`) to the associated issue
+- [ ] Added appropriate release note labels (`release-notes/include` or `release-notes/exclude`) to the associated issue
 - [ ] Public documentation has been updated as necessary. For instance:
   - [ ] https://github.com/huhisoft/huhi-browser/wiki/Deviations-from-Chromium-(features-we-disable-or-remove)
   - [ ] https://github.com/huhisoft/huhi-browser/wiki/Proxy-redirected-URLs

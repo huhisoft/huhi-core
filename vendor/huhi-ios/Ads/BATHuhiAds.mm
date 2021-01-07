@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,6 +10,7 @@
 
 #import "bat/ads/ads.h"
 #import "bat/ads/database.h"
+#import "bat/ads/pref_names.h"
 
 #import "NativeAdsClient.h"
 #import "NativeAdsClientBridge.h"
@@ -21,6 +22,7 @@
 
 #import "base/strings/sys_string_conversions.h"
 #import "huhi/base/containers/utils.h"
+#import "base/base64.h"
 
 #import "RewardsLogging.h"
 
@@ -28,17 +30,24 @@
   + (__type)__objc_getter { return ads::__cpp_var; } \
   + (void)__objc_setter:(__type)newValue { ads::__cpp_var = newValue; }
 
-static const NSInteger kDefaultNumberOfAdsPerDay = 20;
+static const NSInteger kDefaultNumberOfAdsPerDay = 40;
 static const NSInteger kDefaultNumberOfAdsPerHour = 2;
 
 static const int kCurrentUserModelManifestSchemaVersion = 1;
 
-static NSString * const kAdsEnabledPrefKey = @"BATAdsEnabled";
-static NSString * const kNumberOfAdsPerDayKey = @"BATNumberOfAdsPerDay";
-static NSString * const kNumberOfAdsPerHourKey = @"BATNumberOfAdsPerHour";
-static NSString * const kShouldAllowAdsSubdivisionTargetingPrefKey = @"BATShouldAllowAdsSubdivisionTargetingPrefKey";
-static NSString * const kAdsSubdivisionTargetingCodePrefKey = @"BATAdsSubdivisionTargetingCodePrefKey";
-static NSString * const kAutomaticallyDetectedAdsSubdivisionTargetingCodePrefKey = @"BATAutomaticallyDetectedAdsSubdivisionTargetingCodePrefKey";
+static NSString * const kLegacyAdsEnabledPrefKey = @"BATAdsEnabled";
+static NSString * const kLegacyNumberOfAdsPerDayKey = @"BATNumberOfAdsPerDay";
+static NSString * const kLegacyNumberOfAdsPerHourKey = @"BATNumberOfAdsPerHour";
+static NSString * const kLegacyShouldAllowAdsSubdivisionTargetingPrefKey = @"BATShouldAllowAdsSubdivisionTargetingPrefKey";
+static NSString * const kLegacyAdsSubdivisionTargetingCodePrefKey = @"BATAdsSubdivisionTargetingCodePrefKey";
+static NSString * const kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey = @"BATAutoDetectedAdsSubdivisionTargetingCodePrefKey";
+
+static NSString * const kAdsEnabledPrefKey = [NSString stringWithUTF8String:ads::prefs::kEnabled];
+static NSString * const kNumberOfAdsPerHourKey = [NSString stringWithUTF8String:ads::prefs::kAdsPerHour];
+static NSString * const kNumberOfAdsPerDayKey = [NSString stringWithUTF8String:ads::prefs::kAdsPerDay];
+static NSString * const kShouldAllowAdsSubdivisionTargetingPrefKey = [NSString stringWithUTF8String:ads::prefs::kShouldAllowAdsSubdivisionTargeting];
+static NSString * const kAdsSubdivisionTargetingCodePrefKey = [NSString stringWithUTF8String:ads::prefs::kAdsSubdivisionTargetingCode];
+static NSString * const kAutoDetectedAdsSubdivisionTargetingCodePrefKey = [NSString stringWithUTF8String:ads::prefs::kAutoDetectedAdsSubdivisionTargetingCode];
 static NSString * const kUserModelMetadataPrefKey = @"BATUserModelMetadata";
 
 @interface BATAdNotification ()
@@ -80,6 +89,8 @@ static NSString * const kUserModelMetadataPrefKey = @"BATUserModelMetadata";
       self.prefs = [[NSMutableDictionary alloc] init];
       self.numberOfAllowableAdsPerDay = kDefaultNumberOfAdsPerDay;
       self.numberOfAllowableAdsPerHour = kDefaultNumberOfAdsPerHour;
+    } else {
+      [self migratePrefs];
     }
 
     [self setupNetworkMonitoring];
@@ -133,7 +144,14 @@ static NSString * const kUserModelMetadataPrefKey = @"BATUserModelMetadata";
 
 + (BOOL)isCurrentLocaleSupported
 {
-  return [self isSupportedLocale:[[NSLocale preferredLanguages] firstObject]];
+  return [self isSupportedLocale:[self currentLocaleCode]];
+}
+
++ (NSString *)currentLocaleCode
+{
+  const auto locale = NSLocale.currentLocale;
+  return [NSString stringWithFormat:@"%@_%@",
+          locale.languageCode, locale.countryCode];
 }
 
 BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
@@ -175,13 +193,23 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
 
     adsClient = new NativeAdsClient(self);
     ads = ads::Ads::CreateInstance(adsClient);
-    ads->Initialize(^(bool) {
-      [self periodicallyCheckForUserModelUpdates];
-
-      NSString *localeIdentifier = [[NSLocale preferredLanguages] firstObject];
-      NSLocale *locale = [NSLocale localeWithLocaleIdentifier:localeIdentifier];
-      [self registerUserModels:locale];
-    });
+    
+    if (!self.ledger) { return; }
+    [self.ledger currentWalletInfo:^(BATHuhiWallet * _Nullable wallet) {
+      if (!wallet || wallet.recoverySeed.count == 0) {
+        BLOG(0, @"Failed to obtain wallet information to initialize ads");
+        return;
+      }
+      std::vector<uint8_t> seed;
+      for (NSNumber *number in wallet.recoverySeed) {
+        seed.push_back(static_cast<uint8_t>(number.unsignedCharValue));
+      }
+      ads->OnWalletUpdated(wallet.paymentId.UTF8String, base::Base64Encode(seed));
+      ads->Initialize(^(bool) {
+        [self periodicallyCheckForUserModelUpdates];
+        [self registerUserModels];
+      });
+    }];
   }
 }
 
@@ -228,6 +256,7 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
 {
   self.prefs[kAdsEnabledPrefKey] = @(enabled);
   [self savePrefs];
+
   if (enabled) {
     [self initializeIfAdsEnabled];
   } else {
@@ -294,25 +323,62 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   ads->OnAdsSubdivisionTargetingCodeHasChanged();
 }
 
-- (NSString *)automaticallyDetectedSubdivisionTargetingCode
+- (NSString *)autoDetectedSubdivisionTargetingCode
 {
-  return (NSString *)self.prefs[kAutomaticallyDetectedAdsSubdivisionTargetingCodePrefKey] ?: @"";
+  return (NSString *)self.prefs[kAutoDetectedAdsSubdivisionTargetingCodePrefKey] ?: @"";
 }
 
-- (void)setAutomaticallyDetectedSubdivisionTargetingCode:(NSString *)automaticallyDetectedSubdivisionTargetingCode
+- (void)setAutoDetectedSubdivisionTargetingCode:(NSString *)autoDetectedSubdivisionTargetingCode
 {
-  self.prefs[kAutomaticallyDetectedAdsSubdivisionTargetingCodePrefKey] = automaticallyDetectedSubdivisionTargetingCode;
+  self.prefs[kAutoDetectedAdsSubdivisionTargetingCodePrefKey] = autoDetectedSubdivisionTargetingCode;
   [self savePrefs];
 }
 
 - (void)savePrefs
 {
+  NSDictionary *prefs = [self.prefs copy];
+  NSString *path = [[self prefsPath] copy];
   dispatch_async(self.prefsWriteThread, ^{
-    [self.prefs writeToFile:[self prefsPath] atomically:YES];
+    [prefs writeToURL:[NSURL fileURLWithPath:path isDirectory:NO] error:nil];
   });
 }
 
 #pragma mark -
+
+- (void)migratePrefs
+{
+  if ([self.prefs objectForKey:kLegacyAdsEnabledPrefKey]) {
+    self.prefs[kAdsEnabledPrefKey] = self.prefs[kLegacyAdsEnabledPrefKey];
+    [self.prefs removeObjectForKey:kLegacyAdsEnabledPrefKey];
+  }
+
+  if ([self.prefs objectForKey:kLegacyNumberOfAdsPerHourKey]) {
+    self.prefs[kNumberOfAdsPerHourKey] = self.prefs[kLegacyNumberOfAdsPerHourKey];
+    [self.prefs removeObjectForKey:kLegacyNumberOfAdsPerHourKey];
+  }
+
+  if ([self.prefs objectForKey:kLegacyNumberOfAdsPerDayKey]) {
+    self.prefs[kNumberOfAdsPerDayKey] = self.prefs[kLegacyNumberOfAdsPerDayKey];
+    [self.prefs removeObjectForKey:kLegacyNumberOfAdsPerDayKey];
+  }
+
+  if ([self.prefs objectForKey:kLegacyShouldAllowAdsSubdivisionTargetingPrefKey]) {
+    self.prefs[kShouldAllowAdsSubdivisionTargetingPrefKey] = self.prefs[kLegacyShouldAllowAdsSubdivisionTargetingPrefKey];
+    [self.prefs removeObjectForKey:kLegacyShouldAllowAdsSubdivisionTargetingPrefKey];
+  }
+
+  if ([self.prefs objectForKey:kLegacyAdsSubdivisionTargetingCodePrefKey]) {
+    self.prefs[kAdsSubdivisionTargetingCodePrefKey] = self.prefs[kLegacyAdsSubdivisionTargetingCodePrefKey];
+    [self.prefs removeObjectForKey:kLegacyAdsSubdivisionTargetingCodePrefKey];
+  }
+
+  if ([self.prefs objectForKey:kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey]) {
+    self.prefs[kAutoDetectedAdsSubdivisionTargetingCodePrefKey] = self.prefs[kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey];
+    [self.prefs removeObjectForKey:kLegacyAutoDetectedAdsSubdivisionTargetingCodePrefKey];
+  }
+
+  [self savePrefs];
+}
 
 - (void)setupNetworkMonitoring
 {
@@ -358,13 +424,13 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   const uint64_t from_timestamp = 0;
   const uint64_t to_timestamp = std::numeric_limits<uint64_t>::max();
 
-  const auto history = ads->GetAdsHistory(ads::AdsHistory::FilterType::kNone,
-      ads::AdsHistory::SortType::kNone, from_timestamp, to_timestamp);
+  const auto history = ads->GetAdsHistory(ads::AdsHistoryInfo::FilterType::kNone,
+      ads::AdsHistoryInfo::SortType::kNone, from_timestamp, to_timestamp);
 
   const auto dates = [[NSMutableArray<NSDate *> alloc] init];
-  for (const auto& entry : history.entries) {
+  for (const auto& item : history.items) {
     const auto date = [NSDate dateWithTimeIntervalSince1970:
-        entry.timestamp_in_seconds];
+        item.timestamp_in_seconds];
     [dates addObject:date];
   }
 
@@ -422,21 +488,30 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   ads->OnTabClosed((int32_t)tabId);
 }
 
-- (void)reportAdNotificationEvent:(NSString *)notificationUuid eventType:(BATAdNotificationEventType)eventType
+- (void)reportAdNotificationEvent:(NSString *)uuid eventType:(BATAdNotificationEventType)eventType
 {
   if (![self isAdsServiceRunning]) { return; }
-  ads->OnAdNotificationEvent(notificationUuid.UTF8String,
+  ads->OnAdNotificationEvent(uuid.UTF8String,
                              static_cast<ads::AdNotificationEventType>(eventType));
 }
 
-- (void)updateAdRewards:(BOOL)shouldReconcile
+- (void)reportNewTabPageAdEvent:(NSString *)wallpaperId creativeInstanceId:(NSString *)creativeInstanceId eventType:(BATNewTabPageAdEventType)eventType
 {
   if (![self isAdsServiceRunning]) { return; }
-  ads->UpdateAdRewards(shouldReconcile);
+  ads->OnNewTabPageAdEvent(wallpaperId.UTF8String,
+                           creativeInstanceId.UTF8String,
+                           static_cast<ads::NewTabPageAdEventType>(eventType));
+}
+
+- (void)reconcileAdRewards
+{
+  if (![self isAdsServiceRunning]) { return; }
+  ads->ReconcileAdRewards();
 }
 
 - (void)detailsForCurrentCycle:(void (^)(NSInteger adsReceived, double estimatedEarnings, NSDate *nextPaymentDate))completion
 {
+  if (![self isAdsServiceRunning]) { return; }
   ads->GetTransactionHistory(^(bool success, ads::StatementInfo list) {
     if (!success) {
       completion(0, 0, nil);
@@ -458,7 +533,7 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   if (![self isAdsServiceRunning]) { return; }
   ads->ToggleAdThumbUp(creativeInstanceId.UTF8String,
                        creativeSetID.UTF8String,
-                       ads::AdContent::LikeAction::kThumbsUp);
+                       ads::AdContentInfo::LikeAction::kThumbsUp);
 }
 
 - (void)toggleThumbsDownForAd:(NSString *)creativeInstanceId creativeSetID:(NSString *)creativeSetID
@@ -466,7 +541,7 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   if (![self isAdsServiceRunning]) { return; }
   ads->ToggleAdThumbDown(creativeInstanceId.UTF8String,
                          creativeSetID.UTF8String,
-                         ads::AdContent::LikeAction::kThumbsDown);
+                         ads::AdContentInfo::LikeAction::kThumbsDown);
 }
 
 #pragma mark - Configuration
@@ -543,6 +618,10 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
 
 - (BOOL)registerUserModelsForLanguageCode:(NSString *)languageCode
 {
+  if (!languageCode) {
+    return NO;
+  }
+  
   NSString *isoLanguageCode = [@"iso_639_1_" stringByAppendingString:[languageCode lowercaseString]];
 
   NSArray *languageCodeUserModelIds = [self.userModelPaths allKeysForObject:isoLanguageCode];
@@ -562,6 +641,10 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
 
 - (BOOL)registerUserModelsForCountryCode:(NSString *)countryCode
 {
+  if (!countryCode) {
+    return NO;
+  }
+  
   NSString *isoCountryCode = [@"iso_3166_1_" stringByAppendingString:[countryCode lowercaseString]];
 
   NSArray *countryCodeUserModelIds = [self.userModelPaths allKeysForObject:isoCountryCode];
@@ -579,14 +662,16 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   return YES;
 }
 
-- (void)registerUserModels:(NSLocale *)locale
+- (void)registerUserModels
 {
-  if (![self registerUserModelsForLanguageCode:locale.languageCode]) {
-    BLOG(1, @"%@ not supported for user model installer", locale.languageCode);
+  const auto currentLocale = [NSLocale currentLocale];
+  
+  if (![self registerUserModelsForLanguageCode:currentLocale.languageCode]) {
+    BLOG(1, @"%@ not supported for user model installer", currentLocale.languageCode);
   }
 
-  if (![self registerUserModelsForCountryCode:locale.countryCode]) {
-    BLOG(1, @"%@ not supported for user model installer", locale.countryCode);
+  if (![self registerUserModelsForCountryCode:currentLocale.countryCode]) {
+    BLOG(1, @"%@ not supported for user model installer", currentLocale.countryCode);
   }
 }
 
@@ -642,9 +727,9 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
 
   NSString *baseUrl;
   if (ads::_environment == ads::Environment::PRODUCTION) {
-    baseUrl = @"https://huhi-user-model-installer-input.huhisoft.com";
+    baseUrl = @"https://huhi-user-model-installer-input.s3.hnq.vn";
   } else {
-    baseUrl = @"https://huhi-user-model-installer-input-dev.huhisoft.com";
+    baseUrl = @"https://huhi-user-model-installer-input-dev.s3.huhisoftware.com";
   }
 
   NSString *userModelPath = self.userModelPaths[id] ?: @"";
@@ -859,12 +944,9 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   return [self.notificationsHandler shouldShowNotifications];
 }
 
-- (void)showNotification:(std::unique_ptr<ads::AdNotificationInfo>)info
+- (void)showNotification:(const ads::AdNotificationInfo &)info
 {
-  if (info.get() == nullptr) {
-    return;
-  }
-  const auto notification = [[BATAdNotification alloc] initWithNotificationInfo:*info];
+  const auto notification = [[BATAdNotification alloc] initWithNotificationInfo:info];
   [self.notificationsHandler showNotification:notification];
 }
 
@@ -893,14 +975,14 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   self.subdivisionTargetingCode = [NSString stringWithCString:subdivision_targeting_code.c_str() encoding:[NSString defaultCStringEncoding]];
 }
 
-- (std::string)automaticallyDetectedAdsSubdivisionTargetingCode
+- (std::string)autoDetectedAdsSubdivisionTargetingCode
 {
-  return std::string([self.automaticallyDetectedSubdivisionTargetingCode UTF8String]);
+  return std::string([self.autoDetectedSubdivisionTargetingCode UTF8String]);
 }
 
-- (void)setAutomaticallyDetectedAdsSubdivisionTargetingCode:(const std::string &)subdivision_targeting_code
+- (void)setAutoDetectedAdsSubdivisionTargetingCode:(const std::string &)subdivision_targeting_code
 {
-  self.automaticallyDetectedSubdivisionTargetingCode = [NSString stringWithCString:subdivision_targeting_code.c_str() encoding:[NSString defaultCStringEncoding]];
+  self.autoDetectedSubdivisionTargetingCode = [NSString stringWithCString:subdivision_targeting_code.c_str() encoding:[NSString defaultCStringEncoding]];
 }
 
 - (void)runDBTransaction:(ads::DBTransactionPtr)transaction callback:(ads::RunDBTransactionCallback)callback
@@ -924,6 +1006,93 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
 - (void)onAdRewardsChanged
 {
   // Not needed on iOS because ads do not show unless you are viewing a tab
+}
+
+- (void)setBooleanPref:(const std::string&)path value:(const bool)value
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  self.prefs[key] = @(value);
+  [self savePrefs];
+}
+
+- (bool)getBooleanPref:(const std::string&)path
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  return [self.prefs[key] boolValue];
+}
+
+- (void)setIntegerPref:(const std::string&)path value:(const int)value
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  self.prefs[key] = @(value);
+  [self savePrefs];
+}
+
+- (int)getIntegerPref:(const std::string&)path
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  return [self.prefs[key] intValue];
+}
+
+- (void)setDoublePref:(const std::string&)path value:(const double)value
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  self.prefs[key] = @(value);
+  [self savePrefs];
+}
+
+- (double)getDoublePref:(const std::string&)path
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  return [self.prefs[key] doubleValue];
+}
+
+- (void)setStringPref:(const std::string&)path value:(const std::string&)value
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  self.prefs[key] = [NSString stringWithUTF8String:value.c_str()];
+  [self savePrefs];
+}
+
+- (std::string)getStringPref:(const std::string&)path
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  const auto value = (NSString *)self.prefs[key];
+  if (!value) { return ""; }
+  return value.UTF8String;
+}
+
+- (void)setInt64Pref:(const std::string&)path value:(const int64_t)value
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  self.prefs[key] = @(value);
+  [self savePrefs];
+}
+
+- (int64_t)getInt64Pref:(const std::string&)path
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  return [self.prefs[key] longLongValue];
+}
+
+- (void)setUint64Pref:(const std::string&)path value:(const uint64_t)value
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  self.prefs[key] = @(value);
+  [self savePrefs];
+}
+
+- (uint64_t)getUint64Pref:(const std::string&)path
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  return [self.prefs[key] unsignedLongLongValue];
+}
+
+- (void)clearPref:(const std::string&)path
+{
+  const auto key = [NSString stringWithUTF8String:path.c_str()];
+  [self.prefs removeObjectForKey:key];
+  [self savePrefs];
 }
 
 #pragma mark - User Model Paths
@@ -1371,6 +1540,11 @@ BATClassAdsBridge(BOOL, isDebug, setDebug, _is_debug)
   });
 
   return  _paths;
+}
+
+- (void)recordP2AEvent:(const std::string&)name type:(const ads::P2AEventType)type value:(const std::string&)value
+{
+  // Not needed on iOS
 }
 
 @end

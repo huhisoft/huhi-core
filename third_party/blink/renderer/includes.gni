@@ -15,9 +15,28 @@ huhi_blink_renderer_modules_visibility = [
 ]
 
 huhi_blink_sub_modules = [
-  "//huhi/third_party/blink/renderer/modules/huhi"
+  "//huhi/third_party/blink/renderer/modules/huhi",
+  "//huhi/third_party/blink/renderer/modules/global_privacy_control"
 ]
 
 # common includes which can help minimize patches for
 # src/third_party/blink/renderer/modules/modules_idl_files.gni
-huhi_idl_imports = [ "//huhi/third_party/blink/renderer/modules/huhi/idls.gni" ]
+huhi_idl_imports = [
+  "//huhi/third_party/blink/renderer/modules/huhi/idls.gni",
+  "//huhi/third_party/blink/renderer/modules/global_privacy_control/idls.gni"
+]
+
+# common includes which can help minimize patches for
+# third_party/blink/renderer/bindings/idl_in_modules.gni
+huhi_static_idl_files_in_modules = [
+  "//huhi/third_party/blink/renderer/modules/huhi/huhi.idl",
+  "//huhi/third_party/blink/renderer/modules/huhi/navigator_huhi.idl",
+  "//huhi/third_party/blink/renderer/modules/global_privacy_control/navigator_global_privacy_control.idl",
+]
+
+# common includes which can help minimize patches for
+# third_party/blink/renderer/bindings/generated_in_modules.gni
+huhi_generated_interface_sources_in_modules = [
+  "$root_gen_dir/third_party/blink/renderer/bindings/modules/v8/v8_huhi.h",
+  "$root_gen_dir/third_party/blink/renderer/bindings/modules/v8/v8_huhi.cc",
+]

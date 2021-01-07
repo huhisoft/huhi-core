@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -52,6 +52,18 @@ RegisterPolymerTemplateModifications({
     } else {
       bookmarkBarToggle.insertAdjacentHTML('afterend', `
         <settings-huhi-appearance-toolbar prefs="{{prefs}}"></settings-huhi-appearance-toolbar>
+      `)
+    }
+    const zoomLevel = templateContent.getElementById('zoomLevel')
+    if (!zoomLevel || !zoomLevel.parentNode) {
+      console.error(`[Huhi Settings Overrides] Couldn't find zoomLevel`)
+    } else {
+      zoomLevel.parentNode.insertAdjacentHTML('afterend', `
+        <settings-toggle-button
+          class="hr"
+          pref="{{prefs.huhi.mru_cycling_enabled}}"
+          label="${I18nBehavior.i18n('mruCyclingSettingLabel')}">
+        </settings-toggle-button>
       `)
     }
     // Super referral themes prefs

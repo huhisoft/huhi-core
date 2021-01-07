@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+ * Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  */
@@ -34,9 +34,9 @@ public class HuhiOnboardingNotification extends BroadcastReceiver {
 
     private static final int HUHI_ONBOARDING_NOTIFICATION_ID = -2;
     private static String HUHI_ONBOARDING_NOTIFICATION_TAG = "huhi_onboarding_notification_tag";
-    private static String HUHI_ONBOARDING_ORIGIN_EN = "https://huhisoft.com/my-first-ad/";
-    private static String HUHI_ONBOARDING_ORIGIN_DE = "https://huhisoft.com/de/my-first-ad/";
-    private static String HUHI_ONBOARDING_ORIGIN_FR = "https://huhisoft.com/fr/my-first-ad/";
+    private static String HUHI_ONBOARDING_ORIGIN_EN = "https://hnq.vn/my-first-ad/";
+    private static String HUHI_ONBOARDING_ORIGIN_DE = "https://hnq.vn/de/my-first-ad/";
+    private static String HUHI_ONBOARDING_ORIGIN_FR = "https://hnq.vn/fr/my-first-ad/";
     public static final String DEEP_LINK = "deep_link";
 
     private static final String COUNTRY_CODE_DE = "de_DE";

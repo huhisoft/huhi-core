@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -32,13 +32,14 @@
 #include "components/embedder_support/switches.h"
 #include "components/feed/feed_feature_list.h"
 #include "components/language/core/common/language_experiments.h"
+#include "components/network_time/network_time_tracker.h"
 #include "components/offline_pages/core/offline_page_feature.h"
 #include "components/omnibox/common/omnibox_features.h"
 #include "components/password_manager/core/common/password_manager_features.h"
 #include "components/safe_browsing/core/features.h"
-#include "components/security_state/core/features.h"
 #include "components/sync/base/sync_base_switches.h"
 #include "components/translate/core/browser/translate_prefs.h"
+#include "components/variations/variations_switches.h"
 #include "content/public/common/content_features.h"
 #include "content/public/common/content_switches.h"
 #include "google_apis/gaia/gaia_switches.h"
@@ -63,19 +64,10 @@
 #endif
 
 namespace {
-// staging "https://sync-v2.huhisoft.com/v2" can be overriden by
+// staging "https://sync-v2.huhisoftware.com/v2" can be overriden by
 // switches::kSyncServiceURL manually
 const char kHuhiSyncServiceStagingURL[] =
-    "https://sync-v2.huhisoft.com/v2";
-#if defined(OFFICIAL_BUILD)
-// production
-const char kHuhiSyncServiceURL[] = "https://sync-v2.huhisoft.com/v2";
-#else
-// For local server development "http://localhost:8295/v2 can also be overriden
-// by switches::kSyncServiceURL
-// dev
-const char kHuhiSyncServiceURL[] = "https://sync-v2.huhi.software/v2";
-#endif
+    "https://sync-v2.huhisoftware.com/v2";
 }  // namespace
 
 #if !defined(CHROME_MULTIPLE_DLL_BROWSER)
@@ -187,7 +179,7 @@ bool HuhiMainDelegate::BasicStartupComplete(int* exit_code) {
                                    kHuhiOriginTrialsPublicKey);
   }
 
-  std::string huhi_sync_service_url = kHuhiSyncServiceURL;
+  std::string huhi_sync_service_url = HUHI_SYNC_ENDPOINT;
 #if defined(OS_ANDROID)
   AdjustSyncServiceUrlForAndroid(&huhi_sync_service_url);
 #endif  // defined(OS_ANDROID)
@@ -198,52 +190,64 @@ bool HuhiMainDelegate::BasicStartupComplete(int* exit_code) {
 
   command_line.AppendSwitchASCII(switches::kLsoUrl, kDummyUrl);
 
+#if defined(OFFICIAL_BUILD)
+  // Huhi variations
+  std::string kVariationsServerURL = HUHI_VARIATIONS_SERVER_URL;
+  command_line.AppendSwitchASCII(variations::switches::kVariationsServerURL,
+      kVariationsServerURL.c_str());
+  CHECK(!kVariationsServerURL.empty());
+#endif
+
   // Enabled features.
   std::unordered_set<const char*> enabled_features = {
       // Upgrade all mixed content
       blink::features::kMixedContentAutoupgrade.name,
       password_manager::features::kPasswordImport.name,
       net::features::kLegacyTLSEnforced.name,
-      // Remove URL bar mixed control and allow site specific override instead
-      features::kMixedContentSiteSetting.name,
-      // Warn about Mixed Content optionally blockable content
-      security_state::features::kPassiveMixedContentWarning.name,
       // Enable webui dark theme: @media (prefers-color-scheme: dark) is gated
-      // on
-      // this feature.
+      // on this feature.
       features::kWebUIDarkMode.name,
       blink::features::kPrefetchPrivacyChanges.name,
       blink::features::kReducedReferrerGranularity.name,
 #if defined(OS_WIN)
       features::kWinrtGeolocationImplementation.name,
 #endif
-      omnibox::kOmniboxContextMenuShowFullUrls.name,
   };
 
-  if (!base::CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kDisableDnsOverHttps)) {
-    enabled_features.insert(features::kDnsOverHttps.name);
-  }
-
   // Disabled features.
-  const std::unordered_set<const char*> disabled_features = {
+  std::unordered_set<const char*> disabled_features = {
     autofill::features::kAutofillEnableAccountWalletStorage.name,
     autofill::features::kAutofillServerCommunication.name,
     blink::features::kTextFragmentAnchor.name,
     features::kAllowPopupsDuringPageUnload.name,
+    features::kIdleDetection.name,
     features::kNotificationTriggers.name,
     features::kPrivacySettingsRedesign.name,
+    features::kSignedExchangeSubresourcePrefetch.name,
     features::kSmsReceiver.name,
-    features::kVideoPlaybackQuality.name,
     features::kTabHoverCards.name,
+    network_time::kNetworkTimeServiceQuerying.name,
     password_manager::features::kPasswordCheck.name,
     safe_browsing::kEnhancedProtection.name,
 #if defined(OS_ANDROID)
     feed::kInterestFeedContentSuggestions.name,
-    translate::kTranslateUI.name,
+    translate::kTranslate.name,
     offline_pages::kPrefetchingOfflinePagesFeature.name,
 #endif
   };
+
+#if defined(OS_WIN) || defined(OS_MAC) || defined(OS_ANDROID)
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+          switches::kDisableDnsOverHttps)) {
+    disabled_features.insert(features::kDnsOverHttps.name);
+  }
+#else
+  if (!base::CommandLine::ForCurrentProcess()->HasSwitch(
+          switches::kDisableDnsOverHttps)) {
+    enabled_features.insert(features::kDnsOverHttps.name);
+  }
+#endif
+
   command_line.AppendFeatures(enabled_features, disabled_features);
 
   bool ret = ChromeMainDelegate::BasicStartupComplete(exit_code);

@@ -1,0 +1,55 @@
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+source_set("farbling") {
+  check_includes = false
+  sources = [
+    "farbling_tab_helper.cc",
+    "farbling_tab_helper.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/components/huhi_shields/browser:browser",
+    "//components/version_info",
+    "//content/public/browser",
+    "//content/public/common",
+    "//chrome/common",
+    "//net",
+    "//third_party/blink/public/common",
+  ]
+}
+
+if (!is_android) {
+  source_set("browser_tests") {
+    testonly = true
+    check_includes = false
+    defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
+
+    sources = [
+      "huhi_enumeratedevices_farbling_browsertest.cc",
+      "huhi_navigator_devicememory_farbling_browsertest.cc",
+      "huhi_navigator_hardwareconcurrency_farbling_browsertest.cc",
+      "huhi_navigator_plugins_farbling_browsertest.cc",
+      "huhi_navigator_useragent_farbling_browsertest.cc",
+      "huhi_offscreencanvas_farbling_browsertest.cc",
+      "huhi_webaudio_farbling_browsertest.cc",
+      "huhi_webgl_farbling_browsertest.cc",
+    ]
+
+    deps = [
+      "//huhi/browser:browser_process",
+      "//huhi/common:pref_names",
+      "//huhi/components/huhi_component_updater/browser:browser",
+      "//huhi/components/huhi_shields/browser:browser",
+      "//chrome/browser",
+      "//chrome/browser/ui",
+      "//chrome/test:test_support",
+      "//chrome/test:test_support_ui",
+      "//components/permissions:permissions",
+      "//content/test:test_support",
+    ]
+  }
+}

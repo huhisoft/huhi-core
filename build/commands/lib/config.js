@@ -1,5 +1,5 @@
 'use strict'
-
+/* todo HNQ config api key */
 const path = require('path')
 const fs = require('fs')
 const assert = require('assert')
@@ -68,6 +68,7 @@ const Config = function () {
   this.signTarget = 'sign_app'
   this.buildTarget = 'huhi'
   this.rootDir = rootDir
+  this.isUniversalBinary = false
   this.scriptDir = path.join(this.rootDir, 'scripts')
   this.srcDir = path.join(this.rootDir, 'src')
   this.chromeVersion = this.getProjectVersion('chrome')
@@ -84,8 +85,7 @@ const Config = function () {
   this.targetOS = getNPMConfig(['target_os'])
   this.gypTargetArch = 'x64'
   this.targetApkBase ='classic'
-  /* TODO HuyNQ google api */
-  this.huhiGoogleApiKey = getNPMConfig(['huhi_google_api_key']) || 'AIzaSyCvnES5x2GAMq1wCFrINHHUcnAqQtJGIkU'
+  this.huhiGoogleApiKey = getNPMConfig(['huhi_google_api_key']) || 'AIzaSyAQfxPJiounkhOjODEO5ZieffeBv6yft2Q'
   this.googleApiEndpoint = getNPMConfig(['huhi_google_api_endpoint']) || 'https://www.googleapis.com/geolocation/v1/geolocate?key='
   this.googleDefaultClientId = getNPMConfig(['google_default_client_id']) || ''
   this.googleDefaultClientSecret = getNPMConfig(['google_default_client_secret']) || ''
@@ -93,11 +93,12 @@ const Config = function () {
   this.infuraProjectId = getNPMConfig(['huhi_infura_project_id']) || ''
   this.binanceClientId = getNPMConfig(['binance_client_id']) || ''
   this.geminiClientId = getNPMConfig(['gemini_client_id']) || ''
-  this.geminiClientSecret = getNPMConfig(['gemini_client_secret']) || ''
+  this.geminiClientSecret = getNPMConfig(['gemini_cliehuhi_stringsnt_secret']) || ''
+  this.huhiSyncEndpoint = getNPMConfig(['huhi_sync_endpoint']) || ''
   this.safeBrowsingApiEndpoint = getNPMConfig(['safebrowsing_api_endpoint']) || ''
   this.updaterProdEndpoint = getNPMConfig(['updater_prod_endpoint']) || ''
   this.updaterDevEndpoint = getNPMConfig(['updater_dev_endpoint']) || ''
-  this.webcompatReportApiEndpoint = getNPMConfig(['webcompat_report_api_endpoint']) || 'https://webcompat.huhisoft.com/1/webcompat'
+  this.webcompatReportApiEndpoint = getNPMConfig(['webcompat_report_api_endpoint']) || 'https://webcompat.hnq.vn/1/webcompat'
   this.chromePgoPhase = 0
   // this.buildProjects()
   this.huhiVersion = getNPMConfig(['version']) || '0.0.0'
@@ -106,13 +107,16 @@ const Config = function () {
   this.mac_signing_identifier = getNPMConfig(['mac_signing_identifier'])
   this.mac_installer_signing_identifier = getNPMConfig(['mac_installer_signing_identifier']) || ''
   this.mac_signing_keychain = getNPMConfig(['mac_signing_keychain']) || 'login'
-  this.mac_signing_output_prefix = 'signing'
+  this.sparkleDSAPrivateKeyFile = getNPMConfig(['sparkle_dsa_private_key_file']) || ''
+  this.sparkleEdDSAPrivateKey = getNPMConfig(['sparkle_eddsa_private_key']) || ''
+  this.sparkleEdDSAPublicKey = getNPMConfig(['sparkle_eddsa_public_key']) || ''
   this.notary_user = getNPMConfig(['notary_user']) || ''
   this.notary_password = getNPMConfig(['notary_password']) || ''
   this.channel = 'development'
   this.git_cache_path = getNPMConfig(['git_cache_path'])
   this.sccache = getNPMConfig(['sccache'])
   this.huhiStatsApiKey = getNPMConfig(['huhi_stats_api_key']) || ''
+  this.huhiStatsUpdaterUrl = getNPMConfig(['huhi_stats_updater_url']) || ''
   this.ignore_compile_failure = false
   this.enable_hangout_services_extension = true
   this.widevineVersion = getNPMConfig(['widevine', 'version'])
@@ -128,6 +132,7 @@ const Config = function () {
   this.huhiAndroidKeystoreName = getNPMConfig(['huhi_android_keystore_name'])
   this.huhiAndroidKeystorePassword = getNPMConfig(['huhi_android_keystore_password'])
   this.huhiAndroidKeyPassword = getNPMConfig(['huhi_android_key_password'])
+  this.huhiVariationsServerUrl = getNPMConfig(['huhi_variations_server_url']) || ''
 }
 
 Config.prototype.isOfficialBuild = function () {
@@ -161,6 +166,13 @@ Config.prototype.enableCDMHostVerification = function () {
   return enable
 }
 
+Config.prototype.isAsan = function () {
+  if (this.is_asan) {
+    return true
+  }
+  return false
+}
+
 Config.prototype.buildArgs = function () {
   const version = this.huhiVersion
   let version_parts = version.split('+')[0]
@@ -169,6 +181,9 @@ Config.prototype.buildArgs = function () {
   const chrome_version_parts = this.chromeVersion.split('.')
 
   let args = {
+    is_asan: this.isAsan(),
+    enable_full_stack_frames_for_profiling: this.isAsan(),
+    v8_enable_verify_heap: this.isAsan(),
     fieldtrial_testing_like_official_build: true,
     safe_browsing_mode: 1,
     huhi_services_key: this.huhiServicesKey,
@@ -177,13 +192,14 @@ Config.prototype.buildArgs = function () {
     // paths like widevine_cmdm_compoennt_installer.cc
     // use_jumbo_build: !this.officialBuild,
     is_component_build: this.isComponentBuild(),
+    is_universal_binary: this.isUniversalBinary,
     proprietary_codecs: true,
     ffmpeg_branding: "Chrome",
     branding_path_component: "huhi",
     enable_nacl: false,
     enable_widevine: true,
     target_cpu: this.targetArch,
-    is_official_build: this.isOfficialBuild(),
+    is_official_build: this.isOfficialBuild() && !this.isAsan(),
     is_debug: this.isDebug(),
     dcheck_always_on: this.isDcheckAlwaysOn(),
     huhi_channel: this.channel,
@@ -202,22 +218,21 @@ Config.prototype.buildArgs = function () {
     huhi_version_build: version_parts[2],
     chrome_version_string: this.chromeVersion,
     chrome_version_major: chrome_version_parts[0],
+    huhi_sync_endpoint: this.huhiSyncEndpoint,
     safebrowsing_api_endpoint: this.safeBrowsingApiEndpoint,
+    huhi_variations_server_url: this.huhiVariationsServerUrl,
     updater_prod_endpoint: this.updaterProdEndpoint,
     updater_dev_endpoint: this.updaterDevEndpoint,
     webcompat_report_api_endpoint: this.webcompatReportApiEndpoint,
     huhi_stats_api_key: this.huhiStatsApiKey,
+    huhi_stats_updater_url: this.huhiStatsUpdaterUrl,
     enable_hangout_services_extension: this.enable_hangout_services_extension,
     enable_cdm_host_verification: this.enableCDMHostVerification(),
     skip_signing: !this.shouldSign(),
     chrome_pgo_phase: this.chromePgoPhase,
-    // When enabled (see third_party/blink/renderer/config.gni), we end up with
-    // multiple files giving compilation error similar to:
-    // gen/third_party/blink/renderer/bindings/modules/v8/v8_shared_worker_global_scope.cc:4614:34:
-    // error: no member named 'isReportingObserversEnabled' in 'blink::ContextFeatureSettings'
-    // cs.chromium.org shows the same files not having any calls to isReportingObserversEnabled,
-    // which makes me think that Chromium also disables it in their builds.
-    use_blink_v8_binding_new_idl_interface: false,
+    sparkle_dsa_private_key_file: this.sparkleDSAPrivateKeyFile,
+    sparkle_eddsa_private_key: this.sparkleEdDSAPrivateKey,
+    sparkle_eddsa_public_key: this.sparkleEdDSAPublicKey,
     ...this.extraGnArgs,
   }
 
@@ -226,7 +241,6 @@ Config.prototype.buildArgs = function () {
       args.mac_signing_identifier = this.mac_signing_identifier
       args.mac_installer_signing_identifier = this.mac_installer_signing_identifier
       args.mac_signing_keychain = this.mac_signing_keychain
-      args.mac_signing_output_prefix = this.mac_signing_output_prefix
       if (this.notarize) {
         args.notarize = true
         args.notary_user = this.notary_user
@@ -245,7 +259,7 @@ Config.prototype.buildArgs = function () {
     args.tag_ap = this.tag_ap
   }
 
-  if (process.platform === 'win32' && this.build_delta_installer) {
+  if ((process.platform === 'win32' || process.platform === 'darwin') && this.build_delta_installer) {
     assert(this.last_chrome_installer, 'Need last_chrome_installer args for building delta installer')
     args.build_delta_installer = true
     args.last_chrome_installer = this.last_chrome_installer
@@ -314,6 +328,10 @@ Config.prototype.buildArgs = function () {
       args.symbol_level = 1
     }
 
+    // Feed is not used in Huhi
+    args.enable_feed_v1 = false
+    args.enable_feed_v2 = false
+
     // TODO(fixme)
     args.enable_tor = false
 
@@ -326,7 +344,6 @@ Config.prototype.buildArgs = function () {
     // not have a default value for this. But we'll
     // eventually want it on Android, so keeping CI
     // unchanged and deleting here for now.
-    delete args.binance_client_id
     delete args.gemini_client_id
     delete args.gemini_client_secret
   }
@@ -334,8 +351,8 @@ Config.prototype.buildArgs = function () {
   if (this.targetOS === 'ios') {
     args.target_os = 'ios'
     args.enable_dsyms = true
-    args.enable_stripping = args.enable_dsyms
-    args.use_xcode_clang = this.isOfficialBuild()
+    args.enable_stripping = !this.isDebug()
+    args.use_xcode_clang = false
     args.use_clang_coverage = false
     // Component builds are not supported for iOS:
     // https://chromium.googlesource.com/chromium/src/+/master/docs/component_build.md
@@ -362,12 +379,16 @@ Config.prototype.buildArgs = function () {
     delete args.huhi_google_api_endpoint
     delete args.huhi_google_api_key
     delete args.huhi_stats_api_key
+    delete args.huhi_stats_updater_url
     delete args.huhi_infura_project_id
     delete args.binance_client_id
     delete args.gemini_client_id
     delete args.gemini_client_secret
     delete args.huhi_services_key
     delete args.webcompat_report_api_endpoint
+    delete args.use_blink_v8_binding_new_idl_interface
+    delete args.v8_enable_verify_heap
+    delete args.huhi_variations_server_url
   }
 
   if (process.platform === 'win32') {
@@ -447,6 +468,11 @@ Config.prototype.getProjectRef = function (projectName) {
 }
 
 Config.prototype.update = function (options) {
+  if (options.universal) {
+    this.targetArch = 'arm64'
+    this.isUniversalBinary = true
+  }
+
   if (options.target_arch === 'x86') {
     this.targetArch = options.target_arch
     this.gypTargetArch = 'ia32'
@@ -469,6 +495,12 @@ Config.prototype.update = function (options) {
 
   if (options.target_os) {
     this.targetOS = options.target_os
+  }
+
+  if (options.is_asan) {
+    this.is_asan = true
+  } else {
+    this.is_asan = false
   }
 
   if (options.C) {
@@ -525,6 +557,10 @@ Config.prototype.update = function (options) {
 
   if (options.huhi_stats_api_key) {
     this.huhiStatsApiKey = options.huhi_stats_api_key
+  }
+
+  if (options.huhi_stats_updater_url) {
+    this.huhiStatsUpdaterUrl = options.huhi_stats_updater_url
   }
 
   if (options.channel) {

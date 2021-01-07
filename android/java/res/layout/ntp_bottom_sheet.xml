@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+<!--* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
@@ -46,7 +46,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:background="@drawable/blue_rounded_button"
-            android:text="@string/turn_on_huhi_ads"
+            android:text="@string/turn_on_earn_and_give"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:padding="8dp"

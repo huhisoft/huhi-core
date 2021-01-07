@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -43,7 +43,7 @@ export default class TorTab extends React.PureComponent<{}, State> {
               <Title>{locale.headerTorTitle}</Title>
               <Text>{locale.headerTorText}</Text>
               {/* <FakeButton
-                href='https://support.huhisoft.com/hc/en-us/articles/360018121491'
+                href='https://support.hnq.vn/hc/en-us/articles/360018121491'
                 target='_blank'
               >
                 {locale.headerTorButton}
@@ -60,12 +60,12 @@ export default class TorTab extends React.PureComponent<{}, State> {
           </Content>
           <Separator />
           <ButtonGroup>
-            <FakeButton settings={true} href='https://support.huhisoft.com/hc/en-us/articles/360018266171' target='_blank'>
+            <FakeButton settings={true} href='https://support.hnq.vn/hc/en-us/articles/360018266171' target='_blank'>
               <span>{locale.learnMore}</span>
               <OpenNewIcon />
             </FakeButton>
             {/* <Link
-              href='https://support.huhisoft.com/hc/en-us/articles/360018266171'
+              href='https://support.hnq.vn/hc/en-us/articles/360018266171'
               target='_blank'
             >
               {locale.learnMore}
@@ -81,7 +81,7 @@ export default class TorTab extends React.PureComponent<{}, State> {
           </Content>
           <Separator />
           <FakeButton
-            href='https://support.huhisoft.com/hc/en-us/articles/360018121491'
+            href='https://support.hnq.vn/hc/en-us/articles/360018121491'
             target='_blank'
           >
             {locale.boxTorButton}

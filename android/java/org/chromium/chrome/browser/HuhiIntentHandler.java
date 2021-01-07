@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -13,7 +13,7 @@ public class HuhiIntentHandler extends IntentHandler {
     private static final String CONNECTION_INFO_HELP_URL =
             "https://support.google.com/chrome?p=android_connection_info";
     private static final String HUHI_CONNECTION_INFO_HELP_URL =
-            "https://support.huhisoft.com/hc/en-us/articles/360018185871-How-do-I-check-if-a-site-s-connection-is-secure-";
+            "https://support.hnq.vn/hc/en-us/articles/360018185871-How-do-I-check-if-a-site-s-connection-is-secure-";
 
     public HuhiIntentHandler(Activity activity, IntentHandlerDelegate delegate) {
         super(activity, delegate);

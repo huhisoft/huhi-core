@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,10 +10,10 @@
 TEST(AdBlockRegionalServiceTest, UserModelLanguages) {
   std::vector<adblock::FilterList> catalog = std::vector<adblock::FilterList>();
   catalog.push_back(adblock::FilterList("uuid",
-                                        "https://huhisoft.com",
+                                        "https://hnq.vn",
                                         "Testing Filter List",
                                         {"fr"},
-                                        "https://support.huhisoft.com",
+                                        "https://support.hnq.vn",
                                         "componentid",
                                         "base64publickey",
                                         "Filter list for testing purposes"));

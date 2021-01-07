@@ -1,0 +1,17 @@
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+huhi_sync_protocol_bases = [
+  "huhi_device_info_specifics",
+]
+
+huhi_sync_protocol_sources = []
+huhi_sync_protocol_pyprotos = []
+
+foreach(base, huhi_sync_protocol_bases) {
+  huhi_sync_protocol_sources += [ "//huhi/components/sync/protocol/${base}.proto" ]
+  huhi_sync_protocol_pyprotos +=
+      [ "$root_out_dir/pyproto/components/sync/protocol/${base}_pb2.py" ]
+}

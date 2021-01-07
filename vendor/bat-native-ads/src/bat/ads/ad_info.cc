@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -13,5 +13,18 @@ AdInfo::AdInfo(
     const AdInfo& info) = default;
 
 AdInfo::~AdInfo() = default;
+
+bool AdInfo::IsValid() const {
+  if (type == AdType::kUndefined ||
+      creative_instance_id.empty() ||
+      creative_set_id.empty() ||
+      campaign_id.empty() ||
+      category.empty() ||
+      target_url.empty()) {
+    return false;
+  }
+
+  return true;
+}
 
 }  // namespace ads

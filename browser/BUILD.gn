@@ -1,19 +1,21 @@
 import("//huhi/build/config.gni")
 import("//huhi/components/binance/browser/buildflags/buildflags.gni")
-import("//huhi/components/huhi_together/buildflags/buildflags.gni")
-import("//huhi/components/moonpay/browser/buildflags/buildflags.gni")
-import("//huhi/components/gemini/browser/buildflags/buildflags.gni")
-import("//huhi/browser/tor/buildflags/buildflags.gni")
 import("//huhi/components/huhi_ads/browser/buildflags/buildflags.gni")
-import("//huhi/components/huhi_perf_predictor/browser/buildflags/buildflags.gni")
+import(
+    "//huhi/components/huhi_perf_predictor/browser/buildflags/buildflags.gni")
 import("//huhi/components/huhi_referrals/buildflags/buildflags.gni")
 import("//huhi/components/huhi_sync/buildflags/buildflags.gni")
-import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_together/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/buildflags/buildflags.gni")
 import("//huhi/components/huhi_wayback_machine/buildflags/buildflags.gni")
 import("//huhi/components/huhi_webtorrent/browser/buildflags/buildflags.gni")
+import("//huhi/components/crypto_dot_com/browser/buildflags/buildflags.gni")
+import("//huhi/components/gemini/browser/buildflags/buildflags.gni")
 import("//huhi/components/greaselion/browser/buildflags/buildflags.gni")
-import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/buildflags/buildflags.gni")
+import("//huhi/components/moonpay/browser/buildflags/buildflags.gni")
 import("//huhi/components/speedreader/buildflags.gni")
+import("//huhi/components/tor/buildflags/buildflags.gni")
 import("//build/buildflag_header.gni")
 import("//build/config/features.gni")
 import("//chrome/common/features.gni")
@@ -21,10 +23,6 @@ import("//components/gcm_driver/config.gni")
 import("//extensions/buildflags/buildflags.gni")
 import("//third_party/protobuf/proto_library.gni")
 import("//third_party/widevine/cdm/widevine.gni")
-
-declare_args() {
-  huhi_stats_api_key = ""
-}
 
 source_set("browser_process") {
   # Remove when https://github.com/huhisoft/huhi-browser/issues/10657 is resolved
@@ -34,17 +32,15 @@ source_set("browser_process") {
     "//huhi/browser/*",
     "//huhi:browser_dependencies",
     "//huhi/components/huhi_ads/test:*",
+    "//huhi/components/huhi_rewards/browser:testutil",
     "//huhi/components/huhi_rewards/test:*",
+    "//huhi/components/ipfs/test:*",
     "//huhi/test:*",
   ]
 
   sources = [
     "autocomplete/huhi_autocomplete_scheme_classifier.cc",
     "autocomplete/huhi_autocomplete_scheme_classifier.h",
-    "huhi_shields/ad_block_pref_service_factory.cc",
-    "huhi_shields/ad_block_pref_service_factory.h",
-    "huhi_shields/cookie_pref_service_factory.cc",
-    "huhi_shields/cookie_pref_service_factory.h",
     "huhi_browser_main_extra_parts.cc",
     "huhi_browser_main_extra_parts.h",
     "huhi_browser_main_parts.cc",
@@ -57,6 +53,10 @@ source_set("browser_process") {
     "huhi_local_state_prefs.h",
     "huhi_profile_prefs.cc",
     "huhi_profile_prefs.h",
+    "huhi_shields/ad_block_pref_service_factory.cc",
+    "huhi_shields/ad_block_pref_service_factory.h",
+    "huhi_shields/cookie_pref_service_factory.cc",
+    "huhi_shields/cookie_pref_service_factory.h",
     "huhi_tab_helpers.cc",
     "huhi_tab_helpers.h",
     "browser_context_keyed_service_factories.cc",
@@ -75,6 +75,8 @@ source_set("browser_process") {
     "search_engines/guest_window_search_engine_provider_service.h",
     "search_engines/private_window_search_engine_provider_service.cc",
     "search_engines/private_window_search_engine_provider_service.h",
+    "search_engines/search_engine_provider_service.cc",
+    "search_engines/search_engine_provider_service.h",
     "search_engines/search_engine_provider_service_factory.cc",
     "search_engines/search_engine_provider_service_factory.h",
     "search_engines/search_engine_provider_util.cc",
@@ -83,8 +85,8 @@ source_set("browser_process") {
     "search_engines/search_engine_tracker.h",
     "search_engines/tor_window_search_engine_provider_service.cc",
     "search_engines/tor_window_search_engine_provider_service.h",
-    "search_engines/search_engine_provider_service.cc",
-    "search_engines/search_engine_provider_service.h",
+    "sync/huhi_profile_sync_service_delegate.cc",
+    "sync/huhi_profile_sync_service_delegate.h",
     "update_util.cc",
     "update_util.h",
   ]
@@ -106,25 +108,28 @@ source_set("browser_process") {
 
   deps = [
     ":sparkle_buildflags",
-    ":stats_updater",
     ":version_info",
     "autoplay",
+    "huhi_stats:stats_updater",
+    "browsing_data",
     "content_settings",
     "download",
+    "ephemeral_storage",
+    "farbling",
     "net",
+    "ntp_background_images",
     "profiles",
     "renderer_context_menu",
+    "search",
+    "themes",
     "ui",
     "//base",
     "//huhi/browser/net",
     "//huhi/browser/notifications",
-    "//huhi/browser/tor:buildflags",
     "//huhi/browser/translate/buildflags",
     "//huhi/common",
     "//huhi/common:pref_names",
-    "//huhi/components/huhi_ads/browser",
     "//huhi/components/binance/browser/buildflags",
-    "//huhi/components/gemini/browser/buildflags",
     "//huhi/components/huhi_component_updater/browser",
     "//huhi/components/huhi_drm",
     "//huhi/components/huhi_referrals/buildflags",
@@ -132,20 +137,22 @@ source_set("browser_process") {
     "//huhi/components/huhi_shields/common",
     "//huhi/components/huhi_sync",
     "//huhi/components/huhi_together/browser",
-    "//huhi/components/huhi_wallet/browser/buildflags",
+    "//huhi/components/huhi_wallet/buildflags",
     "//huhi/components/huhi_wayback_machine:buildflags",
     "//huhi/components/huhi_webtorrent/browser/buildflags",
     "//huhi/components/content_settings/core/browser",
+    "//huhi/components/crypto_dot_com/browser/buildflags",
+    "//huhi/components/gemini/browser/buildflags",
     "//huhi/components/greaselion/browser/buildflags",
-    "//huhi/components/ipfs/browser/buildflags",
+    "//huhi/components/ipfs/buildflags",
     "//huhi/components/l10n/browser",
     "//huhi/components/moonpay/browser/buildflags",
     "//huhi/components/ntp_background_images/browser",
     "//huhi/components/ntp_tiles",
     "//huhi/components/p3a",
     "//huhi/components/resources",
-    "//huhi/components/services:huhi_content_manifest_overlays",
     "//huhi/components/speedreader:buildflags",
+    "//huhi/components/tor/buildflags",
     "//huhi/components/weekly_storage",
     "//huhi/services/network/public/cpp",
     "//chrome/common",
@@ -153,11 +160,11 @@ source_set("browser_process") {
     "//components/browsing_data/core",
     "//components/component_updater",
     "//components/content_settings/browser",
-    "//components/content_settings/core/common",
     "//components/content_settings/core/browser",
+    "//components/content_settings/core/common",
     "//components/embedder_support",
-    "//components/gcm_driver:gcm_driver",
     "//components/gcm_driver:gcm_buildflags",
+    "//components/gcm_driver:gcm_driver",
     "//components/keyed_service/content",
     "//components/metrics",
     "//components/password_manager/core/common",
@@ -169,6 +176,7 @@ source_set("browser_process") {
     "//components/services/patch/content",
     "//components/services/unzip/content",
     "//components/sessions",
+    "//components/sync_device_info",
     "//components/spellcheck/browser",
     "//components/unified_consent",
     "//components/update_client:patch_impl",
@@ -176,31 +184,16 @@ source_set("browser_process") {
     "//content/public/browser",
     "//content/public/common",
     "//extensions/buildflags",
-    "//huhi/chromium_src:browser",
-    "browsing_data",
-    "themes",
-    "ntp_background_images",
     "//services/network/public/cpp",
-    "//services/service_manager/embedder",
+    "//third_party/blink/public/common",
     "//third_party/blink/public/mojom:mojom_platform_headers",
     "//third_party/widevine/cdm:buildflags",
     "//ui/base",
   ]
 
-  if (enable_tor) {
-    sources += [
-      # TODO(bridiver) - change the directory for these
-      "extensions/huhi_tor_client_updater.cc",
-      "extensions/huhi_tor_client_updater.h",
-    ]
-    deps += [
-      "//third_party/re2",
-    ]
-  }
-
   if (huhi_wallet_enabled) {
     deps += [
-      "//huhi/components/huhi_wallet/browser",
+      "//huhi/components/huhi_wallet",
       "huhi_wallet",
     ]
   }
@@ -213,9 +206,7 @@ source_set("browser_process") {
   }
 
   if (enable_huhi_sync) {
-    deps += [
-      "//huhi/components/huhi_sync",
-    ]
+    deps += [ "//huhi/components/huhi_sync" ]
   }
 
   if (!is_android) {
@@ -230,72 +221,42 @@ source_set("browser_process") {
       "//huhi/app:huhi_generated_resources_grit",
     ]
   } else {
-    sources += [
-      "android/huhi_feature_list.cc",
-      "android/huhi_relaunch_utils.cc",
-      "android/huhi_shields_content_settings.cc",
-      "android/huhi_shields_content_settings.h",
-      "android/huhi_stats_updater_android.cc",
-    ]
-
-    if (huhi_ads_enabled) {
-      sources += [
-        "huhi_ads/android/huhi_ads_native_helper.cc",
-      ]
-
-      deps += [
-        "huhi_ads/android:jni_headers",
-      ]
-    }
-
-    if (enable_huhi_sync) {
-      sources += [
-        "android/huhi_sync_worker.cc",
-        "android/huhi_sync_worker.h",
-        "sync/huhi_sync_devices_android.cc",
-        "sync/huhi_sync_devices_android.h",
-      ]
-      deps += [
-        "//components/sync",
-        "//components/sync_device_info",
-      ]
-    }
-
-    deps += [
-      "//huhi/browser/android/preferences",
-      "//huhi/build/android:jni_headers",
-      "//chrome/android:jni_headers",
-      "//components/ntp_tiles",
-      "//components/translate/core/browser",
-    ]
+    deps += [ "android:android_browser_process" ]
   }
 
   if (binance_enabled) {
     sources += [
-      "binance/binance_service_factory.cc",
-      "binance/binance_service_factory.h",
       "binance/binance_protocol_handler.cc",
       "binance/binance_protocol_handler.h",
+      "binance/binance_service_factory.cc",
+      "binance/binance_service_factory.h",
     ]
 
     deps += [
       "//huhi/components/binance/browser",
       "//components/country_codes",
     ]
+
+    if (is_android) {
+      sources += [
+        "binance/android/binance_native_worker.cc",
+        "binance/android/binance_native_worker.h",
+      ]
+    }
   }
 
   if (gemini_enabled) {
     sources += [
-      "gemini/gemini_service_factory.cc",
-      "gemini/gemini_service_factory.h",
       "gemini/gemini_protocol_handler.cc",
       "gemini/gemini_protocol_handler.h",
+      "gemini/gemini_service_factory.cc",
+      "gemini/gemini_service_factory.h",
     ]
 
     deps += [
       "//base",
-      "//huhi/common",
       "//huhi/browser/profiles",
+      "//huhi/common",
       "//huhi/components/gemini/browser",
       "//components/country_codes",
       "//components/keyed_service/content",
@@ -306,35 +267,43 @@ source_set("browser_process") {
     ]
   }
 
+  if (crypto_dot_com_enabled) {
+    sources += [
+      "crypto_dot_com/crypto_dot_com_service_factory.cc",
+      "crypto_dot_com/crypto_dot_com_service_factory.h",
+    ]
+
+    deps += [
+      "//base",
+      "//huhi/browser/profiles",
+      "//huhi/components/crypto_dot_com/browser",
+      "//huhi/components/crypto_dot_com/common",
+      "//components/keyed_service/content",
+    ]
+  }
+
   if (ipfs_enabled) {
     sources += [
       "ipfs/content_browser_client_helper.cc",
       "ipfs/content_browser_client_helper.h",
-      "ipfs/ipfs_navigation_throttle.cc",
-      "ipfs/ipfs_navigation_throttle.h",
-      "ipfs/ipfs_service.cc",
-      "ipfs/ipfs_service.h",
       "ipfs/ipfs_service_factory.cc",
       "ipfs/ipfs_service_factory.h",
-      "ipfs/ipfs_service_observer.h",
       "ipfs/ipfs_tab_helper.cc",
       "ipfs/ipfs_tab_helper.h",
     ]
 
     deps += [
       "//huhi/browser/infobars",
-      "//huhi/components/ipfs/browser",
-      "//huhi/components/ipfs/common",
+      "//huhi/components/ipfs",
       "//huhi/components/services/ipfs/public/mojom",
+      "//components/user_prefs",
       "//extensions/browser",
       "//extensions/common",
     ]
   }
 
   if (huhi_together_enabled) {
-    deps += [
-      "//huhi/components/huhi_together/browser",
-    ]
+    deps += [ "//huhi/components/huhi_together/browser" ]
   }
 
   if (moonpay_enabled) {
@@ -347,8 +316,7 @@ source_set("browser_process") {
   if (enable_tor) {
     deps += [
       "//huhi/browser/tor",
-      "//huhi/components/services/tor/public/cpp:manifest",
-      "//huhi/common/tor:pref_names",
+      "//huhi/components/tor",
     ]
   }
 
@@ -357,7 +325,6 @@ source_set("browser_process") {
       "extensions",
       "//extensions/common:common_constants",
     ]
-
   }
 
   if (enable_huhi_referrals) {
@@ -368,31 +335,32 @@ source_set("browser_process") {
     deps += [
       "//huhi/components/huhi_referrals/browser",
       "//huhi/components/huhi_referrals/common",
+      "//huhi/components/huhi_stats/browser",
     ]
   }
 
   if (huhi_ads_enabled) {
     deps += [
+      "//huhi/components/huhi_ads/browser",
       "//huhi/components/huhi_user_model/browser",
-      "//huhi/components/services/bat_ads/public/cpp:manifest",
       "//components/dom_distiller/core",
     ]
   }
 
   if (huhi_rewards_enabled) {
     sources += [
-      "huhi_rewards/rewards_tab_helper.cc",
-      "huhi_rewards/rewards_tab_helper.h",
       "huhi_rewards/rewards_service_factory.cc",
       "huhi_rewards/rewards_service_factory.h",
+      "huhi_rewards/rewards_tab_helper.cc",
+      "huhi_rewards/rewards_tab_helper.h",
     ]
 
     if (enable_extensions) {
       sources += [
-        "huhi_rewards/extension_rewards_service_observer.cc",
-        "huhi_rewards/extension_rewards_service_observer.h",
         "huhi_rewards/extension_rewards_notification_service_observer.cc",
         "huhi_rewards/extension_rewards_notification_service_observer.h",
+        "huhi_rewards/extension_rewards_service_observer.cc",
+        "huhi_rewards/extension_rewards_service_observer.h",
       ]
     }
 
@@ -410,21 +378,16 @@ source_set("browser_process") {
 
     deps += [
       "//huhi/components/huhi_rewards/browser",
-      "//huhi/components/services/bat_ledger/public/cpp:manifest",
       "//huhi/vendor/bat-native-ledger:headers",
     ]
   }
 
   if (enable_huhi_webtorrent) {
-    deps += [
-      "//huhi/components/huhi_webtorrent/browser",
-    ]
+    deps += [ "//huhi/components/huhi_webtorrent/browser" ]
   }
 
   if (enable_huhi_wayback_machine) {
-    deps += [
-      "//huhi/components/huhi_wayback_machine",
-    ]
+    deps += [ "//huhi/components/huhi_wayback_machine" ]
   }
 
   if (enable_widevine) {
@@ -436,9 +399,7 @@ source_set("browser_process") {
   }
 
   if (enable_huhi_perf_predictor) {
-    deps += [
-      "//huhi/components/huhi_perf_predictor/browser",
-    ]
+    deps += [ "//huhi/components/huhi_perf_predictor/browser" ]
   }
 
   if (enable_speedreader) {
@@ -459,25 +420,19 @@ source_set("browser_process") {
       "//chrome/browser/google/switches.h",
     ]
 
-    deps += [
-      "//google_update",
-    ]
+    deps += [ "//google_update" ]
   }
 }
 
 buildflag_header("sparkle_buildflags") {
   header = "sparkle_buildflags.h"
-  flags = [
-    "ENABLE_SPARKLE=$enable_sparkle",
-  ]
+  flags = [ "ENABLE_SPARKLE=$enable_sparkle" ]
 }
 
 source_set("version_info") {
   # these are only for version_info.cc and should not be exposed as public configs
   configs += [ "//huhi/build:version" ]
-  defines = [
-    "HUHI_BROWSER_VERSION=\"$huhi_version\"",
-  ]
+  defines = [ "HUHI_BROWSER_VERSION=\"$huhi_version\"" ]
 
   sources = [
     "version_info.cc",
@@ -485,48 +440,16 @@ source_set("version_info") {
   ]
 }
 
-source_set("stats_updater") {
-  # Remove when https://github.com/huhisoft/huhi-browser/issues/10657 is resolved
-  check_includes = false
-  defines = [ "HUHI_STATS_API_KEY=\"$huhi_stats_api_key\"" ]
-
-  sources = [
-    "huhi_stats_updater.cc",
-    "huhi_stats_updater.h",
-    "huhi_stats_updater_params.cc",
-    "huhi_stats_updater_params.h",
-    "huhi_stats_updater_util.cc",
-    "huhi_stats_updater_util.h",
-  ]
-
-  deps = [
-    ":version_info",
-    "//huhi/common:pref_names",
-    "//huhi/components/huhi_referrals/buildflags",
-    "//chrome/common",
-  ]
-
-  if (enable_huhi_referrals) {
-    deps += [
-      "//huhi/components/huhi_referrals/common",
-    ]
-  }
-}
-
 source_set("browser") {
   visibility = [
     "//chrome/browser/*",
     "//huhi/browser/*",
     "//huhi:browser_dependencies",
-    "//huhi/test:*"
+    "//huhi/test:*",
   ]
 
-  deps = [
-    "//chrome/browser",
-  ]
+  deps = [ "//chrome/browser" ]
   if (enable_sparkle) {
-    deps += [
-      "//huhi/vendor/sparkle:sparkle_framework_bundle_data"
-    ]
+    deps += [ "//huhi/vendor/sparkle:sparkle_framework_bundle_data" ]
   }
 }

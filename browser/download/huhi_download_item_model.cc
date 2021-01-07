@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,7 +11,7 @@
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "components/strings/grit/components_strings.h"
-#include "content/public/common/origin_util.h"
+#include "third_party/blink/public/common/loader/network_utils.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/gfx/text_constants.h"
 #include "ui/gfx/text_elider.h"
@@ -54,7 +54,7 @@ base::string16 HuhiDownloadItemModel::GetOriginURLText(bool* is_secure) {
 
   std::string origin;
   if (gurl.is_valid()) {
-    *is_secure = content::IsOriginSecure(gurl);
+    *is_secure = blink::network_utils::IsOriginSecure(gurl);
     if (gurl.SchemeIs(url::kAboutScheme)) {
       origin = gurl.spec();
     } else {

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,11 +15,13 @@
 #include "huhi/browser/net/huhi_httpse_network_delegate_helper.h"
 #include "huhi/browser/net/huhi_site_hacks_network_delegate_helper.h"
 #include "huhi/browser/net/huhi_stp_util.h"
+#include "huhi/browser/net/global_privacy_control_network_delegate_helper.h"
 #include "huhi/browser/translate/buildflags/buildflags.h"
 #include "huhi/common/pref_names.h"
 #include "huhi/components/huhi_referrals/buildflags/buildflags.h"
 #include "huhi/components/huhi_rewards/browser/buildflags/buildflags.h"
 #include "huhi/components/huhi_webtorrent/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
 #include "chrome/browser/browser_process.h"
 #include "components/prefs/pref_change_registrar.h"
 #include "components/prefs/pref_service.h"
@@ -43,6 +45,10 @@
 
 #if BUILDFLAG(ENABLE_HUHI_TRANSLATE_GO)
 #include "huhi/browser/net/huhi_translate_redirect_network_delegate_helper.h"
+#endif
+
+#if BUILDFLAG(IPFS_ENABLED)
+#include "huhi/browser/net/ipfs_redirect_network_delegate_helper.h"
 #endif
 
 static bool IsInternalScheme(std::shared_ptr<huhi::HuhiRequestInfo> ctx) {
@@ -85,8 +91,17 @@ void HuhiRequestHandler::SetupCallbacks() {
   before_url_request_callbacks_.push_back(callback);
 #endif
 
+#if BUILDFLAG(IPFS_ENABLED)
+  callback = base::BindRepeating(ipfs::OnBeforeURLRequest_IPFSRedirectWork);
+  before_url_request_callbacks_.push_back(callback);
+#endif
+
   huhi::OnBeforeStartTransactionCallback start_transaction_callback =
       base::Bind(huhi::OnBeforeStartTransaction_SiteHacksWork);
+  before_start_transaction_callbacks_.push_back(start_transaction_callback);
+
+  start_transaction_callback =
+      base::Bind(huhi::OnBeforeStartTransaction_GlobalPrivacyControlWork);
   before_start_transaction_callbacks_.push_back(start_transaction_callback);
 
 #if BUILDFLAG(ENABLE_HUHI_REFERRALS)
@@ -224,10 +239,9 @@ void HuhiRequestHandler::RunNextCallback(
            ctx->next_url_request_index) {
       huhi::OnBeforeURLRequestCallback callback =
           before_url_request_callbacks_[ctx->next_url_request_index++];
-      huhi::ResponseCallback next_callback = base::Bind(
-          &HuhiRequestHandler::RunNextCallback,
-          weak_factory_.GetWeakPtr(),
-          ctx);
+      huhi::ResponseCallback next_callback =
+          base::Bind(&HuhiRequestHandler::RunNextCallback,
+                     weak_factory_.GetWeakPtr(), ctx);
       rv = callback.Run(next_callback, ctx);
       if (rv == net::ERR_IO_PENDING) {
         return;
@@ -241,10 +255,9 @@ void HuhiRequestHandler::RunNextCallback(
            ctx->next_url_request_index) {
       huhi::OnBeforeStartTransactionCallback callback =
           before_start_transaction_callbacks_[ctx->next_url_request_index++];
-      huhi::ResponseCallback next_callback = base::Bind(
-          &HuhiRequestHandler::RunNextCallback,
-          weak_factory_.GetWeakPtr(),
-          ctx);
+      huhi::ResponseCallback next_callback =
+          base::Bind(&HuhiRequestHandler::RunNextCallback,
+                     weak_factory_.GetWeakPtr(), ctx);
       rv = callback.Run(ctx->headers, next_callback, ctx);
       if (rv == net::ERR_IO_PENDING) {
         return;
@@ -257,10 +270,9 @@ void HuhiRequestHandler::RunNextCallback(
     while (headers_received_callbacks_.size() != ctx->next_url_request_index) {
       huhi::OnHeadersReceivedCallback callback =
           headers_received_callbacks_[ctx->next_url_request_index++];
-      huhi::ResponseCallback next_callback = base::Bind(
-          &HuhiRequestHandler::RunNextCallback,
-          weak_factory_.GetWeakPtr(),
-          ctx);
+      huhi::ResponseCallback next_callback =
+          base::Bind(&HuhiRequestHandler::RunNextCallback,
+                     weak_factory_.GetWeakPtr(), ctx);
       rv = callback.Run(ctx->original_response_headers,
                         ctx->override_response_headers,
                         ctx->allowed_unsafe_redirect_url, next_callback, ctx);
@@ -285,9 +297,9 @@ void HuhiRequestHandler::RunNextCallback(
       *ctx->new_url = GURL(ctx->new_url_spec);
     }
     if (ctx->blocked_by == huhi::kAdBlocked) {
-      if (ctx->cancel_request_explicitly) {
+      if (!ctx->ShouldMockRequest()) {
         RunCallbackForRequestIdentifier(ctx->request_identifier,
-                                        net::ERR_ABORTED);
+                                        net::ERR_BLOCKED_BY_CLIENT);
         return;
       }
     }

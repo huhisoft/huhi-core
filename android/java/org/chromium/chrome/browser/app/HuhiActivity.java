@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -27,6 +27,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import org.chromium.base.Log;
+import org.json.JSONException;
 import org.chromium.base.ApplicationStatus;
 import org.chromium.base.CommandLine;
 import org.chromium.base.ContextUtils;
@@ -37,6 +38,8 @@ import org.chromium.base.task.TaskTraits;
 import org.chromium.chrome.R;
 import org.chromium.chrome.browser.ApplicationLifetime;
 import org.chromium.chrome.browser.HuhiHelper;
+import org.chromium.chrome.browser.HuhiRewardsHelper;
+import org.chromium.chrome.browser.HuhiRewardsNativeWorker;
 import org.chromium.chrome.browser.HuhiSyncReflectionUtils;
 import org.chromium.chrome.browser.ChromeTabbedActivity;
 import org.chromium.chrome.browser.LaunchIntentDispatcher;
@@ -48,6 +51,7 @@ import org.chromium.chrome.browser.notifications.HuhiSetDefaultBrowserNotificati
 import org.chromium.chrome.browser.onboarding.OnboardingActivity;
 import org.chromium.chrome.browser.onboarding.OnboardingPrefManager;
 import org.chromium.chrome.browser.preferences.HuhiPreferenceKeys;
+import org.chromium.chrome.browser.preferences.HuhiPrefServiceBridge;
 import org.chromium.chrome.browser.preferences.Pref;
 import org.chromium.chrome.browser.preferences.SharedPreferencesManager;
 import org.chromium.chrome.browser.rate.RateDialogFragment;
@@ -64,9 +68,12 @@ import org.chromium.chrome.browser.tabmodel.TabModelUtils;
 import org.chromium.chrome.browser.toolbar.top.HuhiToolbarLayout;
 import org.chromium.chrome.browser.util.HuhiDbUtil;
 import org.chromium.chrome.browser.util.HuhiReferrer;
+import org.chromium.chrome.browser.widget.crypto.binance.BinanceAccountBalance;
+import org.chromium.chrome.browser.widget.crypto.binance.BinanceWidgetManager;
 import org.chromium.components.bookmarks.BookmarkId;
 import org.chromium.components.bookmarks.BookmarkType;
 import org.chromium.components.embedder_support.util.UrlConstants;
+import org.chromium.components.search_engines.TemplateUrl;
 import org.chromium.components.user_prefs.UserPrefs;
 import org.chromium.ui.widget.Toast;
 import org.chromium.chrome.browser.util.PackageUtils;
@@ -78,8 +85,11 @@ import org.chromium.chrome.browser.notifications.retention.RetentionNotification
 import org.chromium.chrome.browser.huhi_stats.HuhiStatsUtil;
 import org.chromium.chrome.browser.ntp.NewTabPage;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Huhi's extension for ChromeActivity
@@ -91,8 +101,12 @@ public abstract class HuhiActivity<C extends ChromeActivityComponent> extends Ch
     public static final int USER_WALLET_ACTIVITY_REQUEST_CODE = 35;
     public static final String ADD_FUNDS_URL = "chrome://rewards/#add-funds";
     public static final String REWARDS_SETTINGS_URL = "chrome://rewards/";
+    public static final String HUHI_REWARDS_SETTINGS_URL = "huhi://rewards/";
     public static final String REWARDS_AC_SETTINGS_URL = "chrome://rewards/contribute";
-    public static final String REWARDS_LEARN_MORE_URL = "https://huhisoft.com/faq-rewards/#unclaimed-funds";
+    public static final String REWARDS_LEARN_MORE_URL = "https://hnq.vn/faq-rewards/#unclaimed-funds";
+    public static final String HUHI_TERMS_PAGE =
+            "https://basicattentiontoken.org/user-terms-of-service/";
+    public static final String HUHI_PRIVACY_POLICY = "https://hnq.vn/privacy/#rewards";
     private static final String PREF_CLOSE_TABS_ON_EXIT = "close_tabs_on_exit";
     public static final String OPEN_URL = "open_url";
 
@@ -105,7 +119,10 @@ public abstract class HuhiActivity<C extends ChromeActivityComponent> extends Ch
     public static final String CHANNEL_ID = "com.huhi.browser";
     public static final String ANDROID_SETUPWIZARD_PACKAGE_NAME = "com.google.android.setupwizard";
     public static final String ANDROID_PACKAGE_NAME = "android";
-    public static final String HUHI_BLOG_URL = "http://www.huhisoft.com/blog";
+    public static final String HUHI_BLOG_URL = "http://www.hnq.vn/blog";
+
+    private static final List<String> yandexRegions =
+            Arrays.asList("AM", "AZ", "BY", "KG", "KZ", "MD", "RU", "TJ", "TM", "UZ");
 
     public HuhiActivity() {
         // Disable key checker to avoid asserts on Huhi keys in debug
@@ -208,8 +225,17 @@ public abstract class HuhiActivity<C extends ChromeActivityComponent> extends Ch
     public void finishNativeInitialization() {
         super.finishNativeInitialization();
 
+        if (HuhiRewardsHelper.hasRewardsEnvChange()) {
+            HuhiPrefServiceBridge.getInstance().resetPromotionLastFetchStamp();
+            HuhiRewardsHelper.setRewardsEnvChange(false);
+        }
+
         int appOpenCount = SharedPreferencesManager.getInstance().readInt(HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT);
         SharedPreferencesManager.getInstance().writeInt(HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT, appOpenCount + 1);
+
+        if (PackageUtils.isFirstInstall(this) && appOpenCount == 0) {
+            checkForYandexSE();
+        }
 
         //set bg ads to off for existing and new installations
         setBgHuhiAdsDefaultOff();
@@ -230,27 +256,31 @@ public abstract class HuhiActivity<C extends ChromeActivityComponent> extends Ch
         if (RateUtils.getInstance(this).shouldShowRateDialog())
             showHuhiRateDialog();
 
-        if (PackageUtils.isFirstInstall(this)
-                && SharedPreferencesManager.getInstance().readInt(HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT) == 1) {
-            Calendar calender = Calendar.getInstance();
-            calender.setTime(new Date());
-            calender.add(Calendar.DATE, DAYS_4);
-            OnboardingPrefManager.getInstance().setNextOnboardingDate(
-                calender.getTimeInMillis());
-        }
+        // TODO commenting out below code as we may use it in next release
 
-        OnboardingActivity onboardingActivity = null;
-        for (Activity ref : ApplicationStatus.getRunningActivities()) {
-            if (!(ref instanceof OnboardingActivity)) continue;
+        // if (PackageUtils.isFirstInstall(this)
+        //         &&
+        //         SharedPreferencesManager.getInstance().readInt(HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT)
+        //         == 1) {
+        //     Calendar calender = Calendar.getInstance();
+        //     calender.setTime(new Date());
+        //     calender.add(Calendar.DATE, DAYS_4);
+        //     OnboardingPrefManager.getInstance().setNextOnboardingDate(
+        //         calender.getTimeInMillis());
+        // }
 
-            onboardingActivity = (OnboardingActivity) ref;
-        }
+        // OnboardingActivity onboardingActivity = null;
+        // for (Activity ref : ApplicationStatus.getRunningActivities()) {
+        //     if (!(ref instanceof OnboardingActivity)) continue;
 
-        if (onboardingActivity == null
-                && OnboardingPrefManager.getInstance().showOnboardingForSkip(this)) {
-            OnboardingPrefManager.getInstance().showOnboarding(this);
-            OnboardingPrefManager.getInstance().setOnboardingShownForSkip(true);
-        }
+        //     onboardingActivity = (OnboardingActivity) ref;
+        // }
+
+        // if (onboardingActivity == null
+        //         && OnboardingPrefManager.getInstance().showOnboardingForSkip(this)) {
+        //     OnboardingPrefManager.getInstance().showOnboarding(this);
+        //     OnboardingPrefManager.getInstance().setOnboardingShownForSkip(true);
+        // }
 
         if (SharedPreferencesManager.getInstance().readInt(HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT) == 1) {
             Calendar calender = Calendar.getInstance();
@@ -279,6 +309,41 @@ public abstract class HuhiActivity<C extends ChromeActivityComponent> extends Ch
             RetentionNotificationUtil.scheduleNotification(this, RetentionNotificationUtil.DEFAULT_BROWSER_3);
             OnboardingPrefManager.getInstance().setOneTimeNotificationStarted(true);
         }
+        if (!TextUtils.isEmpty(BinanceWidgetManager.getInstance().getBinanceAccountBalance())) {
+            try {
+                BinanceWidgetManager.binanceAccountBalance = new BinanceAccountBalance(
+                        BinanceWidgetManager.getInstance().getBinanceAccountBalance());
+            } catch (JSONException e) {
+                Log.e("NTP", e.getMessage());
+            }
+        }
+
+        if (PackageUtils.isFirstInstall(this)
+                && SharedPreferencesManager.getInstance().readInt(
+                           HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT)
+                        == 1) {
+            Calendar calender = Calendar.getInstance();
+            calender.setTime(new Date());
+            calender.add(Calendar.DATE, DAYS_4);
+            HuhiRewardsHelper.setNextRewardsOnboardingModalDate(calender.getTimeInMillis());
+        }
+        if (HuhiRewardsHelper.shouldShowRewardsOnboardingModalOnDay4()) {
+            HuhiRewardsHelper.setShowHuhiRewardsOnboardingModal(true);
+            openRewardsPanel();
+            HuhiRewardsHelper.setRewardsOnboardingModalShown(true);
+        }
+    }
+
+    private void checkForYandexSE() {
+        String countryCode = Locale.getDefault().getCountry();
+        if (yandexRegions.contains(countryCode)) {
+            TemplateUrl yandexTemplateUrl =
+                    HuhiSearchEngineUtils.getTemplateUrlByShortName(OnboardingPrefManager.YANDEX);
+            if (yandexTemplateUrl != null) {
+                HuhiSearchEngineUtils.setDSEPrefs(yandexTemplateUrl, false);
+                HuhiSearchEngineUtils.setDSEPrefs(yandexTemplateUrl, true);
+            }
+        }
     }
 
     private void checkForNotificationData() {
@@ -296,7 +361,9 @@ public abstract class HuhiActivity<C extends ChromeActivityComponent> extends Ch
             case RetentionNotificationUtil.HUHI_STATS_ADS_TRACKERS:
             case RetentionNotificationUtil.HUHI_STATS_DATA:
             case RetentionNotificationUtil.HUHI_STATS_TIME:
-                if (!NewTabPage.isNTPUrl(getActivityTab().getUrlString())) {
+                if (getActivityTab() != null
+                    && getActivityTab().getUrlString() != null
+                    && !NewTabPage.isNTPUrl(getActivityTab().getUrlString())) {
                     getTabCreator(false).launchUrl(UrlConstants.NTP_URL, TabLaunchType.FROM_CHROME_UI);
                 }
                 break;

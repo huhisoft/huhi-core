@@ -1,8 +1,8 @@
 import("//build/config/features.gni")
 import("//huhi/components/huhi_wayback_machine/buildflags/buildflags.gni")
-import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/buildflags/buildflags.gni")
 import("//huhi/components/huhi_sync/buildflags/buildflags.gni")
-import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/buildflags/buildflags.gni")
 
 source_set("infobars") {
   # Remove when https://github.com/huhisoft/huhi-browser/issues/10649 is resolved
@@ -36,7 +36,7 @@ source_set("infobars") {
     deps += [
       "//huhi/browser/huhi_wallet:huhi_wallet",
       "//huhi/common:pref_names",
-      "//huhi/components/huhi_wallet/browser:browser",
+      "//huhi/components/huhi_wallet",
       "//components/user_prefs:user_prefs",
       "//extensions/common:common_constants",
     ]
@@ -48,8 +48,7 @@ source_set("infobars") {
       "ipfs_infobar_delegate.h",
     ]
     deps += [
-      "//huhi/components/ipfs/browser",
-      "//huhi/components/ipfs/common",
+      "//huhi/components/ipfs",
       "//components/user_prefs"
     ]
   }

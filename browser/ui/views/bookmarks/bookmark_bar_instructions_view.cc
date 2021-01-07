@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,6 +17,7 @@
 #include "ui/accessibility/ax_node_data.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/theme_provider.h"
+#include "ui/events/event.h"
 #include "ui/native_theme/native_theme.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/controls/link.h"
@@ -111,8 +112,7 @@ void BookmarkBarInstructionsView::GetAccessibleNodeData(
   instructions_->GetAccessibleNodeData(node_data);
 }
 
-void BookmarkBarInstructionsView::LinkClicked(views::Link* source,
-                                              int event_flags) {
+void BookmarkBarInstructionsView::LinkClicked() {
   chrome::ShowImportDialog(browser_);
 }
 

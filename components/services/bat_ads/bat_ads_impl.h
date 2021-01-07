@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -80,15 +80,19 @@ class BatAdsImpl :
       const std::string& uuid,
       const ads::AdNotificationEventType event_type) override;
 
+  void OnNewTabPageAdEvent(
+      const std::string& wallpaper_id,
+      const std::string& creative_instance_id,
+      const ads::NewTabPageAdEventType event_type) override;
+
   void RemoveAllHistory(
       RemoveAllHistoryCallback callback) override;
 
   void OnWalletUpdated(
       const std::string& payment_id,
-      const std::string& recovery_seed_base64) override;
+      const std::string& seed) override;
 
-  void UpdateAdRewards(
-      const bool should_reconcile) override;
+  void ReconcileAdRewards() override;
 
   void GetAdsHistory(
       const uint64_t from_timestamp,

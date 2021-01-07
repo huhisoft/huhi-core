@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,12 +9,12 @@
 #include <vector>
 
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/tor/buildflags.h"
 #include "huhi/browser/ui/huhi_browser_command_controller.h"
 #include "huhi/browser/ui/browser_commands.h"
 #include "huhi/components/huhi_rewards/browser/buildflags/buildflags.h"
 #include "huhi/components/huhi_sync/buildflags/buildflags.h"
-#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/app/chrome_command_ids.h"
 #include "chrome/browser/chrome_notification_types.h"
 #include "chrome/browser/profiles/profile.h"
@@ -197,6 +197,7 @@ IN_PROC_BROWSER_TEST_F(HuhiAppMenuBrowserTest, MenuOrderTest) {
   CheckCommandsAreDisabledInMenuModel(guest_browser,
                                       commands_disabled_for_guest_profile);
 
+#if BUILDFLAG(ENABLE_TOR)
   content::WindowedNotificationObserver tor_browser_creation_observer(
       chrome::NOTIFICATION_BROWSER_OPENED,
       content::NotificationService::AllSources());
@@ -215,9 +216,7 @@ IN_PROC_BROWSER_TEST_F(HuhiAppMenuBrowserTest, MenuOrderTest) {
     IDC_NEW_TOR_CONNECTION_FOR_SITE,
     IDC_NEW_WINDOW,
     IDC_NEW_INCOGNITO_WINDOW,
-#if BUILDFLAG(ENABLE_TOR)
     IDC_NEW_OFFTHERECORD_WINDOW_TOR,
-#endif
 #if BUILDFLAG(HUHI_REWARDS_ENABLED)
     IDC_SHOW_HUHI_REWARDS,
 #endif
@@ -251,4 +250,5 @@ IN_PROC_BROWSER_TEST_F(HuhiAppMenuBrowserTest, MenuOrderTest) {
                                      commands_in_order_for_tor_profile);
   CheckCommandsAreDisabledInMenuModel(tor_browser,
                                       commands_disabled_for_tor_profile);
+#endif
 }

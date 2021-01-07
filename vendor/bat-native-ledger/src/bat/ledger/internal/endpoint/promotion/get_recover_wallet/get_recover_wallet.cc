@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/get_recover_wallet/get_recover_wallet.h"
@@ -53,8 +53,9 @@ type::Result GetRecoverWallet::CheckStatusCode(const int status_code) {
 
 type::Result GetRecoverWallet::ParseBody(
     const std::string& body,
-    std::string* payment_id) {
-  DCHECK(payment_id);
+    std::string* payment_id,
+    bool* legacy_wallet) {
+  DCHECK(payment_id && legacy_wallet);
 
   base::Optional<base::Value> value = base::JSONReader::Read(body);
   if (!value || !value->is_dict()) {
@@ -74,6 +75,14 @@ type::Result GetRecoverWallet::ParseBody(
     return type::Result::LEDGER_ERROR;
   }
 
+  const auto* wallet_name =
+      dictionary->FindStringPath("walletProvider.name");
+  if (!wallet_name) {
+    BLOG(0, "Wallet name is missing");
+    return type::Result::LEDGER_ERROR;
+  }
+
+  *legacy_wallet = *wallet_name == "uphold";
   *payment_id = *payment_id_string;
   return type::Result::LEDGER_OK;
 }
@@ -97,15 +106,16 @@ void GetRecoverWallet::OnRequest(
   ledger::LogUrlResponse(__func__, response);
 
   std::string payment_id;
+  bool legacy_wallet = false;
   type::Result result = CheckStatusCode(response.status_code);
 
   if (result != type::Result::LEDGER_OK) {
-    callback(result, payment_id);
+    callback(result, payment_id, legacy_wallet);
     return;
   }
 
-  result = ParseBody(response.body, &payment_id);
-  callback(result, payment_id);
+  result = ParseBody(response.body, &payment_id, &legacy_wallet);
+  callback(result, payment_id, legacy_wallet);
 }
 
 }  // namespace promotion

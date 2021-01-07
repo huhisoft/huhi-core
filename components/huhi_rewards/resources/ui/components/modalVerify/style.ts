@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License. v. 2.0. If a copy of the MPL was not distributed with this file.
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -126,5 +126,11 @@ export const StyledNote = styled<{}, 'div'>('div')`
   font-size: 12px;
   line-height: 20px;
   color: ${p => p.theme.palette.whiteFade30};
+  margin-top: 15px;
+`
+
+export const NoteText = styled<{}, 'div'>('div')`
+  color: ${p => p.theme.palette.whiteFade15};
+  font-size: 12px;
   margin-top: 15px;
 `

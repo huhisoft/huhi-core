@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -26,7 +26,7 @@ HuhiTogetherIsSupportedFunction::Run() {
   }
 
   bool is_supported = ntp_widget_utils::IsRegionSupported(
-      profile->GetPrefs(), huhi_together::supported_regions, true);
+      profile->GetPrefs(), huhi_together::unsupported_regions, false);
   return RespondNow(OneArgument(
       std::make_unique<base::Value>(is_supported)));
 }

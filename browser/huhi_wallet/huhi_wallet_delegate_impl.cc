@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-+ * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
++ * This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 + * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,8 +10,7 @@
 #include "content/public/browser/browser_context.h"
 #include "extensions/browser/extension_system.h"
 
-HuhiWalletDelegateImpl::~HuhiWalletDelegateImpl() {
-}
+HuhiWalletDelegateImpl::~HuhiWalletDelegateImpl() {}
 
 void HuhiWalletDelegateImpl::LoadCryptoWalletsExtension(
     content::BrowserContext* context) {
@@ -19,7 +18,7 @@ void HuhiWalletDelegateImpl::LoadCryptoWalletsExtension(
       extensions::ExtensionSystem::Get(context)->extension_service();
   if (service) {
     extensions::ComponentLoader* loader = service->component_loader();
-    static_cast<extensions::HuhiComponentLoader*>(loader)->
-        AddEthereumRemoteClientExtension();
+    static_cast<extensions::HuhiComponentLoader*>(loader)
+        ->AddEthereumRemoteClientExtension();
   }
 }

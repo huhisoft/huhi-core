@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 3.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -50,6 +50,34 @@ void JNI_HuhiPrefServiceBridge_SetHTTPSEEnabled(
       enabled,
       GURL(),
       g_browser_process->local_state());
+}
+
+void JNI_HuhiPrefServiceBridge_SetThirdPartyGoogleLoginEnabled(
+    JNIEnv* env,
+    jboolean enabled) {
+  GetOriginalProfile()->GetPrefs()->SetBoolean(
+      kGoogleLoginControlType, enabled);
+}
+
+void JNI_HuhiPrefServiceBridge_SetThirdPartyFacebookEmbedEnabled(
+    JNIEnv* env,
+    jboolean enabled) {
+  GetOriginalProfile()->GetPrefs()->SetBoolean(
+      kFBEmbedControlType, enabled);
+}
+
+void JNI_HuhiPrefServiceBridge_SetThirdPartyTwitterEmbedEnabled(
+    JNIEnv* env,
+    jboolean enabled) {
+  GetOriginalProfile()->GetPrefs()->SetBoolean(
+      kTwitterEmbedControlType, enabled);
+}
+
+void JNI_HuhiPrefServiceBridge_SetThirdPartyLinkedinEmbedEnabled(
+    JNIEnv* env,
+    jboolean enabled) {
+  GetOriginalProfile()->GetPrefs()->SetBoolean(
+      kLinkedInEmbedControlType, enabled);
 }
 
 void JNI_HuhiPrefServiceBridge_SetAdBlockEnabled(
@@ -193,6 +221,11 @@ void JNI_HuhiPrefServiceBridge_SetUseRewardsStagingServer(
     jboolean enabled) {
   GetOriginalProfile()->GetPrefs()->SetBoolean(
       huhi_rewards::prefs::kUseRewardsStagingServer, enabled);
+}
+
+void JNI_HuhiPrefServiceBridge_ResetPromotionLastFetchStamp(JNIEnv* env) {
+  GetOriginalProfile()->GetPrefs()->SetUint64(
+      huhi_rewards::prefs::kPromotionLastFetchStamp, 0);
 }
 
 jboolean JNI_HuhiPrefServiceBridge_GetUseRewardsStagingServer(JNIEnv* env) {

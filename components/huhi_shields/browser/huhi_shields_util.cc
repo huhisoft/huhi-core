@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -432,11 +432,20 @@ void DispatchBlockedEvent(const GURL& request_url,
 #endif
 }
 
+bool ShouldCleanReferrerForTopLevelNavigation(const std::string& method,
+                                              const GURL& referrer_url,
+                                              const GURL& request_url) {
+  // See https://github.com/huhisoft/huhi-browser/issues/8696
+  return ((method == "GET" || method == "HEAD") &&
+      !net::registry_controlled_domains::SameDomainOrHost(
+          referrer_url, request_url,
+          net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES));
+}
+
 bool MaybeChangeReferrer(
     bool allow_referrers,
     bool shields_up,
     const GURL& current_referrer,
-    const GURL& tab_origin,
     const GURL& target_url,
     network::mojom::ReferrerPolicy policy,
     Referrer* output_referrer) {

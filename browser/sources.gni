@@ -1,0 +1,28 @@
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+import("//huhi/browser/huhi_wallet/sources.gni")
+import("//huhi/browser/importer/sources.gni")
+import("//huhi/browser/new_tab/sources.gni")
+import("//huhi/browser/themes/sources.gni")
+
+huhi_chrome_browser_sources = []
+huhi_chrome_browser_sources += huhi_browser_themes_sources
+huhi_chrome_browser_sources += huhi_browser_wallet_sources
+huhi_chrome_browser_sources += huhi_chrome_browser_importer_sources
+huhi_chrome_browser_sources += huhi_browser_new_tab_sources
+
+huhi_chrome_browser_deps = [
+  "//huhi/browser:browser_process",
+]
+huhi_chrome_browser_deps += huhi_browser_themes_deps
+huhi_chrome_browser_deps += huhi_browser_wallet_deps
+huhi_chrome_browser_deps += huhi_chrome_browser_importer_deps
+huhi_chrome_browser_deps += huhi_browser_new_tab_deps
+
+huhi_chrome_browser_public_deps = [
+  "//huhi/components/huhi_sync:constants",
+  "//huhi/components/variations:constants",
+]

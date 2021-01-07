@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -26,20 +26,14 @@ SKUHuhi::~SKUHuhi() = default;
 
 void SKUHuhi::Process(
     const std::vector<type::SKUOrderItem>& items,
-    type::ExternalWalletPtr wallet,
+    const std::string& wallet_type,
     ledger::SKUOrderCallback callback,
     const std::string& contribution_id) {
-  if (!wallet) {
-    BLOG(0, "Wallet is null");
-    callback(type::Result::LEDGER_ERROR, "");
-    return;
-  }
-
   auto create_callback = std::bind(&SKUHuhi::OrderCreated,
       this,
       _1,
       _2,
-      *wallet,
+      wallet_type,
       contribution_id,
       callback);
 
@@ -49,7 +43,7 @@ void SKUHuhi::Process(
 void SKUHuhi::OrderCreated(
     const type::Result result,
     const std::string& order_id,
-    const type::ExternalWallet& wallet,
+    const std::string& wallet_type,
     const std::string& contribution_id,
     ledger::SKUOrderCallback callback) {
   if (result != type::Result::LEDGER_OK) {
@@ -62,7 +56,7 @@ void SKUHuhi::OrderCreated(
       this,
       _1,
       order_id,
-      wallet,
+      wallet_type,
       callback);
 
   ledger_->database()->SaveContributionIdForSKUOrder(
@@ -74,7 +68,7 @@ void SKUHuhi::OrderCreated(
 void SKUHuhi::ContributionIdSaved(
     const type::Result result,
     const std::string& order_id,
-    const type::ExternalWallet& wallet,
+    const std::string& wallet_type,
     ledger::SKUOrderCallback callback) {
   if (result != type::Result::LEDGER_OK) {
     BLOG(0, "Contribution id not saved");
@@ -85,7 +79,7 @@ void SKUHuhi::ContributionIdSaved(
   auto get_callback = std::bind(&SKUHuhi::CreateTransaction,
       this,
       _1,
-      wallet,
+      wallet_type,
       callback);
 
   ledger_->database()->GetSKUOrder(order_id, get_callback);
@@ -93,7 +87,7 @@ void SKUHuhi::ContributionIdSaved(
 
 void SKUHuhi::CreateTransaction(
     type::SKUOrderPtr order,
-    const type::ExternalWallet& wallet,
+    const std::string& wallet_type,
     ledger::SKUOrderCallback callback) {
   if (!order) {
     BLOG(0, "Order not found");
@@ -101,24 +95,29 @@ void SKUHuhi::CreateTransaction(
     return;
   }
 
-  const std::string destination = GetHuhiDestination(wallet.type);
+  const std::string destination = GetHuhiDestination(wallet_type);
 
-  common_->CreateTransaction(std::move(order), destination, wallet, callback);
+  common_->CreateTransaction(
+      std::move(order),
+      destination,
+      wallet_type,
+      callback);
 }
 
 void SKUHuhi::Retry(
     const std::string& order_id,
-    type::ExternalWalletPtr wallet,
+    const std::string& wallet_type,
     ledger::SKUOrderCallback callback) {
   if (order_id.empty()) {
     BLOG(0, "Order id is empty");
     callback(type::Result::LEDGER_ERROR, "");
     return;
   }
+
   auto get_callback = std::bind(&SKUHuhi::OnOrder,
       this,
       _1,
-      *wallet,
+      wallet_type,
       callback);
 
   ledger_->database()->GetSKUOrder(order_id, get_callback);
@@ -126,7 +125,7 @@ void SKUHuhi::Retry(
 
 void SKUHuhi::OnOrder(
     type::SKUOrderPtr order,
-    const type::ExternalWallet& wallet,
+    const std::string& wallet_type,
     ledger::SKUOrderCallback callback) {
   if (!order) {
     BLOG(0, "Order is null");
@@ -139,7 +138,7 @@ void SKUHuhi::OnOrder(
       ContributionIdSaved(
           type::Result::LEDGER_OK,
           order->order_id,
-          wallet,
+          wallet_type,
           callback);
       return;
     }

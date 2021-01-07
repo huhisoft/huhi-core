@@ -18,7 +18,7 @@ index 074d57d45118499caf6ba1a215e81240c98733b3..e895da5f3fd58c8f08dc0f87d7703b64
    RPM_COMMON_DEPS="${OUTPUTDIR}/rpm_common.deps"
    DEPENDS=$(cat "${RPM_COMMON_DEPS}" | tr '\n' ',')
 +
-+  # Ensure that our signing key is up-to-date (huhi/huhi-browser#4205).
++  # Ensure that our signing key is up-to-date (huhisoft/huhi-browser#4205).
 +  if [ "$CHANNEL" = "stable" ]; then
 +    DEPENDS="huhi-keyring, ${DEPENDS}"
 +  fi

@@ -1,4 +1,4 @@
-// This Source Code Form is subject to the terms of the Huhi Software
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -170,9 +170,6 @@ base::SingleThreadTaskExecutor* g_task_executor = nullptr;
 
 - (void)onTabRetrieved:(NSInteger)tabId url:(NSURL *)url faviconURL:(nullable NSURL *)faviconURL html:(nullable NSString *)html
 {
-  // Check for private mode should be done on client side.
-  if (!self.ledger.walletCreated || !self.ledger.isEnabled) { return; }
-  
   // New publisher database entry will be created if the pub doesn't exist.
   [self.ledger fetchPublisherActivityFromURL:url faviconURL:faviconURL publisherBlob:html tabId:tabId];
 }

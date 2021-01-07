@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -18,6 +18,7 @@ import './default_browser_page.js'
 import './icons.js'
 import './import_data_dialog.js'
 import './page_visibility.js'
+import './passwords_section.js'
 import './payments_section.js'
 import './people_page.js'
 import './printing_page.js'

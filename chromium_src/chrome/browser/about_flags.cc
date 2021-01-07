@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,12 +11,13 @@
 #include "huhi/components/huhi_component_updater/browser/features.h"
 #include "huhi/components/huhi_shields/common/features.h"
 #include "huhi/components/huhi_sync/buildflags/buildflags.h"
-#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
 #include "huhi/components/ntp_background_images/browser/features.h"
 #include "huhi/components/speedreader/buildflags.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_manager.h"
 #include "components/prefs/pref_service.h"
+#include "third_party/blink/public/common/features.h"
 
 using huhi_shields::features::kHuhiAdblockCosmeticFiltering;
 using ntp_background_images::features::kHuhiNTPBrandedWallpaper;
@@ -49,7 +50,7 @@ using ntp_background_images::features::kHuhiNTPSuperReferralWallpaper;
 #endif
 
 #if BUILDFLAG(IPFS_ENABLED)
-#include "huhi/components/ipfs/browser/features.h"
+#include "huhi/components/ipfs/features.h"
 
 #define HUHI_IPFS_FEATURE_ENTRIES                                         \
     {"huhi-ipfs",                                                         \
@@ -84,7 +85,11 @@ using ntp_background_images::features::kHuhiNTPSuperReferralWallpaper;
      flag_descriptions::kHuhiSuperReferralName,                           \
      flag_descriptions::kHuhiSuperReferralDescription,                    \
      flags_ui::kOsMac | flags_ui::kOsWin | flags_ui::kOsAndroid,           \
-     FEATURE_VALUE_TYPE(kHuhiNTPSuperReferralWallpaper)},
+     FEATURE_VALUE_TYPE(kHuhiNTPSuperReferralWallpaper)},                 \
+    {"huhi-ephemeral-storage",                                            \
+     flag_descriptions::kHuhiEphemeralStorageName,                        \
+     flag_descriptions::kHuhiEphemeralStorageDescription, kOsAll,         \
+     FEATURE_VALUE_TYPE(blink::features::kHuhiEphemeralStorage)},
 
 #define SetFeatureEntryEnabled SetFeatureEntryEnabled_ChromiumImpl
 #include "../../../../chrome/browser/about_flags.cc"  // NOLINT

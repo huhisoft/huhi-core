@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -28,6 +28,7 @@ const char kUpholdAnonAddress[] =
     "huhi.rewards.uphold_anon_address";
 const char kBadgeText[] = "huhi.rewards.badge_text";
 const char kUseRewardsStagingServer[] = "huhi.rewards.use_staging_server";
+const char kOnboarded[] = "huhi.rewards.onboarded";
 const char kPromotionLastFetchStamp[] =
     "huhi.rewards.promotion_last_fetch_stamp";
 const char kPromotionCorruptedMigrated[] =
@@ -63,5 +64,9 @@ const char kFetchOldBalance[] =
     "huhi.rewards.fetch_old_balance";
 const char kEmptyBalanceChecked[] =
     "huhi.rewards.empty_balance_checked";
+const char kWalletHuhi[] =
+    "huhi.rewards.wallets.huhi";
+const char kWalletUphold[] =
+    "huhi.rewards.wallets.uphold";
 }  // namespace prefs
 }  // namespace huhi_rewards

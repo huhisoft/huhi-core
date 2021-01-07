@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -42,7 +42,7 @@ class HuhiSpellingOptionsSubMenuObserverTest : public InProcessBrowserTest {
                  HuhiSpellingOptionsSubMenuObserver::GTEST_MODE_NORMAL) {
     Clear();
     menu_.reset(new HuhiMockRenderViewContextMenu(
-        incognito ? browser()->profile()->GetOffTheRecordProfile()
+        incognito ? browser()->profile()->GetPrimaryOTRProfile()
                   : browser()->profile()));
     std::unique_ptr<HuhiSpellingOptionsSubMenuObserver> observer =
         std::make_unique<HuhiSpellingOptionsSubMenuObserver>(menu_.get(),

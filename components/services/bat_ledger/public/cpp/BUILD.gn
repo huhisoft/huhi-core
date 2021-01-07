@@ -10,17 +10,3 @@ source_set("cpp") {
     "//huhi/vendor/bat-native-ledger",
   ]
 }
-
-source_set("manifest") {
-  sources = [
-    "manifest.cc",
-    "manifest.h",
-  ]
-
-  deps = [
-    "//base",
-    "//huhi/base",
-    "//services/service_manager/public/cpp",
-    "//huhi/components/services/bat_ledger/public/interfaces",
-  ]
-}

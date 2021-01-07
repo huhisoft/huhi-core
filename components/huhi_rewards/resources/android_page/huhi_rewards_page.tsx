@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -49,24 +49,12 @@ window.cr.define('huhi_rewards', function () {
     return newActions
   }
 
-  function walletCreated () {
-    getActions().onWalletCreated()
-  }
-
-  function walletCreateFailed () {
-    getActions().onWalletCreateFailed()
-  }
-
   function rewardsParameters (properties: Rewards.RewardsParameters) {
     getActions().onRewardsParameters(properties)
   }
 
   function promotions (properties: Rewards.PromotionResponse) {
     getActions().onPromotions(properties)
-  }
-
-  function walletPassphrase (pass: string) {
-    getActions().onWalletPassphrase(pass)
   }
 
   function promotionFinish (properties: Rewards.PromotionFinish) {
@@ -87,10 +75,6 @@ window.cr.define('huhi_rewards', function () {
 
   function balanceReport (properties: {month: number, year: number, report: Rewards.BalanceReport}) {
     getActions().onBalanceReport(properties)
-  }
-
-  function walletExists (exists: boolean) {
-    getActions().onWalletExists(exists)
   }
 
   function contributionAmount (amount: number) {
@@ -117,10 +101,6 @@ window.cr.define('huhi_rewards', function () {
     if (result === 0) {
       getActions().getPendingContributions()
     }
-  }
-
-  function rewardsEnabled (enabled: boolean) {
-    getActions().onRewardsEnabled(enabled)
   }
 
   function transactionHistory (data: {adsEstimatedPendingRewards: number, adsNextPaymentDate: string, adsNotificationsReceivedThisMonth: number}) {
@@ -184,17 +164,13 @@ window.cr.define('huhi_rewards', function () {
 
   return {
     initialize,
-    walletCreated,
-    walletCreateFailed,
     rewardsParameters,
     promotions,
-    walletPassphrase,
     promotionFinish,
     reconcileStamp,
     contributeList,
     excludedList,
     balanceReport,
-    walletExists,
     contributionAmount,
     recurringTips,
     currentTips,
@@ -202,7 +178,6 @@ window.cr.define('huhi_rewards', function () {
     adsData,
     pendingContributions,
     onPendingContributionSaved,
-    rewardsEnabled,
     transactionHistory,
     transactionHistoryChanged,
     recurringTipSaved,

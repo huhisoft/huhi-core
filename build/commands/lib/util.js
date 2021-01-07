@@ -334,19 +334,25 @@ const util = {
 
       const androidIconSource = path.join(huhiAppDir, 'theme', 'huhi', 'android', androidIconSet)
       const androidIconDest = path.join(config.srcDir, 'chrome', 'android', 'java', 'res_chromium')
+      const androidIconBaseSource = path.join(huhiAppDir, 'theme', 'huhi', 'android', androidIconSet + '_base')
+      const androidIconBaseDest = path.join(config.srcDir, 'chrome', 'android', 'java', 'res_chromium_base')
       const androidResSource = path.join(config.huhiCoreDir, 'android', 'java', 'res')
       const androidResDest = path.join(config.srcDir, 'chrome', 'android', 'java', 'res')
       const androidResTemplateSource = path.join(config.huhiCoreDir, 'android', 'java', 'res_template')
       const androidResTemplateDest = path.join(config.srcDir, 'chrome', 'android', 'java', 'res_template')
       const androidContentPublicResSource = path.join(config.huhiCoreDir, 'content', 'public', 'android', 'java', 'res')
       const androidContentPublicResDest = path.join(config.srcDir, 'content', 'public', 'android', 'java', 'res')
+      const androidTouchtoFillResSource = path.join(config.huhiCoreDir, 'browser', 'touch_to_fill', 'android', 'internal', 'java', 'res')
+      const androidTouchtoFillResDest = path.join(config.srcDir, 'chrome', 'browser', 'touch_to_fill', 'android', 'internal', 'java', 'res')
 
       // Mapping for copying Huhi's Android resource into chromium folder.
       const copyAndroidResourceMapping = {
         [androidIconSource]: [androidIconDest],
+        [androidIconBaseSource]: [androidIconBaseDest],
         [androidResSource]: [androidResDest],
         [androidResTemplateSource]: [androidResTemplateDest],
-        [androidContentPublicResSource]: [androidContentPublicResDest]
+        [androidContentPublicResSource]: [androidContentPublicResDest],
+        [androidTouchtoFillResSource]: [androidTouchtoFillResDest]
       }
 
       console.log('copy Android app icons and app resources')
@@ -435,18 +441,6 @@ const util = {
     fs.chmodSync(widevineConfig.fakeWidevineCdmLibFilePath, 0o755)
   },
 
-  signApp: (options = config.defaultOptions) => {
-    console.log('signing ...')
-    if (process.platform === 'win32') {
-      // Sign binaries used for widevine sig file generation.
-      // Other binaries will be done during the create_dist.
-      // Then, both are merged when archive for installer is created.
-      util.signWinBinaries()
-    } else {
-      util.run('ninja', ['-C', config.outputDir, config.signTarget], options)
-    }
-  },
-
   // TODO(bridiver) - this should move to gn and windows should call signApp like other platforms
   signWinBinaries: () => {
     // Copy & sign only binaries for widevine sig file generation.
@@ -458,10 +452,10 @@ const util = {
     fs.copySync(path.join(config.outputDir, 'huhi.exe'), path.join(dir, 'huhi.exe'));
     fs.copySync(path.join(config.outputDir, 'chrome.dll'), path.join(dir, 'chrome.dll'));
 
-     const core_dir = config.huhiCoreDir
-    util.run('python', [path.join(core_dir, 'script', 'sign_binaries.py'), '--build_dir=' + dir])
+    util.run('python', [path.join(config.huhiCoreDir, 'script', 'sign_binaries.py'), '--build_dir=' + dir])
   },
 
+  // TODO(bridiver) - this should move to gn
   generateWidevineSigFiles: () => {
     if (process.platform !== 'win32')
       return

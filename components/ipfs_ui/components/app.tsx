@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,6 +11,7 @@ import { connect } from 'react-redux'
 import { AddressesConfig } from './addressesConfig'
 import { ConnectedPeers } from './connectedPeers'
 import { DaemonStatus } from './daemonStatus'
+import { UninstalledView } from './uninstalledView'
 
 // Utils
 import * as ipfsActions from '../actions/ipfs_actions'
@@ -49,6 +50,14 @@ export class IPFSPage extends React.Component<Props, {}> {
   }
 
   render () {
+    if (!this.props.ipfsData.daemonStatus.installed) {
+      return (
+        <div id='ipfsPage'>
+          <UninstalledView />
+        </div>
+      )
+    }
+
     return (
       <div id='ipfsPage'>
         <DaemonStatus daemonStatus={this.props.ipfsData.daemonStatus} onLaunch={this.launchDaemon} onShutdown={this.shutdownDaemon}/>

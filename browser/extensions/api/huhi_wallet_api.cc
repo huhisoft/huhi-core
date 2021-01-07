@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,11 +10,12 @@
 
 #include "base/json/json_writer.h"
 #include "base/values.h"
+#include "huhi/browser/extensions/huhi_wallet_util.h"
 #include "huhi/browser/infobars/crypto_wallets_infobar_delegate.h"
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/common/huhi_wallet_constants.h"
 #include "huhi/common/extensions/api/huhi_wallet.h"
-#include "huhi/common/pref_names.h"
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
+#include "huhi/components/huhi_wallet/pref_names.h"
 #include "huhi/grit/huhi_generated_resources.h"
 #include "chrome/browser/extensions/api/tabs/tabs_constants.h"
 #include "chrome/browser/extensions/extension_tab_util.h"
@@ -26,8 +27,7 @@
 #include "extensions/browser/extension_util.h"
 #include "extensions/common/constants.h"
 #include "huhi/browser/huhi_wallet/huhi_wallet_service_factory.h"
-#include "huhi/components/huhi_wallet/browser/huhi_wallet_service.h"
-#include "huhi/browser/extensions/huhi_wallet_util.h"
+#include "huhi/components/huhi_wallet/huhi_wallet_service.h"
 #include "ui/base/l10n/l10n_util.h"
 
 namespace {
@@ -82,13 +82,9 @@ HuhiWalletPromptToEnableWalletFunction::Run() {
     CryptoWalletsInfoBarDelegate::InfobarSubType subtype =
         CryptoWalletsInfoBarDelegate::InfobarSubType::GENERIC_SETUP;
     auto* service = GetHuhiWalletService(browser_context());
-    auto* registry = extensions::ExtensionRegistry::Get(profile);
     if (service->ShouldShowLazyLoadInfobar()) {
       subtype = CryptoWalletsInfoBarDelegate::InfobarSubType::
           LOAD_CRYPTO_WALLETS;
-    } else if (registry->ready_extensions().Contains(metamask_extension_id)) {
-      subtype = CryptoWalletsInfoBarDelegate::InfobarSubType::
-          CRYPTO_WALLETS_METAMASK;
     }
     CryptoWalletsInfoBarDelegate::Create(infobar_service, subtype);
   }
@@ -147,15 +143,22 @@ HuhiWalletShouldPromptForSetupFunction::Run() {
 ExtensionFunction::ResponseAction
 HuhiWalletShouldCheckForDappsFunction::Run() {
   Profile* profile = Profile::FromBrowserContext(browser_context());
+  if (huhi::IsTorProfile(profile)) {
+    return RespondNow(OneArgument(
+        std::make_unique<base::Value>(false)));
+  }
   auto provider = static_cast<HuhiWalletWeb3ProviderTypes>(
       profile->GetPrefs()->GetInteger(kHuhiWalletWeb3Provider));
-  bool dappDetection = !huhi::IsTorProfile(profile);
-  if (provider != HuhiWalletWeb3ProviderTypes::ASK) {
-    auto* service = GetHuhiWalletService(browser_context());
-    dappDetection = provider == HuhiWalletWeb3ProviderTypes::ASK ||
-        (provider == HuhiWalletWeb3ProviderTypes::CRYPTO_WALLETS &&
-        !service->IsCryptoWalletsReady());
-  }
+  auto* registry = extensions::ExtensionRegistry::Get(profile);
+  bool has_metamask =
+      registry->ready_extensions().Contains(metamask_extension_id);
+
+  auto* service = GetHuhiWalletService(browser_context());
+  bool dappDetection = (
+      provider == HuhiWalletWeb3ProviderTypes::ASK && !has_metamask) ||
+      (provider == HuhiWalletWeb3ProviderTypes::CRYPTO_WALLETS &&
+       !service->IsCryptoWalletsReady());
+
   return RespondNow(OneArgument(
       std::make_unique<base::Value>(dappDetection)));
 }

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
@@ -31,7 +31,7 @@ void CheckUrl(const std::string& test_url,
 
 TEST(HuhiBlockReportingUrlsHelperTest, PreserveNormalUrls) {
   const std::vector<const std::string> normalUrls({
-      "https://huhisoft.com/",
+      "https://hnq.vn/",
       "https://safebrowsing.google.com/safebrowsing",
       "https://safebrowsing.googleapis.com/v4",
   });
@@ -43,17 +43,22 @@ TEST(HuhiBlockReportingUrlsHelperTest, PreserveNormalUrls) {
 
 TEST(HuhiBlockReportingUrlsHelperTest, CancelReportingUrl) {
   const std::vector<const std::string> reportingUrls({
-      "https://sb-ssl.google.com/safebrowsing/clientreport/download",
+      "https://sb-ssl.google.com/safebrowsing/clientreport/chrome-cct",
       "https://sb-ssl.google.com/safebrowsing/clientreport/chrome-reset",
+      "https://sb-ssl.google.com/safebrowsing/clientreport/chrome-sw-reporter",
       "https://sb-ssl.google.com/safebrowsing/clientreport/incident",
       "https://sb-ssl.google.com/safebrowsing/clientreport/login",
       "https://sb-ssl.google.com/safebrowsing/clientreport/phishing",
       "https://sb-ssl.google.com/safebrowsing/clientreport/malware-check",
+      "https://safebrowsing.google.com/safebrowsing/uploads/app",
+      "https://safebrowsing.google.com/safebrowsing/uploads/chrome",
+      "https://safebrowsing.google.com/safebrowsing/uploads/scan",
       "https://safebrowsing.google.com/safebrowsing/uploads/webprotect",
       "https://safebrowsing.google.com/safebrowsing/report",
       "https://safebrowsing.google.com/safebrowsing/clientreport/malware",
       "https://safebrowsing.google.com/safebrowsing/uploads/chrome",
       "https://safebrowsing.google.com/safebrowsing/clientreport/crx-list-info",
+      "https://safebrowsing.google.com/safebrowsing/clientreport/realtime",
   });
 
   for (const auto& url : reportingUrls) {

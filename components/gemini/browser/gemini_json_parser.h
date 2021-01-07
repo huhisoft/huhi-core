@@ -1,14 +1,15 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef HUHI_COMPONENTS_GEMINI_BROWSER_GEMINI_JSON_PARSER_H_
 #define HUHI_COMPONENTS_GEMINI_BROWSER_GEMINI_JSON_PARSER_H_
 
-#include <map>
 #include <string>
 #include <vector>
+
+#include "huhi/components/gemini/browser/gemini_service.h"
 
 class GeminiJSONParser {
  public:
@@ -18,7 +19,7 @@ class GeminiJSONParser {
   static bool GetTickerPriceFromJSON(const std::string& json,
                                      std::string* price);
   static bool GetAccountBalancesFromJSON(const std::string& json,
-      std::map<std::string, std::string>* balances);
+      GeminiAccountBalances* balances);
   static bool GetDepositInfoFromJSON(const std::string& json,
                                      std::string* address);
   static bool GetOrderQuoteInfoFromJSON(const std::string& json,

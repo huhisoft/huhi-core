@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -109,11 +109,6 @@ class TipBox extends React.Component<Props, State> {
   }
 
   donationSettingsChild = () => {
-    const { enabledMain } = this.props.rewardsData
-    if (!enabledMain) {
-      return null
-    }
-
     let value = this.props.rewardsData.inlineTip
 
     if (!value) {
@@ -162,11 +157,10 @@ class TipBox extends React.Component<Props, State> {
     const {
       parameters,
       firstLoad,
-      enabledMain,
       ui,
       tipsList
     } = this.props.rewardsData
-    const showDisabled = firstLoad !== false || !enabledMain
+    const showDisabled = firstLoad !== false
     const tipRows = this.getTipsRows()
     const topRows = tipRows.slice(0, 5)
     const numRows = tipRows && tipRows.length

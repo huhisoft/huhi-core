@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,10 +17,13 @@ using BuildChannel = mojom::HuhiAdsBuildChannel;
 using BuildChannelPtr = mojom::HuhiAdsBuildChannelPtr;
 
 using AdNotificationEventType = mojom::HuhiAdsAdNotificationEventType;
+using NewTabPageAdEventType = mojom::HuhiAdsNewTabPageAdEventType;
 
 using UrlRequest = mojom::HuhiAdsUrlRequest;
 using UrlRequestPtr = mojom::HuhiAdsUrlRequestPtr;
 using UrlRequestMethod = mojom::HuhiAdsUrlRequestMethod;
+
+using P2AEventType = mojom::HuhiAdsP2AEventType;
 
 using UrlResponse = mojom::HuhiAdsUrlResponse;
 using UrlResponsePtr = mojom::HuhiAdsUrlResponsePtr;

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -25,6 +25,7 @@
 #include "huhi/build/android/jni_headers/HuhiRewardsNativeWorker_jni.h"
 
 #define DEFAULT_ADS_PER_HOUR 2
+#define DEFAULT_AUTO_CONTRIBUTION_AMOUNT 10
 
 namespace chrome {
 namespace android {
@@ -65,19 +66,6 @@ void HuhiRewardsNativeWorker::Destroy(JNIEnv* env, const
     }
   }
   delete this;
-}
-
-void HuhiRewardsNativeWorker::CreateWallet(JNIEnv* env, const
-        base::android::JavaParamRef<jobject>& jcaller) {
-  if (huhi_rewards_service_) {
-    huhi_rewards_service_->CreateWallet(base::Bind(
-            &HuhiRewardsNativeWorker::OnCreateWallet,
-            weak_factory_.GetWeakPtr()));
-  }
-}
-
-void HuhiRewardsNativeWorker::OnCreateWallet(
-    const ledger::type::Result result) {
 }
 
 void HuhiRewardsNativeWorker::GetRewardsParameters(JNIEnv* env, const
@@ -228,16 +216,6 @@ void HuhiRewardsNativeWorker::RemovePublisherFromMap(JNIEnv* env,
   }
 }
 
-void HuhiRewardsNativeWorker::OnWalletInitialized(
-    huhi_rewards::RewardsService* rewards_service,
-    const ledger::type::Result result) {
-  JNIEnv* env = base::android::AttachCurrentThread();
-
-  Java_HuhiRewardsNativeWorker_OnWalletInitialized(env,
-        weak_java_huhi_rewards_native_worker_.get(env),
-        static_cast<int>(result));
-}
-
 void HuhiRewardsNativeWorker::OnGetRewardsParameters(
     huhi_rewards::RewardsService* rewards_service,
     ledger::type::RewardsParametersPtr parameters) {
@@ -287,15 +265,6 @@ double HuhiRewardsNativeWorker::GetWalletRate(JNIEnv* env,
   return parameters_.rate;
 }
 
-void HuhiRewardsNativeWorker::WalletExist(JNIEnv* env,
-        const base::android::JavaParamRef<jobject>& jcaller) {
-  if (huhi_rewards_service_) {
-    huhi_rewards_service_->IsWalletCreated(
-      base::Bind(&HuhiRewardsNativeWorker::OnIsWalletCreated,
-          weak_factory_.GetWeakPtr()));
-  }
-}
-
 void HuhiRewardsNativeWorker::FetchGrants(JNIEnv* env,
     const base::android::JavaParamRef<jobject>& obj) {
   if (huhi_rewards_service_) {
@@ -303,10 +272,21 @@ void HuhiRewardsNativeWorker::FetchGrants(JNIEnv* env,
   }
 }
 
-void HuhiRewardsNativeWorker::OnIsWalletCreated(bool created) {
+void HuhiRewardsNativeWorker::StartProcess(
+    JNIEnv* env,
+    const base::android::JavaParamRef<jobject>& obj) {
+  if (huhi_rewards_service_) {
+    huhi_rewards_service_->StartProcess(base::Bind(
+          &HuhiRewardsNativeWorker::OnStartProcess,
+          weak_factory_.GetWeakPtr()));
+  }
+}
+
+void HuhiRewardsNativeWorker::OnStartProcess(
+    const ledger::type::Result result) {
   JNIEnv* env = base::android::AttachCurrentThread();
-  Java_HuhiRewardsNativeWorker_OnIsWalletCreated(env,
-        weak_java_huhi_rewards_native_worker_.get(env), created);
+  Java_HuhiRewardsNativeWorker_OnStartProcess(
+      env, weak_java_huhi_rewards_native_worker_.get(env));
 }
 
 void HuhiRewardsNativeWorker::GetCurrentBalanceReport(JNIEnv* env,
@@ -327,17 +307,17 @@ void HuhiRewardsNativeWorker::OnGetCurrentBalanceReport(
         huhi_rewards::RewardsService* rewards_service,
         const ledger::type::Result result,
         ledger::type::BalanceReportInfoPtr report) {
-  std::vector<double> values;
-  values.push_back(report->grants);
-  values.push_back(report->earning_from_ads);
-  values.push_back(report->auto_contribute);
-  values.push_back(report->recurring_donation);
-  values.push_back(report->one_time_donation);
-
+  base::android::ScopedJavaLocalRef<jdoubleArray> java_array;
   JNIEnv* env = base::android::AttachCurrentThread();
-  base::android::ScopedJavaLocalRef<jdoubleArray> java_array =
-      base::android::ToJavaDoubleArray(env, values);
-
+  if (report) {
+    std::vector<double> values;
+    values.push_back(report->grants);
+    values.push_back(report->earning_from_ads);
+    values.push_back(report->auto_contribute);
+    values.push_back(report->recurring_donation);
+    values.push_back(report->one_time_donation);
+    java_array = base::android::ToJavaDoubleArray(env, values);
+  }
   Java_HuhiRewardsNativeWorker_OnGetCurrentBalanceReport(env,
         weak_java_huhi_rewards_native_worker_.get(env), java_array);
 }
@@ -350,6 +330,10 @@ void HuhiRewardsNativeWorker::Donate(JNIEnv* env,
     huhi_rewards_service_->OnTip(
       base::android::ConvertJavaStringToUTF8(env, publisher_key), amount,
         recurring);
+    if (!recurring) {
+      Java_HuhiRewardsNativeWorker_OnOneTimeTip(env,
+        weak_java_huhi_rewards_native_worker_.get(env));
+    }
   }
 }
 
@@ -622,39 +606,6 @@ void HuhiRewardsNativeWorker::OnPromotionFinished(
         static_cast<int>(result));
 }
 
-void HuhiRewardsNativeWorker::SetRewardsMainEnabled(JNIEnv* env,
-      const base::android::JavaParamRef<jobject>& obj, bool enabled) {
-  if (huhi_rewards_service_) {
-    huhi_rewards_service_->SetRewardsMainEnabled(enabled);
-  }
-}
-
-void HuhiRewardsNativeWorker::OnRewardsMainEnabled(
-    huhi_rewards::RewardsService* rewards_service,
-    bool rewards_main_enabled) {
-  JNIEnv* env = base::android::AttachCurrentThread();
-
-  Java_HuhiRewardsNativeWorker_OnRewardsMainEnabled(env,
-    weak_java_huhi_rewards_native_worker_.get(env), rewards_main_enabled);
-}
-
-void HuhiRewardsNativeWorker::GetRewardsMainEnabled(JNIEnv* env,
-    const base::android::JavaParamRef<jobject>& obj) {
-  if (huhi_rewards_service_) {
-    huhi_rewards_service_->GetRewardsMainEnabled(base::Bind(
-      &HuhiRewardsNativeWorker::OnGetRewardsMainEnabled,
-      base::Unretained(this)));
-  }
-}
-
-void HuhiRewardsNativeWorker::OnGetRewardsMainEnabled(
-    bool enabled) {
-  JNIEnv* env = base::android::AttachCurrentThread();
-
-  Java_HuhiRewardsNativeWorker_OnGetRewardsMainEnabled(env,
-    weak_java_huhi_rewards_native_worker_.get(env), enabled);
-}
-
 int HuhiRewardsNativeWorker::GetAdsPerHour(
     JNIEnv* env,
     const base::android::JavaParamRef<jobject>& obj) {
@@ -678,6 +629,15 @@ void HuhiRewardsNativeWorker::SetAdsPerHour(
   ads_service_->SetAdsPerHour(value);
 }
 
+void HuhiRewardsNativeWorker::SetAutoContributionAmount(
+    JNIEnv* env,
+    const base::android::JavaParamRef<jobject>& obj,
+    jdouble value) {
+  if (huhi_rewards_service_) {
+    huhi_rewards_service_->SetAutoContributionAmount(value);
+  }
+}
+
 bool HuhiRewardsNativeWorker::IsAnonWallet(JNIEnv* env,
     const base::android::JavaParamRef<jobject>& jcaller) {
   if (huhi_rewards_service_) {
@@ -686,38 +646,38 @@ bool HuhiRewardsNativeWorker::IsAnonWallet(JNIEnv* env,
   return false;
 }
 
-void HuhiRewardsNativeWorker::GetExternalWallet(JNIEnv* env,
-    const base::android::JavaParamRef<jobject>& obj,
-    const base::android::JavaParamRef<jstring>& wallet_type) {
+void HuhiRewardsNativeWorker::GetExternalWallet(
+    JNIEnv* env,
+    const base::android::JavaParamRef<jobject>& obj) {
   if (huhi_rewards_service_) {
-    std::string str_wallet_type =
-        base::android::ConvertJavaStringToUTF8(env, wallet_type);
     auto callback = base::Bind(
         &HuhiRewardsNativeWorker::OnGetExternalWallet,
         base::Unretained(this));
-    huhi_rewards_service_->GetExternalWallet(str_wallet_type, callback);
+    huhi_rewards_service_->GetUpholdWallet(callback);
   }
 }
 
 void HuhiRewardsNativeWorker::OnGetExternalWallet(
     const ledger::type::Result result,
-    ledger::type::ExternalWalletPtr wallet) {
+    ledger::type::UpholdWalletPtr wallet) {
   std::string json_wallet;
-  base::Value dict(base::Value::Type::DICTIONARY);
-  dict.SetStringKey("token", wallet->token);
-  dict.SetStringKey("address", wallet->address);
+  if (!wallet) {
+    json_wallet = "";
+  } else {
+    base::Value dict(base::Value::Type::DICTIONARY);
+    dict.SetStringKey("token", wallet->token);
+    dict.SetStringKey("address", wallet->address);
 
-  // enum class WalletStatus : int32_t
-  dict.SetIntKey("status", static_cast<int32_t>(wallet->status));
-  dict.SetStringKey("type", wallet->type);
-  dict.SetStringKey("verify_url", wallet->verify_url);
-  dict.SetStringKey("add_url", wallet->add_url);
-  dict.SetStringKey("withdraw_url", wallet->withdraw_url);
-  dict.SetStringKey("user_name", wallet->user_name);
-  dict.SetStringKey("account_url", wallet->account_url);
-  dict.SetStringKey("login_url", wallet->login_url);
-  base::JSONWriter::Write(dict, &json_wallet);
-
+    // enum class WalletStatus : int32_t
+    dict.SetIntKey("status", static_cast<int32_t>(wallet->status));
+    dict.SetStringKey("verify_url", wallet->verify_url);
+    dict.SetStringKey("add_url", wallet->add_url);
+    dict.SetStringKey("withdraw_url", wallet->withdraw_url);
+    dict.SetStringKey("user_name", wallet->user_name);
+    dict.SetStringKey("account_url", wallet->account_url);
+    dict.SetStringKey("login_url", wallet->login_url);
+    base::JSONWriter::Write(dict, &json_wallet);
+  }
   JNIEnv* env = base::android::AttachCurrentThread();
   Java_HuhiRewardsNativeWorker_OnGetExternalWallet(env,
       weak_java_huhi_rewards_native_worker_.get(env),
@@ -827,6 +787,15 @@ void HuhiRewardsNativeWorker::OnRefreshPublisher(
       env, weak_java_huhi_rewards_native_worker_.get(env),
       static_cast<int>(status),
       base::android::ConvertUTF8ToJavaString(env, publisher_key));
+}
+
+void HuhiRewardsNativeWorker::SetAutoContributeEnabled(
+    JNIEnv* env,
+    const base::android::JavaParamRef<jobject>& obj,
+    bool isAutoContributeEnabled) {
+  if (huhi_rewards_service_) {
+    huhi_rewards_service_->SetAutoContributeEnabled(isAutoContributeEnabled);
+  }
 }
 
 static void JNI_HuhiRewardsNativeWorker_Init(

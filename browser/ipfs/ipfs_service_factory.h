@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,6 +17,12 @@ class IpfsServiceFactory : public BrowserContextKeyedServiceFactory {
  public:
   static IpfsService* GetForContext(content::BrowserContext* context);
   static IpfsServiceFactory* GetInstance();
+
+  // IsIpfsEnabled returns false if IPFS feature is unsupported for the given
+  // context, disabled by IPFSEnabled policy, or the feature flag.
+  static bool IsIpfsEnabled(content::BrowserContext* context);
+  static bool IsIpfsResolveMethodDisabled(content::BrowserContext* context);
+  static bool IsIpfsDisabledByPolicy();
 
  private:
   friend struct base::DefaultSingletonTraits<IpfsServiceFactory>;

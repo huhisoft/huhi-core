@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-# This Source Code Form is subject to the terms of the Huhi Software
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/. */
 #
@@ -174,6 +174,7 @@ EXCLUDES=(
     '_\(unit\|browser\)test\(_mac\)\?.cc'
     'third_party/blink/renderer/modules/battery/navigator_batterytest.cc'
     'third_party/blink/renderer/modules/bluetooth/navigator_bluetoothtest.cc'
+    'third_party/blink/renderer/modules/quota/navigator_storagetest.cc'
     'third_party/blink/renderer/modules/storage/huhi_dom_window_storage.h'
     './chrome/installer/linux/common/huhi-browser/chromium-browser.appdata.xml'
     './chrome/installer/linux/common/huhi-browser/chromium-browser.info'

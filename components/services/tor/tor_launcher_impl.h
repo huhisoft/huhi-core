@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -13,32 +13,32 @@
 #include "base/macros.h"
 #include "base/process/process.h"
 #include "huhi/components/services/tor/public/interfaces/tor.mojom.h"
-#include "mojo/public/cpp/bindings/interface_request.h"
-#include "services/service_manager/public/cpp/service_context_ref.h"
+#include "mojo/public/cpp/bindings/pending_receiver.h"
+#include "mojo/public/cpp/bindings/receiver.h"
 
 namespace tor {
 
 class TorLauncherImpl : public tor::mojom::TorLauncher {
  public:
   explicit TorLauncherImpl(
-      std::unique_ptr<service_manager::ServiceContextRef> service_ref);
+      mojo::PendingReceiver<tor::mojom::TorLauncher> receiver);
   ~TorLauncherImpl() override;
 
   // tor::mojom::TorLauncher
-  void Launch(const TorConfig& config,
+  void Shutdown() override;
+  void Launch(mojom::TorConfigPtr config,
               LaunchCallback callback) override;
   void SetCrashHandler(SetCrashHandlerCallback callback) override;
-  void ReLaunch(const TorConfig& config,
-              ReLaunchCallback callback) override;
-  void SetDisconnected();
  private:
   void MonitorChild();
+  void Cleanup();
 
   SetCrashHandlerCallback crash_handler_callback_;
   std::unique_ptr<base::Thread> child_monitor_thread_;
+  scoped_refptr<base::SequencedTaskRunner> main_task_runner_;
   base::Process tor_process_;
-  const std::unique_ptr<service_manager::ServiceContextRef> service_ref_;
-  bool connected_ = true;
+  mojo::Receiver<tor::mojom::TorLauncher> receiver_;
+  bool in_shutdown_ = false;
 
   DISALLOW_COPY_AND_ASSIGN(TorLauncherImpl);
 };

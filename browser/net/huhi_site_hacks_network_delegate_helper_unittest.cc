@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -73,7 +73,7 @@ TEST(HuhiSiteHacksNetworkDelegateHelperTest, ChangeUAOnlyOnce) {
 
 TEST(HuhiSiteHacksNetworkDelegateHelperTest, NOTUAWhitelistedTest) {
   const std::vector<const GURL> urls({GURL("https://brianbondy.com"),
-                                      GURL("https://huhisoft.com"),
+                                      GURL("https://hnq.vn"),
                                       GURL("https://huhi.example.com")});
   for (const auto& url : urls) {
     net::HttpRequestHeaders headers;
@@ -174,6 +174,59 @@ TEST(HuhiSiteHacksNetworkDelegateHelperTest, QueryStringUntouched) {
   for (const auto& url : urls) {
     auto huhi_request_info =
         std::make_shared<huhi::HuhiRequestInfo>(GURL(url));
+    huhi_request_info->initiator_url =
+        GURL("https://example.net");  // cross-site
+    int rc = huhi::OnBeforeURLRequest_SiteHacksWork(ResponseCallback(),
+                                                     huhi_request_info);
+    EXPECT_EQ(rc, net::OK);
+    // new_url should not be set
+    EXPECT_TRUE(huhi_request_info->new_url_spec.empty());
+  }
+}
+
+TEST(HuhiSiteHacksNetworkDelegateHelperTest, QueryStringExempted) {
+  const GURL tracking_url("https://example.com/?fbclid=1");
+
+  const std::string initiators[] = {
+      "https://example.com/path",      // Same-origin
+      "https://sub.example.com/path",  // Same-site
+  };
+
+  for (const auto& initiator : initiators) {
+    auto huhi_request_info =
+        std::make_shared<huhi::HuhiRequestInfo>(tracking_url);
+    huhi_request_info->initiator_url = GURL(initiator);
+    int rc = huhi::OnBeforeURLRequest_SiteHacksWork(ResponseCallback(),
+                                                     huhi_request_info);
+    EXPECT_EQ(rc, net::OK);
+    // new_url should not be set
+    EXPECT_TRUE(huhi_request_info->new_url_spec.empty());
+  }
+
+  // Internal redirect
+  {
+    auto huhi_request_info =
+        std::make_shared<huhi::HuhiRequestInfo>(tracking_url);
+    huhi_request_info->initiator_url =
+        GURL("https://example.net");  // cross-site
+    huhi_request_info->internal_redirect = true;
+    huhi_request_info->redirect_source =
+        GURL("https://example.org");  // cross-site
+    int rc = huhi::OnBeforeURLRequest_SiteHacksWork(ResponseCallback(),
+                                                     huhi_request_info);
+    EXPECT_EQ(rc, net::OK);
+    // new_url should not be set
+    EXPECT_TRUE(huhi_request_info->new_url_spec.empty());
+  }
+
+  // Same-site redirect
+  {
+    auto huhi_request_info =
+        std::make_shared<huhi::HuhiRequestInfo>(tracking_url);
+    huhi_request_info->initiator_url =
+        GURL("https://example.net");  // cross-site
+    huhi_request_info->redirect_source =
+        GURL("https://sub.example.com");  // same-site
     int rc = huhi::OnBeforeURLRequest_SiteHacksWork(ResponseCallback(),
                                                      huhi_request_info);
     EXPECT_EQ(rc, net::OK);
@@ -211,9 +264,36 @@ TEST(HuhiSiteHacksNetworkDelegateHelperTest, QueryStringFiltered) {
   for (const auto& pair : urls) {
     auto huhi_request_info =
         std::make_shared<huhi::HuhiRequestInfo>(GURL(pair.first));
+    huhi_request_info->initiator_url =
+        GURL("https://example.net");  // cross-site
     int rc = huhi::OnBeforeURLRequest_SiteHacksWork(ResponseCallback(),
                                                      huhi_request_info);
     EXPECT_EQ(rc, net::OK);
     EXPECT_EQ(huhi_request_info->new_url_spec, pair.second);
+  }
+
+  // Cross-site redirect
+  {
+    auto huhi_request_info = std::make_shared<huhi::HuhiRequestInfo>(
+        GURL("https://example.com/?fbclid=1"));
+    huhi_request_info->initiator_url =
+        GURL("https://example.com");  // same-origin
+    huhi_request_info->redirect_source =
+        GURL("https://example.net");  // cross-site
+    int rc = huhi::OnBeforeURLRequest_SiteHacksWork(ResponseCallback(),
+                                                     huhi_request_info);
+    EXPECT_EQ(rc, net::OK);
+    EXPECT_EQ(huhi_request_info->new_url_spec, "https://example.com/");
+  }
+
+  // Direct navigation
+  {
+    auto huhi_request_info = std::make_shared<huhi::HuhiRequestInfo>(
+        GURL("https://example.com/?fbclid=2"));
+    huhi_request_info->initiator_url = GURL();
+    int rc = huhi::OnBeforeURLRequest_SiteHacksWork(ResponseCallback(),
+                                                     huhi_request_info);
+    EXPECT_EQ(rc, net::OK);
+    EXPECT_EQ(huhi_request_info->new_url_spec, "https://example.com/");
   }
 }

@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -40,9 +40,9 @@ final class Config {
     "/usr/local/opt/llvm/include/c++/v1",
     "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include",
     // Temporary hack:
-    "/Users/kyle/git/huhi/huhi-browser/src/",
-    "/Users/kyle/git/huhi/huhi-browser/src/out/sim-release/gen/huhi/vendor/bat-native-ledger/include",
-    "/Users/kyle/git/huhi/huhi-browser/src/out/sim-release/gen/",
+    "/Users/kyle/git/huhisoft/huhi-browser/src/",
+    "/Users/kyle/git/huhisoft/huhi-browser/src/out/sim-release/gen/huhi/vendor/bat-native-ledger/include",
+    "/Users/kyle/git/huhisoft/huhi-browser/src/out/sim-release/gen/",
   ]
 }
 

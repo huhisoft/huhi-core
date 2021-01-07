@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -29,10 +29,6 @@ window.cr.define('huhi_rewards_internals', function () {
     const newActions = bindActionCreators(rewardsInternalsActions, store.dispatch.bind(store))
     setActions(newActions)
     return newActions
-  }
-
-  function onGetRewardsEnabled (enabled: boolean) {
-    getActions().onGetRewardsEnabled(enabled)
   }
 
   function onGetRewardsInternalsInfo (info: RewardsInternals.State) {
@@ -81,7 +77,6 @@ window.cr.define('huhi_rewards_internals', function () {
 
   return {
     initialize,
-    onGetRewardsEnabled,
     onGetRewardsInternalsInfo,
     balance,
     contributions,

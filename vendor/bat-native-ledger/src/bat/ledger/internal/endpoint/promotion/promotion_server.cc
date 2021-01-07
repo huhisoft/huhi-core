@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/promotion_server.h"
@@ -29,7 +29,8 @@ PromotionServer::PromotionServer(LedgerImpl* ledger):
     put_devicecheck_(std::make_unique<promotion::PutDevicecheck>(ledger)),
     post_suggestions_(std::make_unique<promotion::PostSuggestions>(ledger)),
     post_suggestions_claim_(
-        std::make_unique<promotion::PostSuggestionsClaim>(ledger)) {
+        std::make_unique<promotion::PostSuggestionsClaim>(ledger)),
+    post_claim_huhi_(std::make_unique<promotion::PostClaimHuhi>(ledger)) {
 }
 
 PromotionServer::~PromotionServer() = default;
@@ -105,6 +106,10 @@ promotion::PostSuggestions* PromotionServer::post_suggestions() const {
 promotion::PostSuggestionsClaim*
 PromotionServer::post_suggestions_claim() const {
   return post_suggestions_claim_.get();
+}
+
+promotion::PostClaimHuhi* PromotionServer::post_claim_huhi() const {
+  return post_claim_huhi_.get();
 }
 
 }  // namespace endpoint

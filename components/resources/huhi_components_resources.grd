@@ -61,6 +61,7 @@
         <part file="../huhi_perf_predictor/resources/huhi_perf_predictor_resources.grdp" />
       </if>
 
+      <part file="huhi_blank_page_resources.grdp" />
       <part file="speedreader_resources.grdp" />
       <part file="huhi_flags_ui_resources.grdp" />
       <part file="ipfs_resources.grdp" />

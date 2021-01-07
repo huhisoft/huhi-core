@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/get_available/get_available.h"
@@ -29,9 +29,16 @@ GetAvailable::GetAvailable(LedgerImpl* ledger):
 GetAvailable::~GetAvailable() = default;
 
 std::string GetAvailable::GetUrl(const std::string& platform) {
-  const std::string payment_id = ledger_->state()->GetPaymentId();
+  const auto wallet = ledger_->wallet()->GetWallet();
+  std::string payment_id;
+  if (wallet) {
+    payment_id = base::StringPrintf(
+      "&paymentId=%s",
+      wallet->payment_id.c_str());
+  }
+
   const std::string& arguments = base::StringPrintf(
-      "migrate=true&paymentId=%s&platform=%s",
+      "migrate=true%s&platform=%s",
       payment_id.c_str(),
       platform.c_str());
 

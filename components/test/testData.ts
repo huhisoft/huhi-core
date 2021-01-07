@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -46,6 +46,8 @@ export const newTabInitialState: NewTab.ApplicationState = {
     showEmptyPage: false,
     isIncognito: new ChromeEvent(),
     useAlternativePrivateSearchEngine: false,
+    torCircuitEstablished: false,
+    torInitProgress: '',
     isTor: false,
     isQwant: false,
     stats: {
@@ -68,9 +70,9 @@ interface Tabs {
 export const tabs: Tabs = {
   2: {
     id: 2,
-    url: 'https://www.huhisoft.com/test',
-    origin: 'https://www.huhisoft.com',
-    hostname: 'www.huhisoft.com',
+    url: 'https://www.hnq.vn/test',
+    origin: 'https://www.hnq.vn',
+    hostname: 'www.hnq.vn',
     ads: 'block',
     adsBlocked: 0,
     trackers: 'block',
@@ -97,7 +99,7 @@ export const activeTabData = tabs[2]
 export const blockedResource: BlockDetails = {
   blockType: 'ads',
   tabId: 2,
-  subresource: 'https://www.huhisoft.com/test'
+  subresource: 'https://www.hnq.vn/test'
 }
 
 // see: https://developer.chrome.com/extensions/events

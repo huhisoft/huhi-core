@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -24,10 +24,10 @@ export class DaemonStatus extends React.Component<Props, {}> {
     return (
       <Section>
         <Title>
-          <span i18n-content='daemonStatusTitle'/>
+          {getLocale('daemonStatusTitle')}
         </Title>
         <div>
-          <span i18n-content='launched'/>: {this.props.daemonStatus.launched.toString()}
+          {getLocale('launched')}: {this.props.daemonStatus.launched.toString()}
         </div>
         <SideBySideButtons>
           <PaddedButton

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -19,7 +19,6 @@
 #include "huhi/components/ntp_background_images/browser/view_counter_service.h"
 #include "huhi/components/ntp_background_images/common/pref_names.h"
 #include "components/prefs/testing_pref_service.h"
-#include "components/pref_registry/pref_registry_syncable.h"
 #include "components/sync_preferences/testing_pref_service_syncable.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -33,14 +32,14 @@ std::unique_ptr<NTPBackgroundImagesData> GetDemoWallpaper(bool super_referral) {
       { base::FilePath(FILE_PATH_LITERAL("wallpaper2.jpg")), { 5233, 3464 } },
       { base::FilePath(FILE_PATH_LITERAL("wallpaper3.jpg")), {  0, 0 } },
   };
-  demo->logo_alt_text = "Huhisoftware: Hú hí software.";
-  demo->logo_company_name = "Huhisoftware";
-  demo->logo_destination_url = "https://huhisoft.com";
+  demo->default_logo.alt_text = "Technikke: For music lovers.";
+  demo->default_logo.company_name = "Technikke";
+  demo->default_logo.destination_url = "https://hnq.vn";
 
   if (super_referral) {
-    demo->theme_name = "Huhisoftware";
+    demo->theme_name = "Technikke";
     demo->top_sites = {
-      { "Huhi", "https://huhisoft.com", "huhi.png",
+      { "Huhi", "https://hnq.vn", "huhi.png",
         base::FilePath(FILE_PATH_LITERAL("huhi.png")) },
      { "BAT", "https://basicattentiontoken.org/", "bat.png",
         base::FilePath(FILE_PATH_LITERAL("bat.png")) },
@@ -62,13 +61,12 @@ class NTPBackgroundImagesViewCounterTest : public testing::Test {
     auto* local_registry = local_pref_.registry();
     huhi::RegisterPrefsForHuhiReferralsService(local_registry);
     NTPBackgroundImagesService::RegisterLocalStatePrefs(local_registry);
+    ViewCounterService::RegisterLocalStatePrefs(local_registry);
 
-    service_ = std::make_unique<NTPBackgroundImagesService>(
-        nullptr,
-        &local_pref_,
-        base::FilePath());
+    service_ = std::make_unique<NTPBackgroundImagesService>(nullptr,
+                                                            &local_pref_);
     view_counter_ = std::make_unique<ViewCounterService>(
-        service_.get(), prefs(), true);
+        service_.get(), nullptr, prefs(), &local_pref_, true);
 
     // Set referral service is properly initialized sr component is set.
     local_pref_.SetBoolean(kReferralCheckedForPromoCodeFile, true);

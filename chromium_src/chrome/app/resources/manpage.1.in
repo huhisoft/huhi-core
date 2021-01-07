@@ -12,7 +12,7 @@
 .SH DESCRIPTION
 See the Huhi Help Center for help on using the browser.
 .IP
-<https://support.huhisoft.com/>
+<https://support.hnq.vn/>
 .PP
 This manpage only describes invocation, environment, and arguments.
 
@@ -167,4 +167,4 @@ Be sure to do your search within "All Issues" before reporting bugs,
 and be sure to pick the "Defect on Linux" template when filing a new one.
 
 .SH AUTHOR
-Huhi Software \- <https://huhisoft.com/>
+Huhi Software \- <https://hnq.vn/>

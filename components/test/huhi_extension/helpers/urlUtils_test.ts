@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -66,12 +66,12 @@ describe('urlUtils test', () => {
   })
   describe('stripProtocolFromUrl', () => {
     it('properly strips out an HTTP protocol', () => {
-      const url = 'http://huhisoft.com'
-      expect(stripProtocolFromUrl(url)).toBe('huhisoft.com')
+      const url = 'http://hnq.vn'
+      expect(stripProtocolFromUrl(url)).toBe('hnq.vn')
     })
     it('properly strips out an HTTPS protocol', () => {
-      const url = 'https://huhisoft.com'
-      expect(stripProtocolFromUrl(url)).toBe('huhisoft.com')
+      const url = 'https://hnq.vn'
+      expect(stripProtocolFromUrl(url)).toBe('hnq.vn')
     })
     it('properly strips out an HTTP protocol when domain has HTTP as its name', () => {
       const url = 'https://breakthis.http.com'

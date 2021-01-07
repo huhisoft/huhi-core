@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,10 +12,13 @@
 #include "base/environment.h"
 #include "base/json/json_writer.h"
 #include "huhi/components/huhi_referrals/browser/huhi_referrals_service.h"
+#include "huhi/components/huhi_stats/browser/huhi_stats_updater_util.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "net/base/load_flags.h"
+#include "net/base/privacy_mode.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/cpp/simple_url_loader.h"
+#include "services/network/public/mojom/fetch_api.mojom-shared.h"
 #include "url/gurl.h"
 
 namespace huhi {
@@ -27,7 +30,7 @@ WebcompatReportUploader::WebcompatReportUploader(
 WebcompatReportUploader::~WebcompatReportUploader() {}
 
 void WebcompatReportUploader::SubmitReport(std::string report_domain) {
-  std::string api_key = huhi::GetAPIKey();
+  std::string api_key = huhi_stats::GetAPIKey();
 
   GURL upload_url(WEBCOMPAT_REPORT_ENDPOINT);
 
@@ -50,9 +53,9 @@ void WebcompatReportUploader::CreateAndStartURLLoader(
   auto resource_request = std::make_unique<network::ResourceRequest>();
   resource_request->url = GURL(upload_url);
   resource_request->method = "POST";
+  resource_request->credentials_mode = network::mojom::CredentialsMode::kOmit;
   resource_request->load_flags =
-      net::LOAD_DO_NOT_SEND_COOKIES | net::LOAD_BYPASS_CACHE |
-      net::LOAD_DISABLE_CACHE | net::LOAD_DO_NOT_SEND_AUTH_DATA;
+      net::LOAD_BYPASS_CACHE | net::LOAD_DISABLE_CACHE;
 
   net::NetworkTrafficAnnotationTag traffic_annotation =
       net::DefineNetworkTrafficAnnotation("background_performance_tracer", R"(

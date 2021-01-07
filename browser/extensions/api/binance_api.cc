@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,8 +17,6 @@
 #include "huhi/common/pref_names.h"
 #include "huhi/browser/binance/binance_service_factory.h"
 #include "huhi/components/binance/browser/binance_service.h"
-#include "huhi/components/binance/browser/regions.h"
-#include "huhi/components/ntp_widget_utils/browser/ntp_widget_utils_region.h"
 #include "chrome/browser/extensions/api/tabs/tabs_constants.h"
 #include "chrome/browser/extensions/extension_tab_util.h"
 #include "chrome/browser/infobars/infobar_service.h"
@@ -114,7 +112,7 @@ BinanceGetAccountBalancesFunction::Run() {
 }
 
 void BinanceGetAccountBalancesFunction::OnGetAccountBalances(
-    const std::map<std::string, std::vector<std::string>>& balances,
+    const BinanceAccountBalances& balances,
     bool success) {
   std::unique_ptr<base::DictionaryValue> result(new base::DictionaryValue());
 
@@ -171,9 +169,8 @@ BinanceIsSupportedRegionFunction::Run() {
     return RespondNow(Error("Not available in Tor/incognito/guest profile"));
   }
 
-  Profile* profile = Profile::FromBrowserContext(browser_context());
-  bool is_supported = ntp_widget_utils::IsRegionSupported(
-      profile->GetPrefs(), ::binance::unsupported_regions, false);
+  auto* service = GetBinanceService(browser_context());
+  bool is_supported = service->IsSupportedRegion();
 
   return RespondNow(OneArgument(
       std::make_unique<base::Value>(is_supported)));
@@ -261,21 +258,24 @@ BinanceGetConvertAssetsFunction::Run() {
 }
 
 void BinanceGetConvertAssetsFunction::OnGetConvertAssets(
-    const std::map<std::string, std::vector<std::string>>& assets) {
-  std::unique_ptr<base::DictionaryValue> asset_dict(
-      new base::DictionaryValue());
+    const BinanceConvertAsserts& assets) {
+  auto result = std::make_unique<base::Value>(
+      base::Value::Type::DICTIONARY);
 
   for (const auto& asset : assets) {
-    auto supported = std::make_unique<base::ListValue>();
-    if (!asset.second.empty()) {
-      for (auto const& ticker : asset.second) {
-        supported->Append(ticker);
+    base::ListValue sub_selectors;
+    for (const auto& sub : asset.second) {
+      auto sub_selector = std::make_unique<base::Value>(
+          base::Value::Type::DICTIONARY);
+      for (const auto& att : sub) {
+        sub_selector->SetStringKey(att.first, att.second);
       }
+      sub_selectors.Append(std::move(sub_selector));
     }
-    asset_dict->SetList(asset.first, std::move(supported));
+    result->SetKey(asset.first, std::move(sub_selectors));
   }
 
-  Respond(OneArgument(std::move(asset_dict)));
+  Respond(OneArgument(std::move(result)));
 }
 
 ExtensionFunction::ResponseAction
@@ -320,7 +320,7 @@ BinanceGetCoinNetworksFunction::Run() {
 }
 
 void BinanceGetCoinNetworksFunction::OnGetCoinNetworks(
-    const std::map<std::string, std::string>& networks) {
+    const BinanceCoinNetworks& networks) {
   auto coin_networks = std::make_unique<base::Value>(
       base::Value::Type::DICTIONARY);
 

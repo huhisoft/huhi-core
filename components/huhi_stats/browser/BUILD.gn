@@ -1,0 +1,19 @@
+declare_args() {
+  huhi_stats_api_key = ""
+}
+
+source_set("browser") {
+    defines = [
+      "HUHI_STATS_API_KEY=\"$huhi_stats_api_key\"",
+    ]
+
+    sources = [
+      "huhi_stats_updater_util.cc",
+      "huhi_stats_updater_util.h",
+    ]
+
+    deps = [
+      "//base",
+      "//components/prefs",
+    ]
+}

@@ -1,7 +1,7 @@
 import("//build/config/features.gni")
 
 declare_args() {
-  webcompat_report_api_endpoint = "https://webcompat.huhisoft.com/1/webcompat"
+  webcompat_report_api_endpoint = "https://webcompat.hnq.vn/1/webcompat"
 }
 
 config("webcompat_reporter_config") {
@@ -20,10 +20,11 @@ source_set("browser") {
 
   deps = [
     "//base",
-    "//net",
-    "//content/public/browser",
-    "//services/network/public/cpp",
-    "//huhi/components/huhi_referrals/browser",
     "//huhi/common",
+    "//huhi/components/huhi_referrals/browser",
+    "//huhi/components/huhi_stats/browser",
+    "//content/public/browser",
+    "//net",
+    "//services/network/public/cpp",
   ]
 }

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,11 +8,13 @@
 #include <limits>
 #include <utility>
 
+#include "base/base64.h"
 #include "base/bind.h"
 #include "base/command_line.h"
 #include "base/containers/flat_map.h"
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
+#include "base/json/json_reader.h"
 #include "base/path_service.h"
 #include "chrome/common/chrome_paths.h"
 #include "base/files/important_file_writer.h"
@@ -21,16 +23,18 @@
 #include "base/memory/ptr_util.h"
 #include "base/numerics/ranges.h"
 #include "base/sequenced_task_runner.h"
+#include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/task/post_task.h"
 #include "base/task_runner_util.h"
 #include "base/time/time.h"
 #include "base/i18n/time_formatting.h"
-#include "bat/ads/ad_history.h"
+#include "bat/ads/ad_history_info.h"
 #include "bat/ads/ads.h"
-#include "bat/ads/ads_history.h"
+#include "bat/ads/ads_history_info.h"
 #include "bat/ads/ad_notification_info.h"
 #include "bat/ads/mojom.h"
+#include "bat/ads/pref_names.h"
 #include "bat/ads/resources/grit/bat_ads_resources.h"
 #include "bat/ads/statement_info.h"
 #include "huhi/browser/profiles/profile_util.h"
@@ -39,6 +43,7 @@
 #include "huhi/components/huhi_ads/browser/ads_notification_handler.h"
 #include "huhi/components/huhi_ads/browser/ads_p2a.h"
 #include "huhi/components/huhi_ads/common/pref_names.h"
+#include "huhi/components/huhi_ads/browser/prefs_util.h"
 #include "huhi/components/huhi_ads/common/switches.h"
 #include "huhi/components/huhi_rewards/browser/rewards_notification_service.h"
 #include "huhi/components/huhi_rewards/browser/rewards_p3a.h"
@@ -52,6 +57,7 @@
 #include "huhi/components/huhi_ads/browser/notification_helper.h"
 #include "chrome/browser/browser_process.h"
 #include "huhi/browser/huhi_browser_process_impl.h"
+#include "huhi/grit/huhi_generated_resources.h"
 #include "chrome/browser/notifications/notification_display_service.h"
 #include "chrome/browser/profiles/profile_manager.h"
 #include "chrome/browser/profiles/profile.h"
@@ -67,12 +73,11 @@
 #include "components/wifi/wifi_service.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/network_service_instance.h"
+#include "content/public/browser/service_process_host.h"
 #include "content/public/browser/storage_partition.h"
-#include "content/public/common/service_manager_connection.h"
 #include "net/base/network_change_notifier.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/cpp/simple_url_loader.h"
-#include "services/service_manager/public/cpp/connector.h"
 #include "third_party/dom_distiller_js/dom_distiller.pb.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -91,9 +96,6 @@ using huhi_rewards::RewardsNotificationService;
 namespace huhi_ads {
 
 namespace {
-
-const char kRewardsNotificationAdsOnboarding[] =
-    "rewards_notification_ads_onboarding";
 
 const unsigned int kRetriesCountOnNetworkChange = 1;
 
@@ -206,7 +208,6 @@ net::NetworkTrafficAnnotationTag GetNetworkTrafficAnnotationTag() {
 
 AdsServiceImpl::AdsServiceImpl(Profile* profile) :
     profile_(profile),
-    is_initialized_(false),
     file_task_runner_(base::CreateSequencedTaskRunner(
           {base::ThreadPool(), base::MayBlock(),
            base::TaskPriority::BEST_EFFORT,
@@ -217,17 +218,14 @@ AdsServiceImpl::AdsServiceImpl(Profile* profile) :
     rewards_service_(huhi_rewards::RewardsServiceFactory::GetForProfile(
         profile_)),
     bat_ads_client_receiver_(new bat_ads::AdsClientMojoBridge(this)) {
-  DCHECK(!profile_->IsOffTheRecord());
+  DCHECK(huhi::IsRegularProfile(profile_));
 
   MigratePrefs();
 
   MaybeInitialize();
 }
 
-AdsServiceImpl::~AdsServiceImpl() {
-  file_task_runner_->DeleteSoon(FROM_HERE, database_.release());
-  g_huhi_browser_process->user_model_file_service()->RemoveObserver(this);
-}
+AdsServiceImpl::~AdsServiceImpl() = default;
 
 void AdsServiceImpl::OnUserModelUpdated(
     const std::string& id) {
@@ -267,30 +265,24 @@ bool AdsServiceImpl::IsNewlySupportedLocale() {
 
 void AdsServiceImpl::SetEnabled(
     const bool is_enabled) {
-  SetBooleanPref(prefs::kEnabled, is_enabled);
-  rewards_service_->OnAdsEnabled(is_enabled);
+  SetBooleanPref(ads::prefs::kEnabled, is_enabled);
 }
 
-void AdsServiceImpl::SetAllowAdConversionTracking(
+void AdsServiceImpl::SetAllowConversionTracking(
     const bool should_allow) {
-  SetBooleanPref(prefs::kShouldAllowAdConversionTracking, should_allow);
+  SetBooleanPref(ads::prefs::kShouldAllowConversionTracking, should_allow);
 }
 
 void AdsServiceImpl::SetAdsPerHour(
     const uint64_t ads_per_hour) {
-  SetUint64Pref(prefs::kAdsPerHour, ads_per_hour);
-}
-
-void AdsServiceImpl::SetAllowAdsSubdivisionTargeting(
-    const bool should_allow) {
-  SetBooleanPref(prefs::kShouldAllowAdsSubdivisionTargeting, should_allow);
+  SetUint64Pref(ads::prefs::kAdsPerHour, ads_per_hour);
 }
 
 void AdsServiceImpl::SetAdsSubdivisionTargetingCode(
     const std::string& subdivision_targeting_code) {
   const auto last_subdivision_targeting_code = GetAdsSubdivisionTargetingCode();
 
-  SetStringPref(prefs::kAdsSubdivisionTargetingCode,
+  SetStringPref(ads::prefs::kAdsSubdivisionTargetingCode,
       subdivision_targeting_code);
 
   if (last_subdivision_targeting_code == subdivision_targeting_code) {
@@ -304,9 +296,9 @@ void AdsServiceImpl::SetAdsSubdivisionTargetingCode(
   bat_ads_->OnAdsSubdivisionTargetingCodeHasChanged();
 }
 
-void AdsServiceImpl::SetAutomaticallyDetectedAdsSubdivisionTargetingCode(
+void AdsServiceImpl::SetAutoDetectedAdsSubdivisionTargetingCode(
     const std::string& subdivision_targeting_code) {
-  SetStringPref(prefs::kAutomaticallyDetectedAdsSubdivisionTargetingCode,
+  SetStringPref(ads::prefs::kAutoDetectedAdsSubdivisionTargetingCode,
       subdivision_targeting_code);
 }
 
@@ -360,8 +352,7 @@ void AdsServiceImpl::OnTabUpdated(
     return;
   }
 
-  const bool is_incognito = profile_->IsOffTheRecord() ||
-      huhi::IsTorProfile(profile_);
+  const bool is_incognito = !huhi::IsRegularProfile(profile_);
 
   bat_ads_->OnTabUpdated(tab_id.id(), url.spec(), is_active,
       is_browser_active, is_incognito);
@@ -381,21 +372,27 @@ void AdsServiceImpl::OnWalletUpdated() {
     return;
   }
 
-  const std::string payment_id =
-      profile_->GetPrefs()->GetString(huhi_rewards::prefs::kPaymentId);
-  const std::string recovery_seed_base64 =
-      profile_->GetPrefs()->GetString(huhi_rewards::prefs::kRecoverySeed);
-
-  bat_ads_->OnWalletUpdated(payment_id, recovery_seed_base64);
+  rewards_service_->GetHuhiWallet(
+      base::BindOnce(&AdsServiceImpl::OnGetHuhiWallet, AsWeakPtr()));
 }
 
-void AdsServiceImpl::UpdateAdRewards(
-      const bool should_reconcile) {
+void AdsServiceImpl::OnGetHuhiWallet(ledger::type::HuhiWalletPtr wallet) {
+  if (!wallet) {
+    VLOG(0) << "Failed to get wallet";
+    return;
+  }
+
+  bat_ads_->OnWalletUpdated(
+      wallet->payment_id,
+      base::Base64Encode(wallet->recovery_seed));
+}
+
+void AdsServiceImpl::ReconcileAdRewards() {
   if (!connected()) {
     return;
   }
 
-  bat_ads_->UpdateAdRewards(should_reconcile);
+  bat_ads_->ReconcileAdRewards();
 }
 
 void AdsServiceImpl::GetAdsHistory(
@@ -506,46 +503,40 @@ void AdsServiceImpl::ToggleFlagAd(
 }
 
 bool AdsServiceImpl::IsEnabled() const {
-  auto is_enabled = GetBooleanPref(prefs::kEnabled);
-
-  auto is_rewards_enabled =
-      GetBooleanPref(huhi_rewards::prefs::kEnabled);
-
-  return is_enabled && is_rewards_enabled;
+  return GetBooleanPref(ads::prefs::kEnabled);
 }
 
-bool AdsServiceImpl::ShouldAllowAdConversionTracking() const {
-  return GetBooleanPref(prefs::kShouldAllowAdConversionTracking);
-}
-
-uint64_t AdsServiceImpl::GetAdsPerHour() {
-  return base::ClampToRange(GetUint64Pref(prefs::kAdsPerHour),
+uint64_t AdsServiceImpl::GetAdsPerHour() const {
+  return base::ClampToRange(GetUint64Pref(ads::prefs::kAdsPerHour),
       static_cast<uint64_t>(1), static_cast<uint64_t>(5));
 }
 
-uint64_t AdsServiceImpl::GetAdsPerDay() {
-  return base::ClampToRange(GetUint64Pref(prefs::kAdsPerDay),
-      static_cast<uint64_t>(1), static_cast<uint64_t>(20));
+uint64_t AdsServiceImpl::GetAdsPerDay() const {
+  return base::ClampToRange(GetUint64Pref(ads::prefs::kAdsPerDay),
+      static_cast<uint64_t>(1), static_cast<uint64_t>(40));
 }
 
 bool AdsServiceImpl::ShouldAllowAdsSubdivisionTargeting() const {
-  return GetBooleanPref(prefs::kShouldAllowAdsSubdivisionTargeting);
+  return GetBooleanPref(ads::prefs::kShouldAllowAdsSubdivisionTargeting);
 }
 
 std::string AdsServiceImpl::GetAdsSubdivisionTargetingCode() const {
-  return GetStringPref(prefs::kAdsSubdivisionTargetingCode);
+  return GetStringPref(ads::prefs::kAdsSubdivisionTargetingCode);
 }
 
 std::string AdsServiceImpl::
-GetAutomaticallyDetectedAdsSubdivisionTargetingCode() const {
-  return GetStringPref(
-      prefs::kAutomaticallyDetectedAdsSubdivisionTargetingCode);
+GetAutoDetectedAdsSubdivisionTargetingCode() const {
+  return GetStringPref(ads::prefs::kAutoDetectedAdsSubdivisionTargetingCode);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 void AdsServiceImpl::Shutdown() {
+  is_initialized_ = false;
+
   BackgroundHelper::GetInstance()->RemoveObserver(this);
+
+  g_huhi_browser_process->user_model_file_service()->RemoveObserver(this);
 
   for (auto* const url_loader : url_loaders_) {
     delete url_loader;
@@ -558,7 +549,9 @@ void AdsServiceImpl::Shutdown() {
   bat_ads_client_receiver_.reset();
   bat_ads_service_.reset();
 
-  is_initialized_ = false;
+  const bool success =
+      file_task_runner_->DeleteSoon(FROM_HERE, database_.release());
+  VLOG_IF(1, !success) << "Failed to release database";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -572,8 +565,20 @@ bool MigrateConfirmationsStateOnFileTaskRunner(
       rewards_service_base_path.AppendASCII("confirmations.json");
 
   if (base::PathExists(legacy_confirmations_state_path)) {
+    const base::FilePath ads_service_base_path =
+        path.AppendASCII("ads_service");
+
+    if (!base::DirectoryExists(ads_service_base_path)) {
+      if (!base::CreateDirectory(ads_service_base_path)) {
+        VLOG(0) << "Failed to create " << ads_service_base_path.value();
+        return false;
+      }
+
+      VLOG(1) << "Created " << ads_service_base_path.value();
+    }
+
     base::FilePath confirmations_state_path =
-        path.AppendASCII("ads_service").AppendASCII("confirmations.json");
+        ads_service_base_path.AppendASCII("confirmations.json");
 
     VLOG(1) << "Migrating " << legacy_confirmations_state_path.value()
         << " to " << confirmations_state_path.value();
@@ -620,27 +625,14 @@ void AdsServiceImpl::OnMigrateConfirmationsState(
 void AdsServiceImpl::Initialize() {
   profile_pref_change_registrar_.Init(profile_->GetPrefs());
 
-  profile_pref_change_registrar_.Add(prefs::kEnabled,
+  profile_pref_change_registrar_.Add(ads::prefs::kEnabled,
       base::Bind(&AdsServiceImpl::OnPrefsChanged, base::Unretained(this)));
 
-  profile_pref_change_registrar_.Add(huhi_rewards::prefs::kEnabled,
+  profile_pref_change_registrar_.Add(ads::prefs::kIdleThreshold,
       base::Bind(&AdsServiceImpl::OnPrefsChanged, base::Unretained(this)));
 
-  profile_pref_change_registrar_.Add(prefs::kIdleThreshold,
+  profile_pref_change_registrar_.Add(huhi_rewards::prefs::kWalletHuhi,
       base::Bind(&AdsServiceImpl::OnPrefsChanged, base::Unretained(this)));
-
-  profile_pref_change_registrar_.Add(huhi_rewards::prefs::kPaymentId,
-      base::Bind(&AdsServiceImpl::OnPrefsChanged, base::Unretained(this)));
-
-  profile_pref_change_registrar_.Add(huhi_rewards::prefs::kRecoverySeed,
-      base::Bind(&AdsServiceImpl::OnPrefsChanged, base::Unretained(this)));
-
-#if !defined(OS_ANDROID)
-  // TODO(tmancey): Refactor on-boarding to be platform agnostic
-  MaybeShowOnboarding();
-#endif
-
-  g_huhi_browser_process->user_model_file_service()->AddObserver(this);
 
   MaybeStart(false);
 }
@@ -679,10 +671,6 @@ void AdsServiceImpl::ShutdownBatAds() {
 
   VLOG(1) << "Shutting down ads";
 
-  const bool success = file_task_runner_->DeleteSoon(FROM_HERE,
-      database_.release());
-  VLOG_IF(1, !success) << "Failed to release database";
-
   bat_ads_->Shutdown(base::BindOnce(&AdsServiceImpl::OnShutdownBatAds,
       AsWeakPtr()));
 }
@@ -705,15 +693,12 @@ bool AdsServiceImpl::StartService() {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
   DCHECK(!connected());
 
-  auto* connection = content::ServiceManagerConnection::GetForProcess();
-  if (!connection) {
-    return false;
-  }
-
   if (!bat_ads_service_.is_bound()) {
-    connection->GetConnector()->Connect(
-        bat_ads::mojom::kServiceName,
-        bat_ads_service_.BindNewPipeAndPassReceiver());
+    content::ServiceProcessHost::Launch(
+        bat_ads_service_.BindNewPipeAndPassReceiver(),
+        content::ServiceProcessHost::Options()
+            .WithDisplayName(IDS_SERVICE_BAT_ADS)
+            .Pass());
 
     bat_ads_service_.set_disconnect_handler(
         base::Bind(&AdsServiceImpl::MaybeStart, AsWeakPtr(), true));
@@ -786,10 +771,6 @@ void AdsServiceImpl::ResetAllState(
 
   VLOG(1) << "Shutting down and resetting ads state";
 
-  const bool success = file_task_runner_->DeleteSoon(FROM_HERE,
-      database_.release());
-  VLOG_IF(1, !success) << "Failed to release database";
-
   bat_ads_->Shutdown(base::BindOnce(&AdsServiceImpl::OnShutdownAndResetBatAds,
       AsWeakPtr()));
 }
@@ -835,15 +816,17 @@ void AdsServiceImpl::OnEnsureBaseDirectoryExists(
     return;
   }
 
+  g_huhi_browser_process->user_model_file_service()->AddObserver(this);
+
   BackgroundHelper::GetInstance()->AddObserver(this);
+
+  database_ = std::make_unique<ads::Database>(
+      base_path_.AppendASCII("database.sqlite"));
 
   bat_ads_service_->Create(
       bat_ads_client_receiver_.BindNewEndpointAndPassRemote(),
       bat_ads_.BindNewEndpointAndPassReceiver(),
       base::BindOnce(&AdsServiceImpl::OnCreate, AsWeakPtr()));
-
-  database_ = std::make_unique<ads::Database>(
-      base_path_.AppendASCII("database.sqlite"));
 
   OnWalletUpdated();
 
@@ -934,7 +917,7 @@ void AdsServiceImpl::ProcessIdleState(
 }
 
 int AdsServiceImpl::GetIdleThreshold() {
-  return GetIntegerPref(prefs::kIdleThreshold);
+  return GetIntegerPref(ads::prefs::kIdleThreshold);
 }
 
 void AdsServiceImpl::OnShow(
@@ -1008,6 +991,17 @@ void AdsServiceImpl::OnViewAdNotification(
 
   bat_ads_->OnAdNotificationEvent(notification.uuid,
       ads::AdNotificationEventType::kClicked);
+}
+
+void AdsServiceImpl::OnNewTabPageAdEvent(
+    const std::string& wallpaper_id,
+    const std::string& creative_instance_id,
+    const ads::NewTabPageAdEventType event_type) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_->OnNewTabPageAdEvent(wallpaper_id, creative_instance_id, event_type);
 }
 
 void AdsServiceImpl::RetryViewingAdNotification(
@@ -1085,8 +1079,6 @@ void AdsServiceImpl::RegisterUserModelComponentsForLocale(
 void AdsServiceImpl::OnURLRequestStarted(
     const GURL& final_url,
     const network::mojom::URLResponseHead& response_head) {
-  VLOG(6) << "URL request started for " << final_url.PathForRequest();
-
   if (response_head.headers->response_code() == -1) {
     VLOG(6) << "Response headers are malformed!!";
     return;
@@ -1099,9 +1091,6 @@ void AdsServiceImpl::OnURLRequestComplete(
     const std::unique_ptr<std::string> response_body) {
   DCHECK(url_loaders_.find(url_loader) != url_loaders_.end());
   url_loaders_.erase(url_loader);
-
-  VLOG(6) << "URL request complete for "
-      << url_loader->GetFinalURL().PathForRequest();
 
   if (!connected()) {
     return;
@@ -1149,48 +1138,44 @@ bool AdsServiceImpl::CanShowBackgroundNotifications() const {
 void AdsServiceImpl::OnGetAdsHistory(
     OnGetAdsHistoryCallback callback,
     const std::string& json) {
-  ads::AdsHistory ads_history;
+  ads::AdsHistoryInfo ads_history;
   ads_history.FromJson(json);
 
   // Build the list structure required by the webUI
   int uuid = 0;
   base::ListValue list;
-  for (const auto& entry : ads_history.entries) {
+  for (const auto& item : ads_history.items) {
     base::DictionaryValue ad_content_dictionary;
     ad_content_dictionary.SetKey("creativeInstanceId",
-        base::Value(entry.ad_content.creative_instance_id));
+        base::Value(item.ad_content.creative_instance_id));
     ad_content_dictionary.SetKey("creativeSetId",
-        base::Value(entry.ad_content.creative_set_id));
-    ad_content_dictionary.SetKey("campaignId",
-        base::Value(entry.ad_content.campaign_id));
+        base::Value(item.ad_content.creative_set_id));
     ad_content_dictionary.SetKey("brand",
-        base::Value(entry.ad_content.brand));
+        base::Value(item.ad_content.brand));
     ad_content_dictionary.SetKey("brandInfo",
-        base::Value(entry.ad_content.brand_info));
+        base::Value(item.ad_content.brand_info));
     ad_content_dictionary.SetKey("brandLogo",
-        base::Value(entry.ad_content.brand_logo));
+        base::Value(item.ad_content.brand_logo));
     ad_content_dictionary.SetKey("brandDisplayUrl",
-        base::Value(entry.ad_content.brand_display_url));
+        base::Value(item.ad_content.brand_display_url));
     ad_content_dictionary.SetKey("brandUrl",
-        base::Value(entry.ad_content.brand_url));
+        base::Value(item.ad_content.brand_url));
     ad_content_dictionary.SetKey("likeAction",
-        base::Value(static_cast<int>(entry.ad_content.like_action)));
+        base::Value(static_cast<int>(item.ad_content.like_action)));
     ad_content_dictionary.SetKey("adAction",
-        base::Value(std::string(entry.ad_content.ad_action)));
+        base::Value(std::string(item.ad_content.ad_action)));
     ad_content_dictionary.SetKey("savedAd",
-        base::Value(entry.ad_content.saved_ad));
+        base::Value(item.ad_content.saved_ad));
     ad_content_dictionary.SetKey("flaggedAd",
-        base::Value(entry.ad_content.flagged_ad));
+        base::Value(item.ad_content.flagged_ad));
 
     base::DictionaryValue category_content_dictionary;
     category_content_dictionary.SetKey("category",
-        base::Value(entry.category_content.category));
+        base::Value(item.category_content.category));
     category_content_dictionary.SetKey("optAction",
-        base::Value(static_cast<int>(entry.category_content.opt_action)));
+        base::Value(static_cast<int>(item.category_content.opt_action)));
 
     base::DictionaryValue ad_history_dictionary;
-    ad_history_dictionary.SetKey("uuid", base::Value(entry.uuid));
-    ad_history_dictionary.SetKey("parentUuid", base::Value(entry.parent_uuid));
     ad_history_dictionary.SetPath("adContent",
         std::move(ad_content_dictionary));
     ad_history_dictionary.SetPath("categoryContent",
@@ -1199,7 +1184,7 @@ void AdsServiceImpl::OnGetAdsHistory(
     base::DictionaryValue dictionary;
 
     dictionary.SetKey("uuid", base::Value(std::to_string(uuid++)));
-    auto time = base::Time::FromDoubleT(entry.timestamp_in_seconds);
+    auto time = base::Time::FromDoubleT(item.timestamp_in_seconds);
     auto js_time = time.ToJsTime();
     dictionary.SetKey("timestampInMilliseconds", base::Value(js_time));
 
@@ -1361,7 +1346,9 @@ bool AdsServiceImpl::MigratePrefs(
     {{3, 4}, &AdsServiceImpl::MigratePrefsVersion3To4},
     {{4, 5}, &AdsServiceImpl::MigratePrefsVersion4To5},
     {{5, 6}, &AdsServiceImpl::MigratePrefsVersion5To6},
-    {{6, 7}, &AdsServiceImpl::MigratePrefsVersion6To7}
+    {{6, 7}, &AdsServiceImpl::MigratePrefsVersion6To7},
+    {{7, 8}, &AdsServiceImpl::MigratePrefsVersion7To8},
+    {{8, 9}, &AdsServiceImpl::MigratePrefsVersion8To9}
   };
 
   // Cycle through migration paths, i.e. if upgrading from version 2 to 5 we
@@ -1406,9 +1393,9 @@ void AdsServiceImpl::MigratePrefsVersion1To2() {
   // migrate to the new value
 
   #if defined(OS_ANDROID)
-    SetUint64Pref(prefs::kAdsPerDay, 12);
+    SetUint64Pref(ads::prefs::kAdsPerDay, 12);
   #else
-    SetUint64Pref(prefs::kAdsPerDay, 20);
+    SetUint64Pref(ads::prefs::kAdsPerDay, 20);
   #endif
 }
 
@@ -1431,15 +1418,6 @@ void AdsServiceImpl::MigratePrefsVersion2To3() {
   };
 
   DisableAdsForUnsupportedCountryCodes(country_code, legacy_country_codes);
-
-  // On-board users for newly supported country_codes
-  const std::vector<std::string> new_country_codes = {
-    "AU",  // Australia
-    "NZ",  // New Zealand
-    "IE"   // Ireland
-  };
-
-  MayBeShowOnboardingForSupportedCountryCode(country_code, new_country_codes);
 }
 
 void AdsServiceImpl::MigratePrefsVersion3To4() {
@@ -1460,34 +1438,6 @@ void AdsServiceImpl::MigratePrefsVersion3To4() {
   };
 
   DisableAdsForUnsupportedCountryCodes(country_code, legacy_country_codes);
-
-  // On-board users for newly supported country codes
-  const std::vector<std::string> new_country_codes = {
-    "AR",  // Argentina
-    "AT",  // Austria
-    "BR",  // Brazil
-    "CH",  // Switzerland
-    "CL",  // Chile
-    "CO",  // Colombia
-    "DK",  // Denmark
-    "EC",  // Ecuador
-    "IL",  // Israel
-    "IN",  // India
-    "IT",  // Italy
-    "JP",  // Japan
-    "KR",  // Korea
-    "MX",  // Mexico
-    "NL",  // Netherlands
-    "PE",  // Peru
-    "PH",  // Philippines
-    "PL",  // Poland
-    "SE",  // Sweden
-    "SG",  // Singapore
-    "VE",  // Venezuela
-    "ZA"   // South Africa
-  };
-
-  MayBeShowOnboardingForSupportedCountryCode(country_code, new_country_codes);
 }
 
 void AdsServiceImpl::MigratePrefsVersion4To5() {
@@ -1530,20 +1480,13 @@ void AdsServiceImpl::MigratePrefsVersion4To5() {
   };
 
   DisableAdsForUnsupportedCountryCodes(country_code, legacy_country_codes);
-
-  // On-board users for newly supported country codes
-  const std::vector<std::string> new_country_codes = {
-    "KY"   // Cayman Islands
-  };
-
-  MayBeShowOnboardingForSupportedCountryCode(country_code, new_country_codes);
 }
 
 void AdsServiceImpl::MigratePrefsVersion5To6() {
   // Unlike Muon, ads per day are not configurable in the UI so we can safely
   // migrate to the new value
 
-  SetUint64Pref(prefs::kAdsPerDay, 20);
+  SetUint64Pref(ads::prefs::kAdsPerDay, 20);
 }
 
 void AdsServiceImpl::MigratePrefsVersion6To7() {
@@ -1607,9 +1550,20 @@ void AdsServiceImpl::MigratePrefsVersion6To7() {
   }
 
   SetEnabled(false);
+}
 
-  SetBooleanPref(prefs::kShouldShowOnboarding, true);
-  SetUint64Pref(prefs::kOnboardingTimestamp, 0);
+void AdsServiceImpl::MigratePrefsVersion7To8() {
+  const bool rewards_enabled = GetBooleanPref(huhi_rewards::prefs::kEnabled);
+  if (!rewards_enabled) {
+    SetEnabled(false);
+  }
+}
+
+void AdsServiceImpl::MigratePrefsVersion8To9() {
+  // Unlike Muon, ads per day are not configurable in the UI so we can safely
+  // migrate to the new value
+
+  SetUint64Pref(ads::prefs::kAdsPerDay, 40);
 }
 
 int AdsServiceImpl::GetPrefsVersion() const {
@@ -1629,8 +1583,9 @@ bool AdsServiceImpl::IsUpgradingFromPreHuhiAdsBuild() {
   // |prefs::kVersion| does not exist and it is not the first time the browser
   // has run for this user
 #if !defined(OS_ANDROID)
-  return GetBooleanPref(prefs::kEnabled) && !PrefExists(prefs::kIdleThreshold)
-      && !PrefExists(prefs::kVersion) && !first_run::IsChromeFirstRun();
+  return GetBooleanPref(ads::prefs::kEnabled) &&
+      !PrefExists(ads::prefs::kIdleThreshold) &&
+      !PrefExists(prefs::kVersion) && !first_run::IsChromeFirstRun();
 #else
   return false;
 #endif
@@ -1655,22 +1610,6 @@ void AdsServiceImpl::DisableAdsForUnsupportedCountryCodes(
   SetEnabled(false);
 }
 
-void AdsServiceImpl::MayBeShowOnboardingForSupportedCountryCode(
-    const std::string& country_code,
-    const std::vector<std::string>& supported_country_codes) {
-  if (IsEnabled()) {
-    return;
-  }
-
-  if (std::find(supported_country_codes.begin(), supported_country_codes.end(),
-      country_code) == supported_country_codes.end()) {
-    return;
-  }
-
-  SetBooleanPref(prefs::kShouldShowOnboarding, true);
-  SetUint64Pref(prefs::kOnboardingTimestamp, 0);
-}
-
 uint64_t AdsServiceImpl::MigrateTimestampToDoubleT(
     const uint64_t timestamp_in_seconds) const {
   if (timestamp_in_seconds < 10000000000) {
@@ -1687,104 +1626,6 @@ uint64_t AdsServiceImpl::MigrateTimestampToDoubleT(
 
   auto date = now + base::TimeDelta::FromSeconds(delta);
   return static_cast<uint64_t>(date.ToDoubleT());
-}
-
-void AdsServiceImpl::MaybeShowOnboarding() {
-  if (!ShouldShowOnboarding()) {
-    MaybeStartRemoveOnboardingTimer();
-    return;
-  }
-
-  ShowOnboarding();
-}
-
-bool AdsServiceImpl::ShouldShowOnboarding() {
-  auto is_ads_enabled = GetBooleanPref(prefs::kEnabled);
-
-  auto is_rewards_enabled =
-      GetBooleanPref(huhi_rewards::prefs::kEnabled);
-
-  auto should_show = GetBooleanPref(prefs::kShouldShowOnboarding);
-
-  return IsNewlySupportedLocale() && !is_ads_enabled && is_rewards_enabled
-      && should_show;
-}
-
-void AdsServiceImpl::ShowOnboarding() {
-  auto type = RewardsNotificationService::REWARDS_NOTIFICATION_ADS_ONBOARDING;
-  RewardsNotificationService::RewardsNotificationArgs args;
-  auto* id = kRewardsNotificationAdsOnboarding;
-
-  auto* notification_service = rewards_service_->GetNotificationService();
-  notification_service->AddNotification(type, args, id);
-
-  SetBooleanPref(prefs::kShouldShowOnboarding, false);
-
-  auto now = static_cast<uint64_t>(base::Time::Now().ToDoubleT());
-  SetUint64Pref(prefs::kOnboardingTimestamp, now);
-
-  StartRemoveOnboardingTimer();
-}
-
-void AdsServiceImpl::RemoveOnboarding() {
-  if (!ShouldRemoveOnboarding()) {
-    return;
-  }
-
-  onboarding_timer_.Stop();
-
-  auto* notification_service = rewards_service_->GetNotificationService();
-  notification_service->DeleteNotification(kRewardsNotificationAdsOnboarding);
-
-  VLOG(1) << "Removed onboarding";
-}
-
-void AdsServiceImpl::MaybeStartRemoveOnboardingTimer() {
-  if (!ShouldRemoveOnboarding()) {
-    return;
-  }
-
-  StartRemoveOnboardingTimer();
-}
-
-bool AdsServiceImpl::ShouldRemoveOnboarding() const {
-  auto* notification_service = rewards_service_->GetNotificationService();
-  return notification_service->Exists(kRewardsNotificationAdsOnboarding);
-}
-
-void AdsServiceImpl::StartRemoveOnboardingTimer() {
-  if (onboarding_timer_.IsRunning()) {
-    return;
-  }
-
-  auto now_in_seconds = static_cast<uint64_t>(base::Time::Now().ToDoubleT());
-
-  auto timestamp_in_seconds =
-      MigrateTimestampToDoubleT(GetUint64Pref(prefs::kOnboardingTimestamp));
-
-  if (IsDebug()) {
-    timestamp_in_seconds += 5 * base::Time::kSecondsPerMinute;
-  } else {
-    timestamp_in_seconds += base::Time::kMicrosecondsPerWeek /
-        base::Time::kMicrosecondsPerSecond;
-  }
-
-  uint64_t timer_offset_in_seconds;
-  if (now_in_seconds >= timestamp_in_seconds) {
-    timer_offset_in_seconds = 1 * base::Time::kSecondsPerMinute;
-  } else {
-    timer_offset_in_seconds = timestamp_in_seconds - now_in_seconds;
-  }
-
-  onboarding_timer_.Start(FROM_HERE,
-      base::TimeDelta::FromSeconds(timer_offset_in_seconds),
-          base::BindOnce(&AdsServiceImpl::RemoveOnboarding, AsWeakPtr()));
-
-  const std::string friendly_date_and_time =
-      base::UTF16ToUTF8(base::TimeFormatFriendlyDateAndTime(
-          base::Time::FromDoubleT(now_in_seconds + timer_offset_in_seconds)));
-
-  VLOG(1) << "Started timer to remove onboarding " << friendly_date_and_time;
 }
 
 void AdsServiceImpl::MaybeShowMyFirstAdNotification() {
@@ -1804,144 +1645,6 @@ bool AdsServiceImpl::ShouldShowMyFirstAdNotification() const {
   return IsEnabled() && should_show;
 }
 
-bool AdsServiceImpl::GetBooleanPref(
-    const std::string& path) const {
-  auto* prefs = profile_->GetPrefs();
-  const auto value = prefs->GetBoolean(path);
-
-  if (!prefs->HasPrefPath(path)) {
-    // If the preference path does not exist then the default value set with
-    // RegisterBooleanPref has not been serialized, so we need to serialize the
-    // default value
-    prefs->SetBoolean(path, value);
-  }
-
-  // If the preference path does exist then a value was serialized, so return
-  // the serialized value
-  return value;
-}
-
-void AdsServiceImpl::SetBooleanPref(
-    const std::string& path,
-    const bool value) {
-  profile_->GetPrefs()->SetBoolean(path, value);
-}
-
-int AdsServiceImpl::GetIntegerPref(
-    const std::string& path) const {
-  auto* prefs = profile_->GetPrefs();
-  const auto value = prefs->GetInteger(path);
-
-  if (!prefs->HasPrefPath(path)) {
-    // If the preference path does not exist then the default value set with
-    // RegisterIntegerPref has not been serialized, so we need to serialize the
-    // default value
-    prefs->SetInteger(path, value);
-  }
-
-  // If the preference path does exist then a value was serialized, so return
-  // the serialized value
-  return value;
-}
-
-void AdsServiceImpl::SetIntegerPref(
-    const std::string& path,
-    const int value) {
-  profile_->GetPrefs()->SetInteger(path, value);
-}
-
-double AdsServiceImpl::GetDoublePref(
-    const std::string& path) const {
-  auto* prefs = profile_->GetPrefs();
-  const auto value = prefs->GetDouble(path);
-
-  if (!prefs->HasPrefPath(path)) {
-    // If the preference path does not exist then the default value set with
-    // RegisterDoublePref has not been serialized, so we need to serialize the
-    // default value
-    prefs->SetDouble(path, value);
-  }
-
-  // If the preference path does exist then a value was serialized, so return
-  // the serialized value
-  return value;
-}
-
-void AdsServiceImpl::SetDoublePref(
-    const std::string& path,
-    const double value) {
-  profile_->GetPrefs()->SetDouble(path, value);
-}
-
-std::string AdsServiceImpl::GetStringPref(
-    const std::string& path) const {
-  auto* prefs = profile_->GetPrefs();
-  const auto value = prefs->GetString(path);
-
-  if (!prefs->HasPrefPath(path)) {
-    // If the preference path does not exist then the default value set with
-    // RegisterStringPref has not been serialized, so we need to serialize the
-    // default value
-    prefs->SetString(path, value);
-  }
-
-  // If the preference path does exist then a value was serialized, so return
-  // the serialized value
-  return value;
-}
-
-void AdsServiceImpl::SetStringPref(
-    const std::string& path,
-    const std::string& value) {
-  profile_->GetPrefs()->SetString(path, value);
-}
-
-int64_t AdsServiceImpl::GetInt64Pref(
-    const std::string& path) const {
-  auto* prefs = profile_->GetPrefs();
-  const auto value = prefs->GetInt64(path);
-
-  if (!prefs->HasPrefPath(path)) {
-    // If the preference path does not exist then the default value set with
-    // RegisterInt64Pref has not been serialized, so we need to serialize the
-    // default value
-    prefs->SetInt64(path, value);
-  }
-
-  // If the preference path does exist then a value was serialized, so return
-  // the serialized value
-  return value;
-}
-
-void AdsServiceImpl::SetInt64Pref(
-    const std::string& path,
-    const int64_t value) {
-  profile_->GetPrefs()->SetInt64(path, value);
-}
-
-uint64_t AdsServiceImpl::GetUint64Pref(
-    const std::string& path) const {
-  auto* prefs = profile_->GetPrefs();
-  const auto value = prefs->GetUint64(path);
-
-  if (!prefs->HasPrefPath(path)) {
-    // If the preference path does not exist then the default value set with
-    // RegisterUint64Pref has not been serialized, so we need to serialize the
-    // default value
-    prefs->SetUint64(path, value);
-  }
-
-  // If the preference path does exist then a value was serialized, so return
-  // the serialized value
-  return value;
-}
-
-void AdsServiceImpl::SetUint64Pref(
-    const std::string& path,
-    const uint64_t value) {
-  profile_->GetPrefs()->SetUint64(path, value);
-}
-
 bool AdsServiceImpl::PrefExists(
     const std::string& path) const {
   return profile_->GetPrefs()->HasPrefPath(path);
@@ -1949,32 +1652,26 @@ bool AdsServiceImpl::PrefExists(
 
 void AdsServiceImpl::OnPrefsChanged(
     const std::string& pref) {
-  if (pref == prefs::kEnabled ||
-      pref == huhi_rewards::prefs::kEnabled) {
-    if (IsEnabled()) {
-#if !defined(OS_ANDROID)
-      if (first_run::IsChromeFirstRun()) {
-        SetBooleanPref(prefs::kShouldShowOnboarding, false);
-      } else {
-        RemoveOnboarding();
-      }
-#endif
+  if (pref == ads::prefs::kEnabled) {
+    rewards_service_->OnAdsEnabled(IsEnabled());
 
+    if (IsEnabled()) {
       MaybeStart(false);
     } else {
       // Record "special value" to prevent sending this week's data to P2A
       // server. Matches INT_MAX - 1 for |kSuspendedMetricValue| in
       // |huhi_p3a_service.cc|
-      huhi_ads::EmitConfirmationsCountMetric(INT_MAX);
+      SuspendP2AHistograms();
+      VLOG(1) << "P2A histograms suspended";
+
       Stop();
     }
 
     // Record P3A.
     huhi_rewards::UpdateAdsP3AOnPreferenceChange(profile_->GetPrefs(), pref);
-  } else if (pref == prefs::kIdleThreshold) {
+  } else if (pref == ads::prefs::kIdleThreshold) {
     StartCheckIdleStateTimer();
-  } else if (pref == huhi_rewards::prefs::kPaymentId ||
-      pref == huhi_rewards::prefs::kRecoverySeed) {
+  } else if (pref == huhi_rewards::prefs::kWalletHuhi) {
     OnWalletUpdated();
   }
 }
@@ -1987,10 +1684,6 @@ bool AdsServiceImpl::connected() {
 
 bool AdsServiceImpl::IsNetworkConnectionAvailable() const {
   return !net::NetworkChangeNotifier::IsOffline();
-}
-
-void AdsServiceImpl::SetIdleThreshold(const int threshold) {
-  SetIntegerPref(prefs::kIdleThreshold, threshold);
 }
 
 bool AdsServiceImpl::IsForeground() const {
@@ -2021,13 +1714,13 @@ std::string AdsServiceImpl::LoadDataResourceAndDecompressIfNeeded(
 }
 
 void AdsServiceImpl::ShowNotification(
-    const std::unique_ptr<ads::AdNotificationInfo> info) {
-  auto notification = CreateAdNotification(*info);
+    const ads::AdNotificationInfo& ad_notification) {
+  auto notification = CreateAdNotification(ad_notification);
 
   display_service_->Display(NotificationHandler::Type::HUHI_ADS,
       *notification, /*metadata=*/nullptr);
 
-  StartNotificationTimeoutTimer(info->uuid);
+  StartNotificationTimeoutTimer(ad_notification.uuid);
 }
 
 void AdsServiceImpl::StartNotificationTimeoutTimer(
@@ -2152,6 +1845,31 @@ void AdsServiceImpl::LoadUserModelForId(
           std::move(callback)));
 }
 
+void AdsServiceImpl::RecordP2AEvent(
+    const std::string& name,
+    const ads::P2AEventType type,
+    const std::string& value) {
+  switch (type) {
+    case ads::P2AEventType::kListType: {
+      base::Optional<base::Value> maybe_list = base::JSONReader::Read(value);
+      if (!maybe_list || !maybe_list->is_list()) {
+        break;
+      }
+
+      base::ListValue* list = nullptr;
+      if (!maybe_list->GetAsList(&list)) {
+        break;
+      }
+
+      for (auto& item : *list) {
+        RecordInWeeklyStorageAndEmitP2AHistogramAnswer(
+            profile_->GetPrefs(), item.GetString());
+      }
+      break;
+    }
+  }
+}
+
 void AdsServiceImpl::Load(
     const std::string& name,
     ads::LoadCallback callback) {
@@ -2224,6 +1942,127 @@ void AdsServiceImpl::Log(
   if (verbose_level <= vlog_level) {
     ::logging::LogMessage(file, line, -verbose_level).stream() << message;
   }
+}
+
+bool AdsServiceImpl::GetBooleanPref(
+    const std::string& path) const {
+  const base::Value* value = prefs::GetValue(profile_->GetPrefs(), path);
+  if (!value) {
+    return false;
+  }
+
+  DCHECK(value->is_bool());
+
+  return value->GetBool();
+}
+
+void AdsServiceImpl::SetBooleanPref(
+    const std::string& path,
+    const bool value) {
+  profile_->GetPrefs()->SetBoolean(path, value);
+}
+
+int AdsServiceImpl::GetIntegerPref(
+    const std::string& path) const {
+  const base::Value* value = prefs::GetValue(profile_->GetPrefs(), path);
+  if (!value) {
+    return 0;
+  }
+
+  DCHECK(value->is_int());
+
+  return value->GetInt();
+}
+
+void AdsServiceImpl::SetIntegerPref(
+    const std::string& path,
+    const int value) {
+  profile_->GetPrefs()->SetInteger(path, value);
+}
+
+double AdsServiceImpl::GetDoublePref(
+    const std::string& path) const {
+  const base::Value* value = prefs::GetValue(profile_->GetPrefs(), path);
+  if (!value) {
+    return 0.0;
+  }
+
+  DCHECK(value->is_double() || value->is_int());
+
+  return value->GetDouble();
+}
+
+void AdsServiceImpl::SetDoublePref(
+    const std::string& path,
+    const double value) {
+  profile_->GetPrefs()->SetDouble(path, value);
+}
+
+std::string AdsServiceImpl::GetStringPref(
+    const std::string& path) const {
+  const base::Value* value = prefs::GetValue(profile_->GetPrefs(), path);
+  if (!value) {
+    return "";
+  }
+
+  DCHECK(value->is_string());
+
+  return value->GetString();
+}
+
+void AdsServiceImpl::SetStringPref(
+    const std::string& path,
+    const std::string& value) {
+  profile_->GetPrefs()->SetString(path, value);
+}
+
+int64_t AdsServiceImpl::GetInt64Pref(
+    const std::string& path) const {
+  const base::Value* value = prefs::GetValue(profile_->GetPrefs(), path);
+  if (!value) {
+    return 0;
+  }
+
+  std::string string = "0";
+  bool success = value->GetAsString(&string);
+  DCHECK(success);
+
+  int64_t integer;
+  base::StringToInt64(string, &integer);
+  return integer;
+}
+
+void AdsServiceImpl::SetInt64Pref(
+    const std::string& path,
+    const int64_t value) {
+  profile_->GetPrefs()->SetInt64(path, value);
+}
+
+uint64_t AdsServiceImpl::GetUint64Pref(
+    const std::string& path) const {
+  const base::Value* value = prefs::GetValue(profile_->GetPrefs(), path);
+  if (!value) {
+    return 0;
+  }
+
+  std::string string = "0";
+  bool success = value->GetAsString(&string);
+  DCHECK(success);
+
+  uint64_t integer;
+  base::StringToUint64(string, &integer);
+  return integer;
+}
+
+void AdsServiceImpl::SetUint64Pref(
+    const std::string& path,
+    const uint64_t value) {
+  profile_->GetPrefs()->SetUint64(path, value);
+}
+
+void AdsServiceImpl::ClearPref(
+    const std::string& path) {
+  profile_->GetPrefs()->ClearPref(path);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

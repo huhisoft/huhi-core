@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -18,19 +18,19 @@ class AdsImpl;
 class UserActivityFrequencyCap : public PermissionRule {
  public:
   UserActivityFrequencyCap(
-      const AdsImpl* const ads);
+      AdsImpl* ads);
 
   ~UserActivityFrequencyCap() override;
 
   UserActivityFrequencyCap(const UserActivityFrequencyCap&) = delete;
   UserActivityFrequencyCap& operator=(const UserActivityFrequencyCap&) = delete;
 
-  bool IsAllowed() override;
+  bool ShouldAllow() override;
 
   std::string get_last_message() const override;
 
  private:
-  const AdsImpl* const ads_;  // NOT OWNED
+  AdsImpl* ads_;  // NOT OWNED
 
   std::string last_message_;
 

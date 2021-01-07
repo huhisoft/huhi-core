@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -25,12 +25,12 @@ class ContributionSKU {
 
   void AutoContribution(
       const std::string& contribution_id,
-      type::ExternalWalletPtr wallet,
+      const std::string& wallet_type,
       ledger::ResultCallback callback);
 
   void AnonUserFunds(
       const std::string& contribution_id,
-      type::ExternalWalletPtr wallet,
+      const std::string& wallet_type,
       ledger::ResultCallback callback);
 
   void Merchant(
@@ -45,13 +45,13 @@ class ContributionSKU {
   void Start(
       const std::string& contribution_id,
       const type::SKUOrderItem& item,
-      type::ExternalWalletPtr wallet,
+      const std::string& wallet_type,
       ledger::ResultCallback callback);
 
   void GetContributionInfo(
       type::ContributionInfoPtr contribution,
       const type::SKUOrderItem& item,
-      const type::ExternalWallet& wallet,
+      const std::string& wallet_type,
       ledger::ResultCallback callback);
 
   void GetOrder(
@@ -107,7 +107,7 @@ class ContributionSKU {
 
   void RetryStartStepExternalWallet(
       const type::Result result,
-      type::ExternalWalletPtr wallet,
+      const std::string& wallet_type,
       const std::string& order_id,
       const std::string& contribution_id,
       ledger::ResultCallback callback);

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -40,7 +40,8 @@ namespace promotion {
 
 using GetRecoverWalletCallback = std::function<void(
     const type::Result result,
-    const std::string& payment_id)>;
+    const std::string& payment_id,
+    const bool legacy_wallet)>;
 
 class GetRecoverWallet {
  public:
@@ -58,7 +59,8 @@ class GetRecoverWallet {
 
   type::Result ParseBody(
       const std::string& body,
-      std::string* payment_id);
+      std::string* payment_id,
+      bool* legacy_wallet);
 
   void OnRequest(
       const type::UrlResponse& response,

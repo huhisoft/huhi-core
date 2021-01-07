@@ -1,0 +1,13 @@
+declare_args() {
+  huhi_variations_server_url = ""
+}
+
+config("huhi_variations_config") {
+  defines = [
+    "HUHI_VARIATIONS_SERVER_URL=\"$huhi_variations_server_url\""
+  ]
+}
+
+group("constants") {
+  public_configs = [ ":huhi_variations_config" ]
+}

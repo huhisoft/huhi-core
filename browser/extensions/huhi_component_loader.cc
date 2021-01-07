@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,18 +9,18 @@
 
 #include "base/bind.h"
 #include "base/command_line.h"
+#include "bat/ads/pref_names.h"
 #include "huhi/browser/huhi_browser_process_impl.h"
 #include "huhi/browser/component_updater/huhi_component_installer.h"
 #include "huhi/common/huhi_switches.h"
-#include "huhi/common/huhi_wallet_constants.h"
 #include "huhi/common/pref_names.h"
+#include "huhi/components/huhi_ads/common/pref_names.h"
 #include "huhi/components/huhi_component_updater/browser/huhi_on_demand_updater.h"
 #include "huhi/components/huhi_extension/grit/huhi_extension.h"
 #include "huhi/components/huhi_rewards/browser/buildflags/buildflags.h"
 #include "huhi/components/huhi_rewards/common/pref_names.h"
 #include "huhi/components/huhi_rewards/resources/extension/grit/huhi_rewards_extension_resources.h"
 #include "huhi/components/huhi_webtorrent/grit/huhi_webtorrent_resources.h"
-#include "huhi/browser/extensions/huhi_wallet_util.h"
 #include "chrome/browser/extensions/extension_service.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/common/pref_names.h"
@@ -32,6 +32,12 @@
 #include "extensions/browser/extension_system.h"
 #include "extensions/common/constants.h"
 
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
+#include "huhi/browser/extensions/huhi_wallet_util.h"
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
+#include "huhi/components/huhi_wallet/pref_names.h"
+#endif
+
 namespace extensions {
 
 HuhiComponentLoader::HuhiComponentLoader(ExtensionSystem* extension_system,
@@ -41,8 +47,8 @@ HuhiComponentLoader::HuhiComponentLoader(ExtensionSystem* extension_system,
       profile_prefs_(profile->GetPrefs()) {
 #if BUILDFLAG(HUHI_REWARDS_ENABLED)
   pref_change_registrar_.Init(profile_prefs_);
-  pref_change_registrar_.Add(huhi_rewards::prefs::kEnabled,
-      base::Bind(&HuhiComponentLoader::HandleRewardsEnabledStatus,
+  pref_change_registrar_.Add(huhi_rewards::prefs::kAutoContributeEnabled,
+      base::Bind(&HuhiComponentLoader::CheckRewardsStatus,
       base::Unretained(this)));
 #endif
 }
@@ -102,7 +108,7 @@ void HuhiComponentLoader::AddDefaultComponentExtensions(
 
 #if BUILDFLAG(HUHI_REWARDS_ENABLED)
   // Enable rewards extension if already opted-in
-  HandleRewardsEnabledStatus();
+  CheckRewardsStatus();
 #endif
 
 #if BUILDFLAG(HUHI_WALLET_ENABLED)
@@ -128,10 +134,11 @@ void HuhiComponentLoader::AddRewardsExtension() {
   }
 }
 
-void HuhiComponentLoader::HandleRewardsEnabledStatus() {
-  const bool is_rewards_enabled = profile_prefs_->GetBoolean(
-      huhi_rewards::prefs::kEnabled);
-  if (is_rewards_enabled) {
+void HuhiComponentLoader::CheckRewardsStatus() {
+  const bool is_ac_enabled = profile_prefs_->GetBoolean(
+      huhi_rewards::prefs::kAutoContributeEnabled);
+
+  if (is_ac_enabled) {
     AddRewardsExtension();
   }
 }

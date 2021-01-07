@@ -1,10 +1,10 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import * as React from 'react'
 
-import { LocaleContext } from '../localeContext'
+import { LocaleContext, getLocaleWithTag } from '../localeContext'
 import { FormSection } from '../formSection'
 import { CreditCardForm, CreditCardDetails, CreditCardFormHandle } from '../creditCardForm'
 import { GoBackLink } from '../goBackLink'
@@ -31,6 +31,7 @@ interface UseCreditCardPanelProps {
 export function UseCreditCardPanel (props: UseCreditCardPanelProps) {
   const locale = React.useContext(LocaleContext)
   const creditCardFormRef = React.useRef<CreditCardFormHandle>(null)
+  const tags = getLocaleWithTag(locale.get('confirmTermsOfSale'))
 
   const onConfirmClick = () => {
     const formHandle = creditCardFormRef.current
@@ -83,7 +84,11 @@ export function UseCreditCardPanel (props: UseCreditCardPanelProps) {
           </div>
         </ConfirmButtonRow>
         <TermsOfSale>
-          <span dangerouslySetInnerHTML={{ __html: locale.get('confirmTermsOfSale') }} />
+          <span>
+            {tags.beforeTag}
+            <a href='javascript:void 0'>{tags.duringTag}</a>
+            {tags.afterTag}
+          </span>
         </TermsOfSale>
       </div>
     )

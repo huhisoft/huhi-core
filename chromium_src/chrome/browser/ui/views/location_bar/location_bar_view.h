@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,7 +11,7 @@
   friend class HuhiLocationBarView; \
                                      \
  public:                             \
-  void Layout(views::View* trailing_view);
+  virtual std::vector<views::View*> GetTrailingViews();
 
 #define GetBorderRadius virtual GetBorderRadius
 #include "../../../../../../../chrome/browser/ui/views/location_bar/location_bar_view.h"

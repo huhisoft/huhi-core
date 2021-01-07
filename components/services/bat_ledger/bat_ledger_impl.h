@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -90,12 +90,10 @@ class BatLedgerImpl :
       const std::string& promotion_id,
       const std::string& solution,
       AttestPromotionCallback callback) override;
-  void GetWalletPassphrase(GetWalletPassphraseCallback callback) override;
   void RecoverWallet(
       const std::string& pass_phrase,
       RecoverWalletCallback callback) override;
 
-  void SetRewardsMainEnabled(bool enabled) override;
   void SetPublisherMinVisitTime(int duration_in_seconds) override;
   void SetPublisherMinVisits(int visits) override;
   void SetPublisherAllowNonVerified(bool allow) override;
@@ -105,8 +103,6 @@ class BatLedgerImpl :
 
   void GetBalanceReport(ledger::type::ActivityMonth month, int32_t year,
       GetBalanceReportCallback callback) override;
-
-  void IsWalletCreated(IsWalletCreatedCallback callback) override;
 
   void GetPublisherActivityFromUrl(
       uint64_t window_id,
@@ -127,8 +123,6 @@ class BatLedgerImpl :
       const std::string& publisher_key,
       RemoveRecurringTipCallback callback) override;
   void GetCreationStamp(GetCreationStampCallback callback) override;
-  void GetRewardsMainEnabled(
-      GetRewardsMainEnabledCallback callback) override;
   void HasSufficientBalanceToReconcile(
       HasSufficientBalanceToReconcileCallback callback) override;
 
@@ -160,6 +154,25 @@ class BatLedgerImpl :
       const base::flat_map<std::string, std::string>& args,
       SaveMediaInfoCallback callback) override;
 
+  void UpdateMediaDuration(
+      const uint64_t window_id,
+      const std::string& publisher_key,
+      const uint64_t duration,
+      const bool first_visit) override;
+
+  void GetPublisherInfo(
+      const std::string& publisher_key,
+      GetPublisherInfoCallback callback) override;
+
+  void GetPublisherPanelInfo(
+      const std::string& publisher_key,
+      GetPublisherPanelInfoCallback callback) override;
+
+  void SavePublisherInfo(
+      const uint64_t window_id,
+      ledger::type::PublisherInfoPtr publisher_info,
+      SavePublisherInfoCallback callback) override;
+
   void SetInlineTippingPlatformEnabled(
       const ledger::type::InlineTipsPlatforms platform,
       bool enabled) override;
@@ -169,7 +182,6 @@ class BatLedgerImpl :
     GetInlineTippingPlatformEnabledCallback callback) override;
 
   void GetShareURL(
-    const std::string& type,
     const base::flat_map<std::string, std::string>& args,
     GetShareURLCallback callback) override;
 
@@ -188,8 +200,7 @@ class BatLedgerImpl :
 
   void FetchBalance(FetchBalanceCallback callback) override;
 
-  void GetExternalWallet(const std::string& wallet_type,
-                         GetExternalWalletCallback callback) override;
+  void GetUpholdWallet(GetUpholdWalletCallback callback) override;
 
   void ExternalWalletAuthorization(
     const std::string& wallet_type,
@@ -214,9 +225,9 @@ class BatLedgerImpl :
 
   void GetAllContributions(GetAllContributionsCallback callback) override;
 
-  void SavePublisherInfo(
+  void SavePublisherInfoForTip(
       ledger::type::PublisherInfoPtr info,
-      SavePublisherInfoCallback callback) override;
+      SavePublisherInfoForTipCallback callback) override;
 
   void GetMonthlyReport(
       const ledger::type::ActivityMonth month,
@@ -231,6 +242,10 @@ class BatLedgerImpl :
   void Shutdown(ShutdownCallback callback) override;
 
   void GetEventLogs(GetEventLogsCallback callback) override;
+
+  void GetHuhiWallet(GetHuhiWalletCallback callback) override;
+
+  void GetWalletPassphrase(GetWalletPassphraseCallback callback) override;
 
  private:
   // workaround to pass base::OnceCallback into std::bind
@@ -249,6 +264,16 @@ class BatLedgerImpl :
       base::WeakPtr<BatLedgerImpl> client_;
       Callback callback_;
     };
+
+  static void OnPublisherInfo(
+      CallbackHolder<GetPublisherInfoCallback>* holder,
+      const ledger::type::Result result,
+      ledger::type::PublisherInfoPtr info);
+
+  static void OnPublisherPanelInfo(
+      CallbackHolder<GetPublisherPanelInfoCallback>* holder,
+      const ledger::type::Result result,
+      ledger::type::PublisherInfoPtr info);
 
   static void OnGetBalanceReport(
       CallbackHolder<GetBalanceReportCallback>* holder,
@@ -363,10 +388,10 @@ class BatLedgerImpl :
       ledger::type::Result result,
       ledger::type::BalancePtr balance);
 
-  static void OnGetExternalWallet(
-    CallbackHolder<GetExternalWalletCallback>* holder,
+  static void OnGetUpholdWallet(
+    CallbackHolder<GetUpholdWalletCallback>* holder,
     ledger::type::Result result,
-    ledger::type::ExternalWalletPtr wallet);
+    ledger::type::UpholdWalletPtr wallet);
 
   static void OnExternalWalletAuthorization(
     CallbackHolder<ExternalWalletAuthorizationCallback>* holder,
@@ -393,6 +418,10 @@ class BatLedgerImpl :
       CallbackHolder<GetAllContributionsCallback>* holder,
       ledger::type::ContributionInfoList list);
 
+  static void OnSavePublisherInfoForTip(
+      CallbackHolder<SavePublisherInfoForTipCallback>* holder,
+      const ledger::type::Result result);
+
   static void OnSavePublisherInfo(
       CallbackHolder<SavePublisherInfoCallback>* holder,
       const ledger::type::Result result);
@@ -417,6 +446,10 @@ class BatLedgerImpl :
   static void OnGetEventLogs(
       CallbackHolder<GetEventLogsCallback>* holder,
       ledger::type::EventLogs logs);
+
+  static void OnGetHuhiWallet(
+      CallbackHolder<GetHuhiWalletCallback>* holder,
+      ledger::type::HuhiWalletPtr wallet);
 
   std::unique_ptr<BatLedgerClientMojoBridge> bat_ledger_client_mojo_bridge_;
   std::unique_ptr<ledger::Ledger> ledger_;

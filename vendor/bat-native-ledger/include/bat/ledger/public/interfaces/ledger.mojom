@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 module ledger.mojom;
@@ -54,7 +54,6 @@ struct PublisherInfo {
   uint32 percent;
   double weight;
   PublisherExclude excluded;
-  int32 category;
   uint64 reconcile_stamp;
   PublisherStatus status = PublisherStatus.NOT_VERIFIED;
   uint64 status_updated_at;
@@ -141,8 +140,7 @@ struct MediaEventInfo {
   string status;
 };
 
-struct ExternalWallet {
-  string type;
+struct UpholdWallet {
   string token;
   string address;
   WalletStatus status;
@@ -153,6 +151,7 @@ struct ExternalWallet {
   string user_name;
   string account_url;
   string login_url;
+  map<string, double> fees;
 };
 
 struct BalanceReportInfo {
@@ -248,11 +247,6 @@ struct ServerPublisherInfo {
   string address;
   uint64 updated_at;
   PublisherBanner? banner;
-};
-
-struct TransferFee {
-  string id;
-  double amount;
 };
 
 enum RewardsType {
@@ -534,4 +528,9 @@ struct EventLog {
   string key;
   string value;
   uint64 created_at;
+};
+
+struct HuhiWallet {
+  string payment_id;
+  array<uint8> recovery_seed;
 };

@@ -1,19 +1,20 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.chromium.chrome.browser.sync;
 
+import android.accounts.Account;
+
 import org.chromium.chrome.browser.sync.ProfileSyncService;
-import org.chromium.components.sync.SyncContentResolverDelegate;
 
 // see org.huhi.bytecode.HuhiAndroidSyncSettingsAdapter
 public class HuhiAndroidSyncSettings extends AndroidSyncSettings {
     private boolean mMasterSyncEnabled;
 
-    public HuhiAndroidSyncSettings(SyncContentResolverDelegate syncContentResolverDelegate) {
-        super(syncContentResolverDelegate);
+    public HuhiAndroidSyncSettings(Account account) {
+        super(account);
     }
 
     // Chromium's AndroidSyncSettings.mChromeSyncEnabled is never set to true

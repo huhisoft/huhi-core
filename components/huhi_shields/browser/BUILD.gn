@@ -30,7 +30,6 @@ source_set("browser") {
     "huhi_shields_p3a.h",
     "huhi_shields_util.cc",
     "huhi_shields_util.h",
-    "huhi_shields_web_contents_observer_android.cc",
     "huhi_shields_web_contents_observer.cc",
     "huhi_shields_web_contents_observer.h",
     "cookie_pref_service.cc",
@@ -41,6 +40,10 @@ source_set("browser") {
     "tracking_protection_service.cc",
     "tracking_protection_service.h",
   ]
+
+  if (is_android) {
+    sources += [ "huhi_shields_web_contents_observer_android.cc" ]
+  }
 
   if (huhi_stp_enabled) {
     sources += [
@@ -54,11 +57,12 @@ source_set("browser") {
     "//huhi/components/huhi_component_updater/browser",
     "//huhi/components/huhi_shields/common",
     "//huhi/components/content_settings/core/browser",
+    "//huhi/components/p3a",
     "//huhi/content:common",
     "//huhi/vendor/adblock_rust_ffi",
     "//chrome/common",
-    "//components/content_settings/core/common",
     "//components/content_settings/core/browser",
+    "//components/content_settings/core/common",
     "//components/keyed_service/core",
     "//components/prefs",
     "//components/sessions",

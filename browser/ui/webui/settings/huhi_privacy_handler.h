@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -28,9 +28,6 @@ class HuhiPrivacyHandler : public settings::SettingsPageUIHandler {
   void RegisterMessages() override;
   void OnJavascriptAllowed() override {}
   void OnJavascriptDisallowed() override {}
-
-  void SetWebRTCPolicy(const base::ListValue* args);
-  void GetWebRTCPolicy(const base::ListValue* args);
 
 #if BUILDFLAG(HUHI_P3A_ENABLED)
   void SetP3AEnabled(const base::ListValue* args);

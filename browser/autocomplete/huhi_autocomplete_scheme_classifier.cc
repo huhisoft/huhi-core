@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,11 +9,15 @@
 
 #include "base/strings/string_util.h"
 #include "huhi/common/url_constants.h"
-#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
 #include "chrome/browser/profiles/profile.h"
 
 #if BUILDFLAG(ENABLE_HUHI_WEBTORRENT)
 #include "huhi/components/huhi_webtorrent/browser/webtorrent_util.h"
+#endif
+
+#if BUILDFLAG(IPFS_ENABLED)
+#include "huhi/components/ipfs/ipfs_constants.h"
 #endif
 
 HuhiAutocompleteSchemeClassifier::HuhiAutocompleteSchemeClassifier(
@@ -49,8 +53,8 @@ HuhiAutocompleteSchemeClassifier::GetInputTypeForScheme(
 
 #if BUILDFLAG(IPFS_ENABLED)
   if (base::IsStringASCII(scheme) &&
-      (base::LowerCaseEqualsASCII(scheme, kIPFSScheme) ||
-       base::LowerCaseEqualsASCII(scheme, kIPNSScheme))) {
+      (base::LowerCaseEqualsASCII(scheme, ipfs::kIPFSScheme) ||
+       base::LowerCaseEqualsASCII(scheme, ipfs::kIPNSScheme))) {
     return metrics::OmniboxInputType::URL;
   }
 #endif

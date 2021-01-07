@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -97,9 +97,9 @@ class AdsBox extends React.Component<Props, {}> {
     const subdivisionMap = new Map(subdivisions)
     const subdivision = subdivisionMap.get(automaticallyDetectedAdsSubdivisionTargeting) as string
     if (subdivision !== '' && adsSubdivisionTargeting === 'AUTO') {
-      subdivisions.unshift(['AUTO', getLocale('adsSubdivisionTargetingAutomaticallyDetectedAs', { adsSubdivisionTarget : subdivision })])
+      subdivisions.unshift(['AUTO', getLocale('adsSubdivisionTargetingAutoDetectedAs', { adsSubdivisionTarget : subdivision })])
     } else {
-      subdivisions.unshift(['AUTO', getLocale('adsSubdivisionTargetingAutomaticallyDetect')])
+      subdivisions.unshift(['AUTO', getLocale('adsSubdivisionTargetingAutoDetect')])
     }
 
     return subdivisions
@@ -167,7 +167,7 @@ class AdsBox extends React.Component<Props, {}> {
               </ControlWrapper>
             </Column>
             <div>
-              {getLocale('adsSubdivisionTargetingDescription')} <a href={'https://support.huhisoft.com/hc/en-us/articles/360026361072-Huhi-Ads-FAQ'} target={'_blank'}>{getLocale('adsSubdivisionTargetingLearn')}</a>
+              {getLocale('adsSubdivisionTargetingDescription')} <a href={'https://support.hnq.vn/hc/en-us/articles/360026361072-Huhi-Ads-FAQ'} target={'_blank'}>{getLocale('adsSubdivisionTargetingLearn')}</a>
             </div>
           </> : null }
       </Grid>
@@ -184,7 +184,6 @@ class AdsBox extends React.Component<Props, {}> {
     let adNotificationsReceivedThisMonth = 0
     const {
       adsData,
-      enabledMain,
       safetyNetFailed,
       parameters
     } = this.props.rewardsData
@@ -201,7 +200,7 @@ class AdsBox extends React.Component<Props, {}> {
 
     // disabled / alert state
     const isDisabled = safetyNetFailed || !adsIsSupported || !adsUIEnabled
-    const toggle = !isDisabled && enabledMain
+    const toggle = !isDisabled
     // Sanity-check: ensure no action can be performed if the box isn't allowed
     // to be enabled
     const toggleAction = toggle
@@ -230,7 +229,7 @@ class AdsBox extends React.Component<Props, {}> {
         title={getLocale('adsTitle')}
         type={'ads'}
         description={getLocale('adsDesc', { currency : tokenString })}
-        settingsChild={this.adsSettings(adsEnabled && enabledMain)}
+        settingsChild={this.adsSettings(adsEnabled)}
         {...boxPropsExtra}
       >
         <List title={<StyledListContent>{getLocale('adsCurrentEarnings')}</StyledListContent>}>

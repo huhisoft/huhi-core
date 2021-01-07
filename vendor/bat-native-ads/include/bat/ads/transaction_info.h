@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -22,7 +22,7 @@ struct ADS_EXPORT TransactionInfo {
         const TransactionInfo& info);
   ~TransactionInfo();
 
-  uint64_t timestamp_in_seconds = 0;
+  int64_t timestamp = 0;
   double estimated_redemption_value = 0.0;
   std::string confirmation_type;
 

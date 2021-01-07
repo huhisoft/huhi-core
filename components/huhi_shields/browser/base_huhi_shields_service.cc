@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -54,12 +54,10 @@ bool BaseHuhiShieldsService::ShouldStartRequest(
     blink::mojom::ResourceType resource_type,
     const std::string& tab_host,
     bool* did_match_exception,
-    bool* cancel_request_explicitly,
     std::string* mock_data_url) {
   if (did_match_exception) {
     *did_match_exception = false;
   }
-  // Intentionally don't set cancel_request_explicitly
   return true;
 }
 

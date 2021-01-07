@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -35,20 +35,16 @@ class MockRewardsService : public RewardsService {
   ~MockRewardsService() {}
 
   MOCK_METHOD0(IsInitialized, bool());
-  MOCK_METHOD1(CreateWallet, void(huhi_rewards::CreateWalletCallback));
   MOCK_METHOD1(
       GetRewardsParameters,
       void(huhi_rewards::GetRewardsParametersCallback callback));
-  MOCK_METHOD7(GetContentSiteList,
-      void(uint32_t,
-           uint32_t,
-           uint64_t,
-           uint64_t,
-           bool,
-           uint32_t,
-           const huhi_rewards::GetContentSiteListCallback&));
+  MOCK_METHOD4(GetActivityInfoList,
+      void(const uint32_t,
+           const uint32_t,
+           ledger::type::ActivityInfoFilterPtr,
+           const huhi_rewards::GetPublisherInfoListCallback&));
   MOCK_METHOD1(GetExcludedList,
-      void(const huhi_rewards::GetContentSiteListCallback&));
+      void(const huhi_rewards::GetPublisherInfoListCallback&));
   MOCK_METHOD0(FetchPromotions, void());
   MOCK_METHOD2(ClaimPromotion, void(const std::string&,
       huhi_rewards::ClaimPromotionCallback));
@@ -57,8 +53,6 @@ class MockRewardsService : public RewardsService {
   MOCK_METHOD3(AttestPromotion, void(const std::string&,
       const std::string&,
       huhi_rewards::AttestPromotionCallback));
-  MOCK_METHOD1(GetWalletPassphrase,
-      void(const huhi_rewards::GetWalletPassphraseCallback&));
   MOCK_METHOD1(RecoverWallet, void(const std::string&));
   MOCK_METHOD0(RestorePublishers, void());
   MOCK_METHOD2(OnLoad, void(SessionID, const GURL&));
@@ -78,7 +72,6 @@ class MockRewardsService : public RewardsService {
                                const std::string&));
   MOCK_METHOD1(GetReconcileStamp,
       void(const huhi_rewards::GetReconcileStampCallback&));
-  MOCK_METHOD1(SetRewardsMainEnabled, void(bool));
   MOCK_METHOD1(GetPublisherMinVisitTime,
       void(const huhi_rewards::GetPublisherMinVisitTimeCallback&));
   MOCK_CONST_METHOD1(SetPublisherMinVisitTime, void(int));
@@ -95,9 +88,9 @@ class MockRewardsService : public RewardsService {
   MOCK_METHOD1(GetAutoContributeEnabled,
       void(huhi_rewards::GetAutoContributeEnabledCallback));
   MOCK_METHOD1(SetAutoContributeEnabled, void(bool));
+  MOCK_CONST_METHOD0(ShouldShowOnboarding, bool());
+  MOCK_METHOD1(SaveOnboardingResult, void(huhi_rewards::OnboardingResult));
   MOCK_METHOD2(SetTimer, void(uint64_t, uint32_t*));
-  MOCK_METHOD1(IsWalletCreated,
-      void(const huhi_rewards::IsWalletCreatedCallback&));
   MOCK_METHOD4(GetPublisherActivityFromUrl, void(uint64_t,
                                                  const std::string&,
                                                  const std::string&,
@@ -128,8 +121,6 @@ class MockRewardsService : public RewardsService {
       void(const huhi_rewards::GetAutoContributePropertiesCallback&));
   MOCK_METHOD1(GetPendingContributionsTotal,
       void(const huhi_rewards::GetPendingContributionsTotalCallback&));
-  MOCK_CONST_METHOD1(GetRewardsMainEnabled,
-      void(const huhi_rewards::GetRewardsMainEnabledCallback&));
   MOCK_METHOD1(GetRewardsInternalsInfo,
       void(huhi_rewards::GetRewardsInternalsInfoCallback));
   MOCK_METHOD3(SaveRecurringTip,
@@ -145,14 +136,28 @@ class MockRewardsService : public RewardsService {
              void(const std::string&,
                   const std::map<std::string, std::string>&,
                   huhi_rewards::SaveMediaInfoCallback));
+  MOCK_METHOD4(UpdateMediaDuration, void(
+      const uint64_t,
+      const std::string&,
+      const uint64_t,
+      const bool));
+  MOCK_METHOD2(GetPublisherInfo, void(
+      const std::string&,
+      huhi_rewards::GetPublisherInfoCallback callback));
+  MOCK_METHOD2(GetPublisherPanelInfo, void(
+      const std::string&,
+      huhi_rewards::GetPublisherInfoCallback callback));
+  MOCK_METHOD3(SavePublisherInfo, void(
+      const uint64_t,
+      ledger::type::PublisherInfoPtr,
+      huhi_rewards::SavePublisherInfoCallback callback));
   MOCK_METHOD2(SetInlineTippingPlatformEnabled,
              void(const std::string& key, bool enabled));
   MOCK_METHOD2(GetInlineTippingPlatformEnabled,
              void(const std::string& key,
                   huhi_rewards::GetInlineTippingPlatformEnabledCallback));
-  MOCK_METHOD3(GetShareURL,
-             void(const std::string& type,
-                  const std::map<std::string, std::string>& args,
+  MOCK_METHOD2(GetShareURL,
+             void(const std::map<std::string, std::string>& args,
                   huhi_rewards::GetShareURLCallback callback));
   MOCK_METHOD1(GetPendingContributions,
       void(huhi_rewards::GetPendingContributionsCallback));
@@ -166,9 +171,8 @@ class MockRewardsService : public RewardsService {
              void(const std::map<std::string, std::string>&,
                   huhi_rewards::SaveMediaInfoCallback));
 
-  MOCK_METHOD2(GetExternalWallet,
-               void(const std::string& wallet_type,
-                    huhi_rewards::GetExternalWalletCallback callback));
+  MOCK_METHOD1(GetUpholdWallet,
+               void(huhi_rewards::GetUpholdWalletCallback callback));
 
   MOCK_METHOD3(ProcessRewardsPageUrl,
       void(const std::string& path,
@@ -224,6 +228,28 @@ class MockRewardsService : public RewardsService {
   MOCK_METHOD1(
       GetEventLogs,
       void(huhi_rewards::GetEventLogsCallback callback));
+
+  MOCK_METHOD1(GetEncryptedStringState, std::string(const std::string&));
+
+  MOCK_METHOD2(
+      SetEncryptedStringState,
+      bool(const std::string&, const std::string&));
+
+  MOCK_METHOD1(
+      GetHuhiWallet,
+      void(huhi_rewards::GetHuhiWalletCallback));
+
+  MOCK_METHOD1(CreateWallet,
+      void(huhi_rewards::CreateWalletCallback));
+
+  MOCK_METHOD1(StartProcess,
+      void(huhi_rewards::StartProcessCallback));
+
+  MOCK_METHOD1(GetWalletPassphrase,
+      void(huhi_rewards::GetWalletPassphraseCallback));
+
+  MOCK_METHOD1(SetAdsEnabled,
+       void(const bool is_enabled));
 };
 
 class AdsServiceTest : public testing::Test {

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -34,6 +34,7 @@ LedgerImpl::LedgerImpl(ledger::LedgerClient* client) :
     state_(std::make_unique<state::State>(this)),
     api_(std::make_unique<api::API>(this)),
     recovery_(std::make_unique<recovery::Recovery>(this)),
+    uphold_(std::make_unique<uphold::Uphold>(this)),
     initialized_task_scheduler_(false),
     initializing_(false),
     last_tab_active_time_(0),
@@ -110,6 +111,10 @@ database::Database* LedgerImpl::database() const {
   return database_.get();
 }
 
+uphold::Uphold* LedgerImpl::uphold() const {
+  return uphold_.get();
+}
+
 void LedgerImpl::LoadURL(
     type::UrlRequestPtr request,
     client::LoadURLCallback callback) {
@@ -132,10 +137,6 @@ void LedgerImpl::LoadURL(
 }
 
 void LedgerImpl::StartServices() {
-  if (!IsWalletCreated()) {
-    return;
-  }
-
   publisher()->SetPublisherServerListTimer();
   contribution()->SetReconcileTimer();
   promotion()->Refresh(false);
@@ -217,14 +218,7 @@ void LedgerImpl::OnStateInitialized(
 }
 
 void LedgerImpl::CreateWallet(ledger::ResultCallback callback) {
-  wallet()->CreateWalletIfNecessary([this, callback](
-      const type::Result result) {
-    if (result == type::Result::WALLET_CREATED) {
-      StartServices();
-    }
-
-    callback(result);
-  });
+  wallet()->CreateWalletIfNecessary(callback);
 }
 
 void LedgerImpl::OneTimeTip(
@@ -273,8 +267,7 @@ void LedgerImpl::OnShow(uint32_t tab_id, const uint64_t& current_time) {
 }
 
 void LedgerImpl::OnHide(uint32_t tab_id, const uint64_t& current_time) {
-  if (!state()->GetRewardsMainEnabled() ||
-      !state()->GetAutoContributeEnabled()) {
+  if (!state()->GetAutoContributeEnabled()) {
     return;
   }
 
@@ -302,6 +295,7 @@ void LedgerImpl::OnHide(uint32_t tab_id, const uint64_t& current_time) {
       iter->second.tld,
       iter->second,
       duration,
+      true,
       0,
       [](type::Result, type::PublisherInfoPtr){});
 }
@@ -392,11 +386,6 @@ void LedgerImpl::GetExcludedList(ledger::PublisherInfoListCallback callback) {
   database()->GetExcludedList(callback);
 }
 
-void LedgerImpl::SetRewardsMainEnabled(bool enabled) {
-  state()->SetRewardsMainEnabled(enabled);
-  publisher()->SetPublisherServerListTimer();
-}
-
 void LedgerImpl::SetPublisherMinVisitTime(int duration) {
   state()->SetPublisherMinVisitTime(duration);
 }
@@ -423,10 +412,6 @@ void LedgerImpl::SetAutoContributeEnabled(bool enabled) {
 
 uint64_t LedgerImpl::GetReconcileStamp() {
   return state()->GetReconcileStamp();
-}
-
-bool LedgerImpl::GetRewardsMainEnabled() {
-  return state()->GetRewardsMainEnabled();
 }
 
 int LedgerImpl::GetPublisherMinVisitTime() {
@@ -486,10 +471,6 @@ void LedgerImpl::AttestPromotion(
   promotion()->Attest(promotion_id, solution, callback);
 }
 
-std::string LedgerImpl::GetWalletPassphrase() const {
-  return wallet()->GetWalletPassphrase();
-}
-
 void LedgerImpl::GetBalanceReport(
     const type::ActivityMonth month,
     const int year,
@@ -530,11 +511,6 @@ void LedgerImpl::RestorePublishers(ledger::ResultCallback callback) {
   database()->RestorePublishers(callback);
 }
 
-bool LedgerImpl::IsWalletCreated() {
-  const auto stamp = state()->GetCreationStamp();
-  return stamp != 0u;
-}
-
 void LedgerImpl::GetPublisherActivityFromUrl(
     uint64_t windowId,
     type::VisitDataPtr visit_data,
@@ -568,21 +544,27 @@ void LedgerImpl::HasSufficientBalanceToReconcile(
 
 void LedgerImpl::GetRewardsInternalsInfo(
     ledger::RewardsInternalsInfoCallback callback) {
-  type::RewardsInternalsInfoPtr info = type::RewardsInternalsInfo::New();
+  auto info = type::RewardsInternalsInfo::New();
+
+  type::HuhiWalletPtr wallet = wallet_->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    callback(std::move(info));
+    return;
+  }
 
   // Retrieve the payment id.
-  info->payment_id = state()->GetPaymentId();
+  info->payment_id = wallet->payment_id;
 
   // Retrieve the boot stamp.
   info->boot_stamp = state()->GetCreationStamp();
 
   // Retrieve the key info seed and validate it.
-  const auto seed = state()->GetRecoverySeed();
-  if (!util::Security::IsSeedValid(seed)) {
+  if (!util::Security::IsSeedValid(wallet->recovery_seed)) {
     info->is_key_info_seed_valid = false;
   } else {
     std::vector<uint8_t> secret_key =
-        util::Security::GetHKDF(seed);
+        util::Security::GetHKDF(wallet->recovery_seed);
     std::vector<uint8_t> public_key;
     std::vector<uint8_t> new_secret_key;
     info->is_key_info_seed_valid =
@@ -629,6 +611,40 @@ void LedgerImpl::SaveMediaInfo(
   media()->SaveMediaInfo(type, data, callback);
 }
 
+void LedgerImpl::UpdateMediaDuration(
+    const uint64_t window_id,
+    const std::string& publisher_key,
+    const uint64_t duration,
+    const bool first_visit) {
+  publisher()->UpdateMediaDuration(
+      window_id,
+      publisher_key,
+      duration,
+      first_visit);
+}
+
+void LedgerImpl::GetPublisherInfo(
+    const std::string& publisher_key,
+    ledger::PublisherInfoCallback callback) {
+  database()->GetPublisherInfo(publisher_key, callback);
+}
+
+void LedgerImpl::GetPublisherPanelInfo(
+    const std::string& publisher_key,
+    ledger::PublisherInfoCallback callback) {
+  publisher()->GetPublisherPanelInfo(publisher_key, callback);
+}
+
+void LedgerImpl::SavePublisherInfo(
+    const uint64_t window_id,
+    type::PublisherInfoPtr publisher_info,
+    ledger::ResultCallback callback) {
+  publisher()->SavePublisherInfo(
+      window_id,
+      std::move(publisher_info),
+      callback);
+}
+
 void LedgerImpl::SetInlineTippingPlatformEnabled(
     const type::InlineTipsPlatforms platform,
     bool enabled) {
@@ -641,9 +657,8 @@ bool LedgerImpl::GetInlineTippingPlatformEnabled(
 }
 
 std::string LedgerImpl::GetShareURL(
-    const std::string& type,
     const std::map<std::string, std::string>& args) {
-  return media()->GetShareURL(type, args);
+  return publisher()->GetShareURL(args);
 }
 
 void LedgerImpl::GetPendingContributions(
@@ -679,10 +694,18 @@ void LedgerImpl::FetchBalance(ledger::FetchBalanceCallback callback) {
   wallet()->FetchBalance(callback);
 }
 
-void LedgerImpl::GetExternalWallet(
-    const std::string& wallet_type,
-    ledger::ExternalWalletCallback callback) {
-  wallet()->GetExternalWallet(wallet_type, callback);
+void LedgerImpl::GetUpholdWallet(ledger::UpholdWalletCallback callback) {
+  uphold()->GenerateWallet(
+    [this, callback](const type::Result result) {
+      if (result != type::Result::LEDGER_OK &&
+          result != type::Result::CONTINUE) {
+        callback(result, nullptr);
+        return;
+      }
+
+      auto wallet = uphold()->GetWallet();
+      callback(type::Result::LEDGER_OK, std::move(wallet));
+    });
 }
 
 void LedgerImpl::ExternalWalletAuthorization(
@@ -729,7 +752,7 @@ void LedgerImpl::GetAllContributions(
   database()->GetAllContributions(callback);
 }
 
-void LedgerImpl::SavePublisherInfo(
+void LedgerImpl::SavePublisherInfoForTip(
     type::PublisherInfoPtr info,
     ledger::ResultCallback callback) {
   database()->SavePublisherInfo(std::move(info), callback);
@@ -749,9 +772,9 @@ void LedgerImpl::GetAllMonthlyReportIds(
 
 void LedgerImpl::ProcessSKU(
     const std::vector<type::SKUOrderItem>& items,
-    type::ExternalWalletPtr wallet,
+    const std::string& wallet_type,
     ledger::SKUOrderCallback callback) {
-  sku()->Process(items, std::move(wallet), callback);
+  sku()->Process(items, wallet_type, callback);
 }
 
 void LedgerImpl::Shutdown(ledger::ResultCallback callback) {
@@ -780,6 +803,33 @@ void LedgerImpl::OnAllDone(
 
 void LedgerImpl::GetEventLogs(ledger::GetEventLogsCallback callback) {
   database()->GetLastEventLogs(callback);
+}
+
+bool LedgerImpl::IsShuttingDown() const {
+  return shutting_down_;
+}
+
+void LedgerImpl::GetHuhiWallet(GetHuhiWalletCallback callback) {
+  callback(wallet()->GetWallet());
+}
+
+std::string LedgerImpl::GetWalletPassphrase() const {
+  const auto huhi_wallet = wallet()->GetWallet();
+  if (!huhi_wallet) {
+    return "";
+  }
+
+  return wallet()->GetWalletPassphrase(huhi_wallet->Clone());
+}
+
+void LedgerImpl::LinkHuhiWallet(
+    const std::string& destination_payment_id,
+    ResultCallback callback) {
+  wallet()->LinkHuhiWallet(destination_payment_id, callback);
+}
+
+void LedgerImpl::GetTransferableAmount(GetTransferableAmountCallback callback) {
+  promotion()->GetTransferableAmount(callback);
 }
 
 }  // namespace ledger

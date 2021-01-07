@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -33,26 +33,6 @@ BatAdsClientMojoBridge::BatAdsClientMojoBridge(
 
 BatAdsClientMojoBridge::~BatAdsClientMojoBridge() = default;
 
-bool BatAdsClientMojoBridge::IsEnabled() const {
-  if (!connected()) {
-    return false;
-  }
-
-  bool is_enabled;
-  bat_ads_client_->IsEnabled(&is_enabled);
-  return is_enabled;
-}
-
-bool BatAdsClientMojoBridge::ShouldAllowAdConversionTracking() const {
-  if (!connected()) {
-    return false;
-  }
-
-  bool should_allow;
-  bat_ads_client_->ShouldAllowAdConversionTracking(&should_allow);
-  return should_allow;
-}
-
 bool BatAdsClientMojoBridge::CanShowBackgroundNotifications() const {
   if (!connected())
     return false;
@@ -60,98 +40,6 @@ bool BatAdsClientMojoBridge::CanShowBackgroundNotifications() const {
   bool can_show;
   bat_ads_client_->CanShowBackgroundNotifications(&can_show);
   return can_show;
-}
-
-uint64_t BatAdsClientMojoBridge::GetAdsPerHour() {
-  if (!connected()) {
-    return 0;
-  }
-
-  uint64_t ads_per_hour;
-  bat_ads_client_->GetAdsPerHour(&ads_per_hour);
-  return ads_per_hour;
-}
-
-uint64_t BatAdsClientMojoBridge::GetAdsPerDay() {
-  if (!connected()) {
-    return 0;
-  }
-
-  uint64_t ads_per_day;
-  bat_ads_client_->GetAdsPerDay(&ads_per_day);
-  return ads_per_day;
-}
-
-bool BatAdsClientMojoBridge::ShouldAllowAdsSubdivisionTargeting() const {
-  if (!connected()) {
-    return false;
-  }
-
-  bool should_allow;
-  bat_ads_client_->ShouldAllowAdsSubdivisionTargeting(&should_allow);
-  return should_allow;
-}
-
-void BatAdsClientMojoBridge::SetAllowAdsSubdivisionTargeting(
-    const bool should_allow) {
-  if (!connected()) {
-    return;
-  }
-
-  bat_ads_client_->SetAllowAdsSubdivisionTargeting(should_allow);
-}
-
-std::string BatAdsClientMojoBridge::GetAdsSubdivisionTargetingCode() const {
-  std::string subdivision_targeting_code;
-
-  if (!connected()) {
-    return subdivision_targeting_code;
-  }
-
-  bat_ads_client_->GetAdsSubdivisionTargetingCode(&subdivision_targeting_code);
-  return subdivision_targeting_code;
-}
-
-void BatAdsClientMojoBridge::SetAdsSubdivisionTargetingCode(
-    const std::string& subdivision_targeting_code) {
-  if (!connected()) {
-    return;
-  }
-
-  bat_ads_client_->SetAdsSubdivisionTargetingCode(subdivision_targeting_code);
-}
-
-std::string BatAdsClientMojoBridge::
-GetAutomaticallyDetectedAdsSubdivisionTargetingCode() const {
-  std::string subdivision_targeting_code;
-
-  if (!connected()) {
-    return subdivision_targeting_code;
-  }
-
-  bat_ads_client_->GetAutomaticallyDetectedAdsSubdivisionTargetingCode(
-      &subdivision_targeting_code);
-  return subdivision_targeting_code;
-}
-
-void BatAdsClientMojoBridge::
-SetAutomaticallyDetectedAdsSubdivisionTargetingCode(
-    const std::string& subdivision_targeting_code) {
-  if (!connected()) {
-    return;
-  }
-
-  bat_ads_client_->SetAutomaticallyDetectedAdsSubdivisionTargetingCode(
-      subdivision_targeting_code);
-}
-
-void BatAdsClientMojoBridge::SetIdleThreshold(
-    const int threshold) {
-  if (!connected()) {
-    return;
-  }
-
-  bat_ads_client_->SetIdleThreshold(threshold);
 }
 
 bool BatAdsClientMojoBridge::IsNetworkConnectionAvailable() const {
@@ -175,12 +63,12 @@ bool BatAdsClientMojoBridge::IsForeground() const {
 }
 
 void BatAdsClientMojoBridge::ShowNotification(
-    std::unique_ptr<ads::AdNotificationInfo> info) {
+    const ads::AdNotificationInfo& ad_notification) {
   if (!connected()) {
     return;
   }
 
-  bat_ads_client_->ShowNotification(info->ToJson());
+  bat_ads_client_->ShowNotification(ad_notification.ToJson());
 }
 
 bool BatAdsClientMojoBridge::ShouldShowNotifications() {
@@ -273,6 +161,17 @@ void BatAdsClientMojoBridge::LoadUserModelForId(
       base::BindOnce(&OnLoadUserModelForId, std::move(callback)));
 }
 
+void BatAdsClientMojoBridge::RecordP2AEvent(
+    const std::string& name,
+    const ads::P2AEventType type,
+    const std::string& value) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->RecordP2AEvent(name, type, value);
+}
+
 void OnLoad(
     const ads::LoadCallback& callback,
     const int32_t result,
@@ -334,6 +233,147 @@ void BatAdsClientMojoBridge::Log(
   }
 
   bat_ads_client_->Log(file, line, verbose_level, message);
+}
+
+bool BatAdsClientMojoBridge::GetBooleanPref(
+    const std::string& path) const {
+  bool value = false;
+
+  if (!connected()) {
+    return value;
+  }
+
+  bat_ads_client_->GetBooleanPref(path, &value);
+  return value;
+}
+
+void BatAdsClientMojoBridge::SetBooleanPref(
+    const std::string& path,
+    const bool value) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->SetBooleanPref(path, value);
+}
+
+int BatAdsClientMojoBridge::GetIntegerPref(
+    const std::string& path) const {
+  int value = 0;
+
+  if (!connected()) {
+    return value;
+  }
+
+  bat_ads_client_->GetIntegerPref(path, &value);
+  return value;
+}
+
+void BatAdsClientMojoBridge::SetIntegerPref(
+    const std::string& path,
+    const int value) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->SetIntegerPref(path, value);
+}
+
+double BatAdsClientMojoBridge::GetDoublePref(
+    const std::string& path) const {
+  double value = 0.0;
+
+  if (!connected()) {
+    return value;
+  }
+
+  bat_ads_client_->GetDoublePref(path, &value);
+  return value;
+}
+
+void BatAdsClientMojoBridge::SetDoublePref(
+    const std::string& path,
+    const double value) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->SetDoublePref(path, value);
+}
+
+std::string BatAdsClientMojoBridge::GetStringPref(
+    const std::string& path) const {
+  std::string value;
+
+  if (!connected()) {
+    return value;
+  }
+
+  bat_ads_client_->GetStringPref(path, &value);
+  return value;
+}
+
+void BatAdsClientMojoBridge::SetStringPref(
+    const std::string& path,
+    const std::string& value) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->SetStringPref(path, value);
+}
+
+int64_t BatAdsClientMojoBridge::GetInt64Pref(
+    const std::string& path) const {
+  int64_t value = 0;
+
+  if (!connected()) {
+    return value;
+  }
+
+  bat_ads_client_->GetInt64Pref(path, &value);
+  return value;
+}
+
+void BatAdsClientMojoBridge::SetInt64Pref(
+    const std::string& path,
+    const int64_t value) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->SetInt64Pref(path, value);
+}
+
+uint64_t BatAdsClientMojoBridge::GetUint64Pref(
+    const std::string& path) const {
+  uint64_t value = 0;
+
+  if (!connected()) {
+    return value;
+  }
+
+  bat_ads_client_->GetUint64Pref(path, &value);
+  return value;
+}
+
+void BatAdsClientMojoBridge::SetUint64Pref(
+    const std::string& path,
+    const uint64_t value) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->SetUint64Pref(path, value);
+}
+
+void BatAdsClientMojoBridge::ClearPref(
+    const std::string& path) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->ClearPref(path);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

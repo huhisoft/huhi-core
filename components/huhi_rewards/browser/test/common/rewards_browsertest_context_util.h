@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -59,7 +59,7 @@ void IsMediaTipsInjected(content::WebContents* contents, bool should_appear);
 
 std::vector<double> GetSiteBannerTipOptions(content::WebContents* site_banner);
 
-std::vector<double> GetRewardsPopupTipOptions(content::WebContents* popup);
+double GetRewardsPopupMonthlyTipValue(content::WebContents* context);
 
 }  // namespace rewards_browsertest_util
 

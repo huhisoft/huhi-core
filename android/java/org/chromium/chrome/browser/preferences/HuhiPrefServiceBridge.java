@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -32,6 +32,34 @@ public class HuhiPrefServiceBridge {
      */
     public void setHTTPSEEnabled(boolean enabled) {
         HuhiPrefServiceBridgeJni.get().setHTTPSEEnabled(enabled);
+    }
+
+    /**
+     * @param whether google login is enabled on third party sites.
+     */
+    public void setThirdPartyGoogleLoginEnabled(boolean enabled) {
+        HuhiPrefServiceBridgeJni.get().setThirdPartyGoogleLoginEnabled(enabled);
+    }
+
+    /**
+     * @param whether facebook embeds are allowed on third party sites.
+     */
+    public void setThirdPartyFacebookEmbedEnabled(boolean enabled) {
+        HuhiPrefServiceBridgeJni.get().setThirdPartyFacebookEmbedEnabled(enabled);
+    }
+
+    /**
+     * @param whether twitter embeds are allowed on third party sites.
+     */
+    public void setThirdPartyTwitterEmbedEnabled(boolean enabled) {
+        HuhiPrefServiceBridgeJni.get().setThirdPartyTwitterEmbedEnabled(enabled);
+    }
+
+    /**
+     * @param whether linkedin embeds are allowed on third party sites.
+     */
+    public void setThirdPartyLinkedinEmbedEnabled(boolean enabled) {
+        HuhiPrefServiceBridgeJni.get().setThirdPartyLinkedinEmbedEnabled(enabled);
     }
 
     /**
@@ -103,6 +131,10 @@ public class HuhiPrefServiceBridge {
         HuhiPrefServiceBridgeJni.get().setUseRewardsStagingServer(enabled);
     }
 
+    public void resetPromotionLastFetchStamp() {
+        HuhiPrefServiceBridgeJni.get().resetPromotionLastFetchStamp();
+    }
+
     public boolean getUseRewardsStagingServer() {
         return HuhiPrefServiceBridgeJni.get().getUseRewardsStagingServer();
     }
@@ -149,6 +181,11 @@ public class HuhiPrefServiceBridge {
         void setAdBlockEnabled(boolean enabled);
         void setFingerprintingProtectionEnabled(boolean enabled);
 
+        void setThirdPartyGoogleLoginEnabled(boolean enabled);
+        void setThirdPartyFacebookEmbedEnabled(boolean enabled);
+        void setThirdPartyTwitterEmbedEnabled(boolean enabled);
+        void setThirdPartyLinkedinEmbedEnabled(boolean enabled);
+
         void setPlayYTVideoInBrowserEnabled(boolean enabled);
         boolean getPlayYTVideoInBrowserEnabled();
 
@@ -174,6 +211,7 @@ public class HuhiPrefServiceBridge {
         void setSafetynetStatus(String status);
 
         void setUseRewardsStagingServer(boolean enabled);
+        void resetPromotionLastFetchStamp();
         boolean getUseRewardsStagingServer();
         boolean getBooleanForContentSetting(int content_type);
 

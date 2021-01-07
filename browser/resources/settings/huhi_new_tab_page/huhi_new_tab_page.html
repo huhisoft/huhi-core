@@ -26,75 +26,86 @@
       }
     </style>
     <div class="settings-box first">
-      <div class="flex">
-        <div class="label primary-title">$i18n{huhiNewTabCustomizeDashboard}</div>
-        <div class="normalize-margin">
-          <template is="dom-if" if="[[!isSuperReferralActive_]]">
-            <settings-toggle-button id="showBackgroundImageControlType"
-                class="borderless"
-                pref="{{prefs.huhi.new_tab_page.show_background_image}}"
-                label="$i18n{huhiNewTabBackgroundImages}">
-            </settings-toggle-button>
-            <settings-toggle-button
-                class="nested-section borderless"
-                pref="{{prefs.huhi.new_tab_page.show_branded_background_image}}"
-                disabled="{{!prefs.huhi.new_tab_page.show_background_image.value}}"
-                label="$i18n{huhiNewTabSponsoredImages}">
-            </settings-toggle-button>
-        </template>
+      <div class="flex cr-padded-text" aria-hidden="true">
+        $i18n{huhiNewTabNewTabPageShows}
+      </div>
+      <settings-dropdown-menu label="$i18n{huhiNewTabNewTabPageShows}"
+          pref="{{prefs.huhi.new_tab_page.shows_options}}"
+          menu-options="[[newTabShowOptions_]]">
+      </settings-dropdown-menu>
+    </div>
+    <template is="dom-if" if="[[showNewTabDashboardSettings_]]">
+      <div class="settings-box">
+        <div class="flex">
+          <div class="normalize-margin">
+            <template is="dom-if" if="[[!isSuperReferralActive_]]">
+              <settings-toggle-button id="showBackgroundImageControlType"
+                  pref="{{prefs.huhi.new_tab_page.show_background_image}}"
+                  label="$i18n{huhiNewTabBackgroundImages}">
+              </settings-toggle-button>
+              <settings-toggle-button
+                  class="nested-section borderless"
+                  pref="{{prefs.huhi.new_tab_page.show_branded_background_image}}"
+                  disabled="{{!prefs.huhi.new_tab_page.show_background_image.value}}"
+                  label="$i18n{huhiNewTabSponsoredImages}">
+              </settings-toggle-button>
+          </template>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="flex">
-      <settings-toggle-button
-          class="cr-row"
-          pref="{{prefs.huhi.new_tab_page.show_stats}}"
-          label="$i18n{huhiNewTabStats}">
-      </settings-toggle-button>
-      <settings-toggle-button
-          class="cr-row"
-          pref="{{prefs.huhi.new_tab_page.show_rewards}}"
-          label="$i18n{huhiNewTabHuhiRewards}">
-      </settings-toggle-button>
-      <template is="dom-if" if="[[isHuhiTogetherSupported_]]">
+      <div class="flex">
         <settings-toggle-button
             class="cr-row"
-            pref="{{prefs.huhi.new_tab_page.show_together}}"
-            label="$i18n{huhiNewTabTogether}">
+            pref="{{prefs.huhi.new_tab_page.show_stats}}"
+            label="$i18n{huhiNewTabStats}">
         </settings-toggle-button>
-      </template>
-      <template is="dom-if" if="[[isBinanceSupported_]]">
         <settings-toggle-button
             class="cr-row"
-            pref="{{prefs.huhi.new_tab_page.show_binance}}"
-            label="$i18n{huhiNewTabBinance}">
+            pref=""
+            checked="[[showTopSites_]]"
+            label="$i18n{huhiNewTabTopSites}"
+            on-settings-boolean-control-change="onShowTopSitesChange_">
         </settings-toggle-button>
-      </template>
-      <template is="dom-if" if="[[isGeminiSupported_]]">
         <settings-toggle-button
             class="cr-row"
-            pref="{{prefs.huhi.new_tab_page.show_gemini}}"
-            label="$i18n{huhiNewTabGemini}">
+            pref="{{prefs.huhi.new_tab_page.show_clock}}"
+            label="$i18n{huhiNewTabClock}">
         </settings-toggle-button>
-      </template>
-      <template is="dom-if" if="[[isBitcoinDotComSupported_]]">
         <settings-toggle-button
             class="cr-row"
-            pref="{{prefs.moonpay.new_tab_page.show_bitcoin_dot_com}}"
-            label="$i18n{huhiNewTabBitcoinDotCom}">
+            pref="{{prefs.huhi.new_tab_page.show_rewards}}"
+            label="$i18n{huhiNewTabHuhiRewards}">
         </settings-toggle-button>
-      </template>
-      <settings-toggle-button
-          class="cr-row"
-          pref="{{prefs.huhi.new_tab_page.show_top_sites}}"
-          label="$i18n{huhiNewTabTopSites}">
-      </settings-toggle-button>
-      <settings-toggle-button
-          class="cr-row"
-          pref="{{prefs.huhi.new_tab_page.show_clock}}"
-          label="$i18n{huhiNewTabClock}">
-      </settings-toggle-button>
-    </div>
+        <template is="dom-if" if="[[isHuhiTogetherSupported_]]">
+          <settings-toggle-button
+              class="cr-row"
+              pref="{{prefs.huhi.new_tab_page.show_together}}"
+              label="$i18n{huhiNewTabTogether}">
+          </settings-toggle-button>
+        </template>
+        <template is="dom-if" if="[[isBinanceSupported_]]">
+          <settings-toggle-button
+              class="cr-row"
+              pref="{{prefs.huhi.new_tab_page.show_binance}}"
+              label="$i18n{huhiNewTabBinance}">
+          </settings-toggle-button>
+        </template>
+        <template is="dom-if" if="[[isGeminiSupported_]]">
+          <settings-toggle-button
+              class="cr-row"
+              pref="{{prefs.huhi.new_tab_page.show_gemini}}"
+              label="$i18n{huhiNewTabGemini}">
+          </settings-toggle-button>
+        </template>
+        <template is="dom-if" if="[[isCryptoDotComSupported_]]">
+          <settings-toggle-button
+              class="cr-row"
+              pref="{{prefs.crypto_dot_com.new_tab_page.show_crypto_dot_com}}"
+              label="$i18n{huhiNewTabCryptoDotCom}">
+          </settings-toggle-button>
+        </template>
+      </div>
+    </template>
   </template>
   <script src="huhi_new_tab_page.js"></script>
 </dom-module>

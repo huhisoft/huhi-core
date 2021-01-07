@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
@@ -10,11 +10,14 @@ options.continueOnFail = false
 const outputDir = config.outputDir + '_audit'
 
 util.updateBranding()
-const args = util.buildArgsToString(config.buildArgs())
+let args = util.buildArgsToString(config.buildArgs())
+if (process.argv.includes('--audit_dev_deps')) {
+  args = args + 'audit_dev_deps=true'
+}
 util.run('gn', ['gen', outputDir, '--args="' + args + '"'], options)
 
 let ninjaOpts = [
   '-C', outputDir, 'huhi:audit_deps',
-  ...config.extraNinjaOpts,
+  ...config.extraNinjaOpts
 ]
 util.run('ninja', ninjaOpts, options)

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import org.chromium.base.supplier.ObservableSupplier;
+import org.chromium.base.supplier.OneshotSupplier;
 import org.chromium.chrome.R;
 import org.chromium.chrome.browser.ActivityTabProvider;
 import org.chromium.chrome.browser.HuhiFeatureList;
@@ -29,6 +30,7 @@ import org.chromium.chrome.browser.tabbed_mode.TabbedAppMenuPropertiesDelegate;
 import org.chromium.chrome.browser.tabmodel.TabModelSelector;
 import org.chromium.chrome.browser.toolbar.ToolbarManager;
 import org.chromium.chrome.browser.toolbar.bottom.BottomToolbarConfiguration;
+import org.chromium.chrome.browser.toolbar.menu_button.HuhiMenuButtonCoordinator;
 import org.chromium.chrome.browser.ui.appmenu.AppMenuDelegate;
 import org.chromium.chrome.browser.ui.appmenu.AppMenuHandler;
 
@@ -40,7 +42,7 @@ public class HuhiTabbedAppMenuPropertiesDelegate extends TabbedAppMenuProperties
             MultiWindowModeStateDispatcher multiWindowModeStateDispatcher,
             TabModelSelector tabModelSelector, ToolbarManager toolbarManager, View decorView,
             AppMenuDelegate appMenuDelegate,
-            @Nullable ObservableSupplier<OverviewModeBehavior> overviewModeBehaviorSupplier,
+            OneshotSupplier<OverviewModeBehavior> overviewModeBehaviorSupplier,
             ObservableSupplier<BookmarkBridge> bookmarkBridgeSupplier) {
         super(context, activityTabProvider, multiWindowModeStateDispatcher, tabModelSelector,
                 toolbarManager, decorView, appMenuDelegate, overviewModeBehaviorSupplier,
@@ -57,6 +59,11 @@ public class HuhiTabbedAppMenuPropertiesDelegate extends TabbedAppMenuProperties
         // To make logic simple, below three items are added whenever menu gets visible
         // and removed when menu is dismissed.
         if (!shouldShowPageMenu()) return;
+
+        if (isMenuButtonInBottomToolbar()) {
+            // Do not show icon row on top when menu itself is on bottom
+            menu.findItem(R.id.icon_row_menu_id).setVisible(false).setEnabled(false);
+        }
 
         // Huhi donesn't show help menu item in app menu.
         menu.findItem(R.id.help_id).setVisible(false).setEnabled(false);
@@ -125,5 +132,29 @@ public class HuhiTabbedAppMenuPropertiesDelegate extends TabbedAppMenuProperties
                     AppCompatResources.getDrawable(mContext, R.drawable.share_icon));
             shareButton.setContentDescription(mContext.getString(R.string.share));
         }
+    }
+
+    @Override
+    public boolean shouldShowHeader(int maxMenuHeight) {
+        if (isMenuButtonInBottomToolbar()) return false;
+        return super.shouldShowHeader(maxMenuHeight);
+    }
+
+    @Override
+    public boolean shouldShowFooter(int maxMenuHeight) {
+        if (isMenuButtonInBottomToolbar()) return true;
+        return super.shouldShowFooter(maxMenuHeight);
+    }
+
+    @Override
+    public int getFooterResourceId() {
+        if (isMenuButtonInBottomToolbar()) {
+            return shouldShowPageMenu() ? R.layout.icon_row_menu_footer : 0;
+        }
+        return super.getFooterResourceId();
+    }
+
+    private boolean isMenuButtonInBottomToolbar() {
+        return HuhiMenuButtonCoordinator.isMenuFromBottom();
     }
 }

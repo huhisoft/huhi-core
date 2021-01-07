@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -13,7 +13,9 @@
 #include "base/strings/string_number_conversions.h"
 #include "huhi/components/huhi_sync/huhi_sync_prefs.h"
 #include "huhi/components/huhi_sync/crypto/crypto.h"
+#include "huhi/components/huhi_sync/profile_sync_service_helper.h"
 #include "huhi/components/sync/driver/huhi_sync_profile_sync_service.h"
+#include "huhi/components/sync_device_info/huhi_device_info.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/sync/device_info_sync_service_factory.h"
 #include "chrome/browser/sync/profile_sync_service_factory.h"
@@ -48,6 +50,11 @@ void HuhiSyncHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback(
       "SyncSetupReset", base::BindRepeating(&HuhiSyncHandler::HandleReset,
                                             base::Unretained(this)));
+
+  web_ui()->RegisterMessageCallback(
+      "SyncDeleteDevice",
+      base::BindRepeating(&HuhiSyncHandler::HandleDeleteDevice,
+                          base::Unretained(this)));
 }
 
 void HuhiSyncHandler::OnJavascriptAllowed() {
@@ -176,10 +183,37 @@ void HuhiSyncHandler::HandleReset(const base::ListValue* args) {
   base::Value callback_id_arg(callback_id->Clone());
   auto* device_info_sync_service =
       DeviceInfoSyncServiceFactory::GetForProfile(profile_);
-  sync_service->ResetSync(device_info_sync_service,
-                          base::BindOnce(&HuhiSyncHandler::OnResetDone,
-                                         weak_ptr_factory_.GetWeakPtr(),
-                                         std::move(callback_id_arg)));
+  huhi_sync::ResetSync(sync_service, device_info_sync_service,
+                        base::BindOnce(&HuhiSyncHandler::OnResetDone,
+                                       weak_ptr_factory_.GetWeakPtr(),
+                                       std::move(callback_id_arg)));
+}
+
+void HuhiSyncHandler::HandleDeleteDevice(const base::ListValue* args) {
+  AllowJavascript();
+  CHECK_EQ(2U, args->GetSize());
+  const base::Value* callback_id;
+  CHECK(args->Get(0, &callback_id));
+  const base::Value* device_id_value;
+  CHECK(args->Get(1, &device_id_value));
+
+  std::string device_guid = device_id_value->GetString();
+  if (device_guid.empty()) {
+    LOG(ERROR) << "No device id to remove!";
+    RejectJavascriptCallback(*callback_id, base::Value(false));
+    return;
+  }
+
+  auto* sync_service = GetSyncService();
+  if (!sync_service) {
+    ResolveJavascriptCallback(*callback_id, base::Value(false));
+    return;
+  }
+
+  base::Value callback_id_arg(callback_id->Clone());
+  auto* device_info_sync_service =
+      DeviceInfoSyncServiceFactory::GetForProfile(profile_);
+  huhi_sync::DeleteDevice(sync_service, device_info_sync_service, device_guid);
 }
 
 syncer::HuhiProfileSyncService* HuhiSyncHandler::GetSyncService() const {
@@ -215,13 +249,19 @@ base::Value HuhiSyncHandler::GetSyncDeviceList() {
 
   base::Value device_list(base::Value::Type::LIST);
 
-  for (const auto& device : tracker->GetAllDeviceInfo()) {
+  for (const auto& device : tracker->GetAllHuhiDeviceInfo()) {
     auto device_value = base::Value::FromUniquePtrValue(device->ToValue());
     bool is_current_device =
         local_device_info ? local_device_info->guid() == device->guid() : false;
     device_value.SetBoolKey("isCurrentDevice", is_current_device);
+    device_value.SetStringKey("guid", device->guid());
+    device_value.SetBoolKey(
+        "supportsSelfDelete",
+        !is_current_device && device->is_self_delete_supported());
+
     device_list.Append(std::move(device_value));
   }
+
   return device_list;
 }
 

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,13 +15,15 @@ class InfoBarService;
 class PrefService;
 
 namespace content {
+class BrowserContext;
 class WebContents;
-}
+}  // namespace content
 
 // An infobar that is run with a string, buttons, and a "Learn More" link.
 class IPFSInfoBarDelegate : public ConfirmInfoBarDelegate {
  public:
-  static void Create(InfoBarService* infobar_service);
+  static void Create(InfoBarService* infobar_service,
+                     content::BrowserContext* context);
 
  private:
   IPFSInfoBarDelegate();

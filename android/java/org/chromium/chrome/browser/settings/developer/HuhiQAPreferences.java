@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -32,6 +32,7 @@ import org.chromium.base.annotations.CalledByNative;
 import org.chromium.chrome.R;
 import org.chromium.chrome.browser.HuhiConfig;
 import org.chromium.chrome.browser.HuhiRelaunchUtils;
+import org.chromium.chrome.browser.HuhiRewardsHelper;
 import org.chromium.chrome.browser.HuhiRewardsNativeWorker;
 import org.chromium.chrome.browser.HuhiRewardsObserver;
 import org.chromium.chrome.browser.HuhiRewardsPanelPopup;
@@ -317,6 +318,7 @@ public class HuhiQAPreferences extends HuhiPreferenceFragment
 
             HuhiPrefServiceBridge.getInstance().setSafetynetCheckFailed(false);
             HuhiPrefServiceBridge.getInstance().setUseRewardsStagingServer(mUseRewardsStagingServer);
+            HuhiRewardsHelper.setRewardsEnvChange(true);
 
             HuhiRelaunchUtils.askForRelaunch(getActivity());
         } else {

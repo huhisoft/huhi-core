@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "huhi/components/binance/browser/binance_service.h"
 #include "extensions/browser/extension_function.h"
 
 class Profile;
@@ -66,8 +67,7 @@ class BinanceGetAccountBalancesFunction :
 
  protected:
   ~BinanceGetAccountBalancesFunction() override {}
-  void OnGetAccountBalances(const std::map<std::string,
-                                  std::vector<std::string>>& balances,
+  void OnGetAccountBalances(const BinanceAccountBalances& balances,
                             bool success);
 
   ResponseAction Run() override;
@@ -121,8 +121,7 @@ class BinanceGetConvertAssetsFunction :
 
  protected:
   ~BinanceGetConvertAssetsFunction() override {}
-  void OnGetConvertAssets(
-      const std::map<std::string, std::vector<std::string>>& assets);
+  void OnGetConvertAssets(const BinanceConvertAsserts& assets);
 
   ResponseAction Run() override;
 };
@@ -146,8 +145,7 @@ class BinanceGetCoinNetworksFunction :
 
  protected:
   ~BinanceGetCoinNetworksFunction() override {}
-  void OnGetCoinNetworks(
-      const std::map<std::string, std::string>& networks);
+  void OnGetCoinNetworks(const BinanceCoinNetworks& networks);
 
   ResponseAction Run() override;
 };

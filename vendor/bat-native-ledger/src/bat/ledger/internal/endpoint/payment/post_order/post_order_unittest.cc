@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -58,7 +58,7 @@ TEST_F(PostOrderTest, ServerOK) {
               "updatedAt": "2020-06-10T18:58:21.378752Z",
               "totalPrice": "1",
               "merchantId": "",
-              "location": "huhisoft.com",
+              "location": "hnq.vn",
               "status": "pending",
               "items": [
                {
@@ -71,7 +71,7 @@ TEST_F(PostOrderTest, ServerOK) {
                  "quantity": 4,
                  "price": "0.25",
                  "subtotal": "1",
-                 "location": "huhisoft.com",
+                 "location": "hnq.vn",
                  "description": ""
                }
               ]
@@ -101,7 +101,7 @@ TEST_F(PostOrderTest, ServerOK) {
         type::SKUOrder expected_order;
         expected_order.order_id = "f2e6494e-fb21-44d1-90e9-b5408799acd8";
         expected_order.total_amount = 1;
-        expected_order.location = "huhisoft.com";
+        expected_order.location = "hnq.vn";
         expected_order.status = type::SKUOrderStatus::PENDING;
         expected_order.items.push_back(std::move(expected_order_item));
 

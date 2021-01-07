@@ -1,10 +1,11 @@
 import("//huhi/browser/translate/buildflags/buildflags.gni")
 import("//huhi/build/config.gni")
 import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
-import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/buildflags/buildflags.gni")
 import("//huhi/components/huhi_wayback_machine/buildflags/buildflags.gni")
-import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/buildflags/buildflags.gni")
 import("//huhi/components/speedreader/buildflags.gni")
+import("//huhi/components/tor/buildflags/buildflags.gni")
 import("//build/config/features.gni")
 import("//components/gcm_driver/config.gni")
 import("//chrome/common/features.gni")
@@ -56,6 +57,7 @@ source_set("ui") {
       "huhi_browser_command_controller.h",
       "huhi_browser_content_setting_bubble_model_delegate.cc",
       "huhi_browser_content_setting_bubble_model_delegate.h",
+      "huhi_browser_window.h",
       "huhi_layout_constants.cc",
       "huhi_layout_constants.h",
       "huhi_pages.cc",
@@ -73,20 +75,20 @@ source_set("ui") {
       "content_settings/huhi_content_setting_image_models.h",
       "omnibox/huhi_omnibox_client_impl.cc",
       "omnibox/huhi_omnibox_client_impl.h",
-      "tabs/huhi_tab_menu_model.cc",
-      "tabs/huhi_tab_menu_model.h",
       "toolbar/huhi_app_menu_model.cc",
       "toolbar/huhi_app_menu_model.h",
-      "webui/huhi_new_tab_message_handler.cc",
-      "webui/huhi_new_tab_message_handler.h",
-      "webui/huhi_new_tab_ui.cc",
-      "webui/huhi_new_tab_ui.h",
       "webui/huhi_settings_ui.cc",
       "webui/huhi_settings_ui.h",
-      "webui/navigation_bar_data_provider.cc",
-      "webui/navigation_bar_data_provider.h",
       "webui/huhi_welcome_ui.cc",
       "webui/huhi_welcome_ui.h",
+      "webui/navigation_bar_data_provider.cc",
+      "webui/navigation_bar_data_provider.h",
+      "webui/new_tab_page/huhi_new_tab_message_handler.cc",
+      "webui/new_tab_page/huhi_new_tab_message_handler.h",
+      "webui/new_tab_page/huhi_new_tab_ui.cc",
+      "webui/new_tab_page/huhi_new_tab_ui.h",
+      "webui/new_tab_page/instant_service_message_handler.cc",
+      "webui/new_tab_page/instant_service_message_handler.h",
       "webui/settings/huhi_appearance_handler.cc",
       "webui/settings/huhi_appearance_handler.h",
       "webui/settings/huhi_import_data_handler.h",
@@ -134,6 +136,8 @@ source_set("ui") {
       "views/tabs/huhi_browser_tab_strip_controller.h",
       "views/tabs/huhi_tab_context_menu_contents.cc",
       "views/tabs/huhi_tab_context_menu_contents.h",
+      "views/tabs/huhi_tab_strip.cc",
+      "views/tabs/huhi_tab_strip.h",
       "views/toolbar/bookmark_button.cc",
       "views/toolbar/bookmark_button.h",
     ]
@@ -179,6 +183,7 @@ source_set("ui") {
   }
 
   deps = [
+    "tabs",
     "//base",
     "//huhi/app:command_ids",
     "//huhi/app/theme:huhi_theme_resources",
@@ -194,22 +199,23 @@ source_set("ui") {
     "//huhi/chromium_src/chrome/browser/ui",
     "//huhi/common",
     "//huhi/common:pref_names",
-    "//huhi/common/tor:pref_names",
     "//huhi/components/huhi_adblock_ui:generated_resources",
     "//huhi/components/webcompat_reporter/ui:generated_resources",
     "//huhi/components/huhi_ads/browser",
     "//huhi/components/huhi_rewards/browser",
     "//huhi/components/huhi_rewards/resources",
     "//huhi/components/huhi_shields/browser",
-    "//huhi/components/huhi_wallet/browser/buildflags:buildflags",
+    "//huhi/components/huhi_wallet/buildflags:buildflags",
     "//huhi/components/huhi_wayback_machine:buildflags",
     "//huhi/components/l10n/browser",
     "//huhi/components/l10n/common",
+    "//huhi/components/crypto_dot_com/browser/buildflags:buildflags",
     "//huhi/components/moonpay/browser/buildflags:buildflags",
     "//huhi/components/ntp_background_images/browser",
     "//huhi/components/ntp_background_images/common",
     "//huhi/components/ntp_widget_utils/browser",
     "//huhi/components/p3a:buildflags",
+    "//huhi/components/tor:pref_names",
     "//huhi/components/vector_icons",
     "//huhi/components/webcompat_reporter/browser",
     "//huhi/components/weekly_storage",
@@ -250,7 +256,7 @@ source_set("ui") {
 
   if (ipfs_enabled) {
     deps += [
-      "//huhi/components/ipfs/browser",
+      "//huhi/components/ipfs",
       "//huhi/components/ipfs_ui:generated_resources",
     ]
   }
@@ -262,6 +268,7 @@ source_set("ui") {
       "//huhi/browser/resources/settings:resources",
       "//huhi/browser/ui/bookmark",
       "//huhi/components/huhi_sync",
+      "//huhi/components/huhi_sync:profile_sync_service_helper",
       "//huhi/components/huhi_new_tab_ui:generated_resources",
       "//huhi/components/huhi_welcome_ui:generated_resources",
       "//components/sync_device_info",
@@ -308,6 +315,13 @@ source_set("ui") {
       sources += [
         "views/huhi_actions/huhi_rewards_action_stub_view.cc",
         "views/huhi_actions/huhi_rewards_action_stub_view.h",
+      ]
+    }
+
+    if (enable_tor) {
+      sources += [
+        "views/location_bar/onion_location_view.cc",
+        "views/location_bar/onion_location_view.h",
       ]
     }
 
@@ -365,7 +379,10 @@ source_set("ui") {
   }
 
   if (toolkit_views) {
-    deps += [ "//ui/views" ]
+    deps += [
+      "//ui/events",
+      "//ui/views",
+    ]
 
     if (enable_huhi_translate_extension) {
       deps += [ "//components/translate/core/browser" ]

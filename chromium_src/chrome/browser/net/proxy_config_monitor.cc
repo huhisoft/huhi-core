@@ -1,17 +1,17 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include <memory>
 
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/tor/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 
 #if BUILDFLAG(ENABLE_TOR)
 #include "net/proxy_resolution/proxy_config_service.h"
-#include "huhi/browser/tor/tor_profile_service.h"
 #include "huhi/browser/tor/tor_profile_service_factory.h"
+#include "huhi/components/tor/tor_profile_service.h"
 #endif
 
 namespace {
@@ -19,7 +19,7 @@ namespace {
 #if BUILDFLAG(ENABLE_TOR)
 std::unique_ptr<net::ProxyConfigService> CreateProxyConfigServiceTor(
     Profile* profile) {
-  auto* tor_service = TorProfileServiceFactory::GetForProfile(profile);
+  auto* tor_service = TorProfileServiceFactory::GetForContext(profile);
   DCHECK(tor_service);
   return tor_service->CreateProxyConfigService();
 }

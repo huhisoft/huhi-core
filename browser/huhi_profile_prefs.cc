@@ -1,34 +1,43 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "huhi/browser/huhi_profile_prefs.h"
 
+#include <string>
+
+#include "huhi/browser/new_tab/new_tab_shows_options.h"
+
+#include "huhi/browser/search/ntp_utils.h"
 #include "huhi/browser/themes/huhi_dark_mode_utils.h"
 #include "huhi/browser/ui/omnibox/huhi_omnibox_client_impl.h"
-#include "huhi/common/huhi_wallet_constants.h"
 #include "huhi/common/pref_names.h"
 #include "huhi/components/binance/browser/buildflags/buildflags.h"
-#include "huhi/components/gemini/browser/buildflags/buildflags.h"
 #include "huhi/components/huhi_ads/browser/ads_p2a.h"
 #include "huhi/components/huhi_perf_predictor/browser/buildflags.h"
+#include "huhi/components/huhi_rewards/common/pref_names.h"
 #include "huhi/components/huhi_shields/browser/huhi_shields_web_contents_observer.h"
 #include "huhi/components/huhi_sync/huhi_sync_prefs.h"
-#include "huhi/components/huhi_rewards/common/pref_names.h"
-#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
 #include "huhi/components/huhi_wayback_machine/buildflags.h"
 #include "huhi/components/huhi_webtorrent/browser/buildflags/buildflags.h"
+#include "huhi/components/crypto_dot_com/browser/buildflags/buildflags.h"
+#include "huhi/components/gemini/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
+#include "huhi/components/l10n/browser/locale_helper.h"
+#include "huhi/components/l10n/common/locale_util.h"
 #include "huhi/components/moonpay/browser/buildflags/buildflags.h"
-#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
+#include "huhi/components/search_engines/huhi_prepopulated_engines.h"
 #include "huhi/components/speedreader/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/net/prediction_options.h"
 #include "chrome/browser/prefs/session_startup_pref.h"
 #include "chrome/common/pref_names.h"
+#include "components/autofill/core/common/autofill_prefs.h"
 #include "components/content_settings/core/common/pref_names.h"
 #include "components/embedder_support/pref_names.h"
 #include "components/gcm_driver/gcm_buildflags.h"
-#include "components/autofill/core/common/autofill_prefs.h"
 #include "components/password_manager/core/common/password_manager_pref_names.h"
 #include "components/pref_registry/pref_registry_syncable.h"
 #include "components/safe_browsing/core/common/safe_browsing_prefs.h"
@@ -50,12 +59,13 @@
 #include "huhi/components/huhi_wayback_machine/pref_names.h"
 #endif
 
-#if BUILDFLAG(IPFS_ENABLED)
-#include "huhi/browser/ipfs/ipfs_service.h"
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
+#include "huhi/components/huhi_wallet/pref_names.h"
 #endif
 
-#if BUILDFLAG(HUHI_WALLET_ENABLED)
-#include "huhi/browser/huhi_wallet/huhi_wallet_utils.h"
+#if BUILDFLAG(IPFS_ENABLED)
+#include "huhi/components/ipfs/ipfs_service.h"
 #endif
 
 #if BUILDFLAG(GEMINI_ENABLED)
@@ -68,8 +78,8 @@
 #endif
 
 #if BUILDFLAG(ENABLE_HUHI_PERF_PREDICTOR)
-#include "huhi/components/huhi_perf_predictor/browser/perf_predictor_tab_helper.h"
 #include "huhi/components/huhi_perf_predictor/browser/p3a_bandwidth_savings_tracker.h"
+#include "huhi/components/huhi_perf_predictor/browser/perf_predictor_tab_helper.h"
 #endif
 
 #if !BUILDFLAG(USE_GCM_FROM_PLATFORM)
@@ -78,6 +88,15 @@
 
 #if BUILDFLAG(ENABLE_SPEEDREADER)
 #include "huhi/components/speedreader/speedreader_service.h"
+#endif
+
+#if BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
+#include "huhi/components/crypto_dot_com/browser/crypto_dot_com_pref_utils.h"
+#include "huhi/components/crypto_dot_com/common/pref_names.h"
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/components/tor/tor_profile_service.h"
 #endif
 
 #if defined(OS_ANDROID)
@@ -97,9 +116,8 @@ void RegisterProfilePrefsForMigration(
 #endif
 
   dark_mode::RegisterHuhiDarkModePrefsForMigration(registry);
-
-#if BUILDFLAG(HUHI_WALLET_ENABLED)
-  huhi_wallet::RegisterHuhiWalletProfilePrefsForMigration(registry);
+#if !defined(OS_ANDROID)
+  new_tab_page::RegisterNewTabPagePrefsForMigration(registry);
 #endif
 
   // Restore "Other Bookmarks" migration
@@ -117,9 +135,8 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
 
   // appearance
   registry->RegisterBooleanPref(kLocationBarIsWide, false);
-  registry->RegisterBooleanPref(
-      huhi_rewards::prefs::kHideButton,
-      false);
+  registry->RegisterBooleanPref(huhi_rewards::prefs::kHideButton, false);
+  registry->RegisterBooleanPref(kMRUCyclingEnabled, false);
 
   huhi_sync::Prefs::RegisterProfilePrefs(registry);
 
@@ -167,7 +184,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   registry->RegisterBooleanPref(kSafetynetCheckFailed, false);
   // clear default popular sites
   registry->SetDefaultPrefValue(ntp_tiles::prefs::kPopularSitesJsonPref,
-      base::Value(base::Value::Type::LIST));
+                                base::Value(base::Value::Type::LIST));
   // Disable NTP suggestions
   registry->SetDefaultPrefValue(feed::prefs::kEnableSnippets,
                                 base::Value(false));
@@ -189,7 +206,8 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   // 2. On upgrade users might have enabled Media Router and the pref should
   // be set correctly, so we use feature switch to set the initial value
 #if BUILDFLAG(ENABLE_EXTENSIONS)
-  registry->RegisterBooleanPref(kHuhiEnabledMediaRouter,
+  registry->RegisterBooleanPref(
+      kHuhiEnabledMediaRouter,
       FeatureSwitch::load_media_router_component_extension()->IsEnabled());
 #endif
 
@@ -235,22 +253,43 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
 
   // New Tab Page
   registry->RegisterBooleanPref(kNewTabPageShowClock, true);
-  registry->RegisterBooleanPref(kNewTabPageShowTopSites, true);
+  registry->RegisterStringPref(kNewTabPageClockFormat, "");
   registry->RegisterBooleanPref(kNewTabPageShowStats, true);
+
+  // Only default huhi today to enabled for
+  // english-language on browser startup.
+  const std::string locale =
+      huhi_l10n::LocaleHelper::GetInstance()->GetLocale();
+  const std::string language_code = huhi_l10n::GetLanguageCode(locale);
+  const bool is_english_language = language_code == "en";
+  registry->RegisterBooleanPref(kNewTabPageShowToday, is_english_language);
+
   registry->RegisterBooleanPref(kNewTabPageShowRewards, true);
   registry->RegisterBooleanPref(kNewTabPageShowBinance, true);
-  registry->RegisterBooleanPref(kNewTabPageShowTogether, true);
+  registry->RegisterBooleanPref(kNewTabPageShowTogether, false);
   registry->RegisterBooleanPref(kNewTabPageShowAddCard, true);
   registry->RegisterBooleanPref(kNewTabPageShowGemini, true);
+  registry->RegisterIntegerPref(
+      kNewTabPageShowsOptions,
+      static_cast<int>(NewTabPageShowsOptions::kDashboard));
+
+  // Huhi Today
+  registry->RegisterDictionaryPref(kHuhiTodaySources);
+  registry->RegisterListPref(kHuhiTodayWeeklySessionCount);
+  registry->RegisterListPref(kHuhiTodayWeeklyCardViewsCount);
+  registry->RegisterListPref(kHuhiTodayWeeklyCardVisitsCount);
 
   // Huhi Wallet
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
   registry->RegisterIntegerPref(kHuhiWalletPrefVersion, 0);
   registry->RegisterStringPref(kHuhiWalletAES256GCMSivNonce, "");
   registry->RegisterStringPref(kHuhiWalletEncryptedSeed, "");
-  registry->RegisterIntegerPref(kHuhiWalletWeb3Provider,
+  registry->RegisterIntegerPref(
+      kHuhiWalletWeb3Provider,
       static_cast<int>(HuhiWalletWeb3ProviderTypes::ASK));
   registry->RegisterBooleanPref(kLoadCryptoWalletsOnStartup, false);
   registry->RegisterBooleanPref(kOptedIntoCryptoWallets, false);
+#endif
 
   // Binance widget
 #if BUILDFLAG(BINANCE_ENABLED)
@@ -276,6 +315,11 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   registry->SetDefaultPrefValue(autofill::prefs::kAutofillWalletImportEnabled,
                                 base::Value(false));
 
+  // Default search engine version
+  registry->RegisterIntegerPref(
+      kHuhiDefaultSearchVersion,
+      TemplateURLPrepopulateData::kHuhiCurrentDataVersion);
+
 #if BUILDFLAG(ENABLE_SPEEDREADER)
   speedreader::SpeedreaderService::RegisterPrefs(registry);
 #endif
@@ -284,12 +328,27 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   moonpay::MoonpayPrefUtils::RegisterPrefs(registry);
 #endif
 
+#if BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
+  crypto_dot_com::RegisterPrefs(registry);
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+  tor::TorProfileService::RegisterPrefs(registry);
+#endif
+
 #if !defined(OS_ANDROID)
   HuhiOmniboxClientImpl::RegisterPrefs(registry);
 #endif
 
 #if !defined(OS_ANDROID)
   huhi_ads::RegisterP2APrefs(registry);
+#endif
+
+#if !defined(OS_ANDROID)
+  // Turn on most visited mode on NTP by default.
+  // We can turn customization mode on when we have add-shortcut feature.
+  registry->SetDefaultPrefValue(prefs::kNtpUseMostVisitedTiles,
+                                base::Value(true));
 #endif
 
   RegisterProfilePrefsForMigration(registry);

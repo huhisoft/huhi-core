@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -134,8 +134,8 @@ void HuhiToolbarView::Init() {
                  base::Unretained(this)));
 
   bookmark_ = new BookmarkButton(this);
-  bookmark_->set_triggerable_event_flags(ui::EF_LEFT_MOUSE_BUTTON |
-                                         ui::EF_MIDDLE_MOUSE_BUTTON);
+  bookmark_->SetTriggerableEventFlags(ui::EF_LEFT_MOUSE_BUTTON |
+                                      ui::EF_MIDDLE_MOUSE_BUTTON);
   DCHECK(location_bar_);
   AddChildViewAt(bookmark_, GetIndexOf(location_bar_));
   bookmark_->UpdateImage();
@@ -144,8 +144,8 @@ void HuhiToolbarView::Init() {
   // Speedreader.
   if (base::FeatureList::IsEnabled(speedreader::kSpeedreaderFeature)) {
     speedreader_ = new SpeedreaderButton(this, profile->GetPrefs());
-    speedreader_->set_triggerable_event_flags(ui::EF_LEFT_MOUSE_BUTTON |
-                                              ui::EF_MIDDLE_MOUSE_BUTTON);
+    speedreader_->SetTriggerableEventFlags(ui::EF_LEFT_MOUSE_BUTTON |
+                                           ui::EF_MIDDLE_MOUSE_BUTTON);
   }
 
   if (speedreader_) {

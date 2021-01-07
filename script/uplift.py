@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# This Source Code Form is subject to the terms of the Huhi Software
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -183,7 +183,7 @@ def fancy_print(text):
 
 def parse_issues_fixed(body):
     try:
-        regex = r'((Resolves|Fixes|Fix|Closes|Close|resolves|fixes|fix|closes|close) https:\/\/github\.com\/huhi\/huhi-browser\/issues\/(\d*))'  # nopep8
+        regex = r'((Resolves|Fixes|Fix|Closes|Close|resolves|fixes|fix|closes|close) https:\/\/github\.com\/huhisoft\/huhi-browser\/issues\/(\d*))'  # nopep8
         return re.findall(regex, body)
     except Exception as e:
         print str(e)

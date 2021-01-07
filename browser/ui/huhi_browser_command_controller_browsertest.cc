@@ -1,17 +1,17 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include <memory>
 
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/tor/buildflags.h"
 #include "huhi/browser/ui/huhi_browser_command_controller.h"
 #include "huhi/browser/ui/browser_commands.h"
 #include "huhi/components/huhi_rewards/browser/buildflags/buildflags.h"
 #include "huhi/components/huhi_sync/buildflags/buildflags.h"
-#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/app/chrome_command_ids.h"
 #include "chrome/browser/chrome_notification_types.h"
 #include "chrome/browser/profiles/profile.h"
@@ -23,12 +23,12 @@
 #include "content/public/test/browser_test.h"
 #include "content/public/test/test_utils.h"
 
-#if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/tor/tor_profile_service.h"
-#endif
-
 #if BUILDFLAG(ENABLE_HUHI_SYNC)
 #include "components/sync/driver/sync_driver_switches.h"
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/browser/tor/tor_profile_service_factory.h"
 #endif
 
 using HuhiBrowserCommandControllerTest = InProcessBrowserTest;
@@ -155,6 +155,7 @@ IN_PROC_BROWSER_TEST_F(HuhiBrowserCommandControllerTest,
   EXPECT_TRUE(command_controller->IsCommandEnabled(
                   IDC_SHOW_HUHI_WEBCOMPAT_REPORTER));
 
+#if BUILDFLAG(ENABLE_TOR)
   // Launch tor window and check its command status.
   content::WindowedNotificationObserver tor_browser_creation_observer(
       chrome::NOTIFICATION_BROWSER_OPENED,
@@ -176,12 +177,10 @@ IN_PROC_BROWSER_TEST_F(HuhiBrowserCommandControllerTest,
 
   EXPECT_TRUE(command_controller->IsCommandEnabled(IDC_SHOW_HUHI_ADBLOCK));
 
-#if BUILDFLAG(ENABLE_TOR)
   EXPECT_TRUE(
       command_controller->IsCommandEnabled(IDC_NEW_TOR_CONNECTION_FOR_SITE));
   EXPECT_TRUE(
       command_controller->IsCommandEnabled(IDC_NEW_OFFTHERECORD_WINDOW_TOR));
-#endif
 
 #if BUILDFLAG(ENABLE_HUHI_SYNC)
   if (switches::IsSyncAllowedByFlag())
@@ -200,8 +199,7 @@ IN_PROC_BROWSER_TEST_F(HuhiBrowserCommandControllerTest,
                   IDC_SHOW_HUHI_WEBCOMPAT_REPORTER));
 
   // Check tor commands when tor is disabled.
-#if BUILDFLAG(ENABLE_TOR)
-  tor::TorProfileService::SetTorDisabled(true);
+  TorProfileServiceFactory::SetTorDisabled(true);
   command_controller = browser()->command_controller();
   EXPECT_FALSE(
       command_controller->IsCommandEnabled(IDC_NEW_TOR_CONNECTION_FOR_SITE));

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -271,10 +271,6 @@ void BatLedgerImpl::AttestPromotion(
       std::bind(BatLedgerImpl::OnAttestPromotion, holder, _1, _2));
 }
 
-void BatLedgerImpl::GetWalletPassphrase(GetWalletPassphraseCallback callback) {
-  std::move(callback).Run(ledger_->GetWalletPassphrase());
-}
-
 // static
 void BatLedgerImpl::OnRecoverWallet(
     CallbackHolder<RecoverWalletCallback>* holder,
@@ -294,10 +290,6 @@ void BatLedgerImpl::RecoverWallet(
       BatLedgerImpl::OnRecoverWallet,
       holder,
       _1));
-}
-
-void BatLedgerImpl::SetRewardsMainEnabled(bool enabled) {
-  ledger_->SetRewardsMainEnabled(enabled);
 }
 
 void BatLedgerImpl::SetPublisherMinVisitTime(int duration_in_seconds) {
@@ -344,10 +336,6 @@ void BatLedgerImpl::GetBalanceReport(
       month,
       year,
       std::bind(BatLedgerImpl::OnGetBalanceReport, holder, _1, _2));
-}
-
-void BatLedgerImpl::IsWalletCreated(IsWalletCreatedCallback callback) {
-  std::move(callback).Run(ledger_->IsWalletCreated());
 }
 
 void BatLedgerImpl::GetPublisherActivityFromUrl(
@@ -427,11 +415,6 @@ void BatLedgerImpl::RemoveRecurringTip(
 
 void BatLedgerImpl::GetCreationStamp(GetCreationStampCallback callback) {
   std::move(callback).Run(ledger_->GetCreationStamp());
-}
-
-void BatLedgerImpl::GetRewardsMainEnabled(
-    GetRewardsMainEnabledCallback callback) {
-  std::move(callback).Run(ledger_->GetRewardsMainEnabled());
 }
 
 void BatLedgerImpl::OnHasSufficientBalanceToReconcile(
@@ -601,6 +584,85 @@ void BatLedgerImpl::SaveMediaInfo(
       std::bind(BatLedgerImpl::OnSaveMediaInfoCallback, holder, _1, _2));
 }
 
+void BatLedgerImpl::UpdateMediaDuration(
+    const uint64_t window_id,
+    const std::string& publisher_key,
+    const uint64_t duration,
+    const bool first_visit) {
+  ledger_->UpdateMediaDuration(window_id, publisher_key, duration, first_visit);
+}
+
+// static
+void BatLedgerImpl::OnPublisherInfo(
+    CallbackHolder<GetPublisherInfoCallback>* holder,
+    const ledger::type::Result result,
+    ledger::type::PublisherInfoPtr info) {
+  DCHECK(holder);
+  if (holder->is_valid())
+    std::move(holder->get()).Run(result, std::move(info));
+  delete holder;
+}
+
+void BatLedgerImpl::GetPublisherInfo(
+    const std::string& publisher_key,
+    GetPublisherInfoCallback callback) {
+  // deleted in OnPublisherInfo
+  auto* holder = new CallbackHolder<GetPublisherInfoCallback>(
+      AsWeakPtr(), std::move(callback));
+  ledger_->GetPublisherInfo(
+      publisher_key,
+      std::bind(BatLedgerImpl::OnPublisherInfo, holder, _1, _2));
+}
+
+// static
+void BatLedgerImpl::OnPublisherPanelInfo(
+    CallbackHolder<GetPublisherPanelInfoCallback>* holder,
+    const ledger::type::Result result,
+    ledger::type::PublisherInfoPtr info) {
+  DCHECK(holder);
+  if (holder->is_valid())
+    std::move(holder->get()).Run(result, std::move(info));
+  delete holder;
+}
+
+void BatLedgerImpl::GetPublisherPanelInfo(
+    const std::string& publisher_key,
+    GetPublisherPanelInfoCallback callback) {
+  // deleted in OnPublisherPanelInfo
+  auto* holder = new CallbackHolder<GetPublisherPanelInfoCallback>(
+      AsWeakPtr(), std::move(callback));
+  ledger_->GetPublisherPanelInfo(
+      publisher_key,
+      std::bind(BatLedgerImpl::OnPublisherPanelInfo, holder, _1, _2));
+}
+
+// static
+void BatLedgerImpl::OnSavePublisherInfo(
+    CallbackHolder<SavePublisherInfoCallback>* holder,
+    const ledger::type::Result result) {
+  DCHECK(holder);
+  if (holder->is_valid()) {
+    std::move(holder->get()).Run(result);
+  }
+
+  delete holder;
+}
+
+void BatLedgerImpl::SavePublisherInfo(
+    const uint64_t window_id,
+    ledger::type::PublisherInfoPtr publisher_info,
+    SavePublisherInfoCallback callback) {
+  auto* holder = new CallbackHolder<SavePublisherInfoCallback>(
+      AsWeakPtr(), std::move(callback));
+
+  ledger_->SavePublisherInfo(
+      window_id,
+      std::move(publisher_info),
+      std::bind(BatLedgerImpl::OnSavePublisherInfo,
+          holder,
+          _1));
+}
+
 void BatLedgerImpl::OnRefreshPublisher(
     CallbackHolder<RefreshPublisherCallback>* holder,
     ledger::type::PublisherStatus status) {
@@ -638,10 +700,9 @@ void BatLedgerImpl::GetInlineTippingPlatformEnabled(
 }
 
 void BatLedgerImpl::GetShareURL(
-    const std::string& type,
     const base::flat_map<std::string, std::string>& args,
     GetShareURLCallback callback) {
-  std::move(callback).Run(ledger_->GetShareURL(type, base::FlatMapToMap(args)));
+  std::move(callback).Run(ledger_->GetShareURL(base::FlatMapToMap(args)));
 }
 
 // static
@@ -756,23 +817,21 @@ void BatLedgerImpl::FetchBalance(
 }
 
 // static
-void BatLedgerImpl::OnGetExternalWallet(
-    CallbackHolder<GetExternalWalletCallback>* holder,
+void BatLedgerImpl::OnGetUpholdWallet(
+    CallbackHolder<GetUpholdWalletCallback>* holder,
     ledger::type::Result result,
-    ledger::type::ExternalWalletPtr wallet) {
+    ledger::type::UpholdWalletPtr wallet) {
   if (holder->is_valid())
     std::move(holder->get()).Run(result, std::move(wallet));
   delete holder;
 }
 
-void BatLedgerImpl::GetExternalWallet(const std::string& wallet_type,
-                                      GetExternalWalletCallback callback) {
-  auto* holder = new CallbackHolder<GetExternalWalletCallback>(
+void BatLedgerImpl::GetUpholdWallet(GetUpholdWalletCallback callback) {
+  auto* holder = new CallbackHolder<GetUpholdWalletCallback>(
       AsWeakPtr(), std::move(callback));
 
-  ledger_->GetExternalWallet(
-      wallet_type,
-      std::bind(BatLedgerImpl::OnGetExternalWallet,
+  ledger_->GetUpholdWallet(
+      std::bind(BatLedgerImpl::OnGetUpholdWallet,
                 holder,
                 _1,
                 _2));
@@ -927,8 +986,8 @@ void BatLedgerImpl::GetAllContributions(GetAllContributionsCallback callback) {
 }
 
 // static
-void BatLedgerImpl::OnSavePublisherInfo(
-    CallbackHolder<SavePublisherInfoCallback>* holder,
+void BatLedgerImpl::OnSavePublisherInfoForTip(
+    CallbackHolder<SavePublisherInfoForTipCallback>* holder,
     const ledger::type::Result result) {
   DCHECK(holder);
   if (holder->is_valid()) {
@@ -938,15 +997,15 @@ void BatLedgerImpl::OnSavePublisherInfo(
   delete holder;
 }
 
-void BatLedgerImpl::SavePublisherInfo(
+void BatLedgerImpl::SavePublisherInfoForTip(
     ledger::type::PublisherInfoPtr info,
-    SavePublisherInfoCallback callback) {
-  auto* holder = new CallbackHolder<SavePublisherInfoCallback>(
+    SavePublisherInfoForTipCallback callback) {
+  auto* holder = new CallbackHolder<SavePublisherInfoForTipCallback>(
       AsWeakPtr(), std::move(callback));
 
-  ledger_->SavePublisherInfo(
+  ledger_->SavePublisherInfoForTip(
       std::move(info),
-      std::bind(BatLedgerImpl::OnSavePublisherInfo,
+      std::bind(BatLedgerImpl::OnSavePublisherInfoForTip,
           holder,
           _1));
 }
@@ -1046,7 +1105,6 @@ void BatLedgerImpl::Shutdown(ShutdownCallback callback) {
           _1));
 }
 
-
 // static
 void BatLedgerImpl::OnGetEventLogs(
     CallbackHolder<GetEventLogsCallback>* holder,
@@ -1067,6 +1125,32 @@ void BatLedgerImpl::GetEventLogs(GetEventLogsCallback callback) {
       std::bind(BatLedgerImpl::OnGetEventLogs,
           holder,
           _1));
+}
+
+// static
+void BatLedgerImpl::OnGetHuhiWallet(
+    CallbackHolder<GetHuhiWalletCallback>* holder,
+    ledger::type::HuhiWalletPtr wallet) {
+  DCHECK(holder);
+  if (holder->is_valid()) {
+    std::move(holder->get()).Run(std::move(wallet));
+  }
+
+  delete holder;
+}
+
+void BatLedgerImpl::GetHuhiWallet(GetHuhiWalletCallback callback) {
+  auto* holder = new CallbackHolder<GetHuhiWalletCallback>(
+      AsWeakPtr(), std::move(callback));
+
+  ledger_->GetHuhiWallet(
+      std::bind(BatLedgerImpl::OnGetHuhiWallet,
+          holder,
+          _1));
+}
+
+void BatLedgerImpl::GetWalletPassphrase(GetWalletPassphraseCallback callback) {
+  std::move(callback).Run(ledger_->GetWalletPassphrase());
 }
 
 }  // namespace bat_ledger

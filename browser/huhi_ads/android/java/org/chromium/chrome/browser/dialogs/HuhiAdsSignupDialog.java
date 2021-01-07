@@ -1,5 +1,5 @@
-/** Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-  * This Source Code Form is subject to the terms of the Huhi Software
+/** Copyright (c) 2020 The Huhi Authors. All rights reserved.
+  * This Source Code Form is subject to the terms of the Mozilla Public
   * License, v. 2.0. If a copy of the MPL was not distributed with this file,
   * You can obtain one at http://mozilla.org/MPL/2.0/.
   */
@@ -44,13 +44,11 @@ public class HuhiAdsSignupDialog {
     private static final long MOMENT_LATER = 2_500;
 
     public static boolean shouldShowNewUserDialog(Context context) {
-        boolean shouldShow =
-          shouldShowOnboardingDialog()
-          && PackageUtils.isFirstInstall(context)
-          && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(Profile.getLastUsedRegularProfile())
-          && !UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.ENABLED)
-          && hasElapsed24Hours(context)
-          && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS);
+        boolean shouldShow = shouldShowOnboardingDialog() && PackageUtils.isFirstInstall(context)
+                && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(
+                        Profile.getLastUsedRegularProfile())
+                && hasElapsed24Hours(context)
+                && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS);
 
         boolean shouldShowForViewCount = shouldShowForViewCount();
         if (shouldShow) updateViewCount();
@@ -59,12 +57,10 @@ public class HuhiAdsSignupDialog {
     }
 
     public static boolean shouldShowNewUserDialogIfRewardsIsSwitchedOff(Context context) {
-        boolean shouldShow =
-          shouldShowOnboardingDialog()
-          && !PackageUtils.isFirstInstall(context)
-          && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(Profile.getLastUsedRegularProfile())
-          && !UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.ENABLED)
-          && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS);
+        boolean shouldShow = shouldShowOnboardingDialog() && !PackageUtils.isFirstInstall(context)
+                && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(
+                        Profile.getLastUsedRegularProfile())
+                && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS);
 
         boolean shouldShowForViewCount = shouldShowForViewCount();
         if (shouldShow) updateViewCount();
@@ -73,13 +69,11 @@ public class HuhiAdsSignupDialog {
     }
 
     public static boolean shouldShowExistingUserDialog(Context context) {
-        boolean shouldShow =
-          shouldShowOnboardingDialog()
-          && !PackageUtils.isFirstInstall(context)
-          && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(Profile.getLastUsedRegularProfile())
-          && UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.ENABLED)
-          && HuhiAdsNativeHelper.nativeIsLocaleValid(Profile.getLastUsedRegularProfile())
-          && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS);
+        boolean shouldShow = shouldShowOnboardingDialog() && !PackageUtils.isFirstInstall(context)
+                && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(
+                        Profile.getLastUsedRegularProfile())
+                && HuhiAdsNativeHelper.nativeIsLocaleValid(Profile.getLastUsedRegularProfile())
+                && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS);
 
         boolean shouldShowForViewCount = shouldShowForViewCount();
         if (shouldShow) updateViewCount();
@@ -121,8 +115,6 @@ public class HuhiAdsSignupDialog {
                 neverShowOnboardingDialogAgain();
 
                 HuhiRewardsNativeWorker huhiRewardsNativeWorker = HuhiRewardsNativeWorker.getInstance();
-                huhiRewardsNativeWorker.GetRewardsMainEnabled();
-                huhiRewardsNativeWorker.CreateWallet();
 
                 // Enable ads
                 HuhiAdsNativeHelper.nativeSetAdsEnabled(Profile.getLastUsedRegularProfile());

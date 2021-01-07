@@ -17,6 +17,7 @@ source_set("browser") {
       "//base",
       "//huhi/common",
       "//huhi/components/huhi_referrals/common",
+      "//huhi/components/huhi_stats/browser",
       "//huhi/vendor/huhi_base",
       "//chrome/common",
       "//components/prefs",

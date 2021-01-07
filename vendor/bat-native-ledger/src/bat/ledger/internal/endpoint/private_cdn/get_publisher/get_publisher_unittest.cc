@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -55,11 +55,11 @@ TEST_F(GetPublisherTest, ServerError404) {
           }));
 
   publisher_->Request(
-      "huhisoft.com",
+      "hnq.vn",
       "ce55",
       [](const type::Result result, type::ServerPublisherInfoPtr info) {
     EXPECT_EQ(result, type::Result::LEDGER_OK);
-    EXPECT_EQ(info->publisher_key, "huhisoft.com");
+    EXPECT_EQ(info->publisher_key, "hnq.vn");
     EXPECT_EQ(info->status, type::PublisherStatus::NOT_VERIFIED);
   });
 }

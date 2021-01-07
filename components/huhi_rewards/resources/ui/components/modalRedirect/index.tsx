@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -13,12 +13,11 @@ import {
 import Modal from 'huhi-ui/components/popupModals/modal/index'
 import { LoaderIcon } from 'huhi-ui/components/icons'
 import { Button } from 'huhi-ui/components'
+import { splitStringForTag } from '../../../../../common/locale'
 
 export interface Props {
   id?: string
-  errorText?: {
-    __html: string;
-  }
+  errorText?: string
   buttonText?: string
   titleText?: string
   onClick?: () => void
@@ -41,6 +40,10 @@ export default class ModalRedirect extends React.PureComponent<Props, {}> {
 
   render () {
     const { id, errorText, titleText } = this.props
+    let tags = null
+    if (errorText && errorText.includes('$1')) {
+      tags = splitStringForTag(errorText)
+    }
 
     return (
       <Modal id={id} displayCloseButton={false}>
@@ -51,7 +54,23 @@ export default class ModalRedirect extends React.PureComponent<Props, {}> {
           {
             errorText
             ? <StyledError>
-              <p dangerouslySetInnerHTML={errorText} />
+              <p>
+              {
+                tags
+                ? <>
+                    {tags.beforeTag}
+                    <a
+                      href='https://uphold.com/en/huhi/support'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      {tags.duringTag}
+                    </a>
+                    {tags.afterTag}
+                  </>
+                : errorText
+              }
+              </p>
               {this.getButton()}
             </StyledError>
             : <StyledLoader>

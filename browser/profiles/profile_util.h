@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -43,7 +43,27 @@ Profile* GetParentProfile(const base::FilePath& path);
 // the guest profile by calling IsGuestSession and have to use this function.
 bool IsGuestProfile(content::BrowserContext* profile);
 
+// Similar to Profile::IsRegularProfile but return false for Tor regular
+// profile, Tor incognito profile, and the guest profile and its parent.
+bool IsRegularProfile(content::BrowserContext* profile);
+
 bool IsTorDisabledForProfile(Profile* profile);
+
+// Specifically used to record if sponsored images are enabled.
+// Called from HuhiAppearanceHandler and HuhiNewTabMessageHandler
+void RecordSponsoredImagesEnabledP3A(Profile* profile);
+
+// Records default values for some histograms.
+//
+// For profile agnostic values (ex: local_state) see
+// browser/huhi_browser_main_extra_parts.cc
+void RecordInitialP3AValues(Profile* profile);
+
+// Used for capturing the value of kHuhiCurrentDataVersion so that the
+// default search engine for that version can be determined. New profiles
+// will get locked into newer versions when created. Existing profiles
+// missing this value are backfilled to the first version introduced.
+void SetDefaultSearchVersion(Profile* profile, bool is_new_profile);
 
 }  // namespace huhi
 
@@ -62,7 +82,7 @@ content::BrowserContext* GetBrowserContextRedirectedInIncognitoOverride(
   if (huhi::IsSessionProfile(context)) {                                      \
     auto* parent = huhi::GetParentProfile(context);                           \
     context =                                                                  \
-        context->IsOffTheRecord() ? parent->GetOffTheRecordProfile() : parent; \
+        context->IsOffTheRecord() ? parent->GetPrimaryOTRProfile() : parent; \
   }
 
 #endif  // HUHI_BROWSER_PROFILES_PROFILE_UTIL_H_

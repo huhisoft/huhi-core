@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -41,7 +41,7 @@ storiesOf('Rewards/Table', module)
           provider: 'youtube',
           src: favicon
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 40,
         onRemove: doNothing
       },
@@ -51,7 +51,7 @@ storiesOf('Rewards/Table', module)
           verified: true,
           src: ddgo
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 20,
         onRemove: doNothing
       },
@@ -61,7 +61,7 @@ storiesOf('Rewards/Table', module)
           verified: false,
           src: buzz
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 10,
         onRemove: doNothing
       },
@@ -71,7 +71,7 @@ storiesOf('Rewards/Table', module)
           verified: true,
           src: guardian
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 5,
         onRemove: doNothing
       },
@@ -81,7 +81,7 @@ storiesOf('Rewards/Table', module)
           verified: false,
           src: wiki
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 4,
         onRemove: doNothing
       }
@@ -111,7 +111,7 @@ storiesOf('Rewards/Table', module)
           provider: 'youtube',
           src: favicon
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'recurring',
         contribute: {
           tokens: '2.0',
@@ -125,7 +125,7 @@ storiesOf('Rewards/Table', module)
           name: 'theguardian.com',
           src: guardian
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'donation',
         contribute: {
           tokens: '12000.0',
@@ -140,7 +140,7 @@ storiesOf('Rewards/Table', module)
           provider: 'twitter',
           src: eich
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'tip',
         contribute: {
           tokens: '1.0',
@@ -216,7 +216,7 @@ storiesOf('Rewards/Table', module)
           provider: 'youtube',
           src: favicon
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'recurring',
         amount: {
           tokens: '2.0',
@@ -231,7 +231,7 @@ storiesOf('Rewards/Table', module)
           name: 'theguardian.com',
           src: guardian
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'tip',
         amount: {
           tokens: '12000.0',
@@ -247,7 +247,7 @@ storiesOf('Rewards/Table', module)
           provider: 'twitter',
           src: eich
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'ac',
         amount: {
           tokens: '1.0',

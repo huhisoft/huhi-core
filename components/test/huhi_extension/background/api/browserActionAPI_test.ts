@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -28,7 +28,7 @@ describe('BrowserAction API', () => {
     let setIconSpy: jest.SpyInstance
     let disableSpy: jest.SpyInstance
     let enableSpy: jest.SpyInstance
-    let url = 'https://huhisoft.com'
+    let url = 'https://hnq.vn'
     const tabId = 1
     let shieldsEnabled = true
     beforeEach(() => {

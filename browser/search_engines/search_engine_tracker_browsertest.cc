@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,13 +8,17 @@
 #include "base/test/metrics/histogram_tester.h"
 #include "huhi/browser/profiles/profile_util.h"
 #include "huhi/browser/ui/browser_commands.h"
-#include "huhi/browser/tor/tor_launcher_factory.h"
 #include "huhi/components/search_engines/huhi_prepopulated_engines.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/search_engines/template_url_service_factory.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/test/base/in_process_browser_test.h"
 #include "components/search_engines/template_url_prepopulate_data.h"
 #include "content/public/test/browser_test.h"
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/components/tor/tor_launcher_factory.h"
+#endif
 
 class SearchEngineProviderP3ATest : public InProcessBrowserTest {
  public:
@@ -47,8 +51,10 @@ IN_PROC_BROWSER_TEST_F(SearchEngineProviderP3ATest,
 
   // Check that incognito or TOR profiles do not emit the metric.
   CreateIncognitoBrowser();
+#if BUILDFLAG(ENABLE_TOR)
   ScopedTorLaunchPreventerForTest prevent_tor_process;
   huhi::NewOffTheRecordWindowTor(browser());
+#endif
 
   histogram_tester_->ExpectTotalCount(kDefaultSearchEngineMetric, 2);
 }

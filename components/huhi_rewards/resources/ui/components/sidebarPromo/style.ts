@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License. v. 2.0. If a copy of the MPL was not distributed with this file.
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,7 +15,6 @@ export const StyledWrapper = styled<{}, 'a'>('a')`
   background: #fff;
   margin-top: 30px;
   border-radius: 8px;
-  box-shadow: 0 0 13px 0 rgba(0,0,0,0.07);
   min-height: 157px;
   cursor: pointer;
   display: flex;

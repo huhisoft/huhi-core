@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,6 +11,7 @@
 #include "huhi/browser/ui/webui/settings/huhi_privacy_handler.h"
 #include "huhi/browser/version_info.h"
 #include "huhi/components/moonpay/browser/buildflags/buildflags.h"
+#include "huhi/components/crypto_dot_com/browser/buildflags/buildflags.h"
 #include "chrome/browser/ui/webui/webui_util.h"
 #include "chrome/common/pref_names.h"
 #include "components/grit/huhi_components_strings.h"
@@ -46,8 +47,7 @@ void HuhiAddLocalizedStrings(content::WebUIDataSource*, Profile*);
 namespace settings {
 
 const char kWebRTCLearnMoreURL[] =
-    "https://support.huhisoft.com/hc/en-us/articles/"
-    "360017989132-How-do-I-change-my-Privacy-Settings-#webrtc";
+    "https://support.hnq.vn/hc/en-us/articles/360017989132-How-do-I-change-my-Privacy-Settings-#webrtc";
 const char kHuhiBuildInstructionsUrl[] =
     "https://github.com/huhisoft/huhi-browser/wiki";
 const char kHuhiLicenseUrl[] = "https://mozilla.org/MPL/2.0/";
@@ -80,8 +80,6 @@ void HuhiAddCommonStrings(content::WebUIDataSource* html_source,
       IDS_SETTINGS_APPEARANCE_SETTINGS_LOCATION_BAR_IS_WIDE},
     {"appearanceSettingsHideHuhiRewardsButtonLabel",
       IDS_SETTINGS_HIDE_HUHI_REWARDS_BUTTON_LABEL},
-    {"appearanceSettingsHideHuhiRewardsButtonDesc",
-      IDS_SETTINGS_HIDE_HUHI_REWARDS_BUTTON_DESC},
     {"appearanceSettingsAlwaysShowBookmarkBarOnNTP",
       IDS_SETTINGS_ALWAYS_SHOW_BOOKMARK_BAR_ON_NTP},
     {"appearanceSettingsShowAutocompleteInAddressBar",
@@ -94,6 +92,8 @@ void HuhiAddCommonStrings(content::WebUIDataSource* html_source,
       IDS_SETTINGS_APPEARANCE_SETTINGS_GET_MORE_THEMES},
     {"appearanceHuhiDefaultImagesOptionLabel",
       IDS_SETTINGS_APPEARANCE_SETTINGS_HUHI_DEFAULT_IMAGES_OPTION_LABEL},
+    {"mruCyclingSettingLabel",
+      IDS_SETTINGS_HUHI_MRU_CYCLING_LABEL},
     {"huhiShieldsTitle",
       IDS_SETTINGS_HUHI_SHIELDS_TITLE},
     {"huhiShieldsDefaultsSectionTitle",
@@ -200,6 +200,8 @@ void HuhiAddCommonStrings(content::WebUIDataSource* html_source,
       IDS_SETTINGS_HUHI_SYNC_DEVICE_LIST_NAME_THIS_DEVICE},
     {"huhiSyncDeviceListLastActiveColumn",
       IDS_SETTINGS_HUHI_SYNC_DEVICE_LIST_LAST_ACTIVE_COLUMN},
+    {"huhiSyncDeviceListRemoveColumn",
+      IDS_SETTINGS_HUHI_SYNC_DEVICE_LIST_REMOVE_COLUMN},
     {"huhiSyncSetupTitle",
       IDS_HUHI_SYNC_SETUP_TITLE},
     {"huhiSyncSetupDesc",
@@ -228,6 +230,8 @@ void HuhiAddCommonStrings(content::WebUIDataSource* html_source,
       IDS_HUHI_SYNC_VIEW_CODE_DESCRIPTION_PARTIAL_2},
     {"huhiSyncViewCodeDesc3",
       IDS_HUHI_SYNC_VIEW_CODE_DESCRIPTION_PARTIAL_3},
+    {"huhiSyncCodeWarning",
+      IDS_HUHI_SYNC_CODE_WARNING},
     {"huhiSyncViewCodeQRCodeButton",
       IDS_HUHI_SYNC_VIEW_CODE_QR_CODE_BUTTON},
     {"huhiSyncEnterCodeTitle",
@@ -248,14 +252,14 @@ void HuhiAddCommonStrings(content::WebUIDataSource* html_source,
       IDS_HUHI_SYNC_RESET_BUTTON},
     {"huhiSyncResetConfirmation",
       IDS_HUHI_SYNC_RESET_CONFIRMATION},
+    {"huhiSyncDeleteDeviceConfirmation",
+      IDS_HUHI_SYNC_DELETE_DEVICE_CONFIRMATION},
     {"huhiHelpTips",
       IDS_SETTINGS_HELP_TIPS},
     {"huhiHelpTipsWaybackMachineLabel",
       IDS_SETTINGS_HELP_TIPS_SHOW_HUHI_WAYBACK_MACHINE_PROMPT},
     // New Tab Page
     { "huhiNewTab", IDS_SETTINGS_NEW_TAB },
-    { "huhiNewTabCustomizeDashboard",
-      IDS_SETTINGS_NEW_TAB_CUSTOMIZE_HUHI_DASHBOARD },
     { "huhiNewTabBackgroundImages", IDS_SETTINGS_NEW_TAB_BACKGROUND_IMAGES },
     { "huhiNewTabSponsoredImages", IDS_SETTINGS_NEW_TAB_SPONSORED_IMAGES },
     { "huhiNewTabStats", IDS_SETTINGS_NEW_TAB_STATS },
@@ -265,9 +269,13 @@ void HuhiAddCommonStrings(content::WebUIDataSource* html_source,
 #if BUILDFLAG(MOONPAY_ENABLED)
     { "huhiNewTabBitcoinDotCom", IDS_SETTINGS_NEW_TAB_BITCOIN_DOT_COM },
 #endif
+#if BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
+    { "huhiNewTabCryptoDotCom", IDS_SETTINGS_NEW_TAB_CRYPTO_DOT_COM },
+#endif
     { "huhiNewTabTogether", IDS_SETTINGS_NEW_TAB_TOGETHER },
     { "huhiNewTabTopSites", IDS_SETTINGS_NEW_TAB_TOP_SITES },
     { "huhiNewTabClock", IDS_SETTINGS_NEW_TAB_CLOCK },
+    { "huhiNewTabNewTabPageShows", IDS_SETTINGS_NEW_TAB_NEW_TAB_PAGE_SHOWS },
     // Misc (TODO: Organize this)
     {"onExitPageTitle",
       IDS_SETTINGS_HUHI_ON_EXIT},
@@ -285,6 +293,10 @@ void HuhiAddCommonStrings(content::WebUIDataSource* html_source,
       IDS_SETTINGS_HANGOUTS_ENABLED_DESC},
     {"resolveIPFSURLDesc",
       IDS_SETTINGS_RESOLVE_IPFS_URLS_DESC},
+    {"ipfsAutoFallbackToGatewayLabel",
+      IDS_SETTINGS_IPFS_AUTO_FALLBACK_TO_GATEWAY_LABEL},
+    {"ipfsAutoFallbackToGatewayDesc",
+      IDS_SETTINGS_IPFS_AUTO_FALLBACK_TO_GATEWAY_DESC},
     {"ipfsCompanionEnabledDesc",
       IDS_SETTINGS_IPFS_COMPANION_ENABLED_DESC},
     {"mediaRouterEnabledDesc",
@@ -293,6 +305,10 @@ void HuhiAddCommonStrings(content::WebUIDataSource* html_source,
       IDS_SETTINGS_ENABLE_TOR_TITLE},
     {"torEnabledDesc",
       IDS_SETTINGS_ENABLE_TOR_DESC},
+    {"autoOnionLocationLabel",
+      IDS_SETTINGS_AUTO_ONION_LOCATION_TITLE},
+    {"autoOnionLocationDesc",
+      IDS_SETTINGS_AUTO_ONION_LOCATION_DESC},
     {"restartNotice",
       IDS_SETTINGS_RESTART_NOTICE},
     {"relaunchButtonLabel",

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -44,13 +44,12 @@
 namespace {
 #if BUILDFLAG(HUHI_REWARDS_ENABLED)
 void OverridePrefsForPrivateProfileUserPrefs(Profile* profile) {
-  if (profile->IsRegularProfile())
+  if (huhi::IsRegularProfile(profile))
     return;
 
   // rewards button should be hidden on guest and tor profile.
   PrefService* pref_service = profile->GetPrefs();
   pref_service->SetBoolean(huhi_rewards::prefs::kHideButton, true);
-  pref_service->SetBoolean(huhi_rewards::prefs::kEnabled, false);
 }
 #endif
 }  // namespace
@@ -66,7 +65,7 @@ RewardsService* RewardsServiceFactory::GetForProfile(
     return testing_service_;
   }
 
-  if (profile->IsOffTheRecord() || huhi::IsTorProfile(profile)) {
+  if (!huhi::IsRegularProfile(profile)) {
     return nullptr;
   }
 

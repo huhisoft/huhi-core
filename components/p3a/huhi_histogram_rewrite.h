@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,7 +8,7 @@
 
 namespace huhi {
 
-// Set callbacks for existing Chromium histograms that will be braveized,
+// Set callbacks for existing Chromium histograms that will be huhiized,
 // i.e. reemitted using a different name and custom buckets.
 void SetupHistogramsHuhiization();
 

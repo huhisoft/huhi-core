@@ -12,7 +12,9 @@ declare_args() {
   base_sparkle_update_url = ""
   enable_sparkle = is_official_build && is_mac
 
-  huhi_dsa_file = "dsa_pub.pem"
+  sparkle_dsa_private_key_file = ""
+  sparkle_eddsa_private_key = ""
+  sparkle_eddsa_public_key = ""
 
   huhi_product_name = ""
   huhi_project_name = ""
@@ -24,8 +26,8 @@ declare_args() {
   chrome_version_string = ""
   chrome_version_major = ""
   build_omaha = false
-  tag_ap =""
-  target_apk_base=""
+  tag_ap = ""
+  target_apk_base = ""
   huhi_android_keystore_path = "."
   huhi_android_keystore_name = ""
   huhi_android_keystore_password = ""
@@ -33,19 +35,10 @@ declare_args() {
 
   skip_signing = false
 
-  # Used for generating delta installer on Win.
+  # Used for generating delta installer on macOS/Windows
   build_delta_installer = false
   last_chrome_installer = ""
 }
-
-if (base_sparkle_update_url == "") {
-  base_sparkle_update_url = "https://updates.huhisoft.com/sparkle/Huhi-Browser"
-}
-_update_channel = huhi_channel
-if (_update_channel == "") {
-  _update_channel = "stable"
-}
-huhi_feed_url = "$base_sparkle_update_url/$_update_channel/appcast.xml"
 
 huhi_version = "$huhi_version_major.$huhi_version_minor.$huhi_version_build"
 
@@ -90,6 +83,7 @@ if (is_win) {
   huhi_exe = "$chrome_product_full_name.app"
   huhi_dmg = "$chrome_product_full_name.dmg"
   huhi_pkg = "$chrome_product_full_name.pkg"
+  huhi_delta = "$chrome_product_full_name.delta"
 
   huhi_product_dir_name_suffix = ""
   if (is_official_build) {
@@ -106,6 +100,18 @@ if (is_win) {
     huhi_product_dir_name_suffix = "-Development"
   }
   huhi_product_dir_name = "HuhiSoftware/Huhi-Browser$huhi_product_dir_name_suffix"
+
+  if (base_sparkle_update_url == "") {
+    base_sparkle_update_url = "https://updates.huhisoftware.com/sparkle/Huhi-Browser"
+  }
+  _update_channel = huhi_channel
+  if (_update_channel == "") {
+    _update_channel = "stable"
+  }
+  if (target_cpu == "arm64") {
+    _update_channel += "-arm64"
+  }
+  huhi_feed_url = "$base_sparkle_update_url/$_update_channel/appcast.xml"
 }
 
 huhi_platform = "darwin"

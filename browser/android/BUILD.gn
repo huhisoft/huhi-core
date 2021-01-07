@@ -1,0 +1,61 @@
+import("//huhi/build/config.gni")
+import("//build/config/android/rules.gni")
+
+source_set("android_browser_process") {
+  check_includes = false
+
+  sources = [
+    "huhi_cosmetic_resources_tab_helper.cc",
+    "huhi_cosmetic_resources_tab_helper.h",
+    "huhi_feature_list.cc",
+    "huhi_relaunch_utils.cc",
+    "huhi_shields_content_settings.cc",
+    "huhi_shields_content_settings.h",
+    "huhi_stats_updater_android.cc",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/browser/android/preferences",
+    "//huhi/browser/huhi_stats:stats_updater",
+    "//huhi/build/android:jni_headers",
+    "//huhi/components/huhi_shields/browser",
+    "//chrome/android:jni_headers",
+    "//chrome/common",
+    "//components/content_settings/core/browser",
+    "//components/flags_ui",
+    "//components/ntp_tiles",
+    "//components/translate/core/browser",
+  ]
+
+  if (huhi_ads_enabled) {
+    sources += [
+      "//huhi/browser/huhi_ads/android/huhi_ads_native_helper.cc",
+    ]
+
+    deps += [
+      "//huhi/browser/huhi_ads/android:jni_headers",
+      "//huhi/components/huhi_ads/browser",
+      "//huhi/components/l10n/browser",
+    ]
+  }
+
+  if (enable_huhi_sync) {
+    sources += [
+      "huhi_sync_worker.cc",
+      "huhi_sync_worker.h",
+      "//huhi/browser/sync/huhi_sync_devices_android.cc",
+      "//huhi/browser/sync/huhi_sync_devices_android.h",
+    ]
+    deps += [
+      "//huhi/components/huhi_sync",
+      "//huhi/components/huhi_sync:crypto",
+      "//huhi/components/huhi_sync:prefs",
+      "//huhi/components/huhi_sync:profile_sync_service_helper",
+      "//components/sync",
+      "//components/sync_device_info",
+      "//components/unified_consent",
+      "//third_party/leveldatabase",
+    ]
+  }
+}

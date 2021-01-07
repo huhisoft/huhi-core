@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,7 +8,8 @@
 #include <map>
 #include <vector>
 
-#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
+#include "huhi/components/crypto_dot_com/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
 #include "base/strings/utf_string_conversions.h"
 #include "huhi/common/url_constants.h"
 #include "huhi/components/moonpay/browser/buildflags/buildflags.h"
@@ -90,11 +91,6 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "1bb9aa85741c6d1c077f043324aae835.svg", IDR_HUHI_REWARDS_IMG_WELCOME_BG },            // NOLINT
         { "dcaf489409ca7908aef96547c9aad274.svg", IDR_HUHI_REWARDS_IMG_TAP },                   // NOLINT
       }
-    }, {
-      std::string("tip"), {
-        { "2e7994eaf768ee4a99272ea96cb39849.svg", IDR_HUHI_REWARDS_TIP_BG_1 },
-        { "4364e454dba7ea966b117f643832e871.svg", IDR_HUHI_REWARDS_TIP_BG_2 },
-      }
 #endif
     }, {
       std::string("welcome"), {
@@ -105,24 +101,6 @@ void CustomizeWebUIHTMLSource(const std::string &name,
     }
   };
   AddResourcePaths(source, resources[name]);
-
-  /**
-   * REWARDS
-   */
-  // String used to display not supported region for
-  // uphold wallet connection
-  base::string16 rewards_not_supported_region = l10n_util::GetStringFUTF16(
-      IDS_HUHI_REWARDS_LOCAL_REDIRECT_MODAL_NOT_ALLOWED,
-      base::ASCIIToUTF16(kRewardsUpholdSupport));
-  source->AddString("redirectModalNotAllowed", rewards_not_supported_region);
-
-  // Strings which have token replacement in them
-  base::string16 huhi_welcome_page_privacy_desc = l10n_util::GetStringFUTF16(
-      IDS_HUHI_WELCOME_PAGE_PRIVACY_DESC,
-      base::ASCIIToUTF16(kP3ALearnMoreURL),
-      base::ASCIIToUTF16(kP3ASettingsLink));
-  source->AddString("privacyDesc",
-                         huhi_welcome_page_privacy_desc);
 
   static std::map<std::string, std::vector<WebUISimpleItem> >
                                                            localized_strings = {
@@ -160,7 +138,12 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "showBackgroundImage", IDS_HUHI_NEW_TAB_SHOW_BACKGROUND_IMAGE },
         { "showHuhiStats", IDS_HUHI_NEW_TAB_SHOW_HUHI_STATS },
         { "showClock", IDS_HUHI_NEW_TAB_SHOW_CLOCK },
+        { "clockFormat", IDS_HUHI_NEW_TAB_CLOCK_FORMAT },
+        { "clockFormatDefault", IDS_HUHI_NEW_TAB_CLOCK_FORMAT_DEFAULT },
+        { "clockFormat12", IDS_HUHI_NEW_TAB_CLOCK_FORMAT_12 },
+        { "clockFormat24", IDS_HUHI_NEW_TAB_CLOCK_FORMAT_24 },
         { "showTopSites", IDS_HUHI_NEW_TAB_SHOW_TOP_SITES },
+        { "topSiteCustomLinksEnabled", IDS_HUHI_NEW_TAB_CUSTOM_LINKS_ENABLED },
         { "showRewards", IDS_HUHI_NEW_TAB_SHOW_REWARDS },
         { "showBinance", IDS_HUHI_NEW_TAB_SHOW_BINANCE },
         { "showTogether", IDS_HUHI_NEW_TAB_SHOW_TOGETHER },
@@ -170,6 +153,21 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "statsTitle", IDS_HUHI_NEW_TAB_STATS },
         { "clockTitle", IDS_HUHI_NEW_TAB_CLOCK },
         { "backgroundImageTitle", IDS_HUHI_NEW_TAB_BACKGROUND_IMAGE },
+        { "settingsNavigateBack", IDS_HUHI_NEW_TAB_SETTINGS_BACK },
+
+        { "huhiTodayTitle", IDS_HUHI_TODAY_TITLE },
+        { "huhiTodayIntroTitle", IDS_HUHI_TODAY_INTRO_TITLE },
+        { "huhiTodayIntroDescription", IDS_HUHI_TODAY_INTRO_DESCRIPTION },
+        { "huhiTodayStatusFetching", IDS_HUHI_TODAY_STATUS_FETCHING},
+        { "huhiTodayActionRefresh", IDS_HUHI_TODAY_ACTION_REFRESH},
+        { "huhiTodayScrollHint", IDS_HUHI_TODAY_SCROLL_HINT},
+        { "huhiTodayResetAction", IDS_HUHI_TODAY_RESET_ACTION},
+        { "huhiTodayResetConfirm", IDS_HUHI_TODAY_RESET_CONFIRM},
+        { "huhiTodayCategoryNameAll", IDS_HUHI_TODAY_CATEGORY_NAME_ALL},
+        { "huhiTodaySourcesTitle", IDS_HUHI_TODAY_SOURCES_TITLE},
+        { "huhiTodayDisableSourceCommand",
+            IDS_HUHI_TODAY_DISABLE_SOURCE_COMMAND},
+
         { "addWidget", IDS_HUHI_NEW_TAB_WIDGET_ADD },
         { "hideWidget", IDS_HUHI_NEW_TAB_WIDGET_HIDE },
         { "rewardsWidgetDesc", IDS_HUHI_NEW_TAB_REWARDS_WIDGET_DESC },
@@ -177,6 +175,9 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "geminiWidgetDesc", IDS_HUHI_NEW_TAB_GEMINI_WIDGET_DESC },
 #if BUILDFLAG(MOONPAY_ENABLED)
         { "bitcoinDotComWidgetDesc", IDS_HUHI_NEW_TAB_BITCOIN_DOT_COM_WIDGET_DESC },            // NOLINT
+#endif
+#if BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
+        { "cryptoDotComWidgetDesc", IDS_HUHI_NEW_TAB_CRYPTO_DOT_COM_WIDGET_DESC },              // NOLINT
 #endif
         { "huhiRewardsTitle", IDS_HUHI_NEW_TAB_HUHI_REWARDS_TITLE },
         // Private Tab - General
@@ -214,26 +215,24 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "boxTorText2", IDS_HUHI_PRIVATE_NEW_TAB_BOX_TOR_TEXT_2 },
         { "boxTorButton", IDS_HUHI_PRIVATE_NEW_TAB_BOX_TOR_BUTTON },
 
+        // Private Tab - Private Window - Tor Status
+        { "torStatus", IDS_HUHI_PRIVATE_NEW_TAB_TOR_STATUS },
+        { "torStatusConnected", IDS_HUHI_PRIVATE_NEW_TAB_TOR_STATUS_CONNECTED },         // NOLINT
+        { "torStatusDisconnected", IDS_HUHI_PRIVATE_NEW_TAB_TOR_STATUS_DISCONNECTED },   // NOLINT
+        { "torStatusInitializing", IDS_HUHI_PRIVATE_NEW_TAB_TOR_STATUS_INITIALIZING },   // NOLINT
+
         // Rewards widget
         { "rewardsWidgetBap", IDS_HUHI_UI_BAP_REWARDS_TEXT },
         { "rewardsWidgetBat", IDS_HUHI_UI_BAT_REWARDS_TEXT },
         { "rewardsWidgetHuhiRewards", IDS_HUHI_UI_HUHI_REWARDS },
         { "rewardsWidgetTurnOnAds", IDS_HUHI_UI_TURN_ON_ADS },
+        { "rewardsWidgetTurnOnText", IDS_HUHI_UI_TURN_ON_TEXT },
         { "rewardsWidgetClaimMyRewards", IDS_REWARDS_WIDGET_CLAIM_MY_REWARDS },
-        { "rewardsWidgetWalletFailedButton", IDS_HUHI_UI_WALLET_FAILED_BUTTON },         // NOLINT
         { "rewardsWidgetAboutRewards", IDS_REWARDS_WIDGET_ABOUT_REWARDS },
         { "rewardsWidgetServiceText", IDS_REWARDS_WIDGET_SERVICE_TEXT },
         { "rewardsWidgetEstimatedEarnings", IDS_REWARDS_WIDGET_ESTIMATED_EARNINGS },      // NOLINT
-        { "rewardsWidgetAdsOptInDescription", IDS_REWARDS_WIDGET_ADS_OPT_IN_DESCRIPTION },      // NOLINT
         { "rewardsWidgetMonthlyTips", IDS_REWARDS_WIDGET_MONTHLY_TIPS },
-        { "rewardsWidgetTurningOn", IDS_REWARDS_WIDGET_TURNING_ON },
-        { "rewardsWidgetTurnOnRewards", IDS_REWARDS_WIDGET_TURN_ON_REWARDS },             // NOLINT
-        { "rewardsWidgetReEnableTitle", IDS_REWARDS_WIDGET_REENABLE_TITLE },              // NOLINT
-        { "rewardsWidgetTurnOnLearnMore", IDS_REWARDS_WIDGET_TURN_ON_LEARN_MORE },        // NOLINT
-        { "rewardsWidgetEnableTitle", IDS_REWARDS_WIDGET_ENABLE_TITLE },
         { "rewardsWidgetEnableBrandedWallpaperTitle", IDS_REWARDS_WIDGET_ENABLE_BRANDED_WALLPAPER_TITLE },  // NOLINT
-        { "rewardsWidgetReEnableSubTitle", IDS_REWARDS_WIDGET_REENABLE_SUBTITLE },        // NOLINT
-        { "rewardsWidgetEnableSubTitle", IDS_REWARDS_WIDGET_ENABLE_SUBTITLE },            // NOLINT
         { "rewardsWidgetEnableBrandedWallpaperSubTitle", IDS_REWARDS_WIDGET_ENABLE_BRANDED_WALLPAPER_SUBTITLE },            // NOLINT
         { "rewardsWidgetAdsNotSupported", IDS_HUHI_REWARDS_LOCAL_ADS_NOT_SUPPORTED_REGION },    // NOLINT
         { "rewardsWidgetNotificationTitle", IDS_REWARDS_WIDGET_NOTIFICATION_TITLE },      // NOLINT
@@ -243,6 +242,8 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "rewardsWidgetBrandedNotificationDescription", IDS_REWARDS_WIDGET_BRANDED_NOTIFICATION_DESCRIPTION }, // NOLINT
         { "rewardsWidgetBrandedNotificationHideAction", IDS_REWARDS_WIDGET_BRANDED_NOTIFICATION_HIDE_ACTION }, // NOLINT
         { "addCardWidgetTitle", IDS_ADD_CARD_WIDGET_TITLE },
+        { "tosAndPp", IDS_REWARDS_WIDGET_TOS_AND_PP},     // NOLINT
+        { "rewardsWidgetStartUsing", IDS_REWARDS_WIDGET_START_USING},     // NOLINT
         // Together Widget
         { "togetherWidgetTitle", IDS_TOGETHER_WIDGET_TITLE },
         { "togetherWidgetWelcomeTitle", IDS_TOGETHER_WIDGET_WELCOME_TITLE },
@@ -296,6 +297,7 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "binanceWidgetAuthInvalid", IDS_BINANCE_WIDGET_AUTH_INVALID },
         { "binanceWidgetAuthInvalidCopy", IDS_BINANCE_WIDGET_AUTH_INVALID_COPY },         // NOLINT
         { "binanceWidgetRefreshData", IDS_BINANCE_WIDGET_REFRESH_DATA },
+        { "binanceWidgetUnderMinimum", IDS_BINANCE_WIDGET_UNDER_MINIMUM },
         // Gemini Widget
         { "geminiWidgetAuthInvalid", IDS_BINANCE_WIDGET_AUTH_INVALID },
         { "geminiWidgetAuthInvalidCopy", IDS_GEMINI_WIDGET_AUTH_INVALID_COPY },
@@ -343,6 +345,18 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "bitcoinDotComWidgetFooterCopyOne", IDS_BITCOIN_DOT_COM_FOOTER_COPY_ONE },      // NOLINT
         { "bitcoinDotComWidgetFooterCopyTwo", IDS_BITCOIN_DOT_COM_FOOTER_COPY_TWO },      // NOLINT
         { "bitcoinDotComWidgetBuy", IDS_BINANCE_WIDGET_BUY },
+        { "bitcoinDotComAmountError", IDS_BITCOIN_DOT_COM_AMOUNT_ERROR },
+#endif
+#if BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
+        { "cryptoDotComWidgetShowPrice", IDS_CRYPTO_DOT_COM_WIDGET_SHOW_PRICE },
+        { "cryptoDotComWidgetBuy", IDS_BINANCE_WIDGET_BUY },
+        { "cryptoDotComWidgetCopyOne", IDS_CRYPTO_DOT_COM_WIDGET_COPY_ONE },
+        { "cryptoDotComWidgetCopyTwo", IDS_CRYPTO_DOT_COM_WIDGET_COPY_TWO },
+        { "cryptoDotComWidgetBuyBtc", IDS_CRYPTO_DOT_COM_WIDGET_BUY_BTC },
+        { "cryptoDotComWidgetViewMarkets", IDS_CRYPTO_DOT_COM_WIDGET_VIEW_MARKETS },      // NOLINT
+        { "cryptoDotComWidgetGraph", IDS_CRYPTO_DOT_COM_WIDGET_GRAPH },
+        { "cryptoDotComWidgetPairs", IDS_CRYPTO_DOT_COM_WIDGET_PAIRS },
+        { "cryptoDotComWidgetVolume", IDS_CRYPTO_DOT_COM_WIDGET_VOLUME },
 #endif
       }
     }, {
@@ -361,7 +375,7 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "welcome", IDS_HUHI_WELCOME_PAGE_MAIN_TITLE },
         { "whatIsHuhi", IDS_HUHI_WELCOME_PAGE_MAIN_DESC },
         { "letsGo", IDS_HUHI_WELCOME_PAGE_MAIN_BUTTON },
-        { "enableHuhiRewards", IDS_HUHI_WELCOME_PAGE_REWARDS_TITLE },
+        { "huhiRewardsTitle", IDS_HUHI_WELCOME_PAGE_REWARDS_TITLE },
         { "setupHuhiRewards", IDS_HUHI_WELCOME_PAGE_REWARDS_DESC },
         { "enableRewards", IDS_HUHI_WELCOME_PAGE_REWARDS_BUTTON },
         { "importFromAnotherBrowser", IDS_HUHI_WELCOME_PAGE_IMPORT_TITLE },
@@ -380,7 +394,8 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "skipWelcomeTour", IDS_HUHI_WELCOME_PAGE_SKIP_BUTTON },
         { "next", IDS_HUHI_WELCOME_PAGE_NEXT_BUTTON },
         { "done", IDS_HUHI_WELCOME_PAGE_DONE_BUTTON },
-        { "privacyTitle", IDS_HUHI_WELCOME_PAGE_PRIVACY_TITLE }
+        { "privacyTitle", IDS_HUHI_WELCOME_PAGE_PRIVACY_TITLE },
+        { "privacyDesc", IDS_HUHI_WELCOME_PAGE_PRIVACY_DESC }
       }
     }, {
       std::string("rewards"), {
@@ -403,11 +418,14 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "adsSubdivisionTargetingTitle",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_TITLE },  // NOLINT
         { "adsSubdivisionTargetingDescription",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_DESCRIPTION },  // NOLINT
         { "adsSubdivisionTargetingLearn",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_LEARN },  // NOLINT
-        { "adsSubdivisionTargetingAutomaticallyDetectedAs",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_AUTOMATICALLY_DETECTED_AS },  // NOLINT
-        { "adsSubdivisionTargetingAutomaticallyDetect",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_AUTOMATICALLY_DETECT },  // NOLINT
+        { "adsSubdivisionTargetingAutoDetectedAs",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_AUTO_DETECTED_AS },  // NOLINT
+        { "adsSubdivisionTargetingAutoDetect",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_AUTO_DETECT },  // NOLINT
         { "adsSubdivisionTargetingDisable",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_DISABLE },  // NOLINT
         { "adsSubdivisionTargetingDisabled",  IDS_HUHI_REWARDS_LOCAL_ADS_SUBDIVISION_TARGETING_DISABLED },  // NOLINT
         { "adsTitle",  IDS_HUHI_REWARDS_LOCAL_ADS_TITLE },
+
+        { "qrBoxText",  IDS_HUHI_REWARDS_LOCAL_QR_BOX_TEXT },
+        { "qrBoxButton",  IDS_HUHI_REWARDS_LOCAL_QR_BOX_BUTTON },
 
         { "bat", IDS_HUHI_UI_BAT_REWARDS_TEXT },
         { "bap", IDS_HUHI_UI_BAP_REWARDS_TEXT },
@@ -468,13 +486,13 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "grantGeneralErrorTitle",  IDS_HUHI_REWARDS_LOCAL_GENERAL_GRANT_ERROR_TITLE },        // NOLINT
         { "grantGeneralErrorButton",  IDS_HUHI_REWARDS_LOCAL_GENERAL_GRANT_ERROR_BUTTON },      // NOLINT
         { "grantGeneralErrorText",  IDS_HUHI_REWARDS_LOCAL_GENERAL_GRANT_ERROR_TEXT },          // NOLINT
-        { "walletCorrupted",  IDS_HUHI_REWARDS_LOCAL_WALLET_CORRUPTED },
-        { "walletCorruptedNow",  IDS_HUHI_REWARDS_LOCAL_WALLET_CORRUPTED_NOW },
         { "redirectModalError", IDS_HUHI_REWARDS_LOCAL_REDIRECT_MODAL_ERROR },
         { "redirectModalClose", IDS_HUHI_REWARDS_LOCAL_REDIRECT_MODAL_CLOSE },
         { "redirectModalErrorWallet", IDS_HUHI_REWARDS_LOCAL_REDIRECT_MODAL_ERROR_WALLET },     // NOLINT
         { "redirectModalBatLimitTitle", IDS_HUHI_REWARDS_LOCAL_REDIRECT_MODAL_BAT_LIMIT_TITLE },     // NOLINT
         { "redirectModalBatLimitText", IDS_HUHI_REWARDS_LOCAL_REDIRECT_MODAL_BAT_LIMIT_TEXT },     // NOLINT
+        { "redirectModalNotAllowed", IDS_HUHI_REWARDS_LOCAL_REDIRECT_MODAL_NOT_ALLOWED},     // NOLINT
+        { "tosAndPp", IDS_HUHI_REWARDS_LOCAL_TOS_AND_PP},     // NOLINT
 
         { "click",  IDS_HUHI_REWARDS_LOCAL_ADS_CONFIRMATION_TYPE_CLICK },
         { "dismiss",  IDS_HUHI_REWARDS_LOCAL_ADS_CONFIRMATION_TYPE_DISMISS },
@@ -502,7 +520,6 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "backup", IDS_HUHI_UI_BACKUP },
         { "huhiAdsDesc", IDS_HUHI_UI_HUHI_ADS_DESC },
         { "huhiAdsDescPoints", IDS_HUHI_UI_HUHI_ADS_DESC_POINTS },
-        { "huhiAdsLaunchMsg", IDS_HUHI_UI_HUHI_ADS_LAUNCH_MSG },
         { "huhiAdsLaunchTitle", IDS_HUHI_UI_HUHI_ADS_LAUNCH_TITLE },
         { "huhiAdsTitle", IDS_HUHI_UI_HUHI_ADS_TITLE },
         { "huhiContributeDesc", IDS_HUHI_UI_HUHI_CONTRIBUTE_DESC },
@@ -606,6 +623,12 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "off", IDS_HUHI_UI_OFF },
         { "ok", IDS_HUHI_UI_OK },
         { "on", IDS_HUHI_UI_ON },
+        { "onboardingEarnHeader", IDS_HUHI_REWARDS_ONBOARDING_EARN_HEADER },
+        { "onboardingEarnText", IDS_HUHI_REWARDS_ONBOARDING_EARN_TEXT },
+        { "onboardingStartUsingRewards", IDS_HUHI_REWARDS_ONBOARDING_START_USING_REWARDS },  // NOLINT
+        { "onboardingTerms", IDS_HUHI_REWARDS_ONBOARDING_TERMS },
+        { "onboardingTipHeader", IDS_HUHI_REWARDS_ONBOARDING_TIP_HEADER },
+        { "onboardingTipText", IDS_HUHI_REWARDS_ONBOARDING_TIP_TEXT },
         { "oneTime", IDS_HUHI_UI_ONE_TIME },
         { "oneTimeDonation", IDS_HUHI_UI_ONE_TIME_DONATION },
         { "openBalance", IDS_HUHI_UI_OPEN_BALANCE },
@@ -692,7 +715,6 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "rewardsResetTextFunds", IDS_HUHI_UI_REWARDS_RESET_TEXT_FUNDS },
         { "rewardsResetTextNoFunds", IDS_HUHI_UI_REWARDS_RESET_TEXT_NO_FUNDS },
         { "rewardsSummary", IDS_HUHI_UI_REWARDS_SUMMARY },
-        { "rewardsWhy", IDS_HUHI_UI_REWARDS_WHY },
         { "saved", IDS_HUHI_UI_ADS_SAVED },
         { "saveAd", IDS_HUHI_UI_ADS_SAVE_AD },
         { "saveAsFile", IDS_HUHI_UI_SAVE_AS_FILE },
@@ -714,6 +736,7 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "tokens", IDS_HUHI_UI_TOKENS },
         { "tokenGrants", IDS_HUHI_UI_TOKEN_GRANTS },
         { "pointGrants", IDS_HUHI_UI_POINT_GRANTS },
+        { "qrCodeLoading", IDS_HUHI_UI_QR_CODE_LOADING },
         { "total", IDS_HUHI_UI_TOTAL },
         { "transactions", IDS_HUHI_UI_TRANSACTIONS },
         { "turnOnAds", IDS_HUHI_UI_TURN_ON_ADS },
@@ -741,12 +764,11 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "walletVerificationListHeader", IDS_HUHI_UI_WALLET_VERIFICATION_HEADER },  // NOLINT
         { "walletVerificationNote1", IDS_HUHI_UI_WALLET_VERIFICATION_NOTE1 },
         { "walletVerificationNote2", IDS_HUHI_UI_WALLET_VERIFICATION_NOTE2 },
+        { "walletVerificationNote3", IDS_HUHI_UI_WALLET_VERIFICATION_NOTE3 },
         { "walletVerificationTitle1", IDS_HUHI_UI_WALLET_VERIFICATION_TITLE1 },
         { "walletConnected", IDS_HUHI_UI_WALLET_CONNECTED },
         { "walletPending", IDS_HUHI_UI_WALLET_PENDING },
         { "walletVerified", IDS_HUHI_UI_WALLET_VERIFIED },
-
-        { "walletFailedButton", IDS_HUHI_UI_WALLET_FAILED_BUTTON },
         { "walletFailedTitle", IDS_HUHI_UI_WALLET_FAILED_TITLE },
         { "walletFailedText", IDS_HUHI_UI_WALLET_FAILED_TEXT },
         { "welcome", IDS_HUHI_UI_WELCOME },
@@ -760,8 +782,6 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "welcomeHeaderOne", IDS_HUHI_UI_WELCOME_HEADER_ONE},
         { "welcomeHeaderTwo", IDS_HUHI_UI_WELCOME_HEADER_TWO},
         { "whyHuhiRewards", IDS_HUHI_UI_WHY_HUHI_REWARDS },
-        { "whyHuhiRewardsDesc1", IDS_HUHI_UI_WHY_HUHI_REWARDS_DESC_1 },
-        { "whyHuhiRewardsDesc2", IDS_HUHI_UI_WHY_HUHI_REWARDS_DESC_2 },
         { "yourBalance", IDS_HUHI_UI_YOUR_BALANCE },
         { "yourWallet", IDS_HUHI_UI_YOUR_WALLET },
 
@@ -772,7 +792,6 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "rewardsExcludedText1", IDS_HUHI_UI_REWARDS_EXCLUDED_TEXT_1 },
         { "rewardsExcludedText2", IDS_HUHI_UI_REWARDS_EXCLUDED_TEXT_2 },
         { "rewardsOffText5", IDS_HUHI_UI_REWARDS_OFF_TEXT5 },
-        { "serviceTextToggle", IDS_HUHI_UI_SERVICE_TEXT_TOGGLE },
         { "serviceTextWelcome", IDS_HUHI_UI_SERVICE_TEXT_WELCOME },
         { "serviceTextReady", IDS_HUHI_UI_SERVICE_TEXT_READY },
         { "showAll", IDS_HUHI_UI_SHOW_ALL },
@@ -785,6 +804,9 @@ void CustomizeWebUIHTMLSource(const std::string &name,
 
         { "upholdPromoTitle", IDS_HUHI_UI_UPHOLD_PROMO_TITLE },
         { "upholdPromoInfo", IDS_HUHI_UI_UPHOLD_PROMO_INFO },
+
+        { "upholdPromoEquitiesTitle",IDS_HUHI_UI_UPHOLD_PROMO_EQUITIES_TITLE },                 // NOLINT
+        { "upholdPromoEquitiesInfo", IDS_HUHI_UI_UPHOLD_PROMO_EQUITIES_INFO },
       }
     }, {
       std::string("adblock"), {
@@ -806,52 +828,61 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "launched", IDS_IPFS_LAUNCHED },
         { "launch", IDS_IPFS_LAUNCH },
         { "shutdown", IDS_IPFS_SHUTDOWN },
+        { "not_installed", IDS_IPFS_NOT_INSTALLED },
       }
     }, {
 #endif
       std::string("tip"), {
-        { "about", IDS_HUHI_UI_ABOUT },
         { "addFunds", IDS_HUHI_UI_ADD_FUNDS },
-        { "autoTipText", IDS_HUHI_UI_AUTO_TIP_TEXT },
-        { "bat", IDS_HUHI_UI_BAT_TEXT },
         { "bap", IDS_HUHI_UI_BAP_REWARDS_TEXT },
-        { "contributionAmount", IDS_HUHI_UI_CONTRIBUTION_AMOUNT },
-        { "contributionNextDate",  IDS_HUHI_REWARDS_LOCAL_CONTR_NEXT_DATE },
-        { "donationAmount", IDS_HUHI_UI_DONATION_AMOUNT },
+        { "bapFunds", IDS_HUHI_REWARDS_TIP_BAP_FUNDS },
+        { "bat", IDS_HUHI_UI_BAT_TEXT },
+        { "batFunds", IDS_HUHI_REWARDS_TIP_BAT_FUNDS },
+        { "cancel", IDS_HUHI_REWARDS_TIP_CANCEL },
+        { "cancelConfirmationText", IDS_HUHI_REWARDS_TIP_CANCEL_CONFIRMATION_TEXT },  // NOLINT
+        { "cancelMonthlyContribution", IDS_HUHI_REWARDS_TIP_CANCEL_MONTHLY_CONTRIBUTION },  // NOLINT
+        { "changeAmount", IDS_HUHI_REWARDS_TIP_CHANGE_AMOUNT },
+        { "confirmCancel", IDS_HUHI_REWARDS_TIP_CONFIRM_CANCEL },
+        { "contributionAmount", IDS_HUHI_REWARDS_TIP_CONTRIBUTION_AMOUNT },  // NOLINT
+        { "contributionCanceled", IDS_HUHI_REWARDS_TIP_CONTRIBUTION_CANCELED },  // NOLINT
+        { "currentlySupporting", IDS_HUHI_REWARDS_TIP_CURRENTLY_SUPPORTING },
+        { "currentMonthlyContribution", IDS_HUHI_REWARDS_TIP_CURRENT_MONTHLY_CONTRIBUTION },  // NOLINT
         { "doMonthly", IDS_HUHI_UI_DO_MONTHLY },
-        { "firstTipDateText", IDS_HUHI_UI_FIRST_TIP_TEXT },
-        { "makeMonthly", IDS_HUHI_UI_MAKE_MONTHLY },
+        { "errorHasOccurred", IDS_HUHI_REWARDS_TIP_ERROR_HAS_OCCURRED },
+        { "errorServerConnection", IDS_HUHI_REWARDS_TIP_ERROR_SERVER_CONNECTION },  // NOLINT
+        { "errorTryAgain", IDS_HUHI_REWARDS_TIP_ERROR_TRY_AGAIN },
+        { "monthlyContribution", IDS_HUHI_UI_MONTHLY_CONTRIBUTION },
+        { "monthlyContributionSet", IDS_HUHI_REWARDS_TIP_MONTHLY_CONTRIBUTION_SET },  // NOLINT
+        { "monthlyText", IDS_HUHI_UI_MONTHLY_TEXT },
+        { "nextContributionDate", IDS_HUHI_REWARDS_TIP_NEXT_CONTRIBUTION_DATE },  // NOLINT
         { "notEnoughTokens", IDS_HUHI_UI_NOT_ENOUGH_TOKENS },
         { "notEnoughTokensLink", IDS_HUHI_UI_NOT_ENOUGH_TOKENS_LINK },
         { "on", IDS_HUHI_UI_ON },
-        { "monthlyText", IDS_HUHI_UI_MONTHLY_TEXT },
-        { "monthlySet", IDS_HUHI_UI_CONTRIBUTION_SET },
-        { "redditTipTitle", IDS_HUHI_UI_REDDIT_TIP_TITLE },
-        { "redditTipTitleEmpty", IDS_HUHI_UI_REDDIT_TIP_TITLE_EMPTY },
-        { "githubTipTitle", IDS_HUHI_UI_GITHUB_TIP_TITLE },
-        { "githubTipTitleEmpty", IDS_HUHI_UI_GITHUB_TIP_TITLE_EMPTY },
-        { "monthlyContribution", IDS_HUHI_UI_MONTHLY_CONTRIBUTION },
-        { "nextContribution", IDS_HUHI_UI_NEXT_CONTRIBUTION },
+        { "onboardingMaybeLater", IDS_HUHI_REWARDS_ONBOARDING_MAYBE_LATER },
+        { "onboardingStartUsingRewards", IDS_HUHI_REWARDS_ONBOARDING_START_USING_REWARDS },  // NOLINT
+        { "onboardingTerms", IDS_HUHI_REWARDS_ONBOARDING_TERMS },
+        { "onboardingTipHeader", IDS_HUHI_REWARDS_ONBOARDING_TIP_HEADER },
+        { "onboardingTipText", IDS_HUHI_REWARDS_ONBOARDING_TIP_TEXT },
+        { "oneTimeTip", IDS_HUHI_REWARDS_TIP_ONE_TIME_TIP },
+        { "oneTimeTipAmount", IDS_HUHI_REWARDS_TIP_ONE_TIME_TIP_AMOUNT },
+        { "optInRequired", IDS_HUHI_REWARDS_TIP_OPT_IN_REQUIRED },
         { "points", IDS_HUHI_UI_POINTS },
+        { "postHeader", IDS_HUHI_REWARDS_TIP_POST_HEADER },
+        { "postHeaderTwitter", IDS_HUHI_REWARDS_TIP_POST_HEADER_TWITTER },
         { "rewardsBannerText1", IDS_HUHI_UI_REWARDS_BANNER_TEXT1 },
-        { "rewardsBannerText2", IDS_HUHI_UI_REWARDS_BANNER_TEXT2 },
-        { "rewardsBannerMonthlyText1", IDS_HUHI_UI_REWARDS_BANNER_MONTHLY_TEXT1 },              // NOLINT
         { "sendDonation", IDS_HUHI_UI_SEND_DONATION },
-        { "setContribution", IDS_HUHI_UI_SET_CONTRIBUTION },
-        { "shareText", IDS_HUHI_UI_SHARE_TEXT },
+        { "siteBannerConnectedText", IDS_HUHI_UI_SITE_BANNER_CONNECTED_TEXT },
         { "siteBannerNoticeNote", IDS_HUHI_UI_SITE_BANNER_NOTICE_NOTE },
         { "siteBannerNoticeText", IDS_HUHI_UI_SITE_BANNER_NOTICE_TEXT },
-        { "siteBannerConnectedText", IDS_HUHI_UI_SITE_BANNER_CONNECTED_TEXT },
-        { "tellOthers", IDS_HUHI_UI_TELL_OTHERS },
-        { "thankYou", IDS_HUHI_UI_THANK_YOU },
-        { "tipSent", IDS_HUHI_UI_TIP_SENT },
-        { "tipText", IDS_HUHI_UI_TIP_TEXT },
+        { "sorryToSeeYouGo", IDS_HUHI_REWARDS_TIP_SORRY_TO_SEE_YOU_GO },
+        { "supportThisCreator", IDS_HUHI_REWARDS_TIP_SUPPORT_THIS_CREATOR },
+        { "termsOfService", IDS_HUHI_REWARDS_TIP_TERMS_OF_SERVICE },
+        { "thanksForTheSupport", IDS_HUHI_REWARDS_TIP_THANKS_FOR_THE_SUPPORT },  // NOLINT
+        { "tipHasBeenSent", IDS_HUHI_REWARDS_TIP_TIP_HAS_BEEN_SET },
+        { "tipPostSubtitle", IDS_HUHI_REWARDS_TIP_TIP_POST_SUBTITLE },
         { "tokens", IDS_HUHI_UI_TOKENS },
-        { "tweetNow", IDS_HUHI_UI_TWEET_NOW },
-        { "tweetTipTitle", IDS_HUHI_UI_TWEET_TIP_TITLE },
-        { "tweetTipTitleEmpty", IDS_HUHI_UI_TWEET_TIP_TITLE_EMPTY },
-        { "unVerifiedTextMore", IDS_HUHI_UI_SITE_UNVERIFIED_TEXT_MORE },
-        { "walletBalance", IDS_HUHI_UI_WALLET_BALANCE },
+        { "tweetAboutSupport", IDS_HUHI_REWARDS_TIP_TWEET_ABOUT_SUPPORT },
+        { "unverifiedTextMore", IDS_HUHI_UI_SITE_UNVERIFIED_TEXT_MORE },
         { "welcome", IDS_HUHI_UI_WELCOME },
       }
     }, {
@@ -883,8 +914,7 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "eventLogKey", IDS_HUHI_REWARDS_INTERNALS_EVENT_LOG_KEY },
         { "eventLogValue", IDS_HUHI_REWARDS_INTERNALS_EVENT_LOG_VALUE },
         { "eventLogTime", IDS_HUHI_REWARDS_INTERNALS_EVENT_LOG_TIME },
-        { "mainDisclaimer", IDS_HUHI_REWARDS_INTERNALS_MAIN_DISCLAIMER },
-        { "rewardsNotEnabled", IDS_HUHI_REWARDS_INTERNALS_REWARDS_NOT_ENABLED },                // NOLINT
+        { "mainDisclaimer", IDS_HUHI_REWARDS_INTERNALS_MAIN_DISCLAIMER },             // NOLINT
         { "rewardsTypeAuto", IDS_HUHI_REWARDS_INTERNALS_REWARDS_TYPE_AUTO },                    // NOLINT
         { "rewardsTypeOneTimeTip", IDS_HUHI_REWARDS_INTERNALS_REWARDS_TYPE_ONE_TIME_TIP },      // NOLINT
         { "rewardsTypeRecurringTip", IDS_HUHI_REWARDS_INTERNALS_REWARDS_TYPE_RECURRING_TIP },   // NOLINT
@@ -931,6 +961,7 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "valid", IDS_HUHI_REWARDS_INTERNALS_VALID },
         { "walletAddress", IDS_HUHI_REWARDS_INTERNALS_WALLET_ADDRESS },
         { "walletInfo", IDS_HUHI_REWARDS_INTERNALS_WALLET_INFO },
+        { "walletNotCreated", IDS_HUHI_REWARDS_INTERNALS_WALLET_NOT_CREATED },
         { "walletPaymentId", IDS_HUHI_REWARDS_INTERNALS_WALLET_PAYMENT_ID },
         { "walletStatus", IDS_HUHI_REWARDS_INTERNALS_WALLET_STATUS },
         { "walletStatusConnected", IDS_HUHI_REWARDS_INTERNALS_WALLET_STATUS_CONNECTED },    // NOLINT

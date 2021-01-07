@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License. v. 2.0. If a copy of the MPL was not distributed with this file.
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -37,13 +37,13 @@ const locale = {
   boxTorButton: 'Learn more about Tor in Huhi',
 
   // Modal Private Window with Tor
-  modalPrivateWindowTorTitle: 'Link out to: https://support.huhisoft.com/hc/en-us/articles/360018121491',
+  modalPrivateWindowTorTitle: 'Link out to: https://support.hnq.vn/hc/en-us/articles/360018121491',
 
   // Modal Private Window
-  modalPrivateWindowTitle: 'Link out to: https://support.huhisoft.com/hc/en-us/articles/360017840332',
+  modalPrivateWindowTitle: 'Link out to: https://support.hnq.vn/hc/en-us/articles/360017840332',
 
   // Modal Tor in Huhi
-  modalTorInHuhiTitle: 'Link out to: https://support.huhisoft.com/hc/en-us/articles/360018121491',
+  modalTorInHuhiTitle: 'Link out to: https://support.hnq.vn/hc/en-us/articles/360018121491',
 
   // Modal DuckDuckGo
   modalDuckduckGoTitle: 'Link out to: TBD'

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,14 +10,19 @@
 
 #include <deque>
 
+#include "bat/ads/internal/ad_events/ad_event_info.h"
+
 namespace ads {
+
+std::deque<uint64_t> GetTimestampHistoryForAdEvents(
+    const AdEventList& ad_events);
 
 bool DoesHistoryRespectCapForRollingTimeConstraint(
     const std::deque<uint64_t> history,
     const uint64_t time_constraint_in_seconds,
     const uint64_t cap);
 
-int OccurrencesForRollingTimeConstraint(
+uint64_t OccurrencesForRollingTimeConstraint(
     const std::deque<uint64_t> history,
     const uint64_t time_constraint_in_seconds);
 

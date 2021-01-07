@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -66,10 +66,11 @@ class HuhiP3AService : public base::RefCountedThreadSafe<HuhiP3AService>,
 
   // Invoked by callbacks registered by our service. Since these callbacks
   // can fire on any thread, this method reposts everything to UI thread.
-  void OnHistogramChanged(base::StringPiece histogram_name,
+  void OnHistogramChanged(const char* histogram_name,
+                          uint64_t name_hash,
                           base::HistogramBase::Sample sample);
 
-  void OnHistogramChangedOnUI(base::StringPiece histogram_name,
+  void OnHistogramChangedOnUI(const char* histogram_name,
                               base::HistogramBase::Sample sample,
                               size_t bucket);
 

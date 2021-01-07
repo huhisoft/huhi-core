@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,10 +12,11 @@
 
 #include "huhi/browser/extensions/api/huhi_action_api.h"
 #include "huhi/components/huhi_rewards/browser/buildflags/buildflags.h"
-#include "chrome/browser/ui/views/toolbar/toolbar_action_view.h"
-#include "chrome/browser/ui/toolbar/toolbar_action_view_controller.h"
-#include "chrome/browser/ui/browser.h"
+#include "huhi/components/huhi_rewards/browser/rewards_service.h"
 #include "chrome/browser/extensions/api/extension_action/extension_action_api.h"
+#include "chrome/browser/ui/browser.h"
+#include "chrome/browser/ui/toolbar/toolbar_action_view_controller.h"
+#include "chrome/browser/ui/views/toolbar/toolbar_action_view.h"
 #include "components/prefs/pref_member.h"
 #include "extensions/browser/extension_registry.h"
 #include "extensions/browser/extension_registry_observer.h"
@@ -186,6 +187,8 @@ class HuhiActionsContainer : public views::View,
   BooleanPrefMember hide_huhi_rewards_button_;
 
   std::unique_ptr<EmptyExtensionsContainer> empty_extensions_container_;
+
+  huhi_rewards::RewardsService* rewards_service_;
 
   base::WeakPtrFactory<HuhiActionsContainer> weak_ptr_factory_;
 

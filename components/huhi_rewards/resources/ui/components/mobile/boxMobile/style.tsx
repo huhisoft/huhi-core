@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License. v. 2.0. If a copy of the MPL was not distributed with this file.
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,6 +7,7 @@ import styled, { css } from 'huhi-ui/theme'
 import { Type } from './index'
 import Card, { CardProps } from 'huhi-ui/components/layout/card'
 import { AlertCircleIcon } from 'huhi-ui/components/icons'
+import TOSAndPP, { Props as TOSProps } from '../../TOSAndPP'
 
 interface StyleProps {
   open?: boolean
@@ -183,6 +184,11 @@ export const Arrow = styled<{}, 'span'>('span')`
   margin: 4px;
 `
 
+export const ToggleRow = styled<StyleProps, 'div'>('div')`
+  border-bottom: 1px solid #E5E5EA;
+  padding: ${p => !p.detailView ? '16px' : '0'} 0;
+`
+
 export const ToggleHeader = styled<StyleProps, 'div'>('div')`
   width: 100%;
   display: flex;
@@ -190,8 +196,6 @@ export const ToggleHeader = styled<StyleProps, 'div'>('div')`
   ${p => getFixedStyling(p.detailView)}
   z-index: 1;
   justify-content: space-between;
-  padding: 16px 0;
-  border-bottom: 1px solid #E5E5EA;
 `
 
 export const BackArrow = styled<{}, 'span'>('span')`
@@ -263,4 +267,10 @@ export const AlertContent = styled<{}, 'div'>('div')`
   flex-direction: row;
   font-size: 14px;
   min-height: 100%;
+`
+
+export const TOS = styled(TOSAndPP as React.ComponentType<TOSProps>)`
+  color: ${p => p.theme.palette.grey800};
+  padding: 10px 24px 0;
+  flex: 1;
 `

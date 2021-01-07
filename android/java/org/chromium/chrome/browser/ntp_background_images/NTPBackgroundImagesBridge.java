@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -91,6 +91,13 @@ public class NTPBackgroundImagesBridge {
                 mNativeNTPBackgroundImagesBridge, NTPBackgroundImagesBridge.this);
     }
 
+    public void wallpaperLogoClicked(Wallpaper wallpaper) {
+        NTPBackgroundImagesBridgeJni.get().wallpaperLogoClicked(
+                mNativeNTPBackgroundImagesBridge, NTPBackgroundImagesBridge.this,
+                wallpaper.getCreativeInstanceId(),
+                wallpaper.getLogoDestinationUrl(), wallpaper.getWallpaperId());
+    }
+
     public boolean isSuperReferral() {
         return NTPBackgroundImagesBridgeJni.get().isSuperReferral(
                 mNativeNTPBackgroundImagesBridge, NTPBackgroundImagesBridge.this);
@@ -134,11 +141,13 @@ public class NTPBackgroundImagesBridge {
     @CalledByNative
     public static Wallpaper createWallpaper(
             String imagePath, int focalPointX, int focalPointY,
-            String logoPath, String logoDestinationUrl, 
-            String themeName, boolean isSponsored) {
+            String logoPath, String logoDestinationUrl,
+            String themeName, boolean isSponsored,
+            String creativeInstanceId, String wallpaperId) {
         return new Wallpaper(imagePath, focalPointX, focalPointY,
-                             logoPath, logoDestinationUrl, 
-                             themeName, isSponsored);
+                             logoPath, logoDestinationUrl,
+                             themeName, isSponsored, creativeInstanceId,
+                             wallpaperId);
     }
 
     @CalledByNative
@@ -155,6 +164,10 @@ public class NTPBackgroundImagesBridge {
                                       NTPBackgroundImagesBridge caller);
         void registerPageView(long nativeNTPBackgroundImagesBridge,
                               NTPBackgroundImagesBridge caller);
+        void wallpaperLogoClicked(long nativeNTPBackgroundImagesBridge,
+                                  NTPBackgroundImagesBridge caller,
+                                  String creativeInstanceId,
+                                  String destinationUrl, String wallpaperId);
         void getTopSites(long nativeNTPBackgroundImagesBridge,
                               NTPBackgroundImagesBridge caller);
         boolean isSuperReferral(long nativeNTPBackgroundImagesBridge,

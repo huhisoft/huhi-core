@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,20 +9,19 @@
 #include <memory>
 
 #include "base/memory/ref_counted.h"
-#include "huhi/browser/tor/buildflags.h"
 #include "huhi/components/huhi_ads/browser/buildflags/buildflags.h"
 #include "huhi/components/huhi_component_updater/browser/huhi_component.h"
 #include "huhi/components/huhi_referrals/buildflags/buildflags.h"
 #include "huhi/components/greaselion/browser/buildflags/buildflags.h"
-#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
 #include "huhi/components/speedreader/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/browser_process_impl.h"
 #include "extensions/buildflags/buildflags.h"
 #include "third_party/widevine/cdm/buildflags.h"
 
 namespace huhi {
 class HuhiReferralsService;
-class HuhiStatsUpdater;
 class HuhiP3AService;
 }  // namespace huhi
 
@@ -45,6 +44,10 @@ class HTTPSEverywhereService;
 class TrackingProtectionService;
 }  // namespace huhi_shields
 
+namespace huhi_stats {
+class HuhiStatsUpdater;
+}  // namespace huhi_stats
+
 namespace greaselion {
 #if BUILDFLAG(ENABLE_GREASELION)
 class GreaselionDownloadService;
@@ -55,7 +58,7 @@ namespace ntp_background_images {
 class NTPBackgroundImagesService;
 }  // namespace ntp_background_images
 
-namespace extensions {
+namespace tor {
 class HuhiTorClientUpdater;
 }
 
@@ -97,7 +100,7 @@ class HuhiBrowserProcessImpl : public BrowserProcessImpl {
   huhi_shields::HTTPSEverywhereService* https_everywhere_service();
   huhi_component_updater::LocalDataFilesService* local_data_files_service();
 #if BUILDFLAG(ENABLE_TOR)
-  extensions::HuhiTorClientUpdater* tor_client_updater();
+  tor::HuhiTorClientUpdater* tor_client_updater();
 #endif
 #if BUILDFLAG(IPFS_ENABLED)
   ipfs::HuhiIpfsClientUpdater* ipfs_client_updater();
@@ -106,7 +109,7 @@ class HuhiBrowserProcessImpl : public BrowserProcessImpl {
 #if BUILDFLAG(BUNDLE_WIDEVINE_CDM)
   HuhiWidevineBundleManager* huhi_widevine_bundle_manager();
 #endif
-  huhi::HuhiStatsUpdater* huhi_stats_updater();
+  huhi_stats::HuhiStatsUpdater* huhi_stats_updater();
   ntp_background_images::NTPBackgroundImagesService*
   ntp_background_images_service();
 #if BUILDFLAG(ENABLE_SPEEDREADER)
@@ -152,12 +155,12 @@ class HuhiBrowserProcessImpl : public BrowserProcessImpl {
       tracking_protection_service_;
   std::unique_ptr<huhi_shields::HTTPSEverywhereService>
       https_everywhere_service_;
-  std::unique_ptr<huhi::HuhiStatsUpdater> huhi_stats_updater_;
+  std::unique_ptr<huhi_stats::HuhiStatsUpdater> huhi_stats_updater_;
 #if BUILDFLAG(ENABLE_HUHI_REFERRALS)
   std::unique_ptr<huhi::HuhiReferralsService> huhi_referrals_service_;
 #endif
 #if BUILDFLAG(ENABLE_TOR)
-  std::unique_ptr<extensions::HuhiTorClientUpdater> tor_client_updater_;
+  std::unique_ptr<tor::HuhiTorClientUpdater> tor_client_updater_;
 #endif
 #if BUILDFLAG(IPFS_ENABLED)
   std::unique_ptr<ipfs::HuhiIpfsClientUpdater> ipfs_client_updater_;

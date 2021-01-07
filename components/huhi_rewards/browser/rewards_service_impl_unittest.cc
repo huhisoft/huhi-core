@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -24,8 +24,6 @@ using ::testing::_;
 
 class MockRewardsServiceObserver : public RewardsServiceObserver {
  public:
-  MOCK_METHOD2(OnWalletInitialized,
-      void(RewardsService*, const ledger::type::Result));
   MOCK_METHOD3(OnFetchPromotions, void(RewardsService*,
       const ledger::type::Result result,
       const ledger::type::PromotionList& list));
@@ -35,7 +33,6 @@ class MockRewardsServiceObserver : public RewardsServiceObserver {
       RewardsService*,
       const ledger::type::Result,
       ledger::type::PromotionPtr));
-  MOCK_METHOD1(OnContentSiteUpdated, void(RewardsService*));
   MOCK_METHOD6(OnReconcileComplete, void(
       RewardsService*,
       const ledger::type::Result,

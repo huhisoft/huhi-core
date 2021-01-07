@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,6 +7,7 @@
 #define HUHI_COMPONENTS_SEARCH_ENGINES_HUHI_PREPOPULATED_ENGINES_H_
 
 #include <cstddef>
+#include <map>
 
 #include "build/build_config.h"
 #include "components/search_engines/prepopulated_engines.h"
@@ -14,6 +15,7 @@
 namespace TemplateURLPrepopulateData {
 
 extern const int kHuhiCurrentDataVersion;
+extern const int kHuhiFirstTrackedDataVersion;
 
 // See comments on prepopulated engines ids in
 // components/search_engines/prepopulated_engines_schema.json above the
@@ -28,6 +30,7 @@ enum HuhiPrepopulatedEngineID : unsigned int {
   // These engine IDs are already defined in prepopulated_engines.json
   PREPOPULATED_ENGINE_ID_GOOGLE = 1,
   PREPOPULATED_ENGINE_ID_BING = 3,
+  PREPOPULATED_ENGINE_ID_YANDEX = 15,
   // These engine IDs are not defined in Chromium
   HUHI_PREPOPULATED_ENGINES_START = 500,
   PREPOPULATED_ENGINE_ID_AMAZON = 500,     // No longer in defaults (2/2019).
@@ -94,6 +97,7 @@ extern const PrepopulatedEngine duckduckgo_lite;
 #endif
 extern const PrepopulatedEngine qwant;
 extern const PrepopulatedEngine startpage;
+extern const PrepopulatedEngine huhi_yandex;
 
 // Yahoo has unique URLs per region
 extern const PrepopulatedEngine huhi_yahoo;
@@ -130,6 +134,9 @@ extern const PrepopulatedEngine huhi_yahoo_tw;
 extern const PrepopulatedEngine huhi_yahoo_uk;
 extern const PrepopulatedEngine huhi_yahoo_ve;
 extern const PrepopulatedEngine huhi_yahoo_vn;
+
+const std::map<HuhiPrepopulatedEngineID, const PrepopulatedEngine*>&
+GetHuhiEnginesMap();
 
 }  // namespace TemplateURLPrepopulateData
 

@@ -1,16 +1,19 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef HUHI_CHROMIUM_SRC_COMPONENTS_SYNC_DEVICE_INFO_DEVICE_INFO_SYNC_BRIDGE_H_
 #define HUHI_CHROMIUM_SRC_COMPONENTS_SYNC_DEVICE_INFO_DEVICE_INFO_SYNC_BRIDGE_H_
 
+#include "huhi/components/sync_device_info/huhi_device_info.h"
 #include "components/sync_device_info/device_info_tracker.h"
 
-#define ForcePulseForTest                                       \
-  DeleteDeviceInfo(const syncer::DeviceInfo* local_device_info, \
-                   base::OnceClosure callback) override;        \
+#define ForcePulseForTest                                                    \
+  DeleteDeviceInfo(const std::string& client_id, base::OnceClosure callback) \
+      override;                                                              \
+  std::vector<std::unique_ptr<HuhiDeviceInfo>>                              \
+  GetAllHuhiDeviceInfo() const override;                                    \
   void ForcePulseForTest
 
 // private:

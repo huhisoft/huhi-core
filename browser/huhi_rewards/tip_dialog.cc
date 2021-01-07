@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,7 +15,9 @@
 #include "base/json/json_writer.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
+#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "huhi/common/webui_url_constants.h"
+#include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_finder.h"
 #include "chrome/browser/ui/browser_window.h"
@@ -139,6 +141,12 @@ namespace huhi_rewards {
 
 void OpenTipDialog(WebContents* initiator,
                    std::unique_ptr<base::DictionaryValue> params) {
+  auto* rewards_service = RewardsServiceFactory::GetForProfile(
+      Profile::FromBrowserContext(initiator->GetBrowserContext()));
+  if (rewards_service) {
+    rewards_service->StartProcess(base::DoNothing());
+  }
+
   content::WebContents* outermost_web_contents =
     guest_view::GuestViewBase::GetTopLevelWebContents(initiator);
   gfx::Size host_size = outermost_web_contents->GetContainerBounds().size();

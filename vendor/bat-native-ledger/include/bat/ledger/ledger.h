@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -37,8 +37,8 @@ using HasSufficientBalanceToReconcileCallback = std::function<void(bool)>;
 using FetchBalanceCallback =
     std::function<void(type::Result, type::BalancePtr)>;
 
-using ExternalWalletCallback =
-    std::function<void(type::Result, type::ExternalWalletPtr)>;
+using UpholdWalletCallback =
+    std::function<void(type::Result, type::UpholdWalletPtr)>;
 
 using ExternalWalletAuthorizationCallback =
     std::function<void(type::Result, std::map<std::string, std::string>)>;
@@ -95,6 +95,13 @@ using PublisherInfoListCallback = std::function<void(type::PublisherInfoList)>;
 using PublisherInfoCallback =
     std::function<void(const type::Result, type::PublisherInfoPtr)>;
 
+using GetPublisherInfoCallback =
+    std::function<void(const type::Result, type::PublisherInfoPtr)>;
+
+using GetHuhiWalletCallback = std::function<void(type::HuhiWalletPtr)>;
+
+using GetTransferableAmountCallback = std::function<void(double)>;
+
 class LEDGER_EXPORT Ledger {
  public:
   static bool IsMediaLink(
@@ -115,7 +122,6 @@ class LEDGER_EXPORT Ledger {
       const bool execute_create_script,
       ResultCallback) = 0;
 
-  // returns false if wallet initialization is already in progress
   virtual void CreateWallet(ResultCallback callback) = 0;
 
   virtual void OneTimeTip(
@@ -162,8 +168,6 @@ class LEDGER_EXPORT Ledger {
 
   virtual void GetExcludedList(PublisherInfoListCallback callback) = 0;
 
-  virtual void SetRewardsMainEnabled(bool enabled) = 0;
-
   virtual void SetPublisherMinVisitTime(int duration_in_seconds) = 0;
 
   virtual void SetPublisherMinVisits(int visits) = 0;
@@ -177,8 +181,6 @@ class LEDGER_EXPORT Ledger {
   virtual void SetAutoContributeEnabled(bool enabled) = 0;
 
   virtual uint64_t GetReconcileStamp() = 0;
-
-  virtual bool GetRewardsMainEnabled() = 0;
 
   virtual int GetPublisherMinVisitTime() = 0;  // In milliseconds
 
@@ -231,8 +233,6 @@ class LEDGER_EXPORT Ledger {
       const std::string& solution,
       AttestPromotionCallback callback) const = 0;
 
-  virtual std::string GetWalletPassphrase() const = 0;
-
   virtual void GetBalanceReport(
       type::ActivityMonth month,
       int year,
@@ -253,8 +253,6 @@ class LEDGER_EXPORT Ledger {
       ResultCallback callback) = 0;
 
   virtual void RestorePublishers(ResultCallback callback) = 0;
-
-  virtual bool IsWalletCreated() = 0;
 
   virtual void GetPublisherActivityFromUrl(
       uint64_t windowId,
@@ -296,6 +294,25 @@ class LEDGER_EXPORT Ledger {
       const std::map<std::string, std::string>& data,
       PublisherInfoCallback callback) = 0;
 
+  virtual void UpdateMediaDuration(
+      const uint64_t window_id,
+      const std::string& publisher_key,
+      const uint64_t duration,
+      const bool first_visit) = 0;
+
+  virtual void GetPublisherInfo(
+      const std::string& publisher_key,
+      GetPublisherInfoCallback callback) = 0;
+
+  virtual void GetPublisherPanelInfo(
+      const std::string& publisher_key,
+      GetPublisherInfoCallback callback) = 0;
+
+  virtual void SavePublisherInfo(
+      const uint64_t window_id,
+      type::PublisherInfoPtr publisher_info,
+      ResultCallback callback) = 0;
+
   virtual void SetInlineTippingPlatformEnabled(
       const type::InlineTipsPlatforms platform,
       bool enabled) = 0;
@@ -304,7 +321,6 @@ class LEDGER_EXPORT Ledger {
       const type::InlineTipsPlatforms platform) = 0;
 
   virtual std::string GetShareURL(
-      const std::string& type,
       const std::map<std::string, std::string>& args) = 0;
 
   virtual void GetPendingContributions(
@@ -321,9 +337,7 @@ class LEDGER_EXPORT Ledger {
 
   virtual void FetchBalance(FetchBalanceCallback callback) = 0;
 
-  virtual void GetExternalWallet(
-      const std::string& wallet_type,
-      ExternalWalletCallback callback) = 0;
+  virtual void GetUpholdWallet(UpholdWalletCallback callback) = 0;
 
   virtual void ExternalWalletAuthorization(
       const std::string& wallet_type,
@@ -350,7 +364,7 @@ class LEDGER_EXPORT Ledger {
 
   virtual void GetAllContributions(ContributionInfoListCallback callback) = 0;
 
-  virtual void SavePublisherInfo(
+  virtual void SavePublisherInfoForTip(
       type::PublisherInfoPtr info,
       ResultCallback callback) = 0;
 
@@ -364,12 +378,23 @@ class LEDGER_EXPORT Ledger {
 
   virtual void ProcessSKU(
       const std::vector<type::SKUOrderItem>& items,
-      type::ExternalWalletPtr wallet,
+      const std::string& wallet_type,
       SKUOrderCallback callback) = 0;
 
   virtual void Shutdown(ResultCallback callback) = 0;
 
   virtual void GetEventLogs(GetEventLogsCallback callback) = 0;
+
+  virtual void GetHuhiWallet(GetHuhiWalletCallback callback) = 0;
+
+  virtual std::string GetWalletPassphrase() const = 0;
+
+  virtual void LinkHuhiWallet(
+      const std::string& destination_payment_id,
+      ResultCallback callback) = 0;
+
+  virtual void GetTransferableAmount(
+      GetTransferableAmountCallback callback) = 0;
 };
 
 }  // namespace ledger

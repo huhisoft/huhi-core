@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -49,15 +49,15 @@ ViewCounterServiceFactory::~ViewCounterServiceFactory() {}
 KeyedService* ViewCounterServiceFactory::BuildServiceInstanceFor(
     content::BrowserContext* browser_context) const {
   // Only NTP in normal profile uses sponsored services.
-  if (browser_context->IsOffTheRecord())
+  if (!huhi::IsRegularProfile(browser_context))
     return nullptr;
 
   if (auto* service =
           g_huhi_browser_process->ntp_background_images_service()) {
     Profile* profile = Profile::FromBrowserContext(browser_context);
     bool is_supported_locale = false;
-    if (auto* ads_service =
-            huhi_ads::AdsServiceFactory::GetForProfile(profile)) {
+    auto* ads_service = huhi_ads::AdsServiceFactory::GetForProfile(profile);
+    if (ads_service) {
       is_supported_locale = ads_service->IsSupportedLocale();
     }
     content::URLDataSource::Add(
@@ -65,7 +65,9 @@ KeyedService* ViewCounterServiceFactory::BuildServiceInstanceFor(
         std::make_unique<NTPBackgroundImagesSource>(service));
 
     return new ViewCounterService(service,
+                                  ads_service,
                                   profile->GetPrefs(),
+                                  g_huhi_browser_process->local_state(),
                                   is_supported_locale);
   }
 

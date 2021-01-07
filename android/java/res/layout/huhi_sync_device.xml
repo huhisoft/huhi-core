@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-     This Source Code Form is subject to the terms of the Huhi Software
+<!-- Copyright (c) 2020 The Huhi Authors. All rights reserved.
+     This Source Code Form is subject to the terms of the Mozilla Public
      License, v. 2.0. If a copy of the MPL was not distributed with this file,
      You can obtain one at http://mozilla.org/MPL/2.0/.
 -->
@@ -27,6 +27,18 @@
         android:textSize="16sp"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/huhi_sync_device_image"
+        android:layout_toStartOf="@+id/huhi_sync_remove_device"
         android:paddingStart="10dip" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/huhi_sync_remove_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/ListItemEndIcon"
+        android:contentDescription="@string/remove"
+        android:src="@drawable/ic_delete_white_24dp"
+        app:tint="@color/default_icon_color_tint_list"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

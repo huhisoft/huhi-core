@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -13,6 +13,7 @@
 #include "huhi/components/huhi_referrals/common/pref_names.h"
 #include "huhi/components/ntp_background_images/browser/ntp_background_images_data.h"
 #include "huhi/components/ntp_background_images/browser/ntp_background_images_service.h"
+#include "huhi/components/ntp_background_images/browser/url_constants.h"
 #include "huhi/components/ntp_background_images/common/pref_names.h"
 #include "components/prefs/testing_pref_service.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -29,9 +30,9 @@ constexpr char kTestSponsoredImages[] = R"(
         "schemaVersion": 1,
         "logo": {
           "imageUrl":  "logo.png",
-          "alt": "Huhisoftware: Hú hí software",
-          "destinationUrl": "https://www.huhisoft.com/",
-          "companyName": "Huhisoftware"
+          "alt": "Technikke: For music lovers",
+          "destinationUrl": "https://www.hnq.vn",
+          "companyName": "Technikke"
         },
         "wallpapers": [
             {
@@ -39,7 +40,13 @@ constexpr char kTestSponsoredImages[] = R"(
               "focalPoint": { "x": 696, "y": 691 }
             },
             {
-              "imageUrl": "background-2.jpg"
+              "imageUrl": "background-2.jpg",
+              "logo": {
+                "imageUrl": "logo-2.png",
+                "alt": "logo2",
+                "companyName": "BAT",
+                "destinationUrl": "https://www.bat.com/"
+              }
             },
             {
               "imageUrl": "background-3.jpg",
@@ -125,8 +132,7 @@ class NTPBackgroundImagesServiceTest : public testing::Test {
   }
 
   void Init() {
-    service_.reset(new TestNTPBackgroundImagesService(
-        nullptr, &pref_service_, base::FilePath()));
+    service_.reset(new TestNTPBackgroundImagesService(nullptr, &pref_service_));
     service_->Init();
   }
 
@@ -162,7 +168,7 @@ TEST_F(NTPBackgroundImagesServiceTest, InternalDataTest) {
   auto* data = service_->GetBackgroundImagesData(false);
   EXPECT_EQ(data, nullptr);
   EXPECT_TRUE(observer.on_updated_);
-  EXPECT_TRUE(observer.data_->logo_alt_text.empty());
+  EXPECT_TRUE(observer.data_->default_logo.alt_text.empty());
 
   service_->si_images_data_.reset();
   observer.on_updated_ = false;
@@ -182,8 +188,15 @@ TEST_F(NTPBackgroundImagesServiceTest, InternalDataTest) {
   EXPECT_EQ(0, data->backgrounds[1].focal_point.x());
   EXPECT_EQ(0, data->backgrounds[2].focal_point.x());
   EXPECT_TRUE(observer.on_updated_);
-  EXPECT_FALSE(observer.data_->logo_alt_text.empty());
-  EXPECT_TRUE(*data->GetBackgroundAt(0).FindBoolKey("isSponsored"));
+  EXPECT_FALSE(observer.data_->default_logo.alt_text.empty());
+  EXPECT_TRUE(*data->GetBackgroundAt(0).FindBoolKey(kIsSponsoredKey));
+
+  // Default logo is used for wallpaper at 0.
+  EXPECT_EQ("logo.png",
+            *data->GetBackgroundAt(0).FindStringPath(kLogoImagePath));
+  // Per wallpaper logo is used for wallpaper at 1.
+  EXPECT_EQ("logo-2.png",
+            *data->GetBackgroundAt(1).FindStringPath(kLogoImagePath));
 
   // Invalid schema version
   const std::string test_json_string_higher_schema = R"(
@@ -191,9 +204,9 @@ TEST_F(NTPBackgroundImagesServiceTest, InternalDataTest) {
         "schemaVersion": 2,
         "logo": {
           "imageUrl":  "logo.png",
-          "alt": "Huhisoftware: Hú hí software",
-          "destinationUrl": "https://www.huhisoft.com/",
-          "companyName": "Huhisoftware"
+          "alt": "Technikke: For music lovers",
+          "destinationUrl": "https://www.hnq.vn",
+          "companyName": "Technikke"
         },
         "wallpapers": [
             {
@@ -256,12 +269,12 @@ const char kTestMappingTable[] = R"(
 const char kTestSuperReferral[] = R"(
     {
       "schemaVersion": 1,
-      "themeName": "Huhisoftware",
+      "themeName": "Technikke",
       "logo": {
         "imageUrl": "logo.png",
-        "alt": "Huhisoftware: Hú hí software",
-        "companyName": "Huhisoftware",
-        "destinationUrl": "https://www.huhisoft.com/?from-super-referreer-demo"
+        "alt": "Technikke: For music lovers",
+        "companyName": "Technikke",
+        "destinationUrl": "https://www.hnq.vn"
       },
       "wallpapers": [
         {
@@ -279,7 +292,7 @@ const char kTestSuperReferral[] = R"(
       "topSites": [
         {
           "name": "Huhi",
-          "destinationUrl": "https://huhisoft.com/",
+          "destinationUrl": "https://hnq.vn/",
           "backgroundColor": "#e22919",
           "iconUrl": "huhi.png"
         },
@@ -315,7 +328,7 @@ TEST_F(NTPBackgroundImagesServiceTest, BasicSuperReferralTest) {
   EXPECT_EQ(wallpaper_count, data->wallpaper_image_urls().size());
   EXPECT_EQ(top_site_count, data->top_sites.size());
   EXPECT_TRUE(data->IsSuperReferral());
-  EXPECT_FALSE(*data->GetBackgroundAt(0).FindBoolKey("isSponsored"));
+  EXPECT_FALSE(*data->GetBackgroundAt(0).FindBoolKey(kIsSponsoredKey));
   EXPECT_TRUE(observer.on_updated_);
 
   service_->RemoveObserver(&observer);
@@ -325,6 +338,8 @@ TEST_F(NTPBackgroundImagesServiceTest, BasicSuperReferralTest) {
 // Sponsored Images component will be run after promo code set to pref.
 TEST_F(NTPBackgroundImagesServiceTest, WithDefaultReferralCodeTest1) {
   Init();
+  TestObserver observer;
+  service_->AddObserver(&observer);
 
   // Initially, only SI is started and pref is monitored to get referral code.
   EXPECT_TRUE(service_->sponsored_images_component_started_);
@@ -334,9 +349,12 @@ TEST_F(NTPBackgroundImagesServiceTest, WithDefaultReferralCodeTest1) {
   EXPECT_FALSE(service_->super_referral_component_started_);
   EXPECT_FALSE(service_->marked_this_install_is_not_super_referral_forever_);
 
-  // If default code is set, SI component is started.
+  observer.on_super_referral_ended_ = false;
   pref_service_.SetString(kReferralPromoCode, "BRV001");
   EXPECT_TRUE(service_->marked_this_install_is_not_super_referral_forever_);
+  // We should notify OnSuperReferralEnded() if this is not NTP SR
+  // (default promo code).
+  EXPECT_TRUE(observer.on_super_referral_ended_);
 }
 
 // Test default referral code and not first run.
@@ -361,6 +379,8 @@ TEST_F(NTPBackgroundImagesServiceTest, WithDefaultReferralCodeTest2) {
 // Sponsored Images component will be run after getting mapping table.
 TEST_F(NTPBackgroundImagesServiceTest, WithNonSuperReferralCodeTest) {
   Init();
+  TestObserver observer;
+  service_->AddObserver(&observer);
 
   EXPECT_TRUE(service_->sponsored_images_component_started_);
   EXPECT_TRUE(service_->checked_super_referral_component_);
@@ -374,9 +394,18 @@ TEST_F(NTPBackgroundImagesServiceTest, WithNonSuperReferralCodeTest) {
   EXPECT_TRUE(service_->mapping_table_requested_);
   EXPECT_FALSE(service_->marked_this_install_is_not_super_referral_forever_);
 
-  // If it's not super-referral, we mark this install is not a valid SR.
-  service_->OnGetMappingTableData(kTestMappingTable);
+  // Initialize NTP SI data.
+  service_->OnGetComponentJsonData(false, kTestSponsoredImages);
+  // NTP SI data is ready but don't give data until NTP SR initialization is
+  // complete. Only gives NTP SI data when browser confirms this is not NTP SR.
+  EXPECT_EQ(nullptr, service_->GetBackgroundImagesData(false));
 
+  observer.on_super_referral_ended_ = false;
+  service_->OnGetMappingTableData(kTestMappingTable);
+  // We should notify OnSuperReferralEnded() if this is not NTP SR.
+  EXPECT_TRUE(observer.on_super_referral_ended_);
+
+  // If it's not super-referral, we mark this install is not a valid SR.
   EXPECT_TRUE(service_->marked_this_install_is_not_super_referral_forever_);
   EXPECT_FALSE(service_->super_referral_component_started_);
 }

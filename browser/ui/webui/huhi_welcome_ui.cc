@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -53,7 +53,6 @@ class WelcomeDOMHandler : public WebUIMessageHandler {
  private:
   void HandleImportNowRequested(const base::ListValue* args);
   void HandleRecordP3A(const base::ListValue* args);
-  void OnWalletInitialized(int result_code);
   Browser* GetBrowser();
 
   int screen_number_ = 0;
@@ -105,7 +104,8 @@ void WelcomeDOMHandler::HandleRecordP3A(const base::ListValue* args) {
 
 HuhiWelcomeUI::HuhiWelcomeUI(content::WebUI* web_ui, const std::string& name)
     : BasicUI(web_ui, name, kHuhiWelcomeGenerated,
-        kHuhiWelcomeGeneratedSize, IDR_HUHI_WELCOME_HTML) {
+        kHuhiWelcomeGeneratedSize, IDR_HUHI_WELCOME_HTML,
+        /*disable_trusted_types_csp=*/true) {
   web_ui->AddMessageHandler(std::make_unique<WelcomeDOMHandler>());
   web_ui->AddMessageHandler(
       std::make_unique<settings::HuhiImportDataHandler>());

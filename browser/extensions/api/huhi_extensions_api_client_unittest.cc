@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
@@ -50,7 +50,7 @@ TEST_F(HuhiExtensionsAPIClientTests, IsHuhiProtectedUrlUphold) {
 
   WebRequestInfo allowed1(create_request_params("https://uphold.com/"));
   WebRequestInfo allowed2(create_request_params("https://www.uphold.com/"));
-  WebRequestInfo allowed3(create_request_params("https://huhisoft.com/"));
+  WebRequestInfo allowed3(create_request_params("https://hnq.vn/"));
   ASSERT_FALSE(ShouldHideBrowserNetworkRequest(allowed1));
   ASSERT_FALSE(ShouldHideBrowserNetworkRequest(allowed2));
   ASSERT_FALSE(ShouldHideBrowserNetworkRequest(allowed3));

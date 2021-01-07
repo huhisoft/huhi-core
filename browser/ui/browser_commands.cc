@@ -1,14 +1,13 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "huhi/browser/ui/browser_commands.h"
 
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/tor/tor_profile_service.h"
-#include "huhi/browser/tor/tor_profile_service_factory.h"
 #include "huhi/components/speedreader/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_manager.h"
@@ -24,6 +23,11 @@
 #if BUILDFLAG(ENABLE_SPEEDREADER)
 #include "huhi/browser/speedreader/speedreader_service_factory.h"
 #include "huhi/components/speedreader/speedreader_service.h"
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/browser/tor/tor_profile_service_factory.h"
+#include "huhi/components/tor/tor_profile_service.h"
 #endif
 
 using content::WebContents;
@@ -43,16 +47,18 @@ void NewOffTheRecordWindowTor(Browser* browser) {
 }
 
 void NewTorConnectionForSite(Browser* browser) {
+#if BUILDFLAG(ENABLE_TOR)
   Profile* profile = browser->profile();
   DCHECK(profile);
   tor::TorProfileService* service =
-    TorProfileServiceFactory::GetForProfile(profile);
+    TorProfileServiceFactory::GetForContext(profile);
   DCHECK(service);
   WebContents* current_tab =
     browser->tab_strip_model()->GetActiveWebContents();
   if (!current_tab)
     return;
   service->SetNewTorCircuit(current_tab);
+#endif
 }
 
 void AddNewProfile() {

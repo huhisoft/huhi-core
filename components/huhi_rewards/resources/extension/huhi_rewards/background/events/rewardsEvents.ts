@@ -1,23 +1,15 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import rewardsPanelActions from '../actions/rewardsPanelActions'
 
-// Handle all rewards events and pass to actions
-chrome.huhiRewards.walletCreated.addListener(() => {
-  rewardsPanelActions.walletCreated()
-})
-chrome.huhiRewards.walletCreationFailed.addListener((result: RewardsExtension.Result) => {
-  rewardsPanelActions.walletCreationFailed(result)
-})
-
 chrome.huhiRewards.onPublisherData.addListener((windowId: number, publisher: RewardsExtension.Publisher) => {
   rewardsPanelActions.onPublisherData(windowId, publisher)
 
   // Get publisher amounts
-  if (publisher && publisher.publisher_key && publisher.status !== 0) {
-    chrome.huhiRewards.getPublisherBanner(publisher.publisher_key, ((banner: RewardsExtension.PublisherBanner) => {
+  if (publisher && publisher.publisherKey && publisher.status !== 0) {
+    chrome.huhiRewards.getPublisherBanner(publisher.publisherKey, ((banner: RewardsExtension.PublisherBanner) => {
       rewardsPanelActions.onPublisherBanner(banner)
     }))
   }
@@ -39,10 +31,6 @@ chrome.rewardsNotifications.onNotificationDeleted.addListener((id: string, type:
 
 chrome.rewardsNotifications.onAllNotificationsDeleted.addListener(() => {
   rewardsPanelActions.onAllNotificationsDeleted()
-})
-
-chrome.huhiRewards.onEnabledMain.addListener((enabledMain: boolean) => {
-  rewardsPanelActions.onEnabledMain(enabledMain)
 })
 
 chrome.huhiRewards.onPendingContributionSaved.addListener((result: number) => {
@@ -123,26 +111,4 @@ chrome.huhiRewards.onCompleteReset.addListener((properties: { success: boolean }
 
 chrome.huhiRewards.initialized.addListener((result: RewardsExtension.Result) => {
   rewardsPanelActions.initialized()
-})
-
-// Fetch initial data required to refresh state, keeping in mind
-// that the extension process be restarted at any time.
-// TODO(petemill): Move to initializer function or single 'init' action.
-chrome.huhiRewards.getRewardsMainEnabled((enabledMain: boolean) => {
-  rewardsPanelActions.onEnabledMain(enabledMain)
-  if (enabledMain) {
-    chrome.huhiRewards.getAnonWalletStatus((result: RewardsExtension.Result) => {
-      rewardsPanelActions.onAnonWalletStatus(result)
-    })
-    chrome.huhiRewards.fetchPromotions()
-    chrome.huhiRewards.fetchBalance((balance: RewardsExtension.Balance) => {
-      rewardsPanelActions.onBalance(balance)
-    })
-    chrome.huhiRewards.getAllNotifications((list: RewardsExtension.Notification[]) => {
-      rewardsPanelActions.onAllNotifications(list)
-    })
-    chrome.huhiRewards.getRewardsParameters((parameters: RewardsExtension.RewardsParameters) => {
-      rewardsPanelActions.onRewardsParameters(parameters)
-    })
-  }
 })

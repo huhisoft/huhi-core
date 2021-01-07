@@ -1,0 +1,23 @@
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+import("//huhi/components/huhi_wallet/buildflags/buildflags.gni")
+
+huhi_browser_wallet_sources = []
+
+huhi_browser_wallet_deps = []
+
+if (huhi_wallet_enabled) {
+  huhi_browser_wallet_sources += [
+    "//huhi/browser/huhi_wallet/huhi_wallet_service_factory.cc",
+    "//huhi/browser/huhi_wallet/huhi_wallet_service_factory.h",
+  ]
+
+  huhi_browser_wallet_deps += [
+    "//components/keyed_service/content:content",
+    "//extensions/browser",
+  ]
+}

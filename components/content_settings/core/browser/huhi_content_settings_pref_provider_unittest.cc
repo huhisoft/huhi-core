@@ -1,5 +1,5 @@
-/*  Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/*  Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,7 +17,6 @@
 #include "components/content_settings/core/common/content_settings_pattern.h"
 #include "components/content_settings/core/common/content_settings_utils.h"
 #include "components/content_settings/core/test/content_settings_test_utils.h"
-#include "components/pref_registry/pref_registry_syncable.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/test/browser_task_environment.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -181,8 +180,8 @@ TEST_F(HuhiPrefProviderTest, TestShieldsSettingsMigration) {
   ShieldsScriptSetting script_settings(&provider);
   ShieldsUnknownResourceIDSetting unknown_resource_id_settings(&provider);
 
-  GURL url("http://huhisoft.com:8080/");
-  GURL url2("http://allowed.huhisoft.com:3030");
+  GURL url("http://hnq.vn:8080/");
+  GURL url2("http://allowed.hnq.vn:3030");
   // Check that the settings for the url are default values.
   cookie_settings.CheckSettingsAreDefault(url);
   cookie_settings.CheckSettingsAreDefault(url2);
@@ -201,50 +200,50 @@ TEST_F(HuhiPrefProviderTest, TestShieldsSettingsMigration) {
   cookie_settings.SetPreMigrationSettings(pattern2, CONTENT_SETTING_ALLOW);
   // Pattern that doesn't need to be migrated.
   cookie_settings.SetPreMigrationSettings(
-      ContentSettingsPattern::FromString("*://help.huhisoft.com/*"),
+      ContentSettingsPattern::FromString("*://help.hnq.vn/*"),
       CONTENT_SETTING_BLOCK);
-  // Check that settings would block huhisoft.com:8080, but not huhisoft.com:5555.
+  // Check that settings would block hnq.vn:8080, but not hnq.vn:5555.
   cookie_settings.CheckSettingsWouldBlock(url);
   cookie_settings.CheckSettingsWouldAllow(url2);
-  cookie_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com:5555"));
+  cookie_settings.CheckSettingsAreDefault(GURL("http://hnq.vn:5555"));
 
   // Finterprinting.
   fp_settings.SetPreMigrationSettings(pattern, CONTENT_SETTING_ALLOW);
-  // Check that settings would allow huhisoft.com:8080, but not huhisoft.com:5555.
+  // Check that settings would allow hnq.vn:8080, but not hnq.vn:5555.
   fp_settings.CheckSettingsWouldAllow(url);
-  fp_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com:5555"));
+  fp_settings.CheckSettingsAreDefault(GURL("http://hnq.vn:5555"));
 
   // HTTPSE.
   httpse_settings.SetPreMigrationSettings(pattern, CONTENT_SETTING_BLOCK);
-  // Check that settings would block huhisoft.com:8080, but not huhisoft.com:5555.
+  // Check that settings would block hnq.vn:8080, but not hnq.vn:5555.
   httpse_settings.CheckSettingsWouldBlock(url);
-  httpse_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com:5555"));
+  httpse_settings.CheckSettingsAreDefault(GURL("http://hnq.vn:5555"));
 
   // Ads.
   ads_settings.SetPreMigrationSettings(pattern, CONTENT_SETTING_ALLOW);
-  // Check that settings would allow huhisoft.com:8080, but not huhisoft.com:5555.
+  // Check that settings would allow hnq.vn:8080, but not hnq.vn:5555.
   ads_settings.CheckSettingsWouldAllow(url);
-  ads_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com:5555"));
+  ads_settings.CheckSettingsAreDefault(GURL("http://hnq.vn:5555"));
 
   // Enabled.
   enabled_settings.SetPreMigrationSettings(pattern, CONTENT_SETTING_BLOCK);
-  // Check that settings would block huhisoft.com:8080, but not huhisoft.com:5555.
+  // Check that settings would block hnq.vn:8080, but not hnq.vn:5555.
   httpse_settings.CheckSettingsWouldBlock(url);
-  httpse_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com:5555"));
+  httpse_settings.CheckSettingsAreDefault(GURL("http://hnq.vn:5555"));
 
   // Scripts.
   script_settings.SetPreMigrationSettings(pattern, CONTENT_SETTING_BLOCK);
-  // Check that settings would block huhisoft.com:8080, but not huhisoft.com:5555.
+  // Check that settings would block hnq.vn:8080, but not hnq.vn:5555.
   script_settings.CheckSettingsWouldBlock(url);
-  script_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com:5555"));
+  script_settings.CheckSettingsAreDefault(GURL("http://hnq.vn:5555"));
 
   // Unknown resource_id.
   unknown_resource_id_settings.SetPreMigrationSettings(pattern,
                                                        CONTENT_SETTING_BLOCK);
-  // Check that settings would block huhisoft.com:8080, but not huhisoft.com:5555.
+  // Check that settings would block hnq.vn:8080, but not hnq.vn:5555.
   unknown_resource_id_settings.CheckSettingsWouldBlock(url);
   unknown_resource_id_settings.CheckSettingsAreDefault(
-      GURL("http://huhisoft.com:5555"));
+      GURL("http://hnq.vn:5555"));
 
   // Migrate settings.
   // ------------------------------------------------------
@@ -254,63 +253,63 @@ TEST_F(HuhiPrefProviderTest, TestShieldsSettingsMigration) {
   // Check post-migration settings.
   // ------------------------------------------------------
   // Cookies.
-  // Check that settings would block huhisoft.com with any protocol and port.
+  // Check that settings would block hnq.vn with any protocol and port.
   cookie_settings.CheckSettingsWouldBlock(url);
-  cookie_settings.CheckSettingsWouldBlock(GURL("http://huhisoft.com:5555"));
-  cookie_settings.CheckSettingsWouldBlock(GURL("https://huhisoft.com"));
-  // Check that settings would allow allow.huhisoft.com with any protocol and port.
+  cookie_settings.CheckSettingsWouldBlock(GURL("http://hnq.vn:5555"));
+  cookie_settings.CheckSettingsWouldBlock(GURL("https://hnq.vn"));
+  // Check that settings would allow allow.hnq.vn with any protocol and port.
   cookie_settings.CheckSettingsWouldAllow(url2);
-  cookie_settings.CheckSettingsWouldAllow(GURL("https://allowed.huhisoft.com"));
+  cookie_settings.CheckSettingsWouldAllow(GURL("https://allowed.hnq.vn"));
   // Check the pattern that didn't need to be migrated.
   cookie_settings.CheckSettingsWouldBlock(
-      GURL("https://help.huhisoft.com/article1.html"));
+      GURL("https://help.hnq.vn/article1.html"));
   // Would not block a different domain.
-  cookie_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com"));
+  cookie_settings.CheckSettingsAreDefault(GURL("http://hnq.vn"));
 
   // Fingerprinting.
-  // Check that settings would allow huhisoft.com with any protocol and port.
+  // Check that settings would allow hnq.vn with any protocol and port.
   fp_settings.CheckSettingsWouldAllow(url);
-  fp_settings.CheckSettingsWouldAllow(GURL("http://huhisoft.com:5555"));
-  fp_settings.CheckSettingsWouldAllow(GURL("https://huhisoft.com"));
+  fp_settings.CheckSettingsWouldAllow(GURL("http://hnq.vn:5555"));
+  fp_settings.CheckSettingsWouldAllow(GURL("https://hnq.vn"));
   // Would not allow a different domain.
-  fp_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com"));
+  fp_settings.CheckSettingsAreDefault(GURL("http://hnq.vn"));
 
   // HTTPSE.
-  // Check that settings would block huhisoft.com with any protocol and port.
+  // Check that settings would block hnq.vn with any protocol and port.
   httpse_settings.CheckSettingsWouldBlock(url);
-  httpse_settings.CheckSettingsWouldBlock(GURL("http://huhisoft.com:5555"));
+  httpse_settings.CheckSettingsWouldBlock(GURL("http://hnq.vn:5555"));
   // Would not block a different domain.
-  httpse_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com"));
+  httpse_settings.CheckSettingsAreDefault(GURL("http://hnq.vn"));
 
   // Ads.
-  // Check that settings would allow huhisoft.com with any protocol and port.
+  // Check that settings would allow hnq.vn with any protocol and port.
   ads_settings.CheckSettingsWouldAllow(url);
-  ads_settings.CheckSettingsWouldAllow(GURL("http://huhisoft.com:5555"));
-  ads_settings.CheckSettingsWouldAllow(GURL("https://huhisoft.com"));
+  ads_settings.CheckSettingsWouldAllow(GURL("http://hnq.vn:5555"));
+  ads_settings.CheckSettingsWouldAllow(GURL("https://hnq.vn"));
   // Would not allow a different domain.
-  ads_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com"));
+  ads_settings.CheckSettingsAreDefault(GURL("http://hnq.vn"));
 
   // Enabled.
-  // Check that settings would block huhisoft.com with any protocol and port.
+  // Check that settings would block hnq.vn with any protocol and port.
   httpse_settings.CheckSettingsWouldBlock(url);
-  httpse_settings.CheckSettingsWouldBlock(GURL("http://huhisoft.com:5555"));
-  httpse_settings.CheckSettingsWouldBlock(GURL("https://huhisoft.com"));
+  httpse_settings.CheckSettingsWouldBlock(GURL("http://hnq.vn:5555"));
+  httpse_settings.CheckSettingsWouldBlock(GURL("https://hnq.vn"));
   // Would not block a different domain.
-  httpse_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com"));
+  httpse_settings.CheckSettingsAreDefault(GURL("http://hnq.vn"));
 
   // Scripts.
-  // Check that settings would block huhisoft.com with any protocol and port.
+  // Check that settings would block hnq.vn with any protocol and port.
   script_settings.CheckSettingsWouldBlock(url);
-  script_settings.CheckSettingsWouldBlock(GURL("http://huhisoft.com:5555"));
-  script_settings.CheckSettingsWouldBlock(GURL("https://huhisoft.com"));
+  script_settings.CheckSettingsWouldBlock(GURL("http://hnq.vn:5555"));
+  script_settings.CheckSettingsWouldBlock(GURL("https://hnq.vn"));
   // Would not block a different domain.
-  script_settings.CheckSettingsAreDefault(GURL("http://huhisoft.com"));
+  script_settings.CheckSettingsAreDefault(GURL("http://hnq.vn"));
 
   // Unknown resource_id - should not have been migrated.
-  // Check that settings would block huhisoft.com:8080, but not huhisoft.com:5555.
+  // Check that settings would block hnq.vn:8080, but not hnq.vn:5555.
   unknown_resource_id_settings.CheckSettingsWouldBlock(url);
   unknown_resource_id_settings.CheckSettingsAreDefault(
-      GURL("http://huhisoft.com:5555"));
+      GURL("http://hnq.vn:5555"));
 
   provider.ShutdownOnUIThread();
 }

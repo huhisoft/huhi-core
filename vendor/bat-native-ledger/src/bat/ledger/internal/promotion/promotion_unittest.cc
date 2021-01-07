@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -33,8 +33,8 @@ std::string GetResponse(const std::string& url) {
 
   // Fetch promotions
   response.insert(std::make_pair(
-      "https://grant.rewards.huhisoft.com/v1/promotions?"
-      "migrate=true&paymentId=this_is_id&platform=",
+      "https://grant.rewards.hnq.vn/v1/promotions?"
+      "migrate=true&paymentId=fa5dea51-6af4-44ca-801b-07b6df3dcfe4&platform=",
       R"({
       "promotions":[{
         "id":"36baa4c3-f92d-4121-b6d9-db44cb273a02",
@@ -73,14 +73,12 @@ class PromotionTest : public testing::Test {
   }
 
   void SetUp() override {
-    const std::string payment_id = "this_is_id";
-    ON_CALL(*mock_ledger_client_, GetStringState(state::kPaymentId))
-      .WillByDefault(testing::Return(payment_id));
-
-    const std::string wallet_passphrase =
-        "AN6DLuI2iZzzDxpzywf+IKmK1nzFRarNswbaIDI3pQg=";
-    ON_CALL(*mock_ledger_client_, GetStringState(state::kRecoverySeed))
-      .WillByDefault(testing::Return(wallet_passphrase));
+    const std::string wallet = R"({
+      "payment_id":"fa5dea51-6af4-44ca-801b-07b6df3dcfe4",
+      "recovery_seed":"AN6DLuI2iZzzDxpzywf+IKmK1nzFRarNswbaIDI3pQg="
+    })";
+    ON_CALL(*mock_ledger_client_, GetEncryptedStringState(state::kWalletHuhi))
+      .WillByDefault(testing::Return(wallet));
 
     ON_CALL(*mock_ledger_impl_, database())
       .WillByDefault(testing::Return(mock_database_.get()));
@@ -96,14 +94,12 @@ class PromotionTest : public testing::Test {
           response.body = GetResponse(request->url);
           callback(response);
         }));
-  }
+    }
 };
+
 TEST_F(PromotionTest, LegacyPromotionIsNotOverwritten) {
   ledger::FetchPromotionCallback fetch_promotion_callback =
-      std::bind(
-          [&](type::Result result,
-              type::PromotionList promotions) {
-          },
+      std::bind([&](type::Result result, type::PromotionList promotions) {},
       _1,
       _2);
 

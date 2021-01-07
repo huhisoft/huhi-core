@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -54,7 +54,7 @@ class DonationsBoxMobile extends React.Component<Props, State> {
           provider: 'youtube',
           src: favicon
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'recurring',
         contribute: {
           tokens: '2.0',
@@ -68,7 +68,7 @@ class DonationsBoxMobile extends React.Component<Props, State> {
           name: 'theguardian.com',
           src: guardian
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'donation',
         contribute: {
           tokens: '12.0',
@@ -83,7 +83,7 @@ class DonationsBoxMobile extends React.Component<Props, State> {
           provider: 'twitter',
           src: eich
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         type: 'tip',
         contribute: {
           tokens: '7.0',

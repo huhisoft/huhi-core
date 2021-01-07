@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,6 +7,7 @@
 
 #include "base/logging.h"
 #include "base/metrics/histogram_macros.h"
+#include "huhi/components/p3a/huhi_p3a_utils.h"
 #include "components/prefs/pref_registry_simple.h"
 #include "components/prefs/pref_service.h"
 
@@ -19,16 +20,8 @@ constexpr char kPrefName[] = "huhi_shields.p3a_usage";
 
 void MaybeRecordShieldsUsageP3A(ShieldsIconUsage usage,
                                 PrefService* local_state) {
-  // May be null in tests.
-  if (!local_state) {
-    return;
-  }
-  int last_value = local_state->GetInteger(kPrefName);
-
-  if (last_value < usage) {
-    UMA_HISTOGRAM_ENUMERATION("Huhi.Shields.UsageStatus", usage, kSize);
-    local_state->SetInteger(kPrefName, usage);
-  }
+  ::huhi::RecordValueIfGreater<ShieldsIconUsage>(
+      usage, "Huhi.Shields.UsageStatus", kPrefName, local_state);
 }
 
 void RegisterShieldsP3APrefs(PrefRegistrySimple* local_state) {

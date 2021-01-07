@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -127,7 +127,7 @@ TEST_F(ProxyConfigServiceTorTest, SetNewTorCircuit) {
 TEST_F(ProxyConfigServiceTorTest, SetProxyAuthorization) {
   const std::string proxy_uri("socks5://127.0.0.1:5566");
   const GURL site_url("https://check.torproject.org/");
-  const GURL site_url2("https://huhisoft.com/");
+  const GURL site_url2("https://hnq.vn/");
   const std::string isolation_key =
       ProxyConfigServiceTor::CircuitIsolationKey(site_url);
   const std::string isolation_key2 =

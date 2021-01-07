@@ -40,6 +40,10 @@ const test = (suite, buildConfig = config.defaultBuildConfig, options) => {
     huhiArgs.push('--gtest_filter=' + options.filter)
   }
 
+  if (options.run_disabled_tests) {
+    huhiArgs.push('--gtest_also_run_disabled_tests')
+  }
+
   if (options.output) {
     huhiArgs.push('--gtest_output=xml:' + options.output)
   }

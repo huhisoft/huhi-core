@@ -15,9 +15,9 @@
 #include "base/stl_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
+#include "huhi/common/pref_names.h"
 #include "huhi/components/search_engines/huhi_prepopulated_engines.h"
 #include "components/google/core/common/google_switches.h"
-#include "components/search_engines/prepopulated_engines.h"
 #include "components/search_engines/search_engines_pref_names.h"
 #include "components/search_engines/search_terms_data.h"
 #include "components/search_engines/template_url.h"
@@ -61,10 +61,18 @@ class HuhiTemplateURLPrepopulateDataTest : public testing::Test {
  public:
   void SetUp() override {
     TemplateURLPrepopulateData::RegisterProfilePrefs(prefs_.registry());
+    // Real registration happens in `huhi/browser/huhi_profile_prefs.cc`
+    // Calling huhi::RegisterProfilePrefs() causes some problems though
+    auto* registry = prefs_.registry();
+    registry->RegisterIntegerPref(
+        kHuhiDefaultSearchVersion,
+        TemplateURLPrepopulateData::kHuhiCurrentDataVersion);
   }
 
   void CheckForCountry(char digit1, char digit2, const std::string& expected) {
     prefs_.SetInteger(kCountryIDAtInstall, digit1 << 8 | digit2);
+    prefs_.SetInteger(kHuhiDefaultSearchVersion,
+                      TemplateURLPrepopulateData::kHuhiCurrentDataVersion);
     size_t default_index;
     std::vector<std::unique_ptr<TemplateURLData>> t_urls =
         TemplateURLPrepopulateData::GetPrepopulatedEngines(&prefs_,
@@ -105,12 +113,8 @@ TEST_F(HuhiTemplateURLPrepopulateDataTest, OverriddenEngines) {
 // Verifies that the set of prepopulate data for each locale
 // doesn't contain entries with duplicate ids.
 TEST_F(HuhiTemplateURLPrepopulateDataTest, UniqueIDs) {
-  const int kCountryIds[] = {
-    'D' << 8 | 'E',
-    'F' << 8 | 'R',
-    'U' << 8 | 'S',
-    -1
-  };
+  const int kCountryIds[] = {'D' << 8 | 'E', 'F' << 8 | 'R', 'U' << 8 | 'S',
+                             -1};
 
   for (size_t i = 0; i < base::size(kCountryIds); ++i) {
     prefs_.SetInteger(kCountryIDAtInstall, kCountryIds[i]);
@@ -170,7 +174,56 @@ TEST_F(HuhiTemplateURLPrepopulateDataTest,
   CheckForCountry('N', 'Z', "DuckDuckGo");
 }
 
-TEST_F(HuhiTemplateURLPrepopulateDataTest,
-       DefaultSearchProvidersForIreland) {
+TEST_F(HuhiTemplateURLPrepopulateDataTest, DefaultSearchProvidersForIreland) {
   CheckForCountry('I', 'E', "DuckDuckGo");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForRepublicOfArmenia) {
+  CheckForCountry('A', 'M', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForRepublicOfAzerbaijan) {
+  CheckForCountry('A', 'Z', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForRepublicOfBelarus) {
+  CheckForCountry('B', 'Y', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForKyrgyzRepublic) {
+  CheckForCountry('K', 'G', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForRepublicOfKazakhstan) {
+  CheckForCountry('K', 'Z', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForRepublicOfMoldova) {
+  CheckForCountry('M', 'D', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForRussianFederation) {
+  CheckForCountry('R', 'U', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForRepublicOfTajikistan) {
+  CheckForCountry('T', 'J', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForTurkmenistan) {
+  CheckForCountry('T', 'M', "Yandex");
+}
+
+TEST_F(HuhiTemplateURLPrepopulateDataTest,
+       DefaultSearchProvidersForRepublicOfUzbekistan) {
+  CheckForCountry('U', 'Z', "Yandex");
 }

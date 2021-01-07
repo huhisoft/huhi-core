@@ -1,4 +1,4 @@
-# Copyright 2020 The Huhi Software Authors. All rights reserved.
+# Copyright 2020 The Huhi Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -11,6 +11,8 @@ java_binary("java_bytecode_rewriter") {
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiClassAdapter.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiClassVisitor.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiAndroidSyncSettingsClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiAppMenuClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiBottomControlsCoordinatorClassAdapter.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiCommandLineInitUtilClassAdapter.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiEditUrlSuggestionProcessorClassAdapter.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiFeedSurfaceCoordinatorClassAdapter.java",
@@ -21,6 +23,12 @@ java_binary("java_bytecode_rewriter") {
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiNewTabPageClassAdapter.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiNewTabPageLayoutClassAdapter.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiSearchEngineAdapterClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiTabSwitcherModeTTCoordinatorPhoneClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiTabSwitcherModeTTPhoneClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiTileViewClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiToolbarLayoutClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiToolbarManagerClassAdapter.java",
+    "//huhi/build/android/bytecode/java/org/huhi/bytecode/HuhiTopToolbarCoordinatorClassAdapter.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/ByteCodeProcessor.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/ClassPathValidator.java",
     "//huhi/build/android/bytecode/java/org/huhi/bytecode/ThreadAssertionClassAdapter.java",

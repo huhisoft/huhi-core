@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,6 +7,8 @@
 #define HUHI_CHROMIUM_SRC_CHROME_BROWSER_SERVICE_SANDBOX_TYPE_H_
 
 #include "../../../../chrome/browser/service_sandbox_type.h"
+
+#include "huhi/components/ipfs/buildflags/buildflags.h"
 
 // huhi::mojom::ProfileImport
 namespace huhi {
@@ -21,17 +23,22 @@ content::GetServiceSandboxType<huhi::mojom::ProfileImport>() {
   return sandbox::policy::SandboxType::kNoSandbox;
 }
 
-// ipfs::mojom::IpfsService
-namespace ipfs {
+#if BUILDFLAG(IPFS_ENABLED)
+#include "huhi/components/ipfs/service_sandbox_type.h"
+#endif
+
+#if !defined(OS_ANDROID)  // Android will use default, which is kUtility.
+namespace bat_ledger {
 namespace mojom {
-class IpfsService;
+class BatLedgerService;
 }  // namespace mojom
-}  // namespace ipfs
+}  // namespace bat_ledger
 
 template <>
 inline sandbox::policy::SandboxType
-content::GetServiceSandboxType<ipfs::mojom::IpfsService>() {
+content::GetServiceSandboxType<bat_ledger::mojom::BatLedgerService>() {
   return sandbox::policy::SandboxType::kNoSandbox;
 }
+#endif  // !defined(OS_ANDROID)
 
 #endif  // HUHI_CHROMIUM_SRC_CHROME_BROWSER_SERVICE_SANDBOX_TYPE_H_

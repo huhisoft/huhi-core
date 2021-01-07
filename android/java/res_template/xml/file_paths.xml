@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-     This Source Code Form is subject to the terms of the Huhi Software
+<!-- Copyright (c) 2020 The Huhi Authors. All rights reserved.
+     This Source Code Form is subject to the terms of the Mozilla Public
      License, v. 2.0. If a copy of the MPL was not distributed with this file,
      You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
@@ -8,7 +8,6 @@
 <!-- for the ContentProvider. -->
 
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <root-path name="root" path="." />
     <files-path name="images" path="images/"/>
     <cache-path name="cache" path="net-export/"/>
     <cache-path name="passwords" path="passwords/"/>
@@ -20,7 +19,4 @@
          content:// URIs for downloads. This may no longer work if/when users
          are allowed to save files elsewhere. -->
     <external-path name="downloads" path="Download/" />
-
-    <!-- Needed for Android Q+, due to scoped storage. -->
-    <external-path name="downloads" path="Android/data/{{ manifest_package }}/files/Download/" />
 </paths>

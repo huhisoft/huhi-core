@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -101,14 +101,27 @@ const int kTorPasswordLength = 16;
 // Default tor circuit life time is 10 minutes
 constexpr base::TimeDelta kTenMins = base::TimeDelta::FromMinutes(10);
 
+ProxyConfigServiceTor::ProxyConfigServiceTor() {}
+
 ProxyConfigServiceTor::ProxyConfigServiceTor(const std::string& proxy_uri) {
-  ProxyServer proxy_server =
-      ProxyServer::FromURI(proxy_uri, ProxyServer::SCHEME_SOCKS5);
-  DCHECK(proxy_server.is_valid());
-  proxy_server_ = proxy_server;
+  UpdateProxyURI(proxy_uri);
 }
 
 ProxyConfigServiceTor::~ProxyConfigServiceTor() {}
+
+void ProxyConfigServiceTor::UpdateProxyURI(const std::string& uri) {
+  ProxyServer proxy_server =
+      ProxyServer::FromURI(uri, ProxyServer::SCHEME_SOCKS5);
+  DCHECK(proxy_server.is_valid());
+  proxy_server_ = proxy_server;
+
+  net::ProxyConfigWithAnnotation proxy_config;
+  auto config_valid = GetLatestProxyConfig(&proxy_config);
+
+  for (auto& observer : observers_)
+    observer.OnProxyConfigChanged(proxy_config,
+                                  config_valid);
+}
 
 // static
 std::string ProxyConfigServiceTor::CircuitIsolationKey(const GURL& url) {

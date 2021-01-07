@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,19 +9,11 @@ import { types } from '../constants/rewards_types'
 
 export const isInitialized = () => action(types.IS_INITIALIZED)
 
-export const createWallet = () => action(types.CREATE_WALLET)
-
-export const onWalletCreated = () => action(types.WALLET_CREATED)
-
-export const onWalletCreateFailed = () => action(types.WALLET_CREATE_FAILED)
-
 export const onSettingSave = (key: string, value: any, persist: boolean = true) => action(types.ON_SETTING_SAVE, {
   key,
   value,
   persist
 })
-
-export const updateAdsRewards = () => action(types.UPDATE_ADS_REWARDS)
 
 export const getRewardsParameters = () => action(types.GET_REWARDS_PARAMETERS)
 
@@ -68,12 +60,6 @@ export const deletePromotion = (promotionId: string) => action(types.DELETE_PROM
   promotionId
 })
 
-export const getWalletPassphrase = () => action(types.GET_WALLLET_PASSPHRASE)
-
-export const onWalletPassphrase = (pass: string) => action(types.ON_WALLLET_PASSPHRASE, {
-  pass
-})
-
 export const recoverWallet = (key: string) => action(types.RECOVER_WALLET, {
   key
 })
@@ -115,12 +101,6 @@ export const getBalanceReport = (month: number, year: number) => action(types.GE
 
 export const excludePublisher = (publisherKey: string) => action(types.ON_EXCLUDE_PUBLISHER, {
   publisherKey
-})
-
-export const checkWalletExistence = () => action(types.CHECK_WALLET_EXISTENCE)
-
-export const onWalletExists = (exists: boolean) => action(types.ON_WALLET_EXISTS, {
-  exists
 })
 
 export const restorePublishers = () => action(types.ON_RESTORE_PUBLISHERS)
@@ -231,10 +211,6 @@ export const onPendingContributions = (list: Rewards.PendingContribution[]) =>
     list
   })
 
-export const onRewardsEnabled = (enabled: boolean) => action(types.ON_REWARDS_ENABLED, {
-  enabled
-})
-
 export const onTransactionHistory = (data: {adsEstimatedPendingRewards: number, adsNextPaymentDate: string, adsNotificationsReceivedThisMonth: number}) =>
   action(types.ON_TRANSACTION_HISTORY, {
     data
@@ -243,8 +219,6 @@ export const onTransactionHistory = (data: {adsEstimatedPendingRewards: number, 
 export const getTransactionHistory = () => action(types.GET_TRANSACTION_HISTORY)
 
 export const onTransactionHistoryChanged = () => action(types.ON_TRANSACTION_HISTORY_CHANGED)
-
-export const getRewardsMainEnabled = () => action(types.GET_REWARDS_MAIN_ENABLED)
 
 export const onRecurringTipSaved = (success: boolean) => action(types.ON_RECURRING_TIP_SAVED, {
   success
@@ -288,7 +262,7 @@ export const onExternalWallet = (result: number, wallet: Rewards.ExternalWallet)
   wallet
 })
 
-export const onOnBoardingDisplayed = () => action(types.ON_ON_BOARDING_DISPLAYED)
+export const onVerifyOnboardingDisplayed = () => action(types.ON_VERIFY_ONBOARDING_DISPLAYED)
 
 export const processRewardsPageUrl = (path: string, query: string) => action(types.PROCESS_REWARDS_PAGE_URL, {
   path,
@@ -339,10 +313,6 @@ export const onCountryCode = (countryCode: string) => action(types.ON_COUNTRY_CO
   countryCode
 })
 
-export const toggleEnableMain = (enable: boolean) => action(types.TOGGLE_ENABLE_MAIN, {
-  enable
-})
-
 export const onInitialized = (result: boolean) => action(types.ON_INITIALIZED, {
   result
 })
@@ -351,4 +321,30 @@ export const completeReset = () => action(types.COMPLETE_RESET)
 
 export const onCompleteReset = (success: boolean) => action(types.ON_COMPLETE_RESET, {
   success
+})
+
+export const getPaymentId = () => action(types.GET_PAYMENT_ID)
+
+export const onPaymentId = (paymentId: string) => action(types.ON_PAYMENT_ID, {
+  paymentId
+})
+
+export const setFirstLoad = (firstLoad: boolean) => action(types.SET_FIRST_LOAD, {
+  firstLoad
+})
+
+export const getWalletPassphrase = () => action(types.GET_WALLET_PASSPHRASE)
+
+export const onWalletPassphrase = (passphrase: string) => action(types.ON_WALLET_PASSPHRASE, {
+  passphrase
+})
+
+export const getOnboardingStatus = () => action(types.GET_ONBOARDING_STATUS)
+
+export const onOnboardingStatus = (showOnboarding: boolean) => action(types.ON_ONBOARDING_STATUS, {
+  showOnboarding
+})
+
+export const saveOnboardingResult = (result: 'opted-in' | 'dismissed') => action(types.SAVE_ONBOARDING_RESULT, {
+  result
 })

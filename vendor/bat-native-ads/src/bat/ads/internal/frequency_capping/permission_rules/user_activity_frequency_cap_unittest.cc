@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -62,12 +62,6 @@ class BatAdsUserActivityFrequencyCapTest : public ::testing::Test {
     ASSERT_TRUE(temp_dir_.CreateUniqueTempDir());
     const base::FilePath path = temp_dir_.GetPath();
 
-    ON_CALL(*ads_client_mock_, IsEnabled())
-        .WillByDefault(Return(true));
-
-    ON_CALL(*ads_client_mock_, ShouldAllowAdConversionTracking())
-        .WillByDefault(Return(true));
-
     SetBuildChannel(false, "test");
 
     ON_CALL(*locale_helper_mock_, GetLocale())
@@ -82,6 +76,8 @@ class BatAdsUserActivityFrequencyCapTest : public ::testing::Test {
     MockLoadUserModelForId(ads_client_mock_);
     MockLoadResourceForId(ads_client_mock_);
     MockSave(ads_client_mock_);
+
+    MockPrefs(ads_client_mock_);
 
     database_ = std::make_unique<Database>(path.AppendASCII("database.sqlite"));
     MockRunDBTransaction(ads_client_mock_, database_);
@@ -123,7 +119,7 @@ TEST_F(BatAdsUserActivityFrequencyCapTest,
   task_environment_.FastForwardBy(base::TimeDelta::FromMinutes(59));
 
   // Act
-  const bool is_allowed = frequency_cap_->IsAllowed();
+  const bool is_allowed = frequency_cap_->ShouldAllow();
 
   // Assert
   EXPECT_TRUE(is_allowed);
@@ -140,7 +136,7 @@ TEST_F(BatAdsUserActivityFrequencyCapTest,
   task_environment_.FastForwardBy(base::TimeDelta::FromMinutes(59));
 
   // Act
-  const bool is_allowed = frequency_cap_->IsAllowed();
+  const bool is_allowed = frequency_cap_->ShouldAllow();
 
   // Assert
   EXPECT_TRUE(is_allowed);
@@ -159,12 +155,11 @@ TEST_F(BatAdsUserActivityFrequencyCapTest,
   task_environment_.FastForwardBy(base::TimeDelta::FromMinutes(59));
 
   // Act
-  const bool is_allowed = frequency_cap_->IsAllowed();
+  const bool is_allowed = frequency_cap_->ShouldAllow();
 
   // Assert
   EXPECT_TRUE(is_allowed);
 }
-
 
 TEST_F(BatAdsUserActivityFrequencyCapTest,
     AllowAdIfActivityWasReportedForMoreThanTwoOfTheSameType) {
@@ -179,7 +174,7 @@ TEST_F(BatAdsUserActivityFrequencyCapTest,
   task_environment_.FastForwardBy(base::TimeDelta::FromMinutes(59));
 
   // Act
-  const bool is_allowed = frequency_cap_->IsAllowed();
+  const bool is_allowed = frequency_cap_->ShouldAllow();
 
   // Assert
   EXPECT_TRUE(is_allowed);
@@ -198,7 +193,7 @@ TEST_F(BatAdsUserActivityFrequencyCapTest,
   task_environment_.FastForwardBy(base::TimeDelta::FromMinutes(59));
 
   // Act
-  const bool is_allowed = frequency_cap_->IsAllowed();
+  const bool is_allowed = frequency_cap_->ShouldAllow();
 
   // Assert
   EXPECT_TRUE(is_allowed);
@@ -213,7 +208,7 @@ TEST_F(BatAdsUserActivityFrequencyCapTest,
   task_environment_.FastForwardBy(base::TimeDelta::FromMinutes(59));
 
   // Act
-  const bool is_allowed = frequency_cap_->IsAllowed();
+  const bool is_allowed = frequency_cap_->ShouldAllow();
 
   // Assert
   EXPECT_FALSE(is_allowed);
@@ -224,7 +219,7 @@ TEST_F(BatAdsUserActivityFrequencyCapTest,
   // Arrange
 
   // Act
-  const bool is_allowed = frequency_cap_->IsAllowed();
+  const bool is_allowed = frequency_cap_->ShouldAllow();
 
   // Assert
   EXPECT_FALSE(is_allowed);
@@ -241,7 +236,7 @@ TEST_F(BatAdsUserActivityFrequencyCapTest,
   task_environment_.FastForwardBy(base::TimeDelta::FromHours(1));
 
   // Act
-  const bool is_allowed = frequency_cap_->IsAllowed();
+  const bool is_allowed = frequency_cap_->ShouldAllow();
 
   // Assert
   EXPECT_FALSE(is_allowed);

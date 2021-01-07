@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -37,14 +37,6 @@ class HuhiRewardsNativeWorker : public huhi_rewards::RewardsServiceObserver,
     ~HuhiRewardsNativeWorker() override;
 
     void Destroy(JNIEnv* env,
-        const base::android::JavaParamRef<jobject>& jcaller);
-
-    void CreateWallet(JNIEnv* env,
-        const base::android::JavaParamRef<jobject>& jcaller);
-
-    void OnCreateWallet(const ledger::type::Result result);
-
-    void WalletExist(JNIEnv* env,
         const base::android::JavaParamRef<jobject>& jcaller);
 
     void GetRewardsParameters(JNIEnv* env,
@@ -121,11 +113,6 @@ class HuhiRewardsNativeWorker : public huhi_rewards::RewardsServiceObserver,
         const base::android::JavaParamRef<jobject>& obj,
         const base::android::JavaParamRef<jstring>& publisher);
 
-    void SetRewardsMainEnabled(JNIEnv* env,
-        const base::android::JavaParamRef<jobject>& obj, bool enabled);
-    void GetRewardsMainEnabled(JNIEnv* env,
-        const base::android::JavaParamRef<jobject>& obj);
-
     void GetAutoContributeProperties(JNIEnv* env,
         const base::android::JavaParamRef<jobject>& obj);
 
@@ -156,9 +143,13 @@ class HuhiRewardsNativeWorker : public huhi_rewards::RewardsServiceObserver,
                        const base::android::JavaParamRef<jobject>& obj,
                        jint value);
 
-    void GetExternalWallet(JNIEnv* env,
-        const base::android::JavaParamRef<jobject>& obj,
-        const base::android::JavaParamRef<jstring>& wallet_type);
+    void SetAutoContributionAmount(JNIEnv* env,
+                       const base::android::JavaParamRef<jobject>& obj,
+                       jdouble value);
+
+    void GetExternalWallet(
+        JNIEnv* env,
+        const base::android::JavaParamRef<jobject>& obj);
 
     void DisconnectWallet(JNIEnv* env,
         const base::android::JavaParamRef<jobject>& obj,
@@ -185,15 +176,7 @@ class HuhiRewardsNativeWorker : public huhi_rewards::RewardsServiceObserver,
     void OnGetAutoContributeProperties(
         ledger::type::AutoContributePropertiesPtr properties);
 
-    void OnGetRewardsMainEnabled(bool enabled);
-
     void OnGetPendingContributionsTotal(double amount);
-
-    void OnIsWalletCreated(bool created);
-
-    void OnWalletInitialized(
-        huhi_rewards::RewardsService* rewards_service,
-        const ledger::type::Result result) override;
 
     void OnPanelPublisherInfo(
         huhi_rewards::RewardsService* rewards_service,
@@ -232,9 +215,6 @@ class HuhiRewardsNativeWorker : public huhi_rewards::RewardsServiceObserver,
 
     void OnGetRecurringTips(ledger::type::PublisherInfoList list);
 
-    void OnRewardsMainEnabled(huhi_rewards::RewardsService* rewards_service,
-        bool rewards_main_enabled) override;
-
     bool IsAnonWallet(JNIEnv* env,
         const base::android::JavaParamRef<jobject>& jcaller);
 
@@ -244,7 +224,7 @@ class HuhiRewardsNativeWorker : public huhi_rewards::RewardsServiceObserver,
 
     void OnGetExternalWallet(
         const ledger::type::Result result,
-        ledger::type::ExternalWalletPtr wallet);
+        ledger::type::UpholdWalletPtr wallet);
 
     void OnDisconnectWallet(
       huhi_rewards::RewardsService* rewards_service,
@@ -264,7 +244,13 @@ class HuhiRewardsNativeWorker : public huhi_rewards::RewardsServiceObserver,
     void OnRefreshPublisher(
         const ledger::type::PublisherStatus status,
         const std::string& publisher_key);
-
+    void SetAutoContributeEnabled(
+        JNIEnv* env,
+        const base::android::JavaParamRef<jobject>& obj,
+        bool isAutoContributeEnabled);
+    void StartProcess(JNIEnv* env,
+                      const base::android::JavaParamRef<jobject>& obj);
+    void OnStartProcess(const ledger::type::Result result);
  private:
     std::string StdStrStrMapToJsonString(
         const std::map<std::string, std::string>& args);

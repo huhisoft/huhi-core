@@ -1,7 +1,7 @@
-import("//huhi/browser/tor/buildflags/buildflags.gni")
 import("//huhi/components/huhi_ads/browser/buildflags/buildflags.gni")
 import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
-import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/buildflags/buildflags.gni")
+import("//huhi/components/tor/buildflags/buildflags.gni")
 import("//build/config/features.gni")
 import("//build/config/ui.gni")
 
@@ -20,10 +20,8 @@ source_set("utility") {
     "huhi_content_utility_client.h",
   ]
 
-  deps = [
-    "//chrome/common",
-    "//content/public/common",
-  ]
+  deps = []
+  public_deps = []
 
   if (!is_android) {
     sources += [
@@ -45,19 +43,6 @@ source_set("utility") {
     ]
   }
 
-  if (is_mac) {
-    sources += [
-      "importer/huhi_safari_importer.mm",
-      "importer/huhi_safari_importer.h",
-    ]
-
-    deps += [
-      "//base",
-      "//sql",
-      "//url",
-    ]
-  }
-
   if (enable_tor) {
     deps += [ "//huhi/components/services/tor" ]
   }
@@ -67,10 +52,10 @@ source_set("utility") {
   }
 
   if (huhi_ads_enabled) {
-    deps += [ "//huhi/components/services/bat_ads:lib" ]
+    public_deps += [ "//huhi/components/services/bat_ads:lib" ]
   }
 
   if (huhi_rewards_enabled) {
-    deps += [ "//huhi/components/services/bat_ledger:lib" ]
+    public_deps += [ "//huhi/components/services/bat_ledger:lib" ]
   }
 }

@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+ * Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  */
@@ -58,7 +58,7 @@ public class SearchEngineOnboardingFragment extends Fragment {
         TemplateUrlService templateUrlService = TemplateUrlServiceFactory.get();
         List<TemplateUrl> templateUrls = templateUrlService.getTemplateUrls();
         TemplateUrl defaultSearchEngineTemplateUrl =
-            templateUrlService.getDefaultSearchEngineTemplateUrl();
+            HuhiSearchEngineUtils.getTemplateUrlByShortName(HuhiSearchEngineUtils.getDSEShortName(false));
 
         for (TemplateUrl templateUrl : templateUrls) {
             if (templateUrl.getIsPrepopulated()
@@ -114,7 +114,7 @@ public class SearchEngineOnboardingFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (selectedSearchEngine == null) {
-                    selectedSearchEngine = TemplateUrlServiceFactory.get().getDefaultSearchEngineTemplateUrl();
+                    selectedSearchEngine = HuhiSearchEngineUtils.getTemplateUrlByShortName(HuhiSearchEngineUtils.getDSEShortName(false));
                 }
                 if (selectedSearchEngine != null) {
                     HuhiSearchEngineUtils.setDSEPrefs(selectedSearchEngine, false);

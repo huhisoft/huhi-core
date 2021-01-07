@@ -13,8 +13,10 @@ source_set("browser") {
 
   deps = [
     "//base",
+    "//huhi/browser:version_info",
     "//huhi/components/huhi_component_updater/browser",
     "//chrome/browser/extensions:extensions",
+    "//components/version_info",
     "//content/public/browser",
     "//content/public/common",
     "//extensions/browser",

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# This Source Code Form is subject to the terms of the Huhi Software
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -72,13 +72,14 @@ def Main(argv):
       help='Product directory name')
   parser.add_option('--huhi_feed_url', dest='huhi_feed_url', action='store',
       type='string', default=None, help='Target url for update feed')
-  parser.add_option('--huhi_dsa_file', dest='huhi_dsa_file', action='store',
-      type='string', default=None, help='Public DSA file for update')
+  parser.add_option('--huhi_eddsa_key', dest='huhi_eddsa_key', action='store',
+      type='string', default=None, help='Public EdDSA key for update')
   parser.add_option('--huhi_version', dest='huhi_version', action='store',
       type='string', default=None, help='huhi version string')
   parser.add_option('--format', choices=('binary1', 'xml1', 'json'),
       default='xml1', help='Format to use when writing property list '
           '(default: %(default)s)')
+  parser.add_option('--skip_signing', dest='skip_signing', action='store_true')
   (options, args) = parser.parse_args(argv)
 
   if len(args) > 0:
@@ -101,16 +102,19 @@ def Main(argv):
   if options.plist_output is not None:
     output_path = options.plist_output
 
-  if options.huhi_channel:
+  if options.skip_signing:
     plist['KSChannelID'] = options.huhi_channel
+  elif 'KSChannelID' in plist:
+    # 'KSChannelID' is set at _modify_plists() of modification.py.
+    del plist['KSChannelID']
 
   plist['CrProductDirName'] = options.huhi_product_dir_name
 
   if options.huhi_feed_url:
     plist['SUFeedURL'] = options.huhi_feed_url
 
-  if options.huhi_dsa_file:
-    plist['SUPublicDSAKeyFile'] = options.huhi_dsa_file
+  if options.huhi_eddsa_key:
+    plist['SUPublicEDKey'] = options.huhi_eddsa_key
 
   _OverrideVersionKey(plist, options.huhi_version)
 

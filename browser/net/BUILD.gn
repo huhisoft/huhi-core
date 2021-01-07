@@ -1,6 +1,7 @@
 import("//huhi/browser/translate/buildflags/buildflags.gni")
 import("//huhi/components/huhi_referrals/buildflags/buildflags.gni")
 import("//huhi/components/huhi_webtorrent/browser/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/buildflags/buildflags.gni")
 import("//build/config/features.gni")
 
 # Refer to the keyed API spec for more details about the Huhi Services Key
@@ -33,6 +34,8 @@ source_set("net") {
     "huhi_stp_util.h",
     "huhi_system_request_handler.cc",
     "huhi_system_request_handler.h",
+    "global_privacy_control_network_delegate_helper.cc",
+    "global_privacy_control_network_delegate_helper.h",
     "resource_context_data.cc",
     "resource_context_data.h",
     "url_context.cc",
@@ -49,8 +52,10 @@ source_set("net") {
     "//huhi/components/huhi_referrals/buildflags",
     "//huhi/components/huhi_shields/browser",
     "//huhi/components/huhi_webtorrent/browser/buildflags",
+    "//huhi/components/ipfs/buildflags",
     "//huhi/extensions:common",
     "//components/prefs",
+    "//components/user_prefs",
     "//content/public/browser",
     "//content/public/common",
     "//components/content_settings/core/browser",
@@ -65,6 +70,16 @@ source_set("net") {
     "//third_party/re2",
     "//url",
   ]
+
+  if (ipfs_enabled) {
+    sources += [
+      "ipfs_redirect_network_delegate_helper.cc",
+      "ipfs_redirect_network_delegate_helper.h",
+    ]
+    deps += [
+      "//huhi/components/ipfs",
+    ]
+  }
 
   if (enable_huhi_referrals) {
     sources += [

@@ -1,11 +1,11 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "huhi/components/huhi_wallet/browser/huhi_wallet_service.h"
+#include "huhi/components/huhi_wallet/huhi_wallet_service.h"
 
-#include "huhi/common/pref_names.h"
+#include "huhi/components/huhi_wallet/pref_names.h"
 #include "chrome/browser/profiles/profile_manager.h"
 #include "chrome/test/base/testing_browser_process.h"
 #include "chrome/test/base/testing_profile_manager.h"

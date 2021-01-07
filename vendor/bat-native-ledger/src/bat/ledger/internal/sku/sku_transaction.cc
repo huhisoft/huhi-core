@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -53,7 +53,7 @@ SKUTransaction::~SKUTransaction() = default;
 void SKUTransaction::Create(
     type::SKUOrderPtr order,
     const std::string& destination,
-    const type::ExternalWallet& wallet,
+    const std::string& wallet_type,
     ledger::ResultCallback callback) {
   if (!order) {
     BLOG(0, "Order is null");
@@ -64,7 +64,7 @@ void SKUTransaction::Create(
   auto transaction = type::SKUTransaction::New();
   transaction->transaction_id = base::GenerateGUID();
   transaction->order_id = order->order_id;
-  transaction->type = GetTransactionTypeFromWalletType(wallet.type);
+  transaction->type = GetTransactionTypeFromWalletType(wallet_type);
   transaction->amount = order->total_amount;
   transaction->status = type::SKUTransactionStatus::CREATED;
 
@@ -73,7 +73,7 @@ void SKUTransaction::Create(
       _1,
       *transaction,
       destination,
-      wallet,
+      wallet_type,
       callback);
 
   ledger_->database()->SaveSKUTransaction(transaction->Clone(), save_callback);
@@ -83,7 +83,7 @@ void SKUTransaction::OnTransactionSaved(
     const type::Result result,
     const type::SKUTransaction& transaction,
     const std::string& destination,
-    const type::ExternalWallet& wallet,
+    const std::string& wallet_type,
     ledger::ResultCallback callback) {
   if (result != type::Result::LEDGER_OK) {
     BLOG(0, "Transaction was not saved");
@@ -101,7 +101,7 @@ void SKUTransaction::OnTransactionSaved(
   ledger_->contribution()->TransferFunds(
       transaction,
       destination,
-      type::ExternalWallet::New(wallet),
+      wallet_type,
       transfer_callback);
 }
 

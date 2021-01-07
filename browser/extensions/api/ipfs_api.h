@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,12 +15,12 @@ class Profile;
 namespace extensions {
 namespace api {
 
-class IpfsGetIPFSResolveMethodListFunction : public ExtensionFunction {
+class IpfsGetResolveMethodListFunction : public ExtensionFunction {
  public:
-  DECLARE_EXTENSION_FUNCTION("ipfs.getIPFSResolveMethodList", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("ipfs.getResolveMethodList", UNKNOWN)
 
  protected:
-  ~IpfsGetIPFSResolveMethodListFunction() override {}
+  ~IpfsGetResolveMethodListFunction() override {}
   ResponseAction Run() override;
 };
 
@@ -30,6 +30,54 @@ class IpfsGetIPFSEnabledFunction : public ExtensionFunction {
 
  protected:
   ~IpfsGetIPFSEnabledFunction() override {}
+  ResponseAction Run() override;
+};
+
+class IpfsGetResolveMethodTypeFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("ipfs.getResolveMethodType", UNKNOWN)
+
+ protected:
+  ~IpfsGetResolveMethodTypeFunction() override {}
+  ResponseAction Run() override;
+};
+
+class IpfsLaunchFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("ipfs.launch", UNKNOWN)
+
+ protected:
+  void OnLaunch(bool);
+  ~IpfsLaunchFunction() override {}
+  ResponseAction Run() override;
+};
+
+class IpfsShutdownFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("ipfs.shutdown", UNKNOWN)
+
+ protected:
+  void OnShutdown(bool);
+  ~IpfsShutdownFunction() override {}
+  ResponseAction Run() override;
+};
+
+class IpfsGetConfigFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("ipfs.getConfig", UNKNOWN)
+
+ protected:
+  void OnGetConfig(bool, const std::string& config);
+  ~IpfsGetConfigFunction() override {}
+  ResponseAction Run() override;
+};
+
+class IpfsGetExecutableAvailableFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("ipfs.getExecutableAvailable", UNKNOWN)
+
+ protected:
+  ~IpfsGetExecutableAvailableFunction() override {}
   ResponseAction Run() override;
 };
 

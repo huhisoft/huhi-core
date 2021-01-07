@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -37,7 +37,7 @@ const localeData = {
     enterCreditCardInfo: 'Enter credit card info',
     addFundsButtonText: 'Add Funds & Purchase',
     addFundsTermsOfSale: 'By clicking Add Funds & Purchase, you agree to ' +
-      '<a href="javascript:void 0">Huhi’s Terms of Sale</a>.',
+      '$1Huhi’s Terms of Sale$2.',
     cardNumber: 'Card number',
     expiration: 'Expiration',
     securityCode: 'Security code',
@@ -51,22 +51,22 @@ const localeData = {
     paymentProcessing: 'Your payment is being processed…',
     confirmButtonText: 'Confirm',
     confirmTermsOfSale: 'By clicking Confirm, you agree ' +
-      '<a href="javascript:void 0">Huhi’s Terms of Sale</a>.',
+      '$1Huhi’s Terms of Sale$2.',
     useCreditCard: 'Use credit card',
     continueWithCreditCard: 'Continue with credit card',
     continueWithCreditCardMessage: 'Make a one-time purchase using a credit card instead.',
     payWithBat: 'Pay with BAT',
     payWithBatTermsOfSale: 'By clicking Pay with BAT, you agree to ' +
-      '<a href="javascript:void 0">Huhi’s Terms of Sale</a>.',
+      '$1Huhi’s Terms of Sale$2.',
     addFundsLinkText: 'Add Funds',
     notEnoughFunds: 'You don\'t have enough tokens to buy this item.',
     useTokenBalance: 'Use your token balance',
     updated: 'Updated',
     enableRewardsTitle: 'Enable Huhi Rewards to continue.',
     enableRewardsText: 'To purchase this item, you need to earn tokens. Turn on Huhi Rewards to earn.',
-    enableRewardsLearnMore: '<a href="javascript:void 0">Learn more.</a>',
+    enableRewardsLearnMore: 'Learn more.',
     enableRewardsButtonText: 'Enable Huhi Rewards',
-    enableRewardsTerms: 'By clicking Enable Huhi Rewards, you agree to <a href="javascript:void 0">Huhi Reward’s Terms of Service</a>.'
+    enableRewardsTerms: 'By clicking Enable Huhi Rewards, you agree to $1Huhi Reward’s Terms of Service$2.'
   },
   get (key: string) {
     return this.strings[key] || 'MISSING'

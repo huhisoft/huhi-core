@@ -1,17 +1,24 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "huhi/browser/browsing_data/huhi_browsing_data_remover_delegate.h"
 
+#include <memory>
 #include <utility>
 
 #include "huhi/components/content_settings/core/browser/huhi_content_settings_pref_provider.h"
 #include "huhi/components/content_settings/core/browser/huhi_content_settings_utils.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/profiles/profile.h"
+#include "chrome/common/buildflags.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
+
+#if BUILDFLAG(ENABLE_EXTENSIONS)
+#include "huhi/common/extensions/api/huhi_today.h"
+#include "extensions/browser/event_router.h"
+#endif
 
 HuhiBrowsingDataRemoverDelegate::HuhiBrowsingDataRemoverDelegate(
     content::BrowserContext* browser_context)
@@ -39,6 +46,20 @@ void HuhiBrowsingDataRemoverDelegate::RemoveEmbedderData(
   // shields settings with non-empty resource ids.
   if (remove_mask & DATA_TYPE_CONTENT_SETTINGS)
     ClearShieldsSettings(delete_begin, delete_end);
+#if BUILDFLAG(ENABLE_EXTENSIONS)
+  if (remove_mask & DATA_TYPE_HISTORY) {
+    auto* event_router = extensions::EventRouter::Get(profile_);
+    if (event_router) {
+      std::unique_ptr<base::ListValue> args(
+          extensions::api::huhi_today::OnClearHistory::Create().release());
+      std::unique_ptr<extensions::Event> event(new extensions::Event(
+          extensions::events::HUHI_START,
+          extensions::api::huhi_today::OnClearHistory::kEventName,
+          std::move(args)));
+      event_router->BroadcastEvent(std::move(event));
+    }
+  }
+#endif
 }
 
 void HuhiBrowsingDataRemoverDelegate::ClearShieldsSettings(

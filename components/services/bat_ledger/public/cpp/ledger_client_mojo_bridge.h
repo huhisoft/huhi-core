@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -98,27 +98,12 @@ class LedgerClientMojoBridge :
       const std::string& publisher_key,
       const std::string& publisher_name) override;
 
-  void GetExternalWallets(GetExternalWalletsCallback callback) override;
-
-  void SaveExternalWallet(const std::string& wallet_type,
-                          ledger::type::ExternalWalletPtr wallet) override;
+  void GetLegacyWallet(GetLegacyWalletCallback callback) override;
 
   void ShowNotification(
       const std::string& type,
       const std::vector<std::string>& args,
       ShowNotificationCallback callback) override;
-
-  void SetTransferFee(
-      const std::string& wallet_type,
-      ledger::type::TransferFeePtr transfer_fee) override;
-
-  void GetTransferFees(
-      const std::string& wallet_type,
-      GetTransferFeesCallback callback) override;
-
-  void RemoveTransferFee(
-      const std::string& wallet_type,
-      const std::string& id) override;
 
   void GetClientInfo(
       GetClientInfoCallback callback) override;
@@ -147,6 +132,15 @@ class LedgerClientMojoBridge :
   void WalletDisconnected(const std::string& wallet_type) override;
 
   void DeleteLog(DeleteLogCallback callback) override;
+
+  void SetEncryptedStringState(
+      const std::string& name,
+      const std::string& value,
+      SetEncryptedStringStateCallback callback) override;
+
+  void GetEncryptedStringState(
+      const std::string& name,
+      GetEncryptedStringStateCallback callback) override;
 
  private:
   // workaround to pass base::OnceCallback into std::bind

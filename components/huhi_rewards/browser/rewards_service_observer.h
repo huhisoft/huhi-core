@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -21,10 +21,6 @@ class RewardsServiceObserver : public base::CheckedObserver {
  public:
   ~RewardsServiceObserver() override {}
 
-  virtual void OnWalletInitialized(
-      RewardsService* rewards_service,
-      const ledger::type::Result result) {}
-
   virtual void OnFetchPromotions(
       RewardsService* rewards_service,
       const ledger::type::Result result,
@@ -38,9 +34,6 @@ class RewardsServiceObserver : public base::CheckedObserver {
       RewardsService* rewards_service,
       const ledger::type::Result result,
       ledger::type::PromotionPtr promotion) {}
-
-  virtual void OnContentSiteUpdated(
-      RewardsService* rewards_service) {}
 
   virtual void OnExcludedSitesChanged(
       RewardsService* rewards_service,
@@ -58,10 +51,6 @@ class RewardsServiceObserver : public base::CheckedObserver {
   virtual void OnAdsEnabled(
       huhi_rewards::RewardsService* rewards_service,
       bool ads_enabled) {}
-
-  virtual void OnRewardsMainEnabled(
-      huhi_rewards::RewardsService* rewards_service,
-      bool rewards_main_enabled) {}
 
   virtual void OnPendingContributionSaved(
       huhi_rewards::RewardsService* rewards_service,
@@ -102,7 +91,7 @@ class RewardsServiceObserver : public base::CheckedObserver {
   // RewardsServiceObserver should not be used to return responses to the
   // caller. Method calls on RewardsService should use callbacks to return
   // responses. The observer is primarily for broadcast notifications of events
-  // from the the rewards service. OnWalletInitialized, OnContentSiteUpdated,
+  // from the rewards service. OnPublisherInfoUpdated,
   // etc... are examples of events that all observers will be interested in.
 };
 

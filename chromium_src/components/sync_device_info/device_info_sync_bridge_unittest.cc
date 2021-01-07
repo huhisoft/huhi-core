@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -9,17 +9,6 @@
 
 namespace syncer {
 namespace {
-
-std::auto_ptr<syncer::DeviceInfo> CreateStubDeviceInfoByGuid(
-    const std::string& guid) {
-  base::SysInfo::HardwareInfo hardware_info;
-  std::auto_ptr<syncer::DeviceInfo> device_info(new syncer::DeviceInfo(
-      guid, "", "", "", sync_pb::SyncEnums_DeviceType_TYPE_CROS, "",
-      hardware_info.manufacturer, hardware_info.model, base::Time(),
-      base::TimeDelta(), false,
-      base::Optional<syncer::DeviceInfo::SharingInfo>(), ""));
-  return device_info;
-}
 
 TEST_F(DeviceInfoSyncBridgeTest, LocalDelete) {
   InitializeAndMergeInitialData(SyncMode::kFull);
@@ -42,16 +31,13 @@ TEST_F(DeviceInfoSyncBridgeTest, LocalDelete) {
 
   bool deleted_device_info_sent = false;
   base::RunLoop loop;
-
-  auto local_device_info = CreateStubDeviceInfoByGuid(kLocalGuid);
   bridge()->DeleteDeviceInfo(
-      local_device_info.get(),
-      base::BindOnce(
-          [](base::RunLoop* loop, bool* deleted_device_info_sent) {
-            *deleted_device_info_sent = true;
-            loop->Quit();
-          },
-          &loop, &deleted_device_info_sent));
+      kLocalGuid, base::BindOnce(
+                      [](base::RunLoop* loop, bool* deleted_device_info_sent) {
+                        *deleted_device_info_sent = true;
+                        loop->Quit();
+                      },
+                      &loop, &deleted_device_info_sent));
   loop.Run();
 
   EXPECT_TRUE(deleted_device_info_sent);
@@ -82,9 +68,8 @@ TEST_F(DeviceInfoSyncBridgeTest, RemoteDelete) {
 
   bool deleted_device_info_sent = false;
   base::RunLoop loop;
-  auto local_device_info = CreateStubDeviceInfoByGuid(specifics.cache_guid());
   bridge()->DeleteDeviceInfo(
-      local_device_info.get(),
+      specifics.cache_guid(),
       base::BindOnce(
           [](base::RunLoop* loop, bool* deleted_device_info_sent) {
             *deleted_device_info_sent = true;

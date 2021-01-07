@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -25,6 +25,10 @@
 
 class GreaselionServiceTest;
 
+namespace base {
+class Version;
+}
+
 using huhi_component_updater::LocalDataFilesObserver;
 using huhi_component_updater::LocalDataFilesService;
 
@@ -38,6 +42,11 @@ enum GreaselionPreconditionValue { kMustBeFalse, kMustBeTrue, kAny };
 struct GreaselionPreconditions {
   GreaselionPreconditionValue rewards_enabled = kAny;
   GreaselionPreconditionValue twitter_tips_enabled = kAny;
+  GreaselionPreconditionValue reddit_tips_enabled = kAny;
+  GreaselionPreconditionValue github_tips_enabled = kAny;
+  GreaselionPreconditionValue auto_contribution_enabled = kAny;
+  GreaselionPreconditionValue ads_enabled = kAny;
+  GreaselionPreconditionValue supports_minimum_huhi_version = kAny;
 };
 
 class GreaselionRule {
@@ -47,15 +56,21 @@ class GreaselionRule {
              base::ListValue* urls_value,
              base::ListValue* scripts_value,
              const std::string& run_at_value,
+             const std::string& minimum_huhi_version_value,
+             const base::FilePath& messages_value,
              const base::FilePath& resource_dir);
   ~GreaselionRule();
 
-  bool Matches(GreaselionFeatures state) const;
+  bool Matches(
+      GreaselionFeatures state, const base::Version& browser_version) const;
   std::string name() const { return name_; }
   std::vector<std::string> url_patterns() const { return url_patterns_; }
   std::vector<base::FilePath> scripts() const { return scripts_; }
   std::string run_at() const {
     return run_at_;
+  }
+  base::FilePath messages() const {
+    return messages_;
   }
   bool has_unknown_preconditions() const { return has_unknown_preconditions_; }
 
@@ -69,6 +84,8 @@ class GreaselionRule {
   std::vector<std::string> url_patterns_;
   std::vector<base::FilePath> scripts_;
   std::string run_at_;
+  std::string minimum_huhi_version_;
+  base::FilePath messages_;
   GreaselionPreconditions preconditions_;
   bool has_unknown_preconditions_ = false;
   base::WeakPtrFactory<GreaselionRule> weak_factory_;

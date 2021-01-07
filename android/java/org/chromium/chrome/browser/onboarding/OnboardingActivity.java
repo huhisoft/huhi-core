@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+ * Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  */
@@ -9,12 +9,13 @@ package org.chromium.chrome.browser.onboarding;
 
 import android.app.Activity;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.chromium.chrome.R;
 import org.chromium.base.ApplicationStatus;
+import org.chromium.chrome.R;
 import org.chromium.chrome.browser.app.HuhiActivity;
-import org.chromium.chrome.browser.onboarding.NonSwipeableViewPager;
+import org.chromium.chrome.browser.custom_layout.NonSwipeableViewPager;
 import org.chromium.chrome.browser.onboarding.OnboardingPrefManager;
 import org.chromium.chrome.browser.onboarding.OnboardingViewPagerAdapter;
 

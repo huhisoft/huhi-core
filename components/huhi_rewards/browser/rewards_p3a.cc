@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,6 +10,7 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/values.h"
 #include "huhi/components/huhi_ads/common/pref_names.h"
+#include "bat/ads/pref_names.h"
 #include "huhi/components/huhi_rewards/common/pref_names.h"
 #include "components/prefs/pref_service.h"
 
@@ -95,43 +96,23 @@ void RecordAdsState(AdsP3AState state) {
 
 void UpdateAdsP3AOnPreferenceChange(PrefService *prefs,
                                     const std::string& pref) {
-  using huhi_rewards::AdsP3AState;
-  const bool rewards_enabled =
-      prefs->GetBoolean(huhi_rewards::prefs::kEnabled);
-  const bool ads_enabled = prefs->GetBoolean(huhi_ads::prefs::kEnabled);
-  if (pref == huhi_ads::prefs::kEnabled) {
+  const bool ads_enabled = prefs->GetBoolean(ads::prefs::kEnabled);
+  if (pref == ads::prefs::kEnabled) {
     if (ads_enabled) {
       huhi_rewards::RecordAdsState(AdsP3AState::kAdsEnabled);
       prefs->SetBoolean(huhi_ads::prefs::kAdsWereDisabled, false);
     } else {
       // Apparently, the pref was disabled.
-      // TODO(ifremov): DCHECK(rewards_enabled)?
       huhi_rewards::RecordAdsState(
-          rewards_enabled ? AdsP3AState::kAdsEnabledThenDisabledRewardsOn :
-                            AdsP3AState::kAdsEnabledThenDisabledRewardsOff);
+          AdsP3AState::kAdsEnabledThenDisabledRewardsOn);
       prefs->SetBoolean(huhi_ads::prefs::kAdsWereDisabled, true);
-    }
-  } else if (pref == huhi_rewards::prefs::kEnabled) {
-    // Rewards pref was changed.
-    if (prefs->GetBoolean(huhi_ads::prefs::kAdsWereDisabled)) {
-      DCHECK(!ads_enabled);
-      huhi_rewards::RecordAdsState(
-          rewards_enabled ? AdsP3AState::kAdsEnabledThenDisabledRewardsOn :
-                            AdsP3AState::kAdsEnabledThenDisabledRewardsOff);
-    } else if (!rewards_enabled) {
-      // Ads state had never been disabled, but the user has toggled rewards
-      // off.
-      huhi_rewards::RecordAdsState(AdsP3AState::kRewardsDisabled);
-    } else {
-      RecordAdsState(ads_enabled ? AdsP3AState::kAdsEnabled :
-                                   AdsP3AState::kAdsDisabled);
     }
   }
 }
 
 void MaybeRecordInitialAdsP3AState(PrefService* prefs) {
   if (!prefs->GetBoolean(huhi_ads::prefs::kHasAdsP3AState)) {
-    const bool ads_state = prefs->GetBoolean(huhi_ads::prefs::kEnabled);
+    const bool ads_state = prefs->GetBoolean(ads::prefs::kEnabled);
     RecordAdsState(ads_state ? AdsP3AState::kAdsEnabled
                              : AdsP3AState::kAdsDisabled);
     prefs->SetBoolean(huhi_ads::prefs::kHasAdsP3AState, true);

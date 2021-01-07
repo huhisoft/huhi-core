@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -20,7 +20,6 @@ import {
 } from './style'
 import { StyledTitleTab } from '../widgetTitleTab'
 import HuhiTogetherIcon from './assets/huhi-together-icon'
-import getRandomBase64 from '../../../getRandomBytes'
 
 interface Props {
   showContent: boolean
@@ -61,8 +60,7 @@ class Together extends React.PureComponent<Props, {}> {
 
   shouldCreateCall = (event: any) => {
     event.preventDefault()
-    const roomId = getRandomBase64(32)
-    window.open(`https://together.huhisoft.com/${roomId}`, '_self', 'noopener')
+    window.open(`https://together.hnq.vn/widget`, '_self', 'noopener')
   }
 
   render () {
@@ -89,7 +87,7 @@ class Together extends React.PureComponent<Props, {}> {
                 <PrivacyLink
                   rel={'noopener'}
                   target={'_blank'}
-                  href={'https://huhisoft.com/privacy/#huhi-together-learn'}
+                  href={'https://hnq.vn/privacy/#huhi-together-learn'}
                 >
                   {getLocale('togetherWidgetAboutData')}
                 </PrivacyLink>

@@ -304,6 +304,8 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
         </message>
         </if>
 
+      <if expr="is_macosx">
+        </if>
     </messages>
   </release>
 </grit>

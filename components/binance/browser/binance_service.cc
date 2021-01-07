@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -21,7 +21,9 @@
 #include "base/token.h"
 #include "huhi/common/pref_names.h"
 #include "huhi/components/binance/browser/binance_json_parser.h"
+#include "huhi/components/binance/browser/regions.h"
 #include "huhi/components/ntp_widget_utils/browser/ntp_widget_utils_oauth.h"
+#include "huhi/components/ntp_widget_utils/browser/ntp_widget_utils_region.h"
 #include "components/country_codes/country_codes.h"
 #include "components/os_crypt/os_crypt.h"
 #include "components/prefs/pref_service.h"
@@ -32,6 +34,7 @@
 #include "net/base/url_util.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/cpp/simple_url_loader.h"
+#include "services/network/public/mojom/fetch_api.mojom-shared.h"
 
 namespace {
 
@@ -125,6 +128,13 @@ bool BinanceService::GetAccessToken(GetAccessTokenCallback callback) {
       base_url, "POST", url.query(), std::move(internal_callback), true, true);
 }
 
+bool BinanceService::IsSupportedRegion() {
+  PrefService* prefs = user_prefs::UserPrefs::Get(context_);
+  bool is_supported = ntp_widget_utils::IsRegionSupported(
+      prefs, ::binance::unsupported_regions, false);
+  return is_supported;
+}
+
 bool BinanceService::GetAccountBalances(GetAccountBalancesCallback callback) {
   auto internal_callback = base::BindOnce(&BinanceService::OnGetAccountBalances,
       base::Unretained(this), std::move(callback));
@@ -137,7 +147,7 @@ bool BinanceService::GetAccountBalances(GetAccountBalancesCallback callback) {
 void BinanceService::OnGetAccountBalances(GetAccountBalancesCallback callback,
     const int status, const std::string& body,
     const std::map<std::string, std::string>& headers) {
-  std::map<std::string, std::vector<std::string>> balances;
+  BinanceAccountBalances balances;
 
   bool success = status >= 200 && status <= 299;
   if (success) {
@@ -172,7 +182,7 @@ bool BinanceService::OAuthRequest(const GURL &url,
                         net::LOAD_DISABLE_CACHE;
 
   if (!send_save_cookies) {
-    request->load_flags |= net::LOAD_DO_NOT_SEND_COOKIES;
+    request->credentials_mode = network::mojom::CredentialsMode::kOmit;
     request->load_flags |= net::LOAD_DO_NOT_SAVE_COOKIES;
   }
 
@@ -356,7 +366,7 @@ void BinanceService::OnGetCoinNetworks(
   GetCoinNetworksCallback callback,
   const int status, const std::string& body,
   const std::map<std::string, std::string>& headers) {
-  std::map<std::string, std::string> networks;
+  BinanceCoinNetworks networks;
   if (status >= 200 && status <= 299) {
     BinanceJSONParser::GetCoinNetworksFromJSON(body, &networks);
   }
@@ -430,7 +440,7 @@ bool BinanceService::GetConvertAssets(GetConvertAssetsCallback callback) {
 void BinanceService::OnGetConvertAssets(GetConvertAssetsCallback callback,
     const int status, const std::string& body,
     const std::map<std::string, std::string>& headers) {
-  std::map<std::string, std::vector<std::string>> assets;
+  BinanceConvertAsserts assets;
 
   if (status >= 200 && status <= 299) {
     BinanceJSONParser::GetConvertAssetsFromJSON(body, &assets);

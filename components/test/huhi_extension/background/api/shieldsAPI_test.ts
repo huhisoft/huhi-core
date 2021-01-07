@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -18,7 +18,7 @@ describe('Shields API', () => {
 
     it('resolves the returned promise with shield settings for the tab data', (cb) => {
       const tab: chrome.tabs.Tab = {
-        url: 'https://www.huhisoft.com/serg/dont/know/pokemon',
+        url: 'https://www.hnq.vn/serg/dont/know/pokemon',
         id: 5,
         index: 1,
         pinned: false,
@@ -34,9 +34,9 @@ describe('Shields API', () => {
       expect.assertions(1)
       shieldsAPI.getShieldSettingsForTabData(tab).then((data) => {
         expect(data).toEqual({
-          url: 'https://www.huhisoft.com/serg/dont/know/pokemon',
-          origin: 'https://www.huhisoft.com',
-          hostname: 'www.huhisoft.com',
+          url: 'https://www.hnq.vn/serg/dont/know/pokemon',
+          origin: 'https://www.hnq.vn',
+          hostname: 'www.hnq.vn',
           huhiShields: 'block',
           ads: 'block',
           trackers: 'block',
@@ -101,8 +101,8 @@ describe('Shields API', () => {
         cosmeticFiltering: true,
         firstPartyCosmeticFiltering: false,
         httpUpgradableResources: 'block',
-        origin: 'https://www.huhisoft.com',
-        hostname: 'www.huhisoft.com',
+        origin: 'https://www.hnq.vn',
+        hostname: 'www.hnq.vn',
         id: 2,
         javascript: 'block',
         fingerprinting: 'block',
@@ -115,7 +115,7 @@ describe('Shields API', () => {
           expect(spy).toBeCalledTimes(1)
           expect(spy.mock.calls[0][0]).toEqual({
             ...details,
-            url: 'https://www.huhisoft.com/test',
+            url: 'https://www.hnq.vn/test',
             huhiShields: 'block'
           })
           cb()
@@ -135,7 +135,7 @@ describe('Shields API', () => {
       spy.mockRestore()
     })
     it('calls chrome.huhiShields.setAdControlTypeAsync with the correct args', () => {
-      shieldsAPI.setAllowAds('https://www.huhisoft.com', 'block')
+      shieldsAPI.setAllowAds('https://www.hnq.vn', 'block')
         .catch(() => {
           expect(true).toBe(false)
         })
@@ -143,7 +143,7 @@ describe('Shields API', () => {
       const arg1 = spy.mock.calls[0][1]
       expect.assertions(2)
       expect(arg0).toEqual('block')
-      expect(arg1).toEqual('https://www.huhisoft.com')
+      expect(arg1).toEqual('https://www.hnq.vn')
     })
   })
 
@@ -156,7 +156,7 @@ describe('Shields API', () => {
       spy.mockRestore()
     })
     it('calls chrome.huhiShields.setHTTPSEverywhereEnabledAsync with the correct args', () => {
-      shieldsAPI.setAllowHTTPUpgradableResources('https://www.huhisoft.com', 'block')
+      shieldsAPI.setAllowHTTPUpgradableResources('https://www.hnq.vn', 'block')
         .catch(() => {
           expect(true).toBe(false)
         })
@@ -164,7 +164,7 @@ describe('Shields API', () => {
       const arg1 = spy.mock.calls[0][1]
       expect.assertions(2)
       expect(arg0).toEqual(true)
-      expect(arg1).toEqual('https://www.huhisoft.com')
+      expect(arg1).toEqual('https://www.hnq.vn')
     })
   })
 
@@ -177,7 +177,7 @@ describe('Shields API', () => {
       spy.mockRestore()
     })
     it('calls chrome.huhiShields.setNoScriptControlTypeAsync with the correct args', () => {
-      shieldsAPI.setAllowJavaScript('https://www.huhisoft.com', 'block')
+      shieldsAPI.setAllowJavaScript('https://www.hnq.vn', 'block')
         .catch(() => {
           expect(true).toBe(false)
         })
@@ -185,7 +185,7 @@ describe('Shields API', () => {
       const arg1 = spy.mock.calls[0][1]
       expect.assertions(2)
       expect(arg0).toEqual('block')
-      expect(arg1).toEqual('https://www.huhisoft.com')
+      expect(arg1).toEqual('https://www.hnq.vn')
     })
   })
 
@@ -198,7 +198,7 @@ describe('Shields API', () => {
       spy.mockRestore()
     })
     it('calls chrome.huhiShields.setFingerprintingControlTypeAsync with the correct args', () => {
-      shieldsAPI.setAllowFingerprinting('https://www.huhisoft.com', 'block')
+      shieldsAPI.setAllowFingerprinting('https://www.hnq.vn', 'block')
         .catch(() => {
           expect(true).toBe(false)
         })
@@ -206,7 +206,7 @@ describe('Shields API', () => {
       const arg1 = spy.mock.calls[0][1]
       expect.assertions(2)
       expect(arg0).toEqual('block')
-      expect(arg1).toEqual('https://www.huhisoft.com')
+      expect(arg1).toEqual('https://www.hnq.vn')
     })
   })
 
@@ -219,7 +219,7 @@ describe('Shields API', () => {
       spy.mockRestore()
     })
     it('calls chrome.huhiShields.setCookieControlTypeAsync with the correct args', () => {
-      shieldsAPI.setAllowCookies('https://www.huhisoft.com', 'block')
+      shieldsAPI.setAllowCookies('https://www.hnq.vn', 'block')
         .catch(() => {
           expect(true).toBe(false)
         })
@@ -227,7 +227,7 @@ describe('Shields API', () => {
       const arg1 = spy.mock.calls[0][1]
       expect.assertions(2)
       expect(arg0).toEqual('block')
-      expect(arg1).toEqual('https://www.huhisoft.com')
+      expect(arg1).toEqual('https://www.hnq.vn')
     })
   })
 

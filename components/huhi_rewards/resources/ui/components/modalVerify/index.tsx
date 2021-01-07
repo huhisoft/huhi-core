@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -22,7 +22,8 @@ import {
   StyledLeftSide,
   StyledRightSide,
   StyledContent,
-  StyledNote
+  StyledNote,
+  NoteText
 } from './style'
 
 import {
@@ -32,6 +33,7 @@ import {
   RewardsCheckIcon
 } from 'huhi-ui/components/icons'
 import { Modal } from 'huhi-ui/components'
+import { getLocaleWithTag } from '../../../../../common/locale'
 
 export interface Props {
   onVerifyClick: () => void
@@ -69,14 +71,21 @@ export default class ModalVerify extends React.PureComponent<Props, {}> {
     </>
   )
 
-  getFooter = () => (
-    <StyledFooter>
-      <span dangerouslySetInnerHTML={{ __html: getLocale('walletVerificationFooter') }} />
-      <StyledFooterIcon>
-        <UpholdColorIcon />
-      </StyledFooterIcon>
-    </StyledFooter>
-  )
+  getFooter = () => {
+    const tags = getLocaleWithTag('walletVerificationFooter')
+    return (
+      <StyledFooter>
+        <span>
+          {tags.beforeTag}
+          <b>{tags.duringTag}</b>
+          {tags.afterTag}
+        </span>
+        <StyledFooterIcon>
+          <UpholdColorIcon />
+        </StyledFooterIcon>
+      </StyledFooter>
+    )
+  }
 
   render () {
     const {
@@ -113,6 +122,9 @@ export default class ModalVerify extends React.PureComponent<Props, {}> {
               </StyledNote>
             </StyledRightSide>
           </StyledContent>
+          <NoteText>
+            {getLocale('walletVerificationNote3')}
+          </NoteText>
         </StyledWrapper>
       </Modal>
     )

@@ -1,5 +1,5 @@
-/*  Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/*  Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -56,37 +56,37 @@ TEST_F(HuhiContentSettingsUtilsTest,
   // Wildcard scheme, no port.
   EXPECT_EQ(base::nullopt,
             ConvertPatternToWildcardSchemeAndPort(
-                ContentSettingsPattern::FromString("*://huhisoft.com/*")));
+                ContentSettingsPattern::FromString("*://hnq.vn/*")));
   EXPECT_EQ(base::nullopt,
             ConvertPatternToWildcardSchemeAndPort(
-                ContentSettingsPattern::FromString("*://huhisoft.com:*/")));
+                ContentSettingsPattern::FromString("*://hnq.vn:*/")));
 
   // Wildcard scheme, has port.
   auto pattern = ConvertPatternToWildcardSchemeAndPort(
-      ContentSettingsPattern::FromString("*://huhisoft.com:8080/*"));
+      ContentSettingsPattern::FromString("*://hnq.vn:8080/*"));
   EXPECT_NE(base::nullopt, pattern);
-  EXPECT_EQ(pattern->ToString(), "huhisoft.com");
-  EXPECT_TRUE(pattern->Matches(GURL("http://huhisoft.com:80/path1")));
-  EXPECT_TRUE(pattern->Matches(GURL("https://huhisoft.com/path2")));
-  EXPECT_FALSE(pattern->Matches(GURL("http://huhisoft.com:8080")));
+  EXPECT_EQ(pattern->ToString(), "hnq.vn");
+  EXPECT_TRUE(pattern->Matches(GURL("http://hnq.vn:80/path1")));
+  EXPECT_TRUE(pattern->Matches(GURL("https://hnq.vn/path2")));
+  EXPECT_FALSE(pattern->Matches(GURL("http://hnq.vn:8080")));
   pattern.reset();
 
   // Scheme, no port.
   pattern = ConvertPatternToWildcardSchemeAndPort(
-      ContentSettingsPattern::FromString("http://huhisoft.com/"));
+      ContentSettingsPattern::FromString("http://hnq.vn/"));
   EXPECT_NE(base::nullopt, pattern);
-  EXPECT_EQ(pattern->ToString(), "huhisoft.com");
-  EXPECT_TRUE(pattern->Matches(GURL("ftp://huhisoft.com:80/path1")));
-  EXPECT_TRUE(pattern->Matches(GURL("https://huhisoft.com/path2")));
-  EXPECT_FALSE(pattern->Matches(GURL("http://huhisoft.com:8080")));
+  EXPECT_EQ(pattern->ToString(), "hnq.vn");
+  EXPECT_TRUE(pattern->Matches(GURL("ftp://hnq.vn:80/path1")));
+  EXPECT_TRUE(pattern->Matches(GURL("https://hnq.vn/path2")));
+  EXPECT_FALSE(pattern->Matches(GURL("http://hnq.vn:8080")));
   pattern.reset();
 
   // Scheme and port.
   pattern = ConvertPatternToWildcardSchemeAndPort(
-      ContentSettingsPattern::FromString("https://huhisoft.com:56558/"));
+      ContentSettingsPattern::FromString("https://hnq.vn:56558/"));
   EXPECT_NE(base::nullopt, pattern);
-  EXPECT_EQ(pattern->ToString(), "huhisoft.com");
-  EXPECT_TRUE(pattern->Matches(GURL("wss://huhisoft.com:80/path1")));
-  EXPECT_TRUE(pattern->Matches(GURL("https://huhisoft.com/path2")));
-  EXPECT_FALSE(pattern->Matches(GURL("http://huhisoft.com:8080")));
+  EXPECT_EQ(pattern->ToString(), "hnq.vn");
+  EXPECT_TRUE(pattern->Matches(GURL("wss://hnq.vn:80/path1")));
+  EXPECT_TRUE(pattern->Matches(GURL("https://hnq.vn/path2")));
+  EXPECT_FALSE(pattern->Matches(GURL("http://hnq.vn:8080")));
 }

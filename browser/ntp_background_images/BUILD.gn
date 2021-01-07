@@ -8,15 +8,16 @@ source_set("ntp_background_images") {
 
   deps = [
     "//base",
-    "//huhi/components/ntp_background_images/browser",
-    "//huhi/components/ntp_background_images/common",
+    "//huhi/components/huhi_stats/browser",
     "//huhi/common",
     "//huhi/components/huhi_ads/browser",
+    "//huhi/components/ntp_background_images/browser",
+    "//huhi/components/ntp_background_images/common",
     "//chrome/common",
-    "//content/public/browser",
     "//components/keyed_service/content",
-    "//components/prefs",
     "//components/pref_registry",
+    "//components/prefs",
+    "//content/public/browser",
   ]
 
   if (is_android) {

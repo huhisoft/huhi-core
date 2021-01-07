@@ -1,8 +1,6 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/.
- * @TODO HuyNQ link appstore, ch play, link share social media
- * */
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import AppStoreFavicon from '../../img/newtab/defaultTopSitesIcon/appstore.png'
 import HuhiFavicon from '../../img/newtab/defaultTopSitesIcon/huhi.png'
@@ -14,13 +12,13 @@ import YouTubeFavicon from '../../img/newtab/defaultTopSitesIcon/youtube.png'
 export const defaultTopSitesData = [
   {
     name: 'App Store',
-    url: 'https://itunes.apple.com/app/huhi-browser/id20061990?mt=8',
+    url: 'https://itunes.apple.com/app/huhi-browser-fast-adblocker/id1052879175?mt=8',
     favicon: AppStoreFavicon,
     background: 'rgba(255,255,255,0.8)'
   },
   {
     name: 'Huhi Software',
-    url: 'https://huhisoft.com',
+    url: 'https://hnq.vn',
     favicon: HuhiFavicon,
     background: 'rgba(255,255,255,0.8)'
   },
@@ -44,7 +42,7 @@ export const defaultTopSitesData = [
   },
   {
     name: 'YouTube',
-    url: 'https://www.youtube.com/huhibrowser',
+    url: 'https://www.youtube.com/huhisoftware',
     favicon: YouTubeFavicon,
     background: 'rgba(255,255,255,0.8)'
   }

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,8 +15,6 @@ import androidx.annotation.Nullable;
 import org.chromium.base.ApiCompatibilityUtils;
 import org.chromium.base.supplier.Supplier;
 import org.chromium.chrome.R;
-import org.chromium.chrome.browser.feed.action.FeedActionHandler;
-import org.chromium.chrome.browser.feed.library.api.host.action.ActionApi;
 import org.chromium.chrome.browser.feed.shared.FeedSurfaceDelegate;
 import org.chromium.chrome.browser.native_page.NativePageNavigationDelegate;
 import org.chromium.chrome.browser.ntp.SnapScrollHelper;
@@ -37,13 +35,13 @@ public class HuhiFeedSurfaceCoordinator extends FeedSurfaceCoordinator {
     public HuhiFeedSurfaceCoordinator(Activity activity, SnackbarManager snackbarManager,
             TabModelSelector tabModelSelector, Supplier<Tab> tabProvider,
             @Nullable SnapScrollHelper snapScrollHelper, @Nullable View ntpHeader,
-            @Nullable SectionHeaderView sectionHeaderView, FeedActionHandler.Options actionOptions,
+            @Nullable SectionHeaderView sectionHeaderView, FeedV1ActionOptions actionOptions,
             boolean showDarkBackground, FeedSurfaceDelegate delegate,
             @Nullable NativePageNavigationDelegate pageNavigationDelegate, Profile profile,
-            boolean isPlaceholderShown, BottomSheetController bottomSheetController) {
+            boolean isPlaceholderRequested, BottomSheetController bottomSheetController) {
         super(activity, snackbarManager, tabModelSelector, tabProvider, snapScrollHelper, ntpHeader,
                 sectionHeaderView, actionOptions, showDarkBackground, delegate,
-                pageNavigationDelegate, profile, isPlaceholderShown, bottomSheetController);
+                pageNavigationDelegate, profile, isPlaceholderRequested, bottomSheetController);
     }
 
     @Override

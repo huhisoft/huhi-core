@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -18,7 +18,6 @@
 #include "bat/ledger/internal/contribution/contribution_util.h"
 #include "bat/ledger/internal/ledger_impl.h"
 #include "bat/ledger/internal/publisher/publisher_status_helper.h"
-#include "bat/ledger/internal/uphold/uphold.h"
 #include "bat/ledger/internal/wallet/wallet_balance.h"
 
 using std::placeholders::_1;
@@ -63,21 +62,18 @@ Contribution::Contribution(LedgerImpl* ledger) :
     unverified_(std::make_unique<Unverified>(ledger)),
     unblinded_(std::make_unique<Unblinded>(ledger)),
     sku_(std::make_unique<ContributionSKU>(ledger)),
-    uphold_(std::make_unique<uphold::Uphold>(ledger)),
     monthly_(std::make_unique<ContributionMonthly>(ledger)),
     ac_(std::make_unique<ContributionAC>(ledger)),
     tip_(std::make_unique<ContributionTip>(ledger)),
     anon_card_(std::make_unique<ContributionAnonCard>(ledger)) {
-  DCHECK(ledger_ && uphold_);
-  external_wallet_ = std::make_unique<ContributionExternalWallet>(
-      ledger,
-      uphold_.get());
+  DCHECK(ledger_);
+  external_wallet_ = std::make_unique<ContributionExternalWallet>(ledger);
 }
 
 Contribution::~Contribution() = default;
 
 void Contribution::Initialize() {
-  uphold_->Initialize();
+  ledger_->uphold()->Initialize();
 
   CheckContributionQueue();
   CheckNotCompletedContributions();
@@ -154,10 +150,6 @@ void Contribution::ResetReconcileStamp() {
 void Contribution::StartMonthlyContribution() {
   const auto reconcile_stamp = ledger_->state()->GetReconcileStamp();
   ResetReconcileStamp();
-
-  if (!ledger_->state()->GetRewardsMainEnabled()) {
-    return;
-  }
 
   BLOG(1, "Staring monthly contribution");
 
@@ -355,7 +347,7 @@ void Contribution::CreateNewEntry(
   }
 
   BLOG(1, "Creating contribution(" << wallet_type << ") for " <<
-      queue->amount << " type " << queue->type);
+      contribution->amount << " type " << queue->type);
 
   type::ContributionPublisherList publisher_list;
   for (const auto& item : queue_publishers) {
@@ -413,15 +405,12 @@ void Contribution::OnEntrySaved(
         contribution_id,
         result_callback);
   } else if (wallet_type == constant::kWalletAnonymous) {
-    auto wallet = type::ExternalWallet::New();
-    wallet->type = wallet_type;
-
     auto result_callback = std::bind(&Contribution::Result,
       this,
       _1,
       contribution_id);
 
-    sku_->AnonUserFunds(contribution_id, std::move(wallet), result_callback);
+    sku_->AnonUserFunds(contribution_id, wallet_type, result_callback);
   } else if (wallet_type == constant::kWalletUphold) {
     auto result_callback = std::bind(&Contribution::Result,
         this,
@@ -513,23 +502,17 @@ void Contribution::Process(
 void Contribution::TransferFunds(
     const type::SKUTransaction& transaction,
     const std::string& destination,
-    type::ExternalWalletPtr wallet,
+    const std::string& wallet_type,
     client::TransactionCallback callback) {
-  if (!wallet) {
-     BLOG(0, "Wallet is null");
-    callback(type::Result::LEDGER_ERROR, "");
-    return;
-  }
-
-  if (wallet->type == constant::kWalletUphold) {
-    uphold_->TransferFunds(
+  if (wallet_type == constant::kWalletUphold) {
+    ledger_->uphold()->TransferFunds(
         transaction.amount,
         destination,
         callback);
     return;
   }
 
-  if (wallet->type == constant::kWalletAnonymous) {
+  if (wallet_type == constant::kWalletAnonymous) {
     anon_card_->SendTransaction(
         transaction.amount,
         transaction.order_id,
@@ -538,20 +521,20 @@ void Contribution::TransferFunds(
     return;
   }
 
-  if (wallet->type == constant::kWalletUnBlinded) {
+  if (wallet_type == constant::kWalletUnBlinded) {
     sku_->Merchant(transaction, callback);
     return;
   }
 
   NOTREACHED();
-  BLOG(0, "Wallet type not supported: " << wallet->type);
+  BLOG(0, "Wallet type not supported: " << wallet_type);
 }
 
 void Contribution::SKUAutoContribution(
     const std::string& contribution_id,
-    type::ExternalWalletPtr wallet,
+    const std::string& wallet_type,
     ledger::ResultCallback callback) {
-  sku_->AutoContribution(contribution_id, std::move(wallet), callback);
+  sku_->AutoContribution(contribution_id, wallet_type, callback);
 }
 
 void Contribution::StartUnblinded(
@@ -719,14 +702,6 @@ void Contribution::Retry(
 
   // negative steps are final steps, nothing to retry
   if (static_cast<int>((*shared_contribution)->step) < 0) {
-    return;
-  }
-
-  if (!ledger_->state()->GetRewardsMainEnabled()) {
-    BLOG(1, "Rewards is disabled, completing contribution");
-    ledger_->contribution()->ContributionCompleted(
-        type::Result::REWARDS_OFF,
-        std::move(*shared_contribution));
     return;
   }
 

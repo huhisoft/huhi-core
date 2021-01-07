@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -297,7 +297,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public long getTotalSavedBandwidthWithDate(String thresholdTime, String currentTime) {
-        int sum = 0;
+        long sum = 0;
         String selectQuery = "SELECT  SUM(" + SavedBandwidthTable.COLUMN_SAVED_BANDWIDTH + ") as total FROM "
                              + SavedBandwidthTable.TABLE_NAME
                              + " WHERE " + HuhiStatsTable.COLUMN_TIMESTAMP
@@ -307,14 +307,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst())
-            sum = cursor.getInt(cursor.getColumnIndex("total"));
+            sum = cursor.getLong(cursor.getColumnIndex("total"));
 
         cursor.close();
         return sum;
     }
 
     public long getTotalSavedBandwidth() {
-        int sum = 0;
+        long sum = 0;
         String selectQuery = "SELECT  SUM(" + SavedBandwidthTable.COLUMN_SAVED_BANDWIDTH + ") as total FROM "
                              + SavedBandwidthTable.TABLE_NAME;
 
@@ -322,7 +322,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst())
-            sum = cursor.getInt(cursor.getColumnIndex("total"));
+            sum = cursor.getLong(cursor.getColumnIndex("total"));
 
         cursor.close();
         return sum;

@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -81,11 +81,11 @@ NS_SWIFT_NAME(HuhiLedger)
 /// Whether or not the wallet is currently in the process of being created
 @property (nonatomic, readonly, getter=isInitializingWallet) BOOL initializingWallet;
 
-/// Whether or not the wallet has been created
-@property (nonatomic, readonly, getter=isWalletCreated) BOOL walletCreated;
-
 /// Creates a cryptocurrency wallet
 - (void)createWallet:(nullable void (^)(NSError * _Nullable error))completion;
+
+/// Get the huhi wallet's payment ID and seed for ads confirmations
+- (void)currentWalletInfo:(void (^)(BATHuhiWallet *_Nullable wallet))completion;
 
 /// Get parameters served from the server
 - (void)getRewardsParameters:(nullable void (^)(BATRewardsParameters * _Nullable))completion;
@@ -113,13 +113,20 @@ NS_SWIFT_NAME(HuhiLedger)
 /// Returns reserved amount of pending contributions to publishers.
 - (void)pendingContributionsTotal:(void (^)(double amount))completion NS_SWIFT_NAME(pendingContributionsTotal(completion:));
 
+/// Links a desktop huhi wallet given some payment ID
+- (void)linkHuhiWalletToPaymentId:(NSString *)paymentId
+                        completion:(void (^)(BATResult result))completion
+    NS_SWIFT_NAME(linkHuhiWallet(paymentId:completion:));
+
+/// Get the amount of BAT that is transferrable via wallet linking
+- (void)transferrableAmount:(void (^)(double amount))completion;
+
 #pragma mark - User Wallets
 
 /// The last updated external wallet if a user has hooked one up
-@property (nonatomic, readonly) NSDictionary<BATWalletType, BATExternalWallet *> *externalWallets;
+@property (nonatomic, readonly, nullable) BATUpholdWallet *upholdWallet;
 
-- (void)fetchExternalWalletForType:(BATWalletType)walletType
-                        completion:(nullable void (^)(BATExternalWallet * _Nullable wallet))completion;
+- (void)fetchUpholdWallet:(nullable void (^)(BATUpholdWallet * _Nullable wallet))completion;
 
 - (void)disconnectWalletOfType:(BATWalletType)walletType
                     completion:(nullable void (^)(BATResult result))completion;
@@ -275,8 +282,6 @@ NS_SWIFT_NAME(HuhiLedger)
 
 #pragma mark - Preferences
 
-/// Whether or not huhi rewards is enabled
-@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 /// The number of seconds before a publisher is added.
 @property (nonatomic, assign) int minimumVisitDuration;
 /// The minimum number of visits before a publisher is added

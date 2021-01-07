@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -80,23 +80,11 @@ uint64_t NativeLedgerClient::GetUint64State(const std::string& name) const {
 void NativeLedgerClient::ClearState(const std::string& name) {
   [bridge_ clearState:name];
 }
-std::map<std::string, ledger::type::ExternalWalletPtr> NativeLedgerClient::GetExternalWallets() {
-  return [bridge_ getExternalWallets];
-}
-void NativeLedgerClient::SaveExternalWallet(const std::string& wallet_type, ledger::type::ExternalWalletPtr wallet) {
-  [bridge_ saveExternalWallet:wallet_type wallet:std::move(wallet)];
+std::string NativeLedgerClient::GetLegacyWallet() {
+  return [bridge_ getLegacyWallet];
 }
 void NativeLedgerClient::ShowNotification(const std::string& type, const std::vector<std::string>& args, ledger::client::ResultCallback callback) {
   [bridge_ showNotification:type args:args callback:callback];
-}
-void NativeLedgerClient::SetTransferFee(const std::string& wallet_type, ledger::type::TransferFeePtr transfer_fee) {
-  [bridge_ setTransferFee:wallet_type transfer_fee:std::move(transfer_fee)];
-}
-ledger::type::TransferFeeList NativeLedgerClient::GetTransferFees(const std::string& wallet_type) {
-  return [bridge_ getTransferFees:wallet_type];
-}
-void NativeLedgerClient::RemoveTransferFee(const std::string& wallet_type, const std::string& id) {
-  [bridge_ removeTransferFee:wallet_type id:id];
 }
 bool NativeLedgerClient::GetBooleanOption(const std::string& name) const {
   return [bridge_ getBooleanOption:name];
@@ -142,4 +130,10 @@ void NativeLedgerClient::WalletDisconnected(const std::string& wallet_type) {
 }
 void NativeLedgerClient::DeleteLog(ledger::client::ResultCallback callback) {
   [bridge_ deleteLog:callback];
+}
+bool NativeLedgerClient::SetEncryptedStringState(const std::string& key, const std::string& value) {
+  return [bridge_ setEncryptedStringState:key value:value];
+}
+std::string NativeLedgerClient::GetEncryptedStringState(const std::string& key) {
+  return [bridge_ getEncryptedStringState:key];
 }

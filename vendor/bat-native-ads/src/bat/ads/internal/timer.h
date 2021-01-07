@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -45,6 +45,10 @@ class Timer {
 
   // Returns true if the timer is running (i.e., not stopped)
   bool IsRunning() const;
+
+  // Run the scheduled task immediately, and stop the timer. The timer needs to
+  // be running
+  void FireNow();
 
   // Call this method to stop the timer. It is a no-op if the timer is not
   // running

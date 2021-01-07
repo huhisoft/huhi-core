@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -20,7 +20,7 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/task/post_task.h"
 #include "base/trace_event/trace_event.h"
-#include "huhi/browser/huhi_stats_updater_util.h"
+#include "huhi/components/huhi_stats/browser/huhi_stats_updater_util.h"
 #include "huhi/browser/version_info.h"
 #include "huhi/common/huhi_channel_info.h"
 #include "huhi/common/pref_names.h"
@@ -51,8 +51,8 @@ constexpr uint64_t kSuspendedMetricBucket = INT_MAX - 1;
 
 constexpr char kLastRotationTimeStampPref[] = "p3a.last_rotation_timestamp";
 
-constexpr char kP3AServerUrl[] = "https://p3a.huhisoft.com/";
-constexpr char kP2AServerUrl[] = "https://p2a.huhisoft.com/";
+constexpr char kP3AServerUrl[] = "https://p3a.hnq.vn/";
+constexpr char kP2AServerUrl[] = "https://p2a.hnq.vn/";
 
 constexpr uint64_t kDefaultUploadIntervalSeconds = 60;  // 1 minute.
 
@@ -69,6 +69,10 @@ constexpr const char* kCollectedHistograms[] = {
     "Huhi.Core.TorEverUsed",
     "Huhi.Core.WindowCount.2",
     "Huhi.Importer.ImporterSource",
+    "Huhi.NTP.CustomizeUsageStatus",
+    "Huhi.NTP.NewTabsCreated",
+    "Huhi.NTP.SponsoredImagesEnabled",
+    "Huhi.NTP.SponsoredNewTabsCreated",
     "Huhi.Omnibox.SearchCount",
     "Huhi.P3A.SentAnswersCount",
     "Huhi.Rewards.AdsState.2",
@@ -76,16 +80,81 @@ constexpr const char* kCollectedHistograms[] = {
     "Huhi.Rewards.TipsState.2",
     "Huhi.Rewards.WalletBalance.2",
     "Huhi.Savings.BandwidthSavingsMB",
-    "Huhi.Search.DefaultEngine.2",
-    "Huhi.SpeedReader.ToggleCount",
-    "Huhi.SpeedReader.Enabled",
+    "Huhi.Search.DefaultEngine.3",
     "Huhi.Shields.UsageStatus",
+    "Huhi.SpeedReader.Enabled",
+    "Huhi.SpeedReader.ToggleCount",
+    "Huhi.Today.HasEverInteracted",
+    "Huhi.Today.WeeklySessionCount",
+    "Huhi.Today.WeeklyMaxCardViewsCount",
+    "Huhi.Today.WeeklyMaxCardVisitsCount",
     "Huhi.Sync.Status",
     "Huhi.Uptime.BrowserOpenMinutes",
     "Huhi.Welcome.InteractionStatus",
 
     // P2A
-    "Huhi.P2A.ViewConfirmationCount",
+    // Ad Opportunities
+    "Huhi.P2A.TotalAdOpportunities",
+    "Huhi.P2A.AdOpportunitiesPerSegment.architecture",
+    "Huhi.P2A.AdOpportunitiesPerSegment.artsentertainment",
+    "Huhi.P2A.AdOpportunitiesPerSegment.automotive",
+    "Huhi.P2A.AdOpportunitiesPerSegment.business",
+    "Huhi.P2A.AdOpportunitiesPerSegment.careers",
+    "Huhi.P2A.AdOpportunitiesPerSegment.cellphones",
+    "Huhi.P2A.AdOpportunitiesPerSegment.crypto",
+    "Huhi.P2A.AdOpportunitiesPerSegment.education",
+    "Huhi.P2A.AdOpportunitiesPerSegment.familyparenting",
+    "Huhi.P2A.AdOpportunitiesPerSegment.fashion",
+    "Huhi.P2A.AdOpportunitiesPerSegment.folklore",
+    "Huhi.P2A.AdOpportunitiesPerSegment.fooddrink",
+    "Huhi.P2A.AdOpportunitiesPerSegment.gaming",
+    "Huhi.P2A.AdOpportunitiesPerSegment.healthfitness",
+    "Huhi.P2A.AdOpportunitiesPerSegment.history",
+    "Huhi.P2A.AdOpportunitiesPerSegment.hobbiesinterests",
+    "Huhi.P2A.AdOpportunitiesPerSegment.home",
+    "Huhi.P2A.AdOpportunitiesPerSegment.law",
+    "Huhi.P2A.AdOpportunitiesPerSegment.military",
+    "Huhi.P2A.AdOpportunitiesPerSegment.other",
+    "Huhi.P2A.AdOpportunitiesPerSegment.personalfinance",
+    "Huhi.P2A.AdOpportunitiesPerSegment.pets",
+    "Huhi.P2A.AdOpportunitiesPerSegment.realestate",
+    "Huhi.P2A.AdOpportunitiesPerSegment.science",
+    "Huhi.P2A.AdOpportunitiesPerSegment.sports",
+    "Huhi.P2A.AdOpportunitiesPerSegment.technologycomputing",
+    "Huhi.P2A.AdOpportunitiesPerSegment.travel",
+    "Huhi.P2A.AdOpportunitiesPerSegment.weather",
+    "Huhi.P2A.AdOpportunitiesPerSegment.untargeted",
+    // Ad Impressions
+    "Huhi.P2A.TotalAdImpressions",
+    "Huhi.P2A.AdImpressionsPerSegment.architecture",
+    "Huhi.P2A.AdImpressionsPerSegment.artsentertainment",
+    "Huhi.P2A.AdImpressionsPerSegment.automotive",
+    "Huhi.P2A.AdImpressionsPerSegment.business",
+    "Huhi.P2A.AdImpressionsPerSegment.careers",
+    "Huhi.P2A.AdImpressionsPerSegment.cellphones",
+    "Huhi.P2A.AdImpressionsPerSegment.crypto",
+    "Huhi.P2A.AdImpressionsPerSegment.education",
+    "Huhi.P2A.AdImpressionsPerSegment.familyparenting",
+    "Huhi.P2A.AdImpressionsPerSegment.fashion",
+    "Huhi.P2A.AdImpressionsPerSegment.folklore",
+    "Huhi.P2A.AdImpressionsPerSegment.fooddrink",
+    "Huhi.P2A.AdImpressionsPerSegment.gaming",
+    "Huhi.P2A.AdImpressionsPerSegment.healthfitness",
+    "Huhi.P2A.AdImpressionsPerSegment.history",
+    "Huhi.P2A.AdImpressionsPerSegment.hobbiesinterests",
+    "Huhi.P2A.AdImpressionsPerSegment.home",
+    "Huhi.P2A.AdImpressionsPerSegment.law",
+    "Huhi.P2A.AdImpressionsPerSegment.military",
+    "Huhi.P2A.AdImpressionsPerSegment.other",
+    "Huhi.P2A.AdImpressionsPerSegment.personalfinance",
+    "Huhi.P2A.AdImpressionsPerSegment.pets",
+    "Huhi.P2A.AdImpressionsPerSegment.realestate",
+    "Huhi.P2A.AdImpressionsPerSegment.science",
+    "Huhi.P2A.AdImpressionsPerSegment.sports",
+    "Huhi.P2A.AdImpressionsPerSegment.technologycomputing",
+    "Huhi.P2A.AdImpressionsPerSegment.travel",
+    "Huhi.P2A.AdImpressionsPerSegment.weather",
+    "Huhi.P2A.AdImpressionsPerSegment.untargeted"
 };
 
 bool IsSuspendedMetric(base::StringPiece metric_name,
@@ -139,8 +208,7 @@ void HuhiP3AService::InitCallbacks() {
   for (const char* histogram_name : kCollectedHistograms) {
     base::StatisticsRecorder::SetCallback(
         histogram_name,
-        base::BindRepeating(&HuhiP3AService::OnHistogramChanged, this,
-                            histogram_name));
+        base::BindRepeating(&HuhiP3AService::OnHistogramChanged, this));
   }
 }
 
@@ -268,20 +336,20 @@ void HuhiP3AService::MaybeOverrideSettingsFromCommandLine() {
 }
 
 void HuhiP3AService::InitPyxisMeta() {
-  pyxis_meta_.platform = huhi::GetPlatformIdentifier();
+  pyxis_meta_.platform = huhi_stats::GetPlatformIdentifier();
   pyxis_meta_.channel = huhi::GetChannelName();
   pyxis_meta_.version =
       version_info::GetHuhiVersionWithoutChromiumMajorVersion();
 
   const std::string woi = local_state_->GetString(kWeekOfInstallation);
   if (!woi.empty()) {
-    pyxis_meta_.date_of_install = GetYMDAsDate(woi);
+    pyxis_meta_.date_of_install = huhi_stats::GetYMDAsDate(woi);
   } else {
     pyxis_meta_.date_of_install = base::Time::Now();
   }
-  pyxis_meta_.woi = GetIsoWeekNumber(pyxis_meta_.date_of_install);
+  pyxis_meta_.woi = huhi_stats::GetIsoWeekNumber(pyxis_meta_.date_of_install);
   pyxis_meta_.date_of_survey = base::Time::Now();
-  pyxis_meta_.wos = GetIsoWeekNumber(pyxis_meta_.date_of_survey);
+  pyxis_meta_.wos = huhi_stats::GetIsoWeekNumber(pyxis_meta_.date_of_survey);
 
   pyxis_meta_.country_code =
       base::ToUpperASCII(base::CountryCodeForCurrentTimezone());
@@ -320,7 +388,8 @@ void HuhiP3AService::StartScheduledUpload() {
   }
 }
 
-void HuhiP3AService::OnHistogramChanged(base::StringPiece histogram_name,
+void HuhiP3AService::OnHistogramChanged(const char* histogram_name,
+                                         uint64_t name_hash,
                                          base::HistogramBase::Sample sample) {
   std::unique_ptr<base::HistogramSamples> samples =
       base::StatisticsRecorder::FindHistogram(histogram_name)->SnapshotDelta();
@@ -368,7 +437,7 @@ void HuhiP3AService::OnHistogramChanged(base::StringPiece histogram_name,
                                 histogram_name, sample, bucket));
 }
 
-void HuhiP3AService::OnHistogramChangedOnUI(base::StringPiece histogram_name,
+void HuhiP3AService::OnHistogramChangedOnUI(const char* histogram_name,
                                              base::HistogramBase::Sample sample,
                                              size_t bucket) {
   VLOG(2) << "HuhiP3AService::OnHistogramChanged: histogram_name = "

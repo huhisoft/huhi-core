@@ -15,8 +15,7 @@ declare namespace Rewards {
     TOO_MANY_RESULTS = 8,
     NOT_FOUND = 9,
     REGISTRATION_VERIFICATION_FAILED = 10,
-    BAD_REGISTRATION_RESPONSE = 11,
-    WALLET_CREATED = 12
+    BAD_REGISTRATION_RESPONSE = 11
   }
 
   export type AddressesType = 'BTC' | 'ETH' | 'BAT' | 'LTC'
@@ -42,7 +41,6 @@ declare namespace Rewards {
     enabledAds: boolean
     enabledAdsMigrated: boolean
     enabledContribute: boolean
-    enabledMain: boolean
     externalWallet?: ExternalWallet
     initializing: boolean
     inlineTip: {
@@ -55,6 +53,7 @@ declare namespace Rewards {
     monthlyReport: MonthlyReport
     monthlyReportIds: string[]
     parameters: RewardsParameters
+    paymentId: string
     promotions?: Promotion[]
     pendingContributions: PendingContribution[]
     pendingContributionTotal: number
@@ -63,6 +62,7 @@ declare namespace Rewards {
     recurringList: Publisher[]
     recurringLoad: boolean
     safetyNetFailed?: boolean
+    showOnboarding?: boolean
     tipsList: Publisher[]
     tipsLoad: boolean
     ui: {
@@ -75,12 +75,9 @@ declare namespace Rewards {
       }
       walletRecoveryStatus: number | null
       walletServerProblem: boolean
-      walletCorrupted: boolean
-      onBoardingDisplayed?: boolean
+      verifyOnboardingDisplayed?: boolean
       onlyAnonWallet?: boolean
     }
-    walletCreated: boolean
-    walletCreateFailed: boolean
   }
 
   export interface RewardsParameters {

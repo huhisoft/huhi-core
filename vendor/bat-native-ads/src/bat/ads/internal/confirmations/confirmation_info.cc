@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -26,7 +26,7 @@ bool ConfirmationInfo::operator==(
       blinded_payment_token.encode_base64() ==
           rhs.blinded_payment_token.encode_base64() &&
       credential == rhs.credential &&
-      timestamp_in_seconds == rhs.timestamp_in_seconds &&
+      timestamp == rhs.timestamp &&
       created == rhs.created;
 }
 
@@ -37,7 +37,7 @@ bool ConfirmationInfo::operator!=(
 
 bool ConfirmationInfo::IsValid() const {
   if (id.empty() ||
-      type == ConfirmationType::kNone ||
+      type == ConfirmationType::kUndefined ||
       creative_instance_id.empty()) {
     return false;
   }

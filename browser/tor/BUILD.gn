@@ -1,55 +1,31 @@
-import("//build/buildflag_header.gni")
-import("buildflags/buildflags.gni")
-
-buildflag_header("buildflags") {
-  header = "buildflags.h"
-  flags = [ "ENABLE_TOR=$enable_tor" ]
-}
+import("//huhi/components/tor/buildflags/buildflags.gni")
 
 source_set("tor") {
   # Remove when https://github.com/huhisoft/huhi-browser/issues/10655 is resolved
   check_includes = false
-  sources = [
-    "tor_launcher_service_observer.h",
-    "tor_profile_service_factory.cc",
-    "tor_profile_service_factory.h",
-  ]
-
-  deps = [
-    "//base",
-    "//huhi/common/tor",
-    "//components/keyed_service/content",
-    "//components/keyed_service/core",
-    "//content/public/browser",
-    "//mojo/public/cpp/bindings",
-  ]
-
-  public_deps = [
-    ":buildflags",
+  visibility = [
+    "//huhi/browser:browser_process",
+    "//huhi/browser/profiles",
+    "//huhi/browser/ui",
+    "//huhi/test:*",
+    ":*",
   ]
 
   if (enable_tor) {
-    sources += [
-      "tor_launcher_factory.cc",
-      "tor_launcher_factory.h",
-      "tor_navigation_throttle.cc",
-      "tor_navigation_throttle.h",
-      "tor_profile_service.cc",
-      "tor_profile_service.h",
-      "tor_profile_service_impl.cc",
-      "tor_profile_service_impl.h",
-      "tor_tab_helper.cc",
-      "tor_tab_helper.h",
+    sources = [
+      "onion_location_navigation_throttle_delegate.cc",
+      "onion_location_navigation_throttle_delegate.h",
+      "tor_profile_service_factory.cc",
+      "tor_profile_service_factory.h",
     ]
 
-    deps += [
-      "//huhi/components/services/tor/public/interfaces",
+    deps = [
+      "//base",
+      "//huhi/components/tor",
+      "//huhi/components/tor:pref_names",
+      "//chrome/common",
+      "//components/keyed_service/content",
       "//content/public/browser",
-      "//content/public/common",
-      "//extensions/common:common_constants",
-      "//net",
-      "//services/service_manager",
-      "//url",
     ]
 
     # Below dep list are not directly used tor target.
@@ -62,5 +38,56 @@ source_set("tor") {
       "//huhi/components/greaselion/browser/buildflags",
       "//huhi/components/speedreader:buildflags",
     ]
+  }
+}
+
+source_set("unit_tests") {
+  testonly = true
+  if (enable_tor) {
+    sources = [ "tor_navigation_throttle_unittest.cc" ]
+
+    deps = [
+      "//base",
+      "//base/test:test_support",
+      "//huhi/browser/profiles",
+      "//huhi/browser/tor",
+      "//huhi/components/tor",
+      "//huhi/test:test_support",
+      "//chrome/test:test_support",
+      "//content/public/browser",
+      "//content/test:test_support",
+      "//testing/gtest",
+      "//url",
+    ]
+  }
+}
+
+source_set("browser_tests") {
+  testonly = true
+  if (enable_tor) {
+    sources = [
+      "huhi_local_state_browsertest.cc",
+      "huhi_tor_client_updater_browsertest.cc",
+      "onion_location_navigation_throttle_browsertest.cc",
+    ]
+
+    deps = [
+      "//base",
+      "//huhi/app:huhi_generated_resources_grit",
+      "//huhi/browser:browser_process",
+      "//huhi/browser/profiles",
+      "//huhi/browser/tor",
+      "//huhi/browser/ui",
+      "//huhi/common",
+      "//huhi/components/tor",
+      "//huhi/components/tor:pref_names",
+      "//chrome/browser",
+      "//chrome/test:test_support",
+      "//chrome/test:test_support_ui",
+      "//content/public/browser",
+      "//content/test:test_support",
+      "//net:test_support",
+    ]
+    defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
   }
 }

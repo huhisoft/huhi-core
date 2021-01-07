@@ -1,11 +1,12 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.chromium.chrome.browser.signin;
 
 import org.chromium.base.annotations.CalledByNative;
+import org.chromium.chrome.browser.AppHooks;
 import org.chromium.chrome.browser.externalauth.ExternalAuthUtils;
 import org.chromium.chrome.browser.sync.AndroidSyncSettings;
 import org.chromium.components.signin.AccountTrackerService;
@@ -40,6 +41,6 @@ public class HuhiSigninManager extends SigninManager {
         assert identityMutator != null;
         return new HuhiSigninManager(nativeSigninManagerAndroid, accountTrackerService,
                 identityManager, identityMutator,
-                AndroidSyncSettings.get(), ExternalAuthUtils.getInstance());
+                AndroidSyncSettings.get(), AppHooks.get().getExternalAuthUtils());
     }
 }

@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,20 +12,6 @@ const rewardsReducer: Reducer<Rewards.State | undefined> = (state: Rewards.State
   switch (action.type) {
     case types.IS_INITIALIZED: {
       chrome.send('huhi_rewards.isInitialized')
-      break
-    }
-    case types.TOGGLE_ENABLE_MAIN: {
-      if (state.initializing && state.enabledMain) {
-        break
-      }
-
-      state = { ...state }
-      const key = 'enabledMain'
-      const enable = action.payload.enable
-      state.initializing = true
-
-      state[key] = enable
-      chrome.send('huhi_rewards.saveSetting', [key, enable.toString()])
       break
     }
     case types.GET_AUTO_CONTRIBUTE_PROPERTIES: {
@@ -65,11 +51,6 @@ const rewardsReducer: Reducer<Rewards.State | undefined> = (state: Rewards.State
         chrome.send('huhi_rewards.saveSetting', [key, value.toString()])
       }
       break
-    case types.UPDATE_ADS_REWARDS: {
-      state = { ...state }
-      chrome.send('huhi_rewards.updateAdRewards')
-      break
-    }
     case types.ON_MODAL_BACKUP_CLOSE: {
       state = { ...state }
       let ui = state.ui
@@ -155,25 +136,6 @@ const rewardsReducer: Reducer<Rewards.State | undefined> = (state: Rewards.State
       }
       break
     }
-    case types.ON_REWARDS_ENABLED: {
-      const enabled: boolean = action.payload.enabled
-      state = { ...state }
-      if (state.enabledMain && !enabled) {
-        state = defaultState
-        state.enabledMain = false
-        state.walletCreated = true
-        state.firstLoad = false
-        break
-      }
-
-      if (!enabled) {
-        state.balance = defaultState.balance
-        state.promotions = []
-      }
-
-      state.enabledMain = enabled
-      break
-    }
     case types.GET_TRANSACTION_HISTORY:
     case types.ON_TRANSACTION_HISTORY_CHANGED: {
       chrome.send('huhi_rewards.getTransactionHistory', [])
@@ -194,10 +156,6 @@ const rewardsReducer: Reducer<Rewards.State | undefined> = (state: Rewards.State
       state.adsData.adsEstimatedPendingRewards = data.adsEstimatedPendingRewards
       state.adsData.adsNextPaymentDate = data.adsNextPaymentDate
       state.adsData.adsAdNotificationsReceivedThisMonth = data.adsAdNotificationsReceivedThisMonth
-      break
-    }
-    case types.GET_REWARDS_MAIN_ENABLED: {
-      chrome.send('huhi_rewards.getRewardsMainEnabled', [])
       break
     }
     case types.ON_INLINE_TIP_SETTINGS_CHANGE: {
@@ -248,6 +206,7 @@ const rewardsReducer: Reducer<Rewards.State | undefined> = (state: Rewards.State
         ...state,
         initializing: false
       }
+      chrome.send('huhi_rewards.getReconcileStamp')
       break
     }
   }

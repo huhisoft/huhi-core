@@ -7,7 +7,7 @@ index 55a35677b9c46a2038cea9ac8dedf40d31a679f4..210f7c15ab98449f2ce121d5e7d8a7f6
  fi
  
 -. "$DEFAULTS_FILE"
-+# Don't install the Chrome repo (huhi/huhi-browser#1967)
++# Don't install the Chrome repo (huhisoft/huhi-browser#1967)
 +#. "$DEFAULTS_FILE"
  
  if [ "$repo_add_once" = "true" ]; then

@@ -1,34 +1,13 @@
 import("//build/config/features.gni")
 
 source_set("importer") {
-  # Remove when https://github.com/huhisoft/huhi-browser/issues/10657 is resolved
-  check_includes = false
   sources = [
-    "huhi_external_process_importer_client.cc",
-    "huhi_external_process_importer_client.h",
-    "huhi_external_process_importer_host.cc",
-    "huhi_external_process_importer_host.h",
     "huhi_importer_p3a.cc",
     "huhi_importer_p3a.h",
-    "huhi_in_process_importer_bridge.cc",
-    "huhi_in_process_importer_bridge.h",
   ]
 
   deps = [
     "//base",
-    "//huhi/common",
-    "//huhi/common/importer:interfaces",
-    # For buildflags.h included from chrome/browser/browser_process.h, we are
-    # not including chrome/browser here because of circular dependency.
-    # We should refactor this in the future to be able to add chrome/browser
-    # into importer target's deps.
-    "//chrome/common:buildflags",
     "//chrome/common/importer",
-    # For profile_import.mojom.h from external_process_importer_client.h.
-    # huhi_external_process_importer_client.cc refers it indirectly.
-    "//chrome/common/importer:interfaces",
-    "//content/public/browser",
-    "//extensions/buildflags",
-    "//ui/gfx:native_widget_types",
   ]
 }

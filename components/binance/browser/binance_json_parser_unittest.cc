@@ -1,10 +1,11 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "huhi/components/binance/browser/binance_json_parser.h"
 
+#include "huhi/components/binance/browser/binance_service.h"
 #include "huhi/components/content_settings/core/common/content_settings_util.h"
 #include "chrome/test/base/chrome_render_view_host_test_harness.h"
 
@@ -36,10 +37,24 @@ std::vector<std::string> GetVectorFromStringMap(
   return value;
 }
 
+std::vector<std::map<std::string, std::string>> GetVectorFromStringRecordMap(
+    const std::map<std::string, std::vector<
+    std::map<std::string, std::string>>>& map,
+    const std::string& key) {
+  std::vector<std::map<std::string, std::string>> value;
+  std::map<std::string, std::vector<
+      std::map<std::string, std::string>>>::const_iterator it =
+      map.find(key);
+  if (it != map.end()) {
+    value = it->second;
+  }
+  return value;
+}
+
 typedef testing::Test BinanceJSONParserTest;
 
 TEST_F(BinanceJSONParserTest, GetAccountBalancesFromJSON) {
-  std::map<std::string, std::vector<std::string>> balances;
+  BinanceAccountBalances balances;
   ASSERT_TRUE(BinanceJSONParser::GetAccountBalancesFromJSON(R"(
       {
         "code": "000000",
@@ -242,7 +257,7 @@ TEST_F(BinanceJSONParserTest, RevokeTokenFromJSONFail) {
 }
 
 TEST_F(BinanceJSONParserTest, GetCoinNetworksFromJSON) {
-  std::map<std::string, std::string> networks;
+  BinanceCoinNetworks networks;
   ASSERT_TRUE(BinanceJSONParser::GetCoinNetworksFromJSON(R"(
       {
         "code": "000000",
@@ -285,6 +300,76 @@ TEST_F(BinanceJSONParserTest, GetCoinNetworksFromJSON) {
   std::string gas_network = GetValueFromStringMap(networks, "GAS");
   ASSERT_EQ(bat_network, "ETH");
   ASSERT_EQ(gas_network, "NEO");
+}
+
+TEST_F(BinanceJSONParserTest, GetConvertAssetsFromJSON) {
+  BinanceConvertAsserts assets;
+
+  ASSERT_TRUE(BinanceJSONParser::GetConvertAssetsFromJSON(R"(
+      {
+        "code":"000000",
+        "message":null,
+        "data":[{
+          "assetCode":"BTC",
+          "assetName":"Bitcoin",
+          "logoUrl":"https://bin.bnbstatic.com/images/20191211/fake.png",
+          "size":"6",
+          "order":0,
+            "freeAsset":"0.00508311",
+            "subSelector":[
+              {
+                "assetCode":"BNB",
+                "assetName":"BNB",
+                "logoUrl":"https://bin.bnbstatic.com/images/fake.png",
+                "size":"2",
+                "order":1,
+                "perTimeMinLimit":"0.00200000",
+                "perTimeMaxLimit":"1.00000000",
+                "dailyMaxLimit":"10.00000000",
+                "hadDailyLimit":"0",
+                "needMarket":true,
+                "feeType":1,
+                "feeRate":"0.00050000",
+                "fixFee":"1.00000000",
+                "feeCoin":"BTC",
+                "forexRate":"1.00000000",
+                "expireTime":30
+              },
+              {
+                "assetCode":"ETH",
+                "assetName":"ETH",
+                "logoUrl":"https://bin.bnbstatic.com/images/fake.png",
+                "size":"2",
+                "order":1,
+                "perTimeMinLimit":"0.00500000",
+                "perTimeMaxLimit":"1.00000000",
+                "dailyMaxLimit":"10.00000000",
+                "hadDailyLimit":"0",
+                "needMarket":true,
+                "feeType":1,
+                "feeRate":"0.00050000",
+                "fixFee":"1.00000000",
+                "feeCoin":"BTC",
+                "forexRate":"1.00000000",
+                "expireTime":30
+              }
+            ]
+        }]
+      })", &assets));
+  std::vector<std::map<std::string, std::string>> sub =
+      GetVectorFromStringRecordMap(assets, "BTC");
+
+  std::map<std::string, std::string> bnb_sub = sub.front();
+  std::string bnb_name = GetValueFromStringMap(bnb_sub, "asset");
+  std::string bnb_min = GetValueFromStringMap(bnb_sub, "minAmount");
+  ASSERT_EQ(bnb_name, "BNB");
+  ASSERT_EQ(bnb_min, "0.00200000");
+
+  std::map<std::string, std::string> eth_sub = sub.back();
+  std::string eth_name = GetValueFromStringMap(eth_sub, "asset");
+  std::string eth_min = GetValueFromStringMap(eth_sub, "minAmount");
+  ASSERT_EQ(eth_name, "ETH");
+  ASSERT_EQ(eth_min, "0.00500000");
 }
 
 }  // namespace

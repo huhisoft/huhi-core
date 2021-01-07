@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License. v. 2.0. If a copy of the MPL was not distributed with this file.
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -35,7 +35,6 @@ const wrapperBackgroundRules = (notification: Notification | undefined) => {
 
 export const StyledWrapper = styled<StyledProps, 'div'>('div')`
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,.2);
   font-family: ${p => p.theme.fontFamily.body};
   width: ${p => p.isMobile ? '100%' : '373px'};
   background: ${p => wrapperBackgroundRules(p.notification)};

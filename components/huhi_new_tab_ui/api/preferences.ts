@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -14,7 +14,9 @@ export type Preferences = {
   showBackgroundImage: boolean
   brandedWallpaperOptIn: boolean
   showStats: boolean
+  showToday: boolean
   showClock: boolean
+  clockFormat: string
   showTopSites: boolean
   showRewards: boolean
   showAddCard: boolean
@@ -39,12 +41,16 @@ export function saveShowClock (value: boolean): void {
   sendSavePref('showClock', value)
 }
 
-export function saveShowTopSites (value: boolean): void {
-  sendSavePref('showTopSites', value)
+export function saveClockFormat (value: string): void {
+  sendSavePref('clockFormat', value)
 }
 
 export function saveShowStats (value: boolean): void {
   sendSavePref('showStats', value)
+}
+
+export function saveShowToday (value: boolean): void {
+  sendSavePref('showToday', value)
 }
 
 export function saveShowRewards (value: boolean): void {
@@ -77,6 +83,10 @@ export function saveShowGemini (value: boolean): void {
 
 export function saveShowBitcoinDotCom (value: boolean): void {
   sendSavePref('showBitcoinDotCom', value)
+}
+
+export function saveShowCryptoDotCom (value: boolean): void {
+  sendSavePref('showCryptoDotCom', value)
 }
 
 export function addChangeListener (listener: PreferencesUpdatedHandler): void {

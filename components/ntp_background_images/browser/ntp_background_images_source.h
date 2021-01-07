@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -50,6 +50,8 @@ class NTPBackgroundImagesSource : public content::URLDataSource {
                       base::Optional<std::string> input);
   bool IsValidPath(const std::string& path) const;
   bool IsLogoPath(const std::string& path) const;
+  bool IsDefaultLogoPath(const std::string& path) const;
+  int GetLogoIndexFromPath(const std::string& path) const;
   bool IsWallpaperPath(const std::string& path) const;
   int GetWallpaperIndexFromPath(const std::string& path) const;
   bool IsTopSiteFaviconPath(const std::string& path) const;

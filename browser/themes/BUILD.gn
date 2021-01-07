@@ -1,41 +1,42 @@
 source_set("themes") {
-  # Remove when https://github.com/huhisoft/huhi-browser/issues/10656 is resolved
-  check_includes = false
-  sources = [
-    "huhi_dark_mode_utils.h",
-    "huhi_dark_mode_utils_android.cc",
-  ]
+  sources = [ "huhi_dark_mode_utils.h" ]
 
   deps = [
     "//base",
+    "//huhi/common:pref_names",
+    "//huhi/common:switches",
   ]
 
-  if (!is_android) {
+  if (is_android) {
+    sources += [ "huhi_dark_mode_utils_android.cc" ]
+  } else {
     sources += [
-      "huhi_dark_mode_utils.cc",
       "huhi_dark_mode_utils_internal.cc",
       "huhi_dark_mode_utils_internal.h",
-      "huhi_dark_mode_utils_linux.cc",
-      "huhi_dark_mode_utils_mac.mm",
-      "huhi_dark_mode_utils_win.cc",
-      "huhi_theme_service.cc",
-      "huhi_theme_service.h",
-      "huhi_theme_helper.cc",
-      "huhi_theme_helper.h",
-      "huhi_theme_helper_win.cc",
-      "huhi_theme_helper_win.h",
       "theme_properties.cc",
       "theme_properties.h",
     ]
 
+    if (is_linux) {
+      sources += [ "huhi_dark_mode_utils_linux.cc" ]
+    }
+
+    if (is_mac) {
+      sources += [ "huhi_dark_mode_utils_mac.mm" ]
+    }
+
+    if (is_win) {
+      sources += [
+        "huhi_dark_mode_utils_win.cc",
+      ]
+    }
+
     deps += [
-      "//huhi/app:huhi_generated_resources_grit",
-      "//huhi/common",
-      "//chrome/common",
-      "//components/prefs",
-      "//components/pref_registry",
-      "//components/version_info",
-      "//skia",
+      "//chrome/browser:theme_properties",
+      "//skia:skia",
+      "//ui/gfx:color_utils",
+      "//ui/native_theme:native_theme",
+      "//ui/native_theme:native_theme_browser",
     ]
   }
 }

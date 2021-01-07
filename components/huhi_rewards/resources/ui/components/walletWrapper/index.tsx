@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -43,6 +43,7 @@ import {
   LoginMessageText
 } from './style'
 import { getLocale } from 'huhi-ui/helpers'
+import { getLocaleWithTag } from '../../../../../common/locale'
 import { GrantCaptcha, GrantComplete, GrantError, GrantWrapper, WalletPopup } from '../'
 import Alert, { Type as AlertType } from '../alert'
 import Button, { Props as ButtonProps } from 'huhi-ui/components/buttonsIndicators/button'
@@ -91,7 +92,6 @@ export interface ActionWallet {
 
 export type NotificationType =
   'ads' |
-  'ads-launch' |
   'backupWallet' |
   'contribute' |
   'grant' |
@@ -271,10 +271,6 @@ export default class WalletWrapper extends React.PureComponent<Props, State> {
         buttonText = getLocale('claim')
         buttonAction = this.onNotificationClick
         break
-      case 'ads-launch':
-        buttonText = getLocale('turnOnAds')
-        buttonAction = this.onNotificationClick
-        break
       case 'backupWallet':
         buttonText = getLocale('backupNow')
         buttonAction = this.onNotificationClick
@@ -294,6 +290,7 @@ export default class WalletWrapper extends React.PureComponent<Props, State> {
 
     return (
       <StyledButton
+        id={'panel-notifications'}
         size={'small'}
         type={'accent'}
         level={'primary'}
@@ -454,7 +451,6 @@ export default class WalletWrapper extends React.PureComponent<Props, State> {
 
     switch (notification.type) {
       case 'ads':
-      case 'ads-launch':
       case 'backupWallet':
       case 'insufficientFunds':
       case 'verifyWallet':
@@ -488,9 +484,6 @@ export default class WalletWrapper extends React.PureComponent<Props, State> {
     switch (notification.type) {
       case 'ads':
         typeText = getLocale('huhiAdsTitle')
-        break
-      case 'ads-launch':
-        typeText = getLocale('huhiAdsLaunchTitle')
         break
       case 'backupWallet':
         typeText = getLocale('backupWalletTitle')
@@ -606,6 +599,12 @@ export default class WalletWrapper extends React.PureComponent<Props, State> {
     const connectedVerified = walletState === 'verified'
     const batFormatString = onlyAnonWallet ? getLocale('batPoints') : getLocale('bat')
 
+    const loginText = getLocale('loginMessageText').split('$1')
+    const loginText1 = loginText[0]
+    const loginText2 = loginText[1]
+    const rewardsText1 = getLocaleWithTag('rewardsPanelText1')
+    const rewardsText2 = getLocaleWithTag('rewardsPanelText2')
+
     return (
       <>
         <StyledWrapper
@@ -673,7 +672,13 @@ export default class WalletWrapper extends React.PureComponent<Props, State> {
               ? <LoginMessage>
                   <LoginMessageText>
                     <b>{getLocale('loginMessageTitle')}</b>
-                    <p dangerouslySetInnerHTML={{ __html: getLocale('loginMessageText') }} />
+                    <p>
+                      {loginText1}
+                      <br />
+                      {loginText2}
+                    </p>
+                    <br/>
+                    {getLocale('walletVerificationNote3')}
                   </LoginMessageText>
                   <LoginMessageButtons>
                     <Button
@@ -709,13 +714,21 @@ export default class WalletWrapper extends React.PureComponent<Props, State> {
                       <StyledCopyImage>
                         <UpholdColorIcon />
                       </StyledCopyImage>
-                      <span dangerouslySetInnerHTML={{ __html: getLocale('rewardsPanelText1') }} />
+                      <span>
+                        {rewardsText1.beforeTag}
+                        <b>{rewardsText1.duringTag}</b>
+                        {rewardsText1.afterTag}
+                      </span>
                     </>
                     : <>
                       <StyledCopyImage>
                         <UpholdSystemIcon />
                       </StyledCopyImage>
-                      <span dangerouslySetInnerHTML={{ __html: getLocale('rewardsPanelText2') }} />
+                      <span>
+                        {rewardsText2.beforeTag}
+                        <b>{rewardsText2.duringTag}</b>
+                        {rewardsText2.afterTag}
+                      </span>
                       {
                         onVerifyClick
                           ? <>

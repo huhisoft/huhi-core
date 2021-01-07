@@ -1,4 +1,4 @@
-    /* This Source Code Form is subject to the terms of the Huhi Software
+    /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -35,8 +35,8 @@ export default class PrivateTab extends React.PureComponent<{}, {}> {
             <div>
               <SubTitle>{locale.headerLabel}</SubTitle>
               <Title>{locale.headerTitle}</Title>
-              <Text>{locale.headerText} <Link href='https://support.huhisoft.com/hc/en-us/articles/360017840332' target='_blank'>{locale.headerButton}</Link></Text>
-              {/* <FakeButton href='https://support.huhisoft.com/hc/en-us/articles/360017840332' target='_blank'>
+              <Text>{locale.headerText} <Link href='https://support.hnq.vn/hc/en-us/articles/360017840332' target='_blank'>{locale.headerButton}</Link></Text>
+              {/* <FakeButton href='https://support.hnq.vn/hc/en-us/articles/360017840332' target='_blank'>
                 {locale.headerButton}
               </FakeButton> */}
             </div>
@@ -55,7 +55,7 @@ export default class PrivateTab extends React.PureComponent<{}, {}> {
               <span>{locale.boxDdgButton}</span>
               <Toggle />
             </FakeButton>
-            <Link href='https://support.huhisoft.com/hc/en-us/articles/360018266171' target='_blank'>{locale.learnMore}</Link>
+            <Link href='https://support.hnq.vn/hc/en-us/articles/360018266171' target='_blank'>{locale.learnMore}</Link>
           </ButtonGroup>
         </Box>
         <Box>
@@ -66,7 +66,7 @@ export default class PrivateTab extends React.PureComponent<{}, {}> {
             <Text>{locale.boxTorText2}</Text>
           </Content>
           <Separator />
-          <FakeButton href='https://support.huhisoft.com/hc/en-us/articles/360018121491' target='_blank'>
+          <FakeButton href='https://support.hnq.vn/hc/en-us/articles/360018121491' target='_blank'>
             {locale.boxTorButton}
           </FakeButton>
         </Box>

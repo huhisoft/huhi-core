@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -32,6 +32,7 @@
 #include "net/base/url_util.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/cpp/simple_url_loader.h"
+#include "services/network/public/mojom/fetch_api.mojom-shared.h"
 
 namespace {
   const char oauth_host[] = "exchange.gemini.com";
@@ -169,7 +170,7 @@ void GeminiService::SetAuthToken(const std::string& auth_token) {
 bool GeminiService::GetAccessToken(AccessTokenCallback callback) {
   auto internal_callback = base::BindOnce(&GeminiService::OnGetAccessToken,
       base::Unretained(this), std::move(callback));
-  GURL base_url = GetURLWithPath(oauth_host_, oauth_path_access_token);
+  GURL base_url = GetURLWithPath(oauth_host_, auth_path_access_token);
 
   base::Value dict(base::Value::Type::DICTIONARY);
   dict.SetStringKey("client_id", client_id_);
@@ -189,7 +190,7 @@ bool GeminiService::GetAccessToken(AccessTokenCallback callback) {
 bool GeminiService::RefreshAccessToken(AccessTokenCallback callback) {
   auto internal_callback = base::BindOnce(&GeminiService::OnGetAccessToken,
       base::Unretained(this), std::move(callback));
-  GURL base_url = GetURLWithPath(oauth_host_, oauth_path_access_token);
+  GURL base_url = GetURLWithPath(oauth_host_, auth_path_access_token);
 
   base::Value dict(base::Value::Type::DICTIONARY);
   dict.SetStringKey("client_id", client_id_);
@@ -250,7 +251,7 @@ void GeminiService::OnGetAccountBalances(
   GetAccountBalancesCallback callback,
   const int status, const std::string& body,
   const std::map<std::string, std::string>& headers) {
-  std::map<std::string, std::string> balances;
+  GeminiAccountBalances balances;
   bool auth_invalid = status == 401;
   if (status >= 200 && status <= 299) {
     const std::string json_body = "{\"data\": " + body + "}";
@@ -442,9 +443,9 @@ bool GeminiService::OAuthRequest(const GURL &url,
                                   const std::string& payload) {
   auto request = std::make_unique<network::ResourceRequest>();
   request->url = url;
+  request->credentials_mode = network::mojom::CredentialsMode::kOmit;
   request->load_flags = net::LOAD_BYPASS_CACHE |
                         net::LOAD_DISABLE_CACHE |
-                        net::LOAD_DO_NOT_SEND_COOKIES |
                         net::LOAD_DO_NOT_SAVE_COOKIES;
   request->method = method;
 

@@ -1,22 +1,24 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef HUHI_BROWSER_EXTENSIONS_API_SETTINGS_PRIVATE_HUHI_PREFS_UTIL_H
-#define HUHI_BROWSER_EXTENSIONS_API_SETTINGS_PRIVATE_HUHI_PREFS_UTIL_H
+#ifndef HUHI_BROWSER_EXTENSIONS_API_SETTINGS_PRIVATE_HUHI_PREFS_UTIL_H_
+#define HUHI_BROWSER_EXTENSIONS_API_SETTINGS_PRIVATE_HUHI_PREFS_UTIL_H_
 
 #include "chrome/browser/extensions/api/settings_private/prefs_util.h"
-namespace extensions{
+
+namespace extensions {
 
 class HuhiPrefsUtil : public PrefsUtil {
-  public:
-    using PrefsUtil::PrefsUtil;
-    // Gets the list of whitelisted pref keys -- that is, those which correspond
-    // to prefs that clients of the settingsPrivate API may retrieve and
-    // manipulate.
-    const PrefsUtil::TypedPrefMap& GetWhitelistedKeys() override;
+ public:
+  using PrefsUtil::PrefsUtil;
+  // Gets the list of allowlisted pref keys -- that is, those which correspond
+  // to prefs that clients of the settingsPrivate API may retrieve and
+  // manipulate.
+  const PrefsUtil::TypedPrefMap& GetAllowlistedKeys() override;
 };
 
-}
+}  // namespace extensions
 
-#endif
+#endif  // HUHI_BROWSER_EXTENSIONS_API_SETTINGS_PRIVATE_HUHI_PREFS_UTIL_H_

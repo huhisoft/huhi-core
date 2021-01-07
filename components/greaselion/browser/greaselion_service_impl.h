@@ -1,5 +1,5 @@
-/* Copyright 2016 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,8 +11,11 @@
 #include <vector>
 
 #include "base/files/file_path.h"
+#include "base/files/scoped_temp_dir.h"
 #include "base/macros.h"
 #include "base/memory/weak_ptr.h"
+#include "base/path_service.h"
+#include "base/version.h"
 #include "huhi/components/greaselion/browser/greaselion_service.h"
 #include "extensions/common/extension_id.h"
 #include "url/gurl.h"
@@ -59,6 +62,7 @@ class GreaselionServiceImpl : public GreaselionService {
                            extensions::UnloadedExtensionReason reason) override;
 
  private:
+  void SetBrowserVersionForTesting(const base::Version& version) override;
   void CreateAndInstallExtensions();
   void PostConvert(scoped_refptr<extensions::Extension> extension);
   void Install(scoped_refptr<extensions::Extension> extension);
@@ -72,10 +76,13 @@ class GreaselionServiceImpl : public GreaselionService {
   extensions::ExtensionRegistry* extension_registry_;  // NOT OWNED
   bool all_rules_installed_successfully_;
   bool update_in_progress_;
+  bool update_pending_;
   int pending_installs_;
   scoped_refptr<base::SequencedTaskRunner> task_runner_;
   base::ObserverList<Observer> observers_;
   std::vector<extensions::ExtensionId> greaselion_extensions_;
+  std::vector<base::ScopedTempDir> extension_dirs_;
+  base::Version browser_version_;
   base::WeakPtrFactory<GreaselionServiceImpl> weak_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(GreaselionServiceImpl);

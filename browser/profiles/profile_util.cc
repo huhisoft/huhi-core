@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,16 +11,24 @@
 
 #include "base/files/file_path.h"
 #include "base/memory/ptr_util.h"
+#include "base/metrics/histogram_macros.h"
 #include "base/no_destructor.h"
-#include "huhi/browser/tor/buildflags.h"
-#include "huhi/common/tor/tor_constants.h"
+#include "huhi/common/pref_names.h"
+#include "huhi/components/ntp_background_images/common/pref_names.h"
+#include "huhi/components/search_engines/huhi_prepopulated_engines.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
+#include "huhi/components/tor/tor_constants.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_key.h"
 #include "chrome/browser/profiles/profile_manager.h"
+#include "components/prefs/pref_service.h"
+
+using ntp_background_images::prefs::kNewTabPageShowBackgroundImage;
+using ntp_background_images::prefs::kNewTabPageShowSponsoredImagesBackgroundImage; // NOLINT
 
 #if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/tor/tor_profile_service.h"
+#include "huhi/browser/tor/tor_profile_service_factory.h"
 #endif
 
 namespace huhi {
@@ -201,11 +209,48 @@ bool IsGuestProfile(content::BrowserContext* context) {
 
 bool IsTorDisabledForProfile(Profile* profile) {
 #if BUILDFLAG(ENABLE_TOR)
-  return tor::TorProfileService::IsTorDisabled() ||
+  return TorProfileServiceFactory::IsTorDisabled() ||
          profile->IsGuestSession();
 #else
   return true;
 #endif
+}
+
+bool IsRegularProfile(content::BrowserContext* context) {
+  auto* profile = Profile::FromBrowserContext(context);
+  return !IsTorProfile(context) &&
+         !profile->IsGuestSession() &&
+         profile->IsRegularProfile();
+}
+
+void RecordSponsoredImagesEnabledP3A(Profile* profile) {
+  bool is_sponsored_image_enabled =
+      profile->GetPrefs()->GetBoolean(kNewTabPageShowBackgroundImage) &&
+      profile->GetPrefs()->GetBoolean(
+          kNewTabPageShowSponsoredImagesBackgroundImage);
+  UMA_HISTOGRAM_BOOLEAN("Huhi.NTP.SponsoredImagesEnabled",
+                        is_sponsored_image_enabled);
+}
+
+void RecordInitialP3AValues(Profile* profile) {
+  // Preference is unregistered for some reason in profile_manager_unittest
+  // TODO(bsclifton): create a proper testing profile
+  if (!profile->GetPrefs()->FindPreference(kNewTabPageShowBackgroundImage) ||
+      !profile->GetPrefs()->FindPreference(
+          kNewTabPageShowSponsoredImagesBackgroundImage)) {
+    return;
+  }
+  RecordSponsoredImagesEnabledP3A(profile);
+}
+
+void SetDefaultSearchVersion(Profile* profile, bool is_new_profile) {
+  const PrefService::Preference* pref_default_search_version =
+        profile->GetPrefs()->FindPreference(kHuhiDefaultSearchVersion);
+  if (!pref_default_search_version->HasUserSetting()) {
+    profile->GetPrefs()->SetInteger(kHuhiDefaultSearchVersion, is_new_profile
+        ? TemplateURLPrepopulateData::kHuhiCurrentDataVersion
+        : TemplateURLPrepopulateData::kHuhiFirstTrackedDataVersion);
+  }
 }
 
 }  // namespace huhi

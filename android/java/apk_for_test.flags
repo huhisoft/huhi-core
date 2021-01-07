@@ -1,4 +1,4 @@
-# Copyright 2020 The Huhi Software Authors. All rights reserved.
+# Copyright 2020 The Huhi Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -72,4 +72,55 @@
 
 -keep class org.chromium.base.CommandLineInitUtil {
     *** initCommandLine(...);
+}
+
+-keep class org.chromium.chrome.browser.ui.appmenu.AppMenu {
+    *** getPopupPosition(...);
+}
+
+-keep class org.chromium.chrome.browser.toolbar.bottom.BottomControlsCoordinator {
+    *** mMediator;
+}
+
+-keep class org.chromium.chrome.browser.toolbar.ToolbarManager {
+    *** mBottomControlsCoordinator;
+    *** mBrowserControlsSizer;
+    *** mFullscreenManager;
+    *** mActivityTabProvider;
+    *** mAppThemeColorProvider;
+    *** mShareDelegateSupplier;
+    *** mScrimCoordinator;
+    *** mActivity;
+    *** mShowStartSurfaceSupplier;
+    *** mOverviewModeBehaviorSupplier;
+    *** mMenuButtonCoordinator;
+    *** mToolbarTabController;
+    *** mLocationBar;
+    *** mActionModeController;
+    *** mLocationBarModel;
+    *** mToolbar;
+    *** mBookmarkBridgeSupplier;
+    *** onOrientationChange(...);
+    *** updateButtonStatus(...);
+    *** updateBookmarkButtonStatus(...);
+    *** updateReloadState(...);
+}
+
+-keep class org.chromium.chrome.browser.toolbar.top.TopToolbarCoordinator {
+    *** mTabSwitcherModeCoordinatorPhone;
+    *** mOptionalButtonController;
+}
+
+-keep class org.chromium.chrome.browser.toolbar.top.TabSwitcherModeTTCoordinatorPhone {
+    *** mTabSwitcherModeToolbar;
+}
+
+-keep class org.chromium.chrome.browser.toolbar.top.TabSwitcherModeTTPhone {
+    *** mNewTabViewButton;
+    *** mNewTabImageButton;
+    *** mToggleTabStackButton;
+    *** mMenuButton;
+    *** mShouldShowNewTabVariation;
+    *** updateNewTabButtonVisibility(...);
+    *** shouldShowIncognitoToggle(...);
 }

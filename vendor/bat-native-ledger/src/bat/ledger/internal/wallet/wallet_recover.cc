@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,12 +10,15 @@
 #include "base/json/json_reader.h"
 #include "base/strings/string_split.h"
 #include "bat/ledger/internal/common/security_util.h"
+#include "bat/ledger/internal/common/time_util.h"
 #include "bat/ledger/internal/ledger_impl.h"
+#include "bat/ledger/internal/logging/event_log_keys.h"
 
 #include "wally_bip39.h"  // NOLINT
 
 using std::placeholders::_1;
 using std::placeholders::_2;
+using std::placeholders::_3;
 
 namespace ledger {
 namespace wallet {
@@ -72,6 +75,7 @@ void WalletRecover::Start(
       this,
       _1,
       _2,
+      _3,
       new_seed,
       callback);
 
@@ -83,6 +87,7 @@ void WalletRecover::Start(
 void WalletRecover::OnRecover(
     const type::Result result,
     const std::string& payment_id,
+    const bool legacy_wallet,
     const std::vector<uint8_t>& new_seed,
     ledger::ResultCallback callback) {
   if (result != type::Result::LEDGER_OK) {
@@ -90,12 +95,24 @@ void WalletRecover::OnRecover(
     return;
   }
 
-  ledger_->state()->SetRecoverySeed(new_seed);
-  ledger_->state()->SetPaymentId(payment_id);
-  ledger_->state()->SetFetchOldBalanceEnabled(true);
+  auto wallet = type::HuhiWallet::New();
+  wallet->payment_id = payment_id;
+  wallet->recovery_seed = new_seed;
+  const bool success = ledger_->wallet()->SetWallet(std::move(wallet));
+
+  if (!success) {
+    callback(type::Result::LEDGER_ERROR);
+    return;
+  }
+
   ledger_->state()->SetAnonTransferChecked(false);
   ledger_->state()->SetPromotionLastFetchStamp(0);
-
+  ledger_->state()->SetPromotionCorruptedMigrated(true);
+  if (legacy_wallet) {
+    ledger_->state()->SetFetchOldBalanceEnabled(true);
+  }
+  ledger_->state()->SetCreationStamp(util::GetCurrentTimeStamp());
+  ledger_->database()->SaveEventLog(log::kWalletRecovered, payment_id);
   callback(type::Result::LEDGER_OK);
 }
 

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,12 +17,23 @@
 #include "extensions/common/extension_id.h"
 #include "url/gurl.h"
 
+class GreaselionServiceTest;
+
+namespace base {
+class Version;
+}
+
 namespace greaselion {
 
 enum GreaselionFeature {
   FIRST_FEATURE = 0,
   REWARDS = FIRST_FEATURE,
   TWITTER_TIPS,
+  REDDIT_TIPS,
+  GITHUB_TIPS,
+  AUTO_CONTRIBUTION,
+  ADS,
+  SUPPORTS_MINIMUM_HUHI_VERSION,
   LAST_FEATURE
 };
 
@@ -49,6 +60,8 @@ class GreaselionService : public KeyedService,
   virtual void RemoveObserver(Observer* observer) = 0;
 
  private:
+  friend class ::GreaselionServiceTest;
+  virtual void SetBrowserVersionForTesting(const base::Version& version) = 0;
   DISALLOW_COPY_AND_ASSIGN(GreaselionService);
 };
 

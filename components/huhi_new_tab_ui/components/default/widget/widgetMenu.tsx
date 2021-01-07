@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -27,6 +27,7 @@ interface Props {
   onDisconnect?: () => void
   onRefreshData?: () => void
   lightWidget?: boolean
+  paddingType: 'none' | 'right' | 'default'
 }
 
 interface State {
@@ -89,6 +90,7 @@ export default class WidgetMenu extends React.PureComponent<Props, State> {
       widgetTitle,
       isForeground,
       lightWidget,
+      paddingType,
       onLearnMore,
       onDisconnect,
       onRefreshData
@@ -97,7 +99,7 @@ export default class WidgetMenu extends React.PureComponent<Props, State> {
     const hideString = widgetTitle ? `${getLocale('hide')} ${widgetTitle}` : getLocale('hide')
 
     return (
-      <StyledWidgetMenuContainer innerRef={this.settingsMenuRef}>
+      <StyledWidgetMenuContainer innerRef={this.settingsMenuRef} paddingType={paddingType}>
         <StyledEllipsis widgetMenuPersist={widgetMenuPersist} isForeground={isForeground}>
           <IconButton isClickMenu={true} onClick={this.toggleMenu}>
             <EllipsisIcon lightWidget={lightWidget} />
@@ -108,12 +110,6 @@ export default class WidgetMenu extends React.PureComponent<Props, State> {
           menuPosition={menuPosition}
           widgetMenuPersist={widgetMenuPersist}
         >
-          <StyledWidgetButton
-            onClick={this.unmountWidget}
-          >
-            <StyledWidgetIcon><HideIcon/></StyledWidgetIcon>
-            <StyledSpan>{hideString}</StyledSpan>
-          </StyledWidgetButton>
           {
             onLearnMore
             ? <StyledWidgetLink
@@ -148,6 +144,12 @@ export default class WidgetMenu extends React.PureComponent<Props, State> {
               </StyledWidgetButton>
             : null
           }
+          <StyledWidgetButton
+            onClick={this.unmountWidget}
+          >
+            <StyledWidgetIcon><HideIcon/></StyledWidgetIcon>
+            <StyledSpan>{hideString}</StyledSpan>
+          </StyledWidgetButton>
         </StyledWidgetMenu>}
       </StyledWidgetMenuContainer>
     )

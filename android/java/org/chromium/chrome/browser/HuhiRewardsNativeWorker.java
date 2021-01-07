@@ -1,5 +1,5 @@
-/** Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-  * This Source Code Form is subject to the terms of the Huhi Software
+/** Copyright (c) 2020 The Huhi Authors. All rights reserved.
+  * This Source Code Form is subject to the terms of the Mozilla Public
   * License, v. 2.0. If a copy of the MPL was not distributed with this file,
   * You can obtain one at http://mozilla.org/MPL/2.0/.
   */
@@ -9,6 +9,7 @@ package org.chromium.chrome.browser;
 import android.os.Handler;
 import androidx.annotation.Nullable;
 
+import org.chromium.base.Log;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.base.annotations.JNINamespace;
 import org.chromium.chrome.browser.HuhiRewardsBalance;
@@ -62,7 +63,6 @@ public class HuhiRewardsNativeWorker {
 
     private static HuhiRewardsNativeWorker instance;
     private static final Object lock = new Object();
-    private boolean createWalletInProcess;  // flag: wallet is being created
     private boolean grantClaimInProcess;  // flag: wallet is being created
 
     public static  HuhiRewardsNativeWorker getInstance() {
@@ -125,7 +125,7 @@ public class HuhiRewardsNativeWorker {
     public void OnNotifyFrontTabUrlChanged(int tabId, String url) {
         boolean chromeUrl = url.startsWith(UrlConstants.CHROME_SCHEME);
         boolean newUrl = (frontTabUrl == null || !frontTabUrl.equals(url));
-        if (rewardsStatus != REWARDS_ENABLED || chromeUrl) {
+        if (chromeUrl) {
             // Don't query 'GetPublisherInfo' and post response now.
             mHandler.post(new Runnable() {
                 @Override
@@ -146,7 +146,7 @@ public class HuhiRewardsNativeWorker {
         }
     }
 
-    private void TriggerOnNotifyFrontTabUrlChanged() {
+    public void TriggerOnNotifyFrontTabUrlChanged() {
         // Clear frontTabUrl so that all observers are updated.
         frontTabUrl = "";
         mHandler.post(new Runnable() {
@@ -160,31 +160,9 @@ public class HuhiRewardsNativeWorker {
         });
     }
 
-    public void CreateWallet() {
-        synchronized(lock) {
-            if (createWalletInProcess) {
-                return;
-            }
-            createWalletInProcess = true;
-            nativeCreateWallet(mNativeHuhiRewardsNativeWorker);
-        }
-    }
-
-    public boolean IsCreateWalletInProcess() {
-        synchronized(lock) {
-          return createWalletInProcess;
-        }
-    }
-
     public boolean IsGrantClaimInProcess() {
         synchronized(lock) {
           return grantClaimInProcess;
-        }
-    }
-
-    public void WalletExist() {
-        synchronized(lock) {
-            nativeWalletExist(mNativeHuhiRewardsNativeWorker);
         }
     }
 
@@ -339,18 +317,6 @@ public class HuhiRewardsNativeWorker {
         }
     }
 
-    public void SetRewardsMainEnabled(boolean enabled) {
-        synchronized(lock) {
-            nativeSetRewardsMainEnabled(mNativeHuhiRewardsNativeWorker, enabled);
-        }
-    }
-
-    public void GetRewardsMainEnabled() {
-        synchronized(lock) {
-            nativeGetRewardsMainEnabled(mNativeHuhiRewardsNativeWorker);
-        }
-    }
-
     public void GetAutoContributeProperties() {
         synchronized(lock) {
             nativeGetAutoContributeProperties(mNativeHuhiRewardsNativeWorker);
@@ -405,9 +371,9 @@ public class HuhiRewardsNativeWorker {
         }
     }
 
-    public void GetExternalWallet(String wallet_type) {
+    public void GetExternalWallet() {
         synchronized (lock) {
-            nativeGetExternalWallet(mNativeHuhiRewardsNativeWorker, wallet_type);
+            nativeGetExternalWallet(mNativeHuhiRewardsNativeWorker);
         }
     }
 
@@ -443,6 +409,31 @@ public class HuhiRewardsNativeWorker {
         }
     }
 
+    public void SetAutoContributeEnabled(boolean isSetAutoContributeEnabled) {
+        synchronized(lock) {
+            nativeSetAutoContributeEnabled(mNativeHuhiRewardsNativeWorker, isSetAutoContributeEnabled);
+        }
+    }
+
+    public void SetAutoContributionAmount(double amount) {
+        synchronized(lock) {
+            nativeSetAutoContributionAmount(mNativeHuhiRewardsNativeWorker, amount);
+        }
+    }
+
+    public void StartProcess() {
+        synchronized (lock) {
+            nativeStartProcess(mNativeHuhiRewardsNativeWorker);
+        }
+    }
+
+    @CalledByNative
+    public void OnStartProcess() {
+        for (HuhiRewardsObserver observer : mObservers) {
+            observer.OnStartProcess();
+        }
+    }
+
     @CalledByNative
     public void OnRefreshPublisher(int status, String publisherKey) {
         for (HuhiRewardsObserver observer : mObservers) {
@@ -451,29 +442,9 @@ public class HuhiRewardsNativeWorker {
     }
 
     @CalledByNative
-    public void OnGetRewardsMainEnabled(boolean enabled) {
-        int oldRewardsStatus = rewardsStatus;
-        rewardsStatus = (enabled) ? REWARDS_ENABLED : REWARDS_DISABLED;
-        if (oldRewardsStatus != rewardsStatus) {
-            TriggerOnNotifyFrontTabUrlChanged();
-        }
-
-        for (HuhiRewardsObserver observer : mObservers) {
-            observer.OnGetRewardsMainEnabled(enabled);
-        }
-    }
-
-    @CalledByNative
     public void OnRewardsParameters(int errorCode) {
         for (HuhiRewardsObserver observer : mObservers) {
             observer.OnRewardsParameters(errorCode);
-        }
-    }
-
-    @CalledByNative
-    public void OnIsWalletCreated(boolean created) {
-        for (HuhiRewardsObserver observer : mObservers) {
-            observer.OnIsWalletCreated(created);
         }
     }
 
@@ -488,25 +459,6 @@ public class HuhiRewardsNativeWorker {
     private void setNativePtr(long nativePtr) {
         assert mNativeHuhiRewardsNativeWorker == 0;
         mNativeHuhiRewardsNativeWorker = nativePtr;
-    }
-
-    @CalledByNative
-    public void OnWalletInitialized(int error_code) {
-        createWalletInProcess = false;
-
-        // Query rewards state.
-        if (LEDGER_OK == error_code) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    instance.GetRewardsMainEnabled();
-                }
-            });
-        }
-
-        for (HuhiRewardsObserver observer : mObservers) {
-            observer.OnWalletInitialized(error_code);
-        }
     }
 
     @CalledByNative
@@ -596,19 +548,6 @@ public class HuhiRewardsNativeWorker {
     }
 
     @CalledByNative
-    public void OnRewardsMainEnabled(boolean enabled) {
-        int oldRewardsStatus = rewardsStatus;
-        rewardsStatus = (enabled) ? REWARDS_ENABLED : REWARDS_DISABLED;
-        if (oldRewardsStatus != rewardsStatus) {
-            TriggerOnNotifyFrontTabUrlChanged();
-        }
-
-        for (HuhiRewardsObserver observer : mObservers) {
-            observer.OnRewardsMainEnabled(enabled);
-        }
-    }
-
-    @CalledByNative
     public void OnGetExternalWallet(int error_code, String external_wallet) {
         for (HuhiRewardsObserver observer : mObservers) {
             observer.OnGetExternalWallet(error_code, external_wallet);
@@ -639,10 +578,15 @@ public class HuhiRewardsNativeWorker {
         }
     }
 
+    @CalledByNative
+    public void OnOneTimeTip() {
+        for (HuhiRewardsObserver observer : mObservers) {
+            observer.OnOneTimeTip();
+        }
+    }
+
     private native void nativeInit();
     private native void nativeDestroy(long nativeHuhiRewardsNativeWorker);
-    private native void nativeCreateWallet(long nativeHuhiRewardsNativeWorker);
-    private native void nativeWalletExist(long nativeHuhiRewardsNativeWorker);
     private native String nativeGetWalletBalance(long nativeHuhiRewardsNativeWorker);
     private native double nativeGetWalletRate(long nativeHuhiRewardsNativeWorker);
     private native void nativeGetPublisherInfo(long nativeHuhiRewardsNativeWorker, int tabId, String host);
@@ -668,8 +612,6 @@ public class HuhiRewardsNativeWorker {
     private native void nativeGetRecurringDonations(long nativeHuhiRewardsNativeWorker);
     private native boolean nativeIsCurrentPublisherInRecurrentDonations(long nativeHuhiRewardsNativeWorker,
         String publisher);
-    private native void nativeGetRewardsMainEnabled(long nativeHuhiRewardsNativeWorker);
-    private native void nativeSetRewardsMainEnabled(long nativeHuhiRewardsNativeWorker, boolean enabled);
     private native void nativeGetAutoContributeProperties(long nativeHuhiRewardsNativeWorker);
     private native boolean nativeIsAutoContributeEnabled(long nativeHuhiRewardsNativeWorker);
     private native void nativeGetReconcileStamp(long nativeHuhiRewardsNativeWorker);
@@ -680,10 +622,13 @@ public class HuhiRewardsNativeWorker {
     private native int nativeGetAdsPerHour(long nativeHuhiRewardsNativeWorker);
     private native void nativeSetAdsPerHour(long nativeHuhiRewardsNativeWorker, int value);
     private native boolean nativeIsAnonWallet(long nativeHuhiRewardsNativeWorker);
-    private native void nativeGetExternalWallet(long nativeHuhiRewardsNativeWorker, String wallet_type);
+    private native void nativeGetExternalWallet(long nativeHuhiRewardsNativeWorker);
     private native void nativeDisconnectWallet(long nativeHuhiRewardsNativeWorker, String wallet_type);
     private native void nativeProcessRewardsPageUrl(long nativeHuhiRewardsNativeWorker, String path, String query);
     private native void nativeRecoverWallet(long nativeHuhiRewardsNativeWorker, String passPhrase);
     private native void nativeRefreshPublisher(long nativeHuhiRewardsNativeWorker, String publisherKey);
     private native void nativeGetRewardsParameters(long nativeHuhiRewardsNativeWorker);
+    private native void nativeSetAutoContributeEnabled(long nativeHuhiRewardsNativeWorker, boolean isSetAutoContributeEnabled);
+    private native void nativeSetAutoContributionAmount(long nativeHuhiRewardsNativeWorker, double amount);
+    private native void nativeStartProcess(long nativeHuhiRewardsNativeWorker);
 }

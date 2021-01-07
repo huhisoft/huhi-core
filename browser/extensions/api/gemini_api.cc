@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -120,7 +120,7 @@ GeminiGetAccountBalancesFunction::Run() {
 }
 
 void GeminiGetAccountBalancesFunction::OnGetAccountBalances(
-    const std::map<std::string, std::string>& balances,
+    const GeminiAccountBalances& balances,
     bool auth_invalid) {
   auto result = std::make_unique<base::Value>(
       base::Value::Type::DICTIONARY);

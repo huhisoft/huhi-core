@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -34,8 +34,11 @@ class ProxyResolutionService;
 // Implementation of ProxyConfigService that returns a tor specific result.
 class NET_EXPORT ProxyConfigServiceTor : public net::ProxyConfigService {
  public:
+  ProxyConfigServiceTor();
   explicit ProxyConfigServiceTor(const std::string& proxy_uri);
   ~ProxyConfigServiceTor() override;
+
+  void UpdateProxyURI(const std::string& proxy_uri);
 
   static std::string CircuitIsolationKey(const GURL& url);
   void SetNewTorCircuit(const GURL& url);

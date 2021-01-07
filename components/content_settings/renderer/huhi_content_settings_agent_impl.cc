@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -24,9 +24,9 @@
 #include "mojo/public/cpp/bindings/remote.h"
 #include "services/service_manager/public/cpp/interface_provider.h"
 #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
-#include "third_party/blink/public/mojom/permissions/permission.mojom.h"
-#include "third_party/blink/public/mojom/permissions/permission.mojom-blink.h"
 #include "third_party/blink/public/mojom/permissions/permission.mojom-blink-forward.h"
+#include "third_party/blink/public/mojom/permissions/permission.mojom-blink.h"
+#include "third_party/blink/public/mojom/permissions/permission.mojom.h"
 #include "third_party/blink/public/platform/web_url.h"
 #include "third_party/blink/public/web/web_document.h"
 #include "third_party/blink/public/web/web_frame.h"
@@ -36,8 +36,7 @@
 namespace content_settings {
 namespace {
 
-GURL GetOriginOrURL(
-    const blink::WebFrame* frame) {
+GURL GetOriginOrURL(const blink::WebFrame* frame) {
   url::Origin top_origin = url::Origin(frame->Top()->GetSecurityOrigin());
   // The |top_origin| is unique ("null") e.g., for file:// URLs. Use the
   // document URL as the primary URL in those cases.
@@ -76,8 +75,7 @@ HuhiContentSettingsAgentImpl::HuhiContentSettingsAgentImpl(
                                should_whitelist,
                                std::move(delegate)) {}
 
-HuhiContentSettingsAgentImpl::~HuhiContentSettingsAgentImpl() {
-}
+HuhiContentSettingsAgentImpl::~HuhiContentSettingsAgentImpl() {}
 
 bool HuhiContentSettingsAgentImpl::OnMessageReceived(
     const IPC::Message& message) {
@@ -87,7 +85,8 @@ bool HuhiContentSettingsAgentImpl::OnMessageReceived(
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
-  if (handled) return true;
+  if (handled)
+    return true;
   return ContentSettingsAgentImpl::OnMessageReceived(message);
 }
 
@@ -108,9 +107,9 @@ bool HuhiContentSettingsAgentImpl::IsScriptTemporilyAllowed(
   // Check if scripts from this origin are temporily allowed or not.
   // Also matches the full script URL to support data URL cases which we use
   // the full URL to allow it.
-  return base::Contains(
-      temporarily_allowed_scripts_, script_url.GetOrigin().spec()) ||
-    base::Contains(temporarily_allowed_scripts_, script_url.spec());
+  return base::Contains(temporarily_allowed_scripts_,
+                        script_url.GetOrigin().spec()) ||
+         base::Contains(temporarily_allowed_scripts_, script_url.spec());
 }
 
 void HuhiContentSettingsAgentImpl::HuhiSpecificDidBlockJavaScript(
@@ -118,20 +117,17 @@ void HuhiContentSettingsAgentImpl::HuhiSpecificDidBlockJavaScript(
   Send(new HuhiViewHostMsg_JavaScriptBlocked(routing_id(), details));
 }
 
-bool HuhiContentSettingsAgentImpl::AllowScript(
-    bool enabled_per_settings) {
+bool HuhiContentSettingsAgentImpl::AllowScript(bool enabled_per_settings) {
   // clear cached url for other flow like directly calling `DidNotAllowScript`
   // without calling `AllowScriptFromSource` first
   blocked_script_url_ = GURL::EmptyGURL();
 
   blink::WebLocalFrame* frame = render_frame()->GetWebFrame();
-  const GURL secondary_url(
-      url::Origin(frame->GetDocument().GetSecurityOrigin()).GetURL());
+  const GURL secondary_url(url::Origin(frame->GetSecurityOrigin()).GetURL());
 
   bool allow = ContentSettingsAgentImpl::AllowScript(enabled_per_settings);
-  allow = allow ||
-    IsHuhiShieldsDown(frame, secondary_url) ||
-    IsScriptTemporilyAllowed(secondary_url);
+  allow = allow || IsHuhiShieldsDown(frame, secondary_url) ||
+          IsScriptTemporilyAllowed(secondary_url);
 
   return allow;
 }
@@ -139,7 +135,7 @@ bool HuhiContentSettingsAgentImpl::AllowScript(
 void HuhiContentSettingsAgentImpl::DidNotAllowScript() {
   if (!blocked_script_url_.is_empty()) {
     HuhiSpecificDidBlockJavaScript(
-      base::UTF8ToUTF16(blocked_script_url_.spec()));
+        base::UTF8ToUTF16(blocked_script_url_.spec()));
     blocked_script_url_ = GURL::EmptyGURL();
   }
   ContentSettingsAgentImpl::DidNotAllowScript();
@@ -159,10 +155,9 @@ bool HuhiContentSettingsAgentImpl::AllowScriptFromSource(
       blink::WebSecurityOrigin::Create(script_url),
       render_frame()->GetWebFrame()->GetDocument().Url());
 
-  allow = allow ||
-    should_white_list ||
-    IsHuhiShieldsDown(render_frame()->GetWebFrame(), secondary_url) ||
-    IsScriptTemporilyAllowed(secondary_url);
+  allow = allow || should_white_list ||
+          IsHuhiShieldsDown(render_frame()->GetWebFrame(), secondary_url) ||
+          IsScriptTemporilyAllowed(secondary_url);
 
   if (!allow) {
     blocked_script_url_ = secondary_url;
@@ -189,8 +184,7 @@ bool HuhiContentSettingsAgentImpl::AllowFingerprinting(
   if (!enabled_per_settings)
     return false;
   blink::WebLocalFrame* frame = render_frame()->GetWebFrame();
-  const GURL secondary_url(
-      url::Origin(frame->GetDocument().GetSecurityOrigin()).GetURL());
+  const GURL secondary_url(url::Origin(frame->GetSecurityOrigin()).GetURL());
   if (IsHuhiShieldsDown(frame, secondary_url)) {
     return true;
   }
@@ -203,14 +197,12 @@ HuhiFarblingLevel HuhiContentSettingsAgentImpl::GetHuhiFarblingLevel() {
 
   ContentSetting setting = CONTENT_SETTING_DEFAULT;
   if (content_setting_rules_) {
-    if (IsHuhiShieldsDown(
-            frame,
-            url::Origin(frame->GetDocument().GetSecurityOrigin()).GetURL())) {
+    if (IsHuhiShieldsDown(frame,
+                           url::Origin(frame->GetSecurityOrigin()).GetURL())) {
       setting = CONTENT_SETTING_ALLOW;
     } else {
       setting = GetHuhiFPContentSettingFromRules(
-          content_setting_rules_->fingerprinting_rules,
-          GetOriginOrURL(frame));
+          content_setting_rules_->fingerprinting_rules, GetOriginOrURL(frame));
     }
   }
 
@@ -228,7 +220,7 @@ HuhiFarblingLevel HuhiContentSettingsAgentImpl::GetHuhiFarblingLevel() {
 
 bool HuhiContentSettingsAgentImpl::AllowAutoplay(bool default_value) {
   blink::WebLocalFrame* frame = render_frame()->GetWebFrame();
-  auto origin = frame->GetDocument().GetSecurityOrigin();
+  auto origin = frame->GetSecurityOrigin();
   // default allow local files
   if (origin.IsNull() || origin.Protocol().Ascii() == url::kFileScheme) {
     VLOG(1) << "AllowAutoplay=true because no origin or file scheme";
@@ -238,11 +230,12 @@ bool HuhiContentSettingsAgentImpl::AllowAutoplay(bool default_value) {
   // respect user's site blocklist, if any
   bool ask = false;
   if (content_setting_rules_) {
-    ContentSetting setting = GetContentSettingFromRules(
-        content_setting_rules_->autoplay_rules, frame,
-        url::Origin(frame->GetDocument().GetSecurityOrigin()).GetURL());
+    ContentSetting setting =
+        GetContentSettingFromRules(content_setting_rules_->autoplay_rules,
+                                   frame, url::Origin(origin).GetURL());
     if (setting == CONTENT_SETTING_BLOCK) {
       VLOG(1) << "AllowAutoplay=false because rule=CONTENT_SETTING_BLOCK";
+      DidBlockContentType(ContentSettingsType::AUTOPLAY);
       return false;
     } else if (setting == CONTENT_SETTING_ASK) {
       VLOG(1) << "AllowAutoplay=ask because rule=CONTENT_SETTING_ASK";
@@ -275,12 +268,14 @@ bool HuhiContentSettingsAgentImpl::AllowAutoplay(bool default_value) {
   }
 
   bool allow = ContentSettingsAgentImpl::AllowAutoplay(default_value);
-  if (allow)
+  if (allow) {
     VLOG(1) << "AllowAutoplay=true because "
                "ContentSettingsAgentImpl::AllowAutoplay says so";
-  else
+  } else {
+    DidBlockContentType(ContentSettingsType::AUTOPLAY);
     VLOG(1) << "AllowAutoplay=false because "
                "ContentSettingsAgentImpl::AllowAutoplay says so";
+  }
   return allow;
 }
 

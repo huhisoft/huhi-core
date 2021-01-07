@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -26,31 +26,31 @@ class SKUMerchant : public SKU  {
 
   void Process(
       const std::vector<type::SKUOrderItem>& items,
-      type::ExternalWalletPtr wallet,
+      const std::string& wallet_type,
       ledger::SKUOrderCallback callback,
       const std::string& contribution_id = "") override;
 
   void Retry(
       const std::string& order_id,
-      type::ExternalWalletPtr wallet,
+      const std::string& wallet_type,
       ledger::SKUOrderCallback callback) override;
 
  private:
   void OrderCreated(
       const type::Result result,
       const std::string& order_id,
-      const type::ExternalWallet& wallet,
+      const std::string& wallet_type,
       ledger::SKUOrderCallback callback);
 
   void OnOrder(
       type::SKUOrderPtr order,
-      const type::ExternalWallet& wallet,
+      const std::string& wallet_type,
       ledger::SKUOrderCallback callback);
 
   void OnServerPublisherInfo(
       type::ServerPublisherInfoPtr info,
       std::shared_ptr<type::SKUOrderPtr> shared_order,
-      const type::ExternalWallet& wallet,
+      const std::string& wallet_type,
       ledger::SKUOrderCallback callback);
 
   LedgerImpl* ledger_;  // NOT OWNED

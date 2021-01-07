@@ -1,0 +1,44 @@
+import("//huhi/components/huhi_referrals/buildflags/buildflags.gni")
+
+declare_args() {
+  huhi_stats_updater_url = ""
+}
+
+source_set("stats_updater") {
+  # Remove when https://github.com/huhisoft/huhi-browser/issues/10657 is resolved
+  check_includes = false
+  defines = [
+      "HUHI_USAGE_SERVER=\"$huhi_stats_updater_url\"",
+  ]
+
+  sources = [
+    "huhi_stats_tab_helper.cc",
+    "huhi_stats_tab_helper.h",
+    "huhi_stats_updater.cc",
+    "huhi_stats_updater.h",
+    "huhi_stats_updater_params.cc",
+    "huhi_stats_updater_params.h",
+    "switches.h",
+  ]
+
+  deps = [
+    "//base",
+    "//huhi/browser:version_info",
+    "//huhi/common",
+    "//huhi/common:pref_names",
+    "//huhi/components/huhi_referrals/buildflags",
+    "//huhi/components/huhi_stats/browser",
+    "//chrome/common",
+    "//components/prefs",
+    "//content/public/browser",
+    "//net",
+    "//services/network/public/cpp",
+    "//ui/base",
+  ]
+
+  if (enable_huhi_referrals) {
+    deps += [
+      "//huhi/components/huhi_referrals/common",
+    ]
+  }
+}

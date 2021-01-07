@@ -17,7 +17,7 @@
     },
     {
         "preconditions": {
-            "rewards-enabled": true
+            "auto-contribution-enabled": true
         },
         "urls": [
             "http://pre1.example.com/*"
@@ -51,5 +51,86 @@
         "scripts": [
             "scripts/b-com.js"
         ]
+    },
+    {
+        "urls": [
+            "http://messages.example.com/*"
+        ],
+        "scripts": [
+            "scripts/messages-example-com.js"
+        ],
+        "messages": "messages"
+    },
+    {
+      "urls": [
+            "http://version-low-wild.example.com/*"
+      ],
+      "scripts": [
+            "scripts/a-com.js"
+      ],
+      "minimum_huhi_version": "0.1.*"
+    },
+    {
+      "urls": [
+            "http://version-low-format.example.com/*"
+      ],
+      "scripts": [
+            "scripts/a-com.js"
+      ],
+      "minimum_huhi_version": "1.1.3"
+    },
+    {
+      "urls": [
+            "http://version-match-wild.example.com/*"
+      ],
+      "scripts": [
+            "scripts/a-com.js"
+      ],
+      "minimum_huhi_version": "1.*"
+    },
+    {
+      "urls": [
+            "http://version-match-exact.example.com/*"
+      ],
+      "scripts": [
+            "scripts/a-com.js"
+      ],
+      "minimum_huhi_version": "1.2.3.4"
+    },
+    {
+      "urls": [
+            "http://version-high-wild.example.com/*"
+      ],
+      "scripts": [
+            "scripts/a-com.js"
+      ],
+      "minimum_huhi_version": "2.*"
+    },
+    {
+      "urls": [
+            "http://version-high-exact.example.com/*"
+      ],
+      "scripts": [
+            "scripts/a-com.js"
+      ],
+      "minimum_huhi_version": "2.2.3.4"
+    },
+    {
+      "urls": [
+            "http://version-empty.example.com/*"
+      ],
+      "scripts": [
+            "scripts/a-com.js"
+      ],
+      "minimum_huhi_version": ""
+    },
+    {
+      "urls": [
+            "http://version-bad-format.example.com/*"
+      ],
+      "scripts": [
+            "scripts/a-com.js"
+      ],
+      "minimum_huhi_version": "abcdefghi"
     }
 ]

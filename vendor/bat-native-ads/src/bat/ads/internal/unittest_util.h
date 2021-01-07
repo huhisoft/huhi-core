@@ -1,10 +1,12 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef BAT_ADS_INTERNAL_UNITTEST_UTIL_H_
 #define BAT_ADS_INTERNAL_UNITTEST_UTIL_H_
+
+#include <stdint.h>
 
 #include <map>
 #include <memory>
@@ -96,7 +98,15 @@ void SetBuildChannel(
 
 void MockPlatformHelper(
     const std::unique_ptr<PlatformHelperMock>& mock,
-    PlatformType platform_type);
+    const PlatformType platform_type);
+
+void MockIsNetworkConnectionAvailable(
+    const std::unique_ptr<AdsClientMock>& mock,
+    const bool is_available);
+
+void MockShouldShowNotifications(
+    const std::unique_ptr<AdsClientMock>& mock,
+    const bool should_show);
 
 void MockSave(
     const std::unique_ptr<AdsClientMock>& mock);
@@ -117,6 +127,9 @@ void MockUrlRequest(
 void MockRunDBTransaction(
     const std::unique_ptr<AdsClientMock>& mock,
     const std::unique_ptr<Database>& database);
+
+void MockPrefs(
+    const std::unique_ptr<AdsClientMock>& mock);
 
 int64_t DistantPast();
 

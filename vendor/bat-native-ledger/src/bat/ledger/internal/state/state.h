@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -48,10 +48,6 @@ class State {
 
   void GetScoreValues(double* a, double* b);
 
-  void SetRewardsMainEnabled(bool enabled);
-
-  bool GetRewardsMainEnabled();
-
   void SetAutoContributeEnabled(bool enabled);
 
   bool GetAutoContributeEnabled();
@@ -69,14 +65,6 @@ class State {
   uint64_t GetCreationStamp();
 
   void SetCreationStamp(const uint64_t stamp);
-
-  std::vector<uint8_t> GetRecoverySeed();
-
-  void SetRecoverySeed(const std::vector<uint8_t>& seed);
-
-  std::string GetPaymentId();
-
-  void SetPaymentId(const std::string& id);
 
   bool GetInlineTippingPlatformEnabled(
       const type::InlineTipsPlatforms platform);

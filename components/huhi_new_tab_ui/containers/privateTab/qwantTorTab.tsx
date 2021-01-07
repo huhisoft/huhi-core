@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -25,7 +25,24 @@ import { getLocale } from '../../../common/locale'
 // Assets
 const privateWindowImg = require('../../../img/newtab/private-window-tor.svg')
 
-export default class QwantTorTab extends React.PureComponent<{}, {}> {
+interface Props {
+  actions: any
+  newTabData: NewTab.State
+}
+
+export default class QwantTorTab extends React.PureComponent<Props, {}> {
+  get torStatus () {
+    if (this.props.newTabData &&
+        this.props.newTabData.torCircuitEstablished) {
+      return getLocale('torStatusConnected')
+    }
+    if (this.props.newTabData &&
+        this.props.newTabData.torInitProgress) {
+      return getLocale('torStatusInitializing',
+        { percentage: String(this.props.newTabData.torInitProgress) })
+    }
+    return getLocale('torStatusDisconnected')
+  }
   render () {
     return (
       <Grid2Columns>
@@ -48,11 +65,15 @@ export default class QwantTorTab extends React.PureComponent<{}, {}> {
           </Content>
           <Separator />
           <FakeButton
-            href='https://support.huhisoft.com/hc/en-us/articles/360018121491'
+            href='https://support.hnq.vn/hc/en-us/articles/360018121491'
             target='_blank'
           >
             {getLocale('boxTorButton')}
           </FakeButton>
+        </Box>
+        <Box>
+          <Title>{getLocale('torStatus')}</Title>
+          <Text>{this.torStatus}</Text>
         </Box>
       </Grid2Columns>
     )

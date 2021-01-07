@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -14,7 +14,6 @@
 #import "BATHuhiAds.h"
 #import "BATCommonOperations.h"
 #import "NSURL+Extensions.h"
-#import "BATExternalWallet+DictionaryValue.h"
 
 #import "NativeLedgerClient.h"
 #import "NativeLedgerClientBridge.h"
@@ -30,9 +29,12 @@
 #import "url/gurl.h"
 #import "net/base/registry_controlled_domains/registry_controlled_domain.h"
 #import "base/strings/sys_string_conversions.h"
+#import "components/os_crypt/os_crypt.h"
 
 #import "base/i18n/icu_util.h"
 #import "base/ios/ios_util.h"
+#import "base/base64.h"
+#import "base/command_line.h"
 
 #import "RewardsLogging.h"
 
@@ -69,7 +71,9 @@ static NSString * const kTransferFeesPrefKey = @"transfer_fees";
 static const auto kOneDay = base::Time::kHoursPerDay * base::Time::kSecondsPerHour;
 
 /// Ledger Prefs, keys will be defined in `bat/ledger/option_keys.h`
-const std::map<std::string, bool> kBoolOptions = {};
+const std::map<std::string, bool> kBoolOptions = {
+    {ledger::option::kClaimUGP, true}
+};
 const std::map<std::string, int> kIntegerOptions = {};
 const std::map<std::string, double> kDoubleOptions = {};
 const std::map<std::string, std::string> kStringOptions = {};
@@ -98,7 +102,7 @@ typedef NS_ENUM(NSInteger, BATLedgerDatabaseMigrationType) {
 @property (nonatomic, copy) NSString *storagePath;
 @property (nonatomic) BATRewardsParameters *rewardsParameters;
 @property (nonatomic) BATBalance *balance;
-@property (nonatomic) NSMutableDictionary<BATWalletType, BATExternalWallet *> *mExternalWallets;
+@property (nonatomic) BATUpholdWallet *upholdWallet;
 @property (nonatomic) dispatch_queue_t fileWriteThread;
 @property (nonatomic) NSMutableDictionary<NSString *, NSString *> *state;
 @property (nonatomic) BATCommonOperations *commonOps;
@@ -140,7 +144,6 @@ typedef NS_ENUM(NSInteger, BATLedgerDatabaseMigrationType) {
     self.fileWriteThread = dispatch_queue_create("com.rewards.file-write", DISPATCH_QUEUE_SERIAL);
     self.mPendingPromotions = [[NSMutableArray alloc] init];
     self.mFinishedPromotions = [[NSMutableArray alloc] init];
-    self.mExternalWallets = [[NSMutableDictionary alloc] init];
     self.observers = [NSHashTable weakObjectsHashTable];
     rewardsDatabase = nullptr;
     
@@ -163,6 +166,13 @@ typedef NS_ENUM(NSInteger, BATLedgerDatabaseMigrationType) {
       BLOG(0, @"Failed to initialize ICU data");
     }
     
+    const auto args = [NSProcessInfo processInfo].arguments;
+    const char *argv[args.count];
+    for (NSInteger i = 0; i < args.count; i++) {
+      argv[i] = args[i].UTF8String;
+    }
+    base::CommandLine::Init(args.count, argv);
+    
     self.databaseQueue = dispatch_queue_create("com.rewards.db-transactions", DISPATCH_QUEUE_SERIAL);
     
     const auto* dbPath = [self rewardsDatabasePath].UTF8String;
@@ -182,11 +192,9 @@ typedef NS_ENUM(NSInteger, BATLedgerDatabaseMigrationType) {
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(applicationDidBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
 
-    if (self.walletCreated) {
-      [self getRewardsParameters:nil];
-      [self fetchBalance:nil];
-      [self fetchExternalWalletForType:BATWalletTypeUphold completion:nil];
-    }
+    [self getRewardsParameters:nil];
+    [self fetchBalance:nil];
+    [self fetchUpholdWallet:nil];
 
     [self readNotificationsFromDisk];
   }
@@ -219,10 +227,8 @@ typedef NS_ENUM(NSInteger, BATLedgerDatabaseMigrationType) {
     if (self.initialized) {
       self.prefs[kMigrationSucceeded] = @(YES);
       [self savePrefs];
-      
-      if (self.isEnabled) {
-        [self.ads initializeIfAdsEnabled];
-      }
+
+      [self.ads initializeIfAdsEnabled];
     } else {
       BLOG(0, @"Ledger Initialization Failed with error: %d", result);
       if (result == ledger::type::Result::DATABASE_INIT_FAILED) {
@@ -356,9 +362,9 @@ typedef NS_ENUM(NSInteger, BATLedgerDatabaseMigrationType) {
 - (void)savePrefs
 {
   NSDictionary *prefs = [self.prefs copy];
-  NSString *path = [self prefsPath];
+  NSString *path = [[self prefsPath] copy];
   dispatch_async(self.fileWriteThread, ^{
-    [prefs writeToFile:path atomically:YES];
+    [prefs writeToURL:[NSURL fileURLWithPath:path isDirectory:NO] error:nil];
   });
 }
 
@@ -392,8 +398,6 @@ BATClassLedgerBridge(BOOL, useShortRetries, setUseShortRetries, short_retries)
 }
 
 #pragma mark - Wallet
-
-BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
 
 - (void)createWallet:(void (^)(NSError * _Nullable))completion
 {
@@ -432,17 +436,23 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
       }
       
       for (BATHuhiLedgerObserver *observer in [strongSelf.observers copy]) {
-        if (observer.rewardsEnabledStateUpdated) {
-          observer.rewardsEnabledStateUpdated(strongSelf.isEnabled);
-        }
-      }
-      
-      for (BATHuhiLedgerObserver *observer in [strongSelf.observers copy]) {
         if (observer.walletInitalized) {
           observer.walletInitalized(static_cast<BATResult>(result));
         }
       }
     });
+  });
+}
+
+- (void)currentWalletInfo:(void (^)(BATHuhiWallet *_Nullable wallet))completion
+{
+  ledger->GetHuhiWallet(^(ledger::type::HuhiWalletPtr wallet){
+    if (wallet.get() == nullptr) {
+      completion(nil);
+      return;
+    }
+    const auto bridgedWallet = [[BATHuhiWallet alloc] initWithHuhiWallet:*wallet];
+    completion(bridgedWallet);
   });
 }
 
@@ -482,14 +492,6 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
       }
     });
   });
-}
-
-- (NSString *)walletPassphrase
-{
-  if (ledger->IsWalletCreated()) {
-    return [NSString stringWithUTF8String:ledger->GetWalletPassphrase().c_str()];
-  }
-  return nil;
 }
 
 - (void)recoverWalletUsingPassphrase:(NSString *)passphrase completion:(void (^)(NSError *_Nullable))completion
@@ -533,20 +535,29 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
   });
 }
 
-#pragma mark - User Wallets
-
-- (NSDictionary<BATWalletType, BATExternalWallet *> *)externalWallets
+- (void)linkHuhiWalletToPaymentId:(NSString *)paymentId completion:(void (^)(BATResult result))completion
 {
-  return [self.mExternalWallets copy];
+  ledger->LinkHuhiWallet(paymentId.UTF8String, ^(ledger::type::Result result) {
+    completion(static_cast<BATResult>(result));
+  });
 }
 
-- (void)fetchExternalWalletForType:(BATWalletType)walletType
-                        completion:(nullable void (^)(BATExternalWallet * _Nullable wallet))completion
+- (void)transferrableAmount:(void (^)(double amount))completion
 {
-  ledger->GetExternalWallet(walletType.UTF8String, ^(ledger::type::Result result, ledger::type::ExternalWalletPtr walletPtr) {
+  ledger->GetTransferableAmount(^(double amount) {
+    completion(amount);
+  });
+}
+
+#pragma mark - User Wallets
+
+- (void)fetchUpholdWallet:(nullable void (^)(BATUpholdWallet * _Nullable wallet))completion
+{
+  const auto __weak weakSelf = self;
+  ledger->GetUpholdWallet(^(ledger::type::Result result, ledger::type::UpholdWalletPtr walletPtr) {
     if (result == ledger::type::Result::LEDGER_OK && walletPtr.get() != nullptr) {
-      const auto bridgedWallet = [[BATExternalWallet alloc] initWithExternalWallet:*walletPtr];
-      self.mExternalWallets[walletType] = bridgedWallet;
+      const auto bridgedWallet = [[BATUpholdWallet alloc] initWithUpholdWallet:*walletPtr];
+      weakSelf.upholdWallet = bridgedWallet;
       if (completion) {
         completion(bridgedWallet);
       }
@@ -599,77 +610,18 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
   });
 }
 
-- (std::map<std::string, ledger::type::ExternalWalletPtr>)getExternalWallets
+- (std::string)getLegacyWallet
 {
-  std::map<std::string, ledger::type::ExternalWalletPtr> wallets;
   NSDictionary *externalWallets = self.prefs[kExternalWalletsPrefKey] ?: [[NSDictionary alloc] init];
-  for (NSString *walletTypeKey in externalWallets) {
-    const auto wallet = [[BATExternalWallet alloc] initWithDictionaryValue:externalWallets[walletTypeKey]];
-    wallets.insert(std::make_pair(walletTypeKey.UTF8String, wallet.cppObjPtr));
+  std::string wallet;
+  NSData *data = [NSJSONSerialization dataWithJSONObject:externalWallets options:0 error:nil];
+  if (data != nil) {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (dataString.UTF8String != nil) {
+      wallet = dataString.UTF8String;
+    }
   }
-  return wallets;
-}
-
-- (void)saveExternalWallet:(const std::string &)wallet_type wallet:(ledger::type::ExternalWalletPtr)wallet
-{
-  if (wallet.get() == nullptr) { return; }
-  const auto bridgedWallet = [[BATExternalWallet alloc] initWithExternalWallet:*wallet];
-  const auto bridgedType = [NSString stringWithUTF8String:wallet_type.c_str()];
-  NSMutableDictionary *externalWallets = [self.prefs[kExternalWalletsPrefKey] mutableCopy] ?: [[NSMutableDictionary alloc] init];
-  externalWallets[bridgedType] = [bridgedWallet dictionaryValue];
-  self.prefs[kExternalWalletsPrefKey] = externalWallets;
-  [self savePrefs];
-}
-
-- (void)setTransferFee:(const std::string &)wallet_type transfer_fee:(ledger::type::TransferFeePtr)transfer_fee
-{
-  if (transfer_fee.get() == nullptr) {
-    return;
-  }
-  const auto bridgedType = [NSString stringWithUTF8String:wallet_type.c_str()];
-  const auto feeID = [NSString stringWithUTF8String:transfer_fee->id.c_str()];
-  const auto feeDict = @{
-    @"id": feeID,
-    @"amount": @(transfer_fee->amount)
-  };
-
-  NSMutableDictionary *transferFees = [self.prefs[kTransferFeesPrefKey] mutableCopy] ?: [[NSMutableDictionary alloc] init];
-  NSMutableDictionary *feesForWalletType = [transferFees[bridgedType] mutableCopy] ?: [[NSMutableDictionary alloc] init];
-  feesForWalletType[feeID] = feeDict;
-  transferFees[bridgedType] = feesForWalletType;
-  self.prefs[kTransferFeesPrefKey] = transferFees;
-  [self savePrefs];
-}
-
-- (ledger::type::TransferFeeList)getTransferFees:(const std::string &)wallet_type
-{
-  const auto bridgedType = [NSString stringWithUTF8String:wallet_type.c_str()];
-  ledger::type::TransferFeeList list;
-  NSDictionary *transferFees = self.prefs[kTransferFeesPrefKey] ?: [[NSDictionary alloc] init];
-  NSDictionary *walletFees = transferFees[bridgedType];
-  if (!walletFees || walletFees.count == 0) {
-    return list;
-  }
-  for (NSString *feeID in walletFees) {
-    NSDictionary* feeDict = walletFees[feeID];
-    auto fee = ledger::type::TransferFee::New();
-    fee->id = feeID.UTF8String;
-    fee->amount = [feeDict[@"amount"] doubleValue];
-    list.insert(std::make_pair(feeID.UTF8String, std::move(fee)));
-  }
-  return list;
-}
-
-- (void)removeTransferFee:(const std::string &)wallet_type id:(const std::string &)id
-{
-  const auto bridgedType = [NSString stringWithUTF8String:wallet_type.c_str()];
-  const auto bridgedID = [NSString stringWithUTF8String:id.c_str()];
-  NSMutableDictionary *transferFees = [self.prefs[kTransferFeesPrefKey] mutableCopy] ?: [[NSMutableDictionary alloc] init];
-  NSMutableDictionary *feesForWalletType = [transferFees[bridgedType] mutableCopy] ?: [[NSMutableDictionary alloc] init];
-  [feesForWalletType removeObjectForKey:bridgedID];
-  transferFees[bridgedType] = feesForWalletType;
-  self.prefs[kTransferFeesPrefKey] = transferFees;
-  [self savePrefs];
+  return wallet;
 }
 
 #pragma mark - Publishers
@@ -796,12 +748,9 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
 - (void)processSKUItems:(NSArray<BATSKUOrderItem *> *)items
              completion:(void (^)(BATResult result, NSString *orderID))completion
 {
-  auto wallet = ledger::type::ExternalWallet::New();
-  wallet->type = ledger::constant::kWalletUnBlinded;
-  
   ledger->ProcessSKU(VectorFromNSArray(items, ^ledger::type::SKUOrderItem(BATSKUOrderItem *item) {
     return *item.cppObjPtr;
-  }), std::move(wallet), ^(const ledger::type::Result result, const std::string& order_id) {
+  }), ledger::constant::kWalletUnBlinded, ^(const ledger::type::Result result, const std::string& order_id) {
     completion(static_cast<BATResult>(result), [NSString stringWithUTF8String:order_id.c_str()]);
   });
 }
@@ -906,7 +855,7 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
         [self.mFinishedPromotions addObject:promotion];
 
         if (promotion.type == BATPromotionTypeAds) {
-          [self.ads updateAdRewards:true];
+          [self.ads reconcileAdRewards];
         }
       } else if (promotion.status == BATPromotionStatusActive ||
                  promotion.status == BATPromotionStatusAttested) {
@@ -958,8 +907,9 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
   }
   const auto jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
   ledger->ClaimPromotion(promotionId.UTF8String, jsonString.UTF8String, ^(const ledger::type::Result result, const std::string& nonce) {
+    const auto bridgedNonce = [NSString stringWithUTF8String:nonce.c_str()];
     dispatch_async(dispatch_get_main_queue(), ^{
-      completion(static_cast<BATResult>(result), [NSString stringWithUTF8String:nonce.c_str()]);
+      completion(static_cast<BATResult>(result), bridgedNonce);
     });
   });
 }
@@ -967,7 +917,14 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
 - (void)attestPromotion:(NSString *)promotionId solution:(BATPromotionSolution *)solution completion:(void (^)(BATResult result, BATPromotion * _Nullable promotion))completion
 {
   ledger->AttestPromotion(std::string(promotionId.UTF8String), solution.JSONPayload.UTF8String, ^(const ledger::type::Result result, ledger::type::PromotionPtr promotion) {
-    if (promotion.get() == nullptr) return;
+    if (promotion.get() == nullptr) {
+      if (completion) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+          completion(static_cast<BATResult>(result), nil);
+        });
+      }
+      return;
+    }
     
     const auto bridgedPromotion = [[BATPromotion alloc] initWithPromotion:*promotion];
     if (result == ledger::type::Result::LEDGER_OK) {
@@ -1226,24 +1183,6 @@ BATLedgerReadonlyBridge(BOOL, isWalletCreated, IsWalletCreated)
 
 #pragma mark - Preferences
 
-BATLedgerReadonlyBridge(BOOL, isEnabled, GetRewardsMainEnabled)
-
-- (void)setEnabled:(BOOL)enabled
-{
-  ledger->SetRewardsMainEnabled(enabled);
-  if (enabled) {
-    [self.ads initializeIfAdsEnabled];
-  } else {
-    [self.ads shutdown];
-  }
-
-  for (BATHuhiLedgerObserver *observer in [self.observers copy]) {
-    if (observer.rewardsEnabledStateUpdated) {
-      observer.rewardsEnabledStateUpdated(enabled);
-    }
-  }
-}
-
 BATLedgerBridge(int,
                 minimumVisitDuration, setMinimumVisitDuration,
                 GetPublisherMinVisitTime, SetPublisherMinVisitTime)
@@ -1466,10 +1405,6 @@ BATLedgerBridge(BOOL,
 
 - (void)startNotificationTimers
 {
-  if (!self.isEnabled) {
-    return;
-  }
-
   dispatch_async(dispatch_get_main_queue(), ^{
     // Startup timer, begins after 30-second delay.
     self.notificationStartupTimer =
@@ -1649,9 +1584,7 @@ BATLedgerBridge(BOOL,
     return;
   }
 
-  dispatch_async(self.fileWriteThread, ^{
-    [data writeToFile:path atomically:YES];
-  });
+  [data writeToURL:[NSURL fileURLWithPath:path isDirectory:NO] options:NSDataWritingAtomic error:nil];
 }
 
 #pragma mark - State
@@ -1697,7 +1630,7 @@ BATLedgerBridge(BOOL,
   NSDictionary *state = [self.state copy];
   NSString *path = [self.randomStatePath copy];
   dispatch_async(self.fileWriteThread, ^{
-    [state writeToFile:path atomically:YES];
+    [state writeToURL:[NSURL fileURLWithPath:path isDirectory:NO] error:nil];
   });
 }
 
@@ -1710,7 +1643,7 @@ BATLedgerBridge(BOOL,
   NSDictionary *state = [self.state copy];
   NSString *path = [self.randomStatePath copy];
   dispatch_async(self.fileWriteThread, ^{
-    [state writeToFile:path atomically:YES];
+    [state writeToURL:[NSURL fileURLWithPath:path isDirectory:NO] error:nil];
   });
 }
 
@@ -1763,11 +1696,13 @@ BATLedgerBridge(BOOL,
 
 - (void)fetchFavIcon:(const std::string &)url faviconKey:(const std::string &)favicon_key callback:(ledger::client::FetchIconCallback)callback
 {
-  if (!self.faviconFetcher) {
-    callback(NO, std::string());
+  const auto pageURL = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
+  if (!self.faviconFetcher || !pageURL) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      callback(NO, std::string());
+    });
     return;
   }
-  const auto pageURL = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
   self.faviconFetcher(pageURL, ^(NSURL * _Nullable faviconURL) {
     dispatch_async(dispatch_get_main_queue(), ^{
       callback(faviconURL != nil,
@@ -1927,7 +1862,49 @@ BATLedgerBridge(BOOL,
 
 - (void)deleteLog:(ledger::ResultCallback)callback
 {
-  // TODO implement
+  callback(ledger::type::Result::LEDGER_OK);
+}
+
+- (bool)setEncryptedStringState:(const std::string&)key value:(const std::string&)value
+{
+  const auto bridgedKey = [NSString stringWithUTF8String:key.c_str()];
+  
+  std::string encrypted_value;
+  if (!OSCrypt::EncryptString(value, &encrypted_value)) {
+    BLOG(0, @"Couldn't encrypt value for %@", bridgedKey);
+    return false;
+  }
+  
+  std::string encoded_value;
+  base::Base64Encode(encrypted_value, &encoded_value);
+  
+  self.prefs[bridgedKey] = [NSString stringWithUTF8String:encoded_value.c_str()];
+  [self savePrefs];
+  return true;
+}
+
+- (std::string)getEncryptedStringState:(const std::string&)key
+{
+  const auto bridgedKey = [NSString stringWithUTF8String:key.c_str()];
+  NSString *savedValue = self.prefs[bridgedKey];
+  if (!savedValue || ![savedValue isKindOfClass:NSString.class]) {
+    return "";
+  }
+  
+  std::string encoded_value = savedValue.UTF8String;
+  std::string encrypted_value;
+  if (!base::Base64Decode(encoded_value, &encrypted_value)) {
+    BLOG(0, @"base64 decode failed for %@", bridgedKey);
+    return "";
+  }
+  
+  std::string value;
+  if (!OSCrypt::DecryptString(encrypted_value, &value)) {
+    BLOG(0, @"Decrypting failed for %@", bridgedKey);
+    return "";
+  }
+  
+  return value;
 }
 
 @end

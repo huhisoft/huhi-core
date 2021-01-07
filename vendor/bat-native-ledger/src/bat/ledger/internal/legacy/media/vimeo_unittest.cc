@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -38,7 +38,7 @@ const char page_config[] =
 const char user_link[] =
     "<div class=\"clip_info-subline--watch clip_info-subline--inline\"><p "
     "class=\"userbyline-subline userbyline-subline--lg\"><span>from</span>"
-    "<span class=\"userlink userlink--md\"><a href=\"/huhisoftware\">Nejc</a>"
+    "<span class=\"userlink userlink--md\"><a href=\"/nejchuhi\">Nejc</a>"
     "<span style=\"display: inline-block\"></span></span></p><span "
     "class=\"clip_info-time\"><time datetime=\"2019-04-18T03:15:32-04:00\" "
     "title=\"Thursday, April 18, 2019 at 3:15 AM\">3 weeks ago</time>"
@@ -46,7 +46,7 @@ const char user_link[] =
 
 const char publisher_page[] =
     "<meta property=\"og:site_name\" content=\"Vimeo\">"
-    "<meta property=\"og:url\" content=\"https://vimeo.com/huhisoftware\">"
+    "<meta property=\"og:url\" content=\"https://vimeo.com/nejchuhi\">"
     "<meta property=\"og:title\" content=\"Nejc\">"
     "<meta property=\"og:image\" "
     "content=\"https://i.vimeocdn.com/portrait/31487122_640x640.webp\">"

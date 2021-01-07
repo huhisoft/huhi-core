@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -31,7 +31,9 @@ class VIEWS_EXPORT MdTextButton : public MdTextButtonBase {
   explicit MdTextButton(ButtonListener* listener = nullptr,
                         const base::string16& text = base::string16(),
                         int button_context = style::CONTEXT_BUTTON_MD);
-
+  explicit MdTextButton(PressedCallback callback,
+                        const base::string16& text = base::string16(),
+                        int button_context = style::CONTEXT_BUTTON_MD);
   ~MdTextButton() override;
 
   // InkDrop

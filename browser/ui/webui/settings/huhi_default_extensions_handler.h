@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,7 +9,8 @@
 #include <string>
 
 #include "base/memory/weak_ptr.h"
-#include "huhi/browser/tor/buildflags.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/ui/webui/settings/settings_page_ui_handler.h"
 #include "chrome/common/extensions/webstore_install_result.h"
 #include "components/prefs/pref_change_registrar.h"
@@ -32,13 +33,13 @@ class HuhiDefaultExtensionsHandler : public settings::SettingsPageUIHandler {
   void SetHangoutsEnabled(const base::ListValue* args);
   void SetIPFSCompanionEnabled(const base::ListValue* args);
   void SetMediaRouterEnabled(const base::ListValue* args);
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
   void SetHuhiWalletEnabled(const base::ListValue* args);
-#if BUILDFLAG(ENABLE_TOR)
+#endif
   void SetTorEnabled(const base::ListValue* args);
   void IsTorEnabled(const base::ListValue* args);
   void OnTorEnabledChanged();
   void IsTorManaged(const base::ListValue* args);
-#endif
 
   void InitializePrefCallbacks();
 

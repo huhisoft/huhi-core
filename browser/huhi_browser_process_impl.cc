@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,13 +11,12 @@
 #include "base/path_service.h"
 #include "base/task/post_task.h"
 #include "base/threading/sequenced_task_runner_handle.h"
-#include "huhi/browser/huhi_stats_updater.h"
+#include "huhi/browser/huhi_stats/huhi_stats_updater.h"
 #include "huhi/browser/component_updater/huhi_component_updater_configurator.h"
 #include "huhi/browser/component_updater/huhi_component_updater_delegate.h"
 #include "huhi/browser/net/huhi_system_request_handler.h"
 #include "huhi/browser/profiles/huhi_profile_manager.h"
 #include "huhi/browser/themes/huhi_dark_mode_utils.h"
-#include "huhi/browser/tor/buildflags.h"
 #include "huhi/browser/ui/huhi_browser_command_controller.h"
 #include "huhi/common/pref_names.h"
 #include "huhi/components/huhi_component_updater/browser/huhi_on_demand_updater.h"
@@ -37,7 +36,6 @@
 #include "huhi/services/network/public/cpp/system_request_handler.h"
 #include "chrome/browser/component_updater/component_updater_utils.h"
 #include "chrome/browser/net/system_network_context_manager.h"
-#include "chrome/browser/ui/browser_list.h"
 #include "chrome/common/buildflags.h"
 #include "chrome/common/chrome_paths.h"
 #include "components/component_updater/component_updater_service.h"
@@ -70,12 +68,12 @@
 #endif
 
 #if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/extensions/huhi_tor_client_updater.h"
-#include "huhi/common/tor/pref_names.h"
+#include "huhi/components/tor/huhi_tor_client_updater.h"
+#include "huhi/components/tor/pref_names.h"
 #endif
 
 #if BUILDFLAG(IPFS_ENABLED)
-#include "huhi/components/ipfs/browser/huhi_ipfs_client_updater.h"
+#include "huhi/components/ipfs/huhi_ipfs_client_updater.h"
 #endif
 
 #if BUILDFLAG(ENABLE_SPEEDREADER)
@@ -87,6 +85,7 @@
 #include "chrome/browser/android/component_updater/background_task_update_scheduler.h"
 #else
 #include "chrome/browser/ui/browser.h"
+#include "chrome/browser/ui/browser_list.h"
 #endif
 
 #if BUILDFLAG(HUHI_ADS_ENABLED)
@@ -135,7 +134,7 @@ HuhiBrowserProcessImpl::HuhiBrowserProcessImpl(StartupData* startup_data)
 
   base::SequencedTaskRunnerHandle::Get()->PostTask(
       FROM_HERE, base::BindOnce(
-                     [](huhi::HuhiStatsUpdater* stats_updater) {
+                     [](huhi_stats::HuhiStatsUpdater* stats_updater) {
                        stats_updater->Start();
                      },
                      base::Unretained(huhi_stats_updater())));
@@ -239,13 +238,9 @@ HuhiBrowserProcessImpl::ntp_background_images_service() {
     return nullptr;
 
   if (!ntp_background_images_service_) {
-    base::FilePath user_data_dir;
-    base::PathService::Get(chrome::DIR_USER_DATA, &user_data_dir);
     ntp_background_images_service_ =
-        std::make_unique<NTPBackgroundImagesService>(
-            component_updater(),
-            local_state(),
-            user_data_dir);
+        std::make_unique<NTPBackgroundImagesService>(component_updater(),
+                                                     local_state());
     ntp_background_images_service_->Init();
   }
 
@@ -313,13 +308,16 @@ void HuhiBrowserProcessImpl::OnHuhiDarkModeChanged() {
 }
 
 #if BUILDFLAG(ENABLE_TOR)
-extensions::HuhiTorClientUpdater*
+tor::HuhiTorClientUpdater*
 HuhiBrowserProcessImpl::tor_client_updater() {
   if (tor_client_updater_)
     return tor_client_updater_.get();
 
-  tor_client_updater_ = extensions::HuhiTorClientUpdaterFactory(
-      huhi_component_updater_delegate());
+  base::FilePath user_data_dir;
+  base::PathService::Get(chrome::DIR_USER_DATA, &user_data_dir);
+
+  tor_client_updater_.reset(new tor::HuhiTorClientUpdater(
+      huhi_component_updater_delegate(), local_state(), user_data_dir));
   return tor_client_updater_.get();
 }
 
@@ -350,9 +348,9 @@ HuhiBrowserProcessImpl::huhi_widevine_bundle_manager() {
 }
 #endif
 
-huhi::HuhiStatsUpdater* HuhiBrowserProcessImpl::huhi_stats_updater() {
+huhi_stats::HuhiStatsUpdater* HuhiBrowserProcessImpl::huhi_stats_updater() {
   if (!huhi_stats_updater_)
-    huhi_stats_updater_ = huhi::HuhiStatsUpdaterFactory(local_state());
+    huhi_stats_updater_ = huhi_stats::HuhiStatsUpdaterFactory(local_state());
   return huhi_stats_updater_.get();
 }
 
@@ -421,8 +419,11 @@ HuhiBrowserProcessImpl::ipfs_client_updater() {
   if (ipfs_client_updater_)
     return ipfs_client_updater_.get();
 
+  base::FilePath user_data_dir;
+  base::PathService::Get(chrome::DIR_USER_DATA, &user_data_dir);
+
   ipfs_client_updater_ = ipfs::HuhiIpfsClientUpdaterFactory(
-      huhi_component_updater_delegate());
+      huhi_component_updater_delegate(), user_data_dir);
   return ipfs_client_updater_.get();
 }
 #endif  // BUILDFLAG(IPFS_ENABLED)

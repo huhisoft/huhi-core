@@ -1,7 +1,9 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * You can obtain one at http://mozilla.org/MPL/2.0/.
+ Todo HNQ sync config
+  */
 
 #include "huhi/components/sync/driver/huhi_sync_auth_manager.h"
 
@@ -38,7 +40,7 @@ const char kAccountId[] =
 
 const char kAccountEmail[] =
   "502042270C8145247ED70A18F87022A3 "
-  "9886900AB36F2FFF655635DBE516765E @huhisoft.com";
+  "9886900AB36F2FFF655635DBE516765E @hnq.vn";
 
 class HuhiSyncAuthManagerTest : public testing::Test {
  protected:

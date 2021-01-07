@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -22,6 +22,7 @@
 #include "bat/ads/internal/platform/platform_helper_mock.h"
 #include "bat/ads/internal/time_util.h"
 #include "bat/ads/internal/unittest_util.h"
+#include "bat/ads/pref_names.h"
 
 // npm run test -- huhi_unit_tests --filter=BatAds*
 
@@ -48,8 +49,7 @@ class BatAdsConversionFrequencyCapTest : public ::testing::Test {
         locale_helper_mock_(std::make_unique<
             NiceMock<huhi_l10n::LocaleHelperMock>>()),
         platform_helper_mock_(std::make_unique<
-            NiceMock<PlatformHelperMock>>()),
-        frequency_cap_(std::make_unique<ConversionFrequencyCap>(ads_.get())) {
+            NiceMock<PlatformHelperMock>>()) {
     // You can do set-up work for each test here
 
     huhi_l10n::LocaleHelper::GetInstance()->set_for_testing(
@@ -72,12 +72,6 @@ class BatAdsConversionFrequencyCapTest : public ::testing::Test {
     ASSERT_TRUE(temp_dir_.CreateUniqueTempDir());
     const base::FilePath path = temp_dir_.GetPath();
 
-    ON_CALL(*ads_client_mock_, IsEnabled())
-        .WillByDefault(Return(true));
-
-    ON_CALL(*ads_client_mock_, ShouldAllowAdConversionTracking())
-        .WillByDefault(Return(true));
-
     SetBuildChannel(false, "test");
 
     ON_CALL(*locale_helper_mock_, GetLocale())
@@ -93,6 +87,8 @@ class BatAdsConversionFrequencyCapTest : public ::testing::Test {
     MockLoadResourceForId(ads_client_mock_);
     MockSave(ads_client_mock_);
 
+    MockPrefs(ads_client_mock_);
+
     database_ = std::make_unique<Database>(path.AppendASCII("database.sqlite"));
     MockRunDBTransaction(ads_client_mock_, database_);
 
@@ -106,10 +102,6 @@ class BatAdsConversionFrequencyCapTest : public ::testing::Test {
 
   // Objects declared here can be used by all tests in the test case
 
-  Client* get_client() {
-    return ads_->get_client();
-  }
-
   base::test::TaskEnvironment task_environment_;
 
   base::ScopedTempDir temp_dir_;
@@ -118,36 +110,46 @@ class BatAdsConversionFrequencyCapTest : public ::testing::Test {
   std::unique_ptr<AdsImpl> ads_;
   std::unique_ptr<huhi_l10n::LocaleHelperMock> locale_helper_mock_;
   std::unique_ptr<PlatformHelperMock> platform_helper_mock_;
-  std::unique_ptr<ConversionFrequencyCap> frequency_cap_;
   std::unique_ptr<Database> database_;
 };
 
 TEST_F(BatAdsConversionFrequencyCapTest,
-    AllowAdIfThereIsNoAdConversionHistory) {
+    AllowAdIfThereIsNoConversionHistory) {
   // Arrange
   CreativeAdInfo ad;
   ad.creative_set_id = "654f10df-fbc4-4a92-8d43-2edf73734a60";
 
+  const AdEventList ad_events;
+
+  ConversionFrequencyCap frequency_cap(ads_.get(), ad_events);
+
   // Act
-  const bool should_exclude = frequency_cap_->ShouldExclude(ad);
+  const bool should_exclude = frequency_cap.ShouldExclude(ad);
 
   // Assert
   EXPECT_FALSE(should_exclude);
 }
 
 TEST_F(BatAdsConversionFrequencyCapTest,
-    DoNotAllowAdIfShouldNotAllowAdConversionTrackingAndHasAConversion) {
+    DoNotAllowAdIfShouldNotAllowConversionTrackingAndHasAConversion) {
   // Arrange
-  ON_CALL(*ads_client_mock_, ShouldAllowAdConversionTracking())
-      .WillByDefault(Return(false));
+  ads_client_mock_->SetBooleanPref(
+      prefs::kShouldAllowConversionTracking, false);
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetIds.at(0);
 
-  get_client()->AppendCreativeSetIdToAdConversionHistory(ad.creative_set_id);
+  AdEventList ad_events;
+
+  const AdEventInfo ad_event = GenerateAdEvent(AdType::kAdNotification, ad,
+      ConfirmationType::kConversion);
+
+  ad_events.push_back(ad_event);
+
+  ConversionFrequencyCap frequency_cap(ads_.get(), ad_events);
 
   // Act
-  const bool should_exclude = frequency_cap_->ShouldExclude(ad);
+  const bool should_exclude = frequency_cap.ShouldExclude(ad);
 
   // Assert
   EXPECT_TRUE(should_exclude);
@@ -159,10 +161,17 @@ TEST_F(BatAdsConversionFrequencyCapTest,
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetIds.at(0);
 
-  get_client()->AppendCreativeSetIdToAdConversionHistory(ad.creative_set_id);
+  AdEventList ad_events;
+
+  const AdEventInfo ad_event = GenerateAdEvent(AdType::kAdNotification, ad,
+      ConfirmationType::kConversion);
+
+  ad_events.push_back(ad_event);
+
+  ConversionFrequencyCap frequency_cap(ads_.get(), ad_events);
 
   // Act
-  const bool should_exclude = frequency_cap_->ShouldExclude(ad);
+  const bool should_exclude = frequency_cap.ShouldExclude(ad);
 
   // Assert
   EXPECT_TRUE(should_exclude);
@@ -171,13 +180,23 @@ TEST_F(BatAdsConversionFrequencyCapTest,
 TEST_F(BatAdsConversionFrequencyCapTest,
     AllowAdIfNotAlreadyConverted) {
   // Arrange
-  CreativeAdInfo ad;
-  ad.creative_set_id = kCreativeSetIds.at(0);
+  CreativeAdInfo ad_1;
+  ad_1.creative_set_id = kCreativeSetIds.at(0);
 
-  get_client()->AppendCreativeSetIdToCreativeSetHistory(kCreativeSetIds.at(1));
+  CreativeAdInfo ad_2;
+  ad_2.creative_set_id = kCreativeSetIds.at(1);
+
+  AdEventList ad_events;
+
+  const AdEventInfo ad_event = GenerateAdEvent(AdType::kAdNotification, ad_2,
+      ConfirmationType::kConversion);
+
+  ad_events.push_back(ad_event);
+
+  ConversionFrequencyCap frequency_cap(ads_.get(), ad_events);
 
   // Act
-  const bool should_exclude = frequency_cap_->ShouldExclude(ad);
+  const bool should_exclude = frequency_cap.ShouldExclude(ad_1);
 
   // Assert
   EXPECT_FALSE(should_exclude);

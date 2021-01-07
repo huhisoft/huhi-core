@@ -12,6 +12,11 @@
 <translation id="6754976710186182237">Kontrolinio kodo metodai</translation>
 <translation id="2313532038420432247">HTTPS naujiniai</translation>
 <translation id="7461425058443653485">Užblokuoti scenarijai</translation>
+<translation id="6052725679982758334">Socialinės žiniasklaidos blokavimas</translation>
+<translation id="7498695072878479744">Trečiųjų šalių svetainėse leisti „Google“ prisijungimo mygtukus</translation>
+<translation id="863171915776379000">Leisti rodyti prisijungimo per „Facebook“ formą ir įterptuosius įrašus</translation>
+<translation id="5165042248369837294">Leisti rodyti įterptąsias „Twitter“ žinutes</translation>
+<translation id="958971637207126733">Leisti rodyti įterptuosius „LinkedIn“ įrašus</translation>
 <translation id="3834924998750356151">Blokavimo monitorius</translation>
 <translation id="1713450908129883784">Individualūs valdikliai</translation>
 <translation id="6302422639282249274">Tvarkyti „Huhi Rewards“</translation>
@@ -26,6 +31,8 @@
 <translation id="5787084571334399599">Naršyklei neleidžia naudoti kontrolinių kodų</translation>
 <translation id="7459000603787995422">Išeinant uždaryti skirtukus</translation>
 <translation id="1680858055899097121">Nepalikti skirtukų tarp naršymo seansų</translation>
+<translation id="6469509880167172749">Automatiškai siųskite visiškai privačią produktų analizę „Huhi“</translation>
+<translation id="7090566321964540749">Ši anoniminė informacija leidžia „Huhi“ įvertinti tik bendrą tam tikrų funkcijų naudojimą.</translation>
 <translation id="453601949003770390">Sekiklių ir reklamos blokavimas</translation>
 <translation id="347604927162577559">Duomenys\nįrašyti</translation>
 <translation id="9008534313521214777">Numatomas sutaupytas\nlaikas</translation>
@@ -45,10 +52,7 @@
 <translation id="4150201353443180367">Pateiktis</translation>
 <translation id="2433507940547922241">Išvaizda</translation>
 <translation id="2804710924397009224">Slėpti „Huhi Rewards“ piktogramą</translation>
-<translation id="7358991116457217836">Jei funkcija „Huhi Rewards“ neįjungta, „Huhi Rewards“ piktograma paslepiama</translation>
 <translation id="8495235435594442882">Įjungti apatinę įrankių juostą</translation>
-<translation id="5916664084637901428">Įjungta</translation>
-<translation id="5860033963881614850">Išjungta</translation>
 <translation id="6587448235155023666">Pakeitimai įsigalios kitą kartą iš naujo paleidus „Huhi“</translation>
 <translation id="8701563696941209024">IŠ NAUJO PALEISTI DABAR</translation>
 <translation id="834487290629916192">VĖLIAU</translation>
@@ -57,7 +61,6 @@
 <translation id="986879628471635371">Trikčių šalinimo įtraukimas</translation>
 <translation id="5808759341041733958">Pasirinkite numatytąją paieškos sistemą</translation>
 <translation id="1331593888918588693">Pageidavimus visada galite pakeisti vėliau programos nustatymuose.</translation>
-<translation id="5317780077021120954">Išsaugoti</translation>
 <translation id="7053983685419859001">Blokuoti</translation>
 <translation id="5806601733251372221">„Huhi“ skydai</translation>
 <translation id="2880356288762235261">nuo privatumą pažeidžiančių reklamų ir sekiklių, kad galėtumėte žiniatinklyje naršyti nesekami.</translation>
@@ -65,7 +68,6 @@
 <translation id="3333887201479867589">„Huhi Rewards“</translation>
 <translation id="5870330605209713397">žiūrėdami privatumo nepažeidžiančias reklamas ir paremkite numatytąsias mėgstamas svetaines ir kūrėjus.</translation>
 <translation id="821707262661492716">už privatumo nepažeidžiančių reklamų peržiūrą.</translation>
-<translation id="8267692331246948056">Bakstelėdami „Uždirbti ir &amp; perduoti“ jūs sutinkate su</translation>
 <translation id="4281844954008187215">Paslaugų teikimo sąlygos</translation>
 <translation id="6871397658902960384">Pradėti naršymą</translation>
 <translation id="454386012157232640">Nematau reklamos</translation>
@@ -74,10 +76,8 @@
 <translation id="6511854390690723657">Tai jūsų pirmoji „Huhi“ reklama. Bakstelėkite, jei norite sužinoti daugiau.</translation>
 <translation id="4930714375720679147">Įjungti</translation>
 <translation id="2453860139492968684">Užbaigti</translation>
-<translation id="7983303953939627894">Uždirbkite ir perduokite</translation>
+<translation id="2070991379950719711">Pradėti naudotis „Huhi Rewards“</translation>
 <translation id="48520986898237073">Tęsti su pinigine</translation>
-<translation id="2359808026110333948">Tęsti</translation>
-<translation id="7658239707568436148">Atšaukti</translation>
 <translation id="3570367516044491911">Nustatyti kaip numatytąją naršyklę</translation>
 <translation id="7493053924837150477">Pasirinkite naršyklę „Huhi“ iš sąrašo ir bakstelėkite „Visada“</translation>
 <translation id="3546439402724649282">„Huhi“ jau nustatyta kaip jūsų numatytoji naršyklė.</translation>
@@ -180,7 +180,6 @@ dar nebuvo...</translation>
 <translation id="8038539967102225446">„Huhi Ads“ jau čia!</translation>
 <translation id="8985635554450124959">Sinchronizavimo nustatyti nepavyko</translation>
 <translation id="222883304157347087">(šis įrenginys)</translation>
-<translation id="8193724030871339658">KITI GRANDINĖS ĮRENGINIAI</translation>
 <translation id="279635009973773843">ĮKELIAMI ĮRENGINIAI...</translation>
 <translation id="6394333525003604181">PALIEKAMA SINCHRONIZAVIMO GRANDINĖ...</translation>
 <translation id="2569646144216067185">Žodžių skaičius: <ph name="WORD_COUNT"/></translation>
@@ -190,11 +189,9 @@ dar nebuvo...</translation>
 <translation id="3149880132460839085">„Huhi Sync“</translation>
 <translation id="3680755684186855422">„Huhi Sync“ skirta žymių duomenims privačiai sinchronizuoti tarp įvairiuose įrenginiuose įdiegtų „Huhi“ naršyklių.</translation>
 <translation id="3735228155296883311">Tiesiog nuskaitykite kodą iš savo sinchronizavimo grandinės, kurią sukūrėte kitame įrenginyje. Taip pat galite pradėti naują sinchronizavimo grandinę.</translation>
-<translation id="4690880825349994619">Naudodami esamą sinchronizuotą įrenginį, atverkite „Huhi“ nuostatas ir nueikite į „Nuostatos“ &gt; „Sinchronizavimas“. Pasirinkite „Pridėti įrenginį“ ir nuskaitykite ekrane rodomą QR kodą.</translation>
 <translation id="5241263629636958324">Nukopijuota į iškarpinę</translation>
 <translation id="5817918615728894473">Susieti</translation>
-<translation id="3394474617110693560">Kategorijos</translation>
-<translation id="2004365171440701679">Pašalinti šį įrenginį</translation>
+<translation id="7090325819305486658">Pageidaujamos duomenų nuostatos</translation>
 <translation id="1178128181015923849">Ar tikrai norite panaikinti įrenginį „<ph name="DEVICE_NAME"/>“?</translation>
 <translation id="7745082336226088126">Nuskaitykite arba įveskite sinchronizavimo kodą</translation>
 <translation id="1602067095281698985">Sudaryti naują sinchronizavimo grandinę</translation>
@@ -213,9 +210,8 @@ dar nebuvo...</translation>
 <translation id="8730621377337864115">Atlikta</translation>
 <translation id="6174119914106813304">SINCHRONIZUOTI ŠIAME ĮRENGINYJE</translation>
 <translation id="6776430845975754238">Nuostatų pakeitimas turės įtakos tik duomenims, kuriuos šis įrenginys bendrina kitiems.</translation>
-<translation id="6450924769151530465">Pridėti kitą įrenginį</translation>
+<translation id="1061533051865606843">Pridėti naują prietaisą</translation>
 <translation id="7539985410310934287">Įveskite kodinius žodžius</translation>
-<translation id="6270614677029463366">Naudodami esamą sinchronizuotą įrenginį, atverkite „Huhi“ meniu „Nuostatos“ ir nueikite į dalį „Nuostatos“ &gt; „Sinchronizavimas“. Pasirinkite „Pridėti įrenginį“ ir „Rodyti kodo žodžius“.</translation>
 <translation id="8131740175452115882">Patvirtinti</translation>
 <translation id="4973653569293835178">Naudosiu savo kamerą...</translation>
 <translation id="326454632686131209">Sinchronizuoti įrenginį</translation>
@@ -231,6 +227,10 @@ dar nebuvo...</translation>
 <translation id="6810078320346589989">Kurti žymę</translation>
 <translation id="3396347744975515056">„Huhi Sync“ buvo atnaujinta ir reikia atlikti sąranką</translation>
 <translation id="7473245612074035141">Pradėti sąranką</translation>
+<translation id="1872784258300710671">„Huhi“ naudoja visiškai privačią produktų analizę bendram tam tikrų funkcijų naudojimui įvertinti</translation>
+<translation id="8712637175834984815">Supratau</translation>
+<translation id="4394049700291259645">Neleisti</translation>
+<translation id="8446884382197647889">Sužinokite daugiau</translation>
 <translation id="597993392929850353">„Huhi“ licencija</translation>
 <translation id="6336451774241870485">Naujas inkognito skirtukas</translation>
 <translation id="6199596294742117349">Tai inkognito skirtukas</translation>
@@ -240,7 +240,6 @@ dar nebuvo...</translation>
 <translation id="844921671123185605">Jūsų mėnesiniai arbatpinigiai apdoroti!</translation>
 <translation id="3124090095880236567">Įjungti reklamas</translation>
 <translation id="2975780980638932742">„Huhi“ reklamos – jau čia!</translation>
-<translation id="7655723274266132226">Dabar galite užsidirbti už reklamos peržiūrą.</translation>
 <translation id="7541582550122501404">Laukiama indėlių</translation>
 <translation id="8520059774736886747">Kūrėjas <ph name="PUBLISHER_NAME"/> neseniai patvirtintas</translation>
 <translation id="7924320838799747606">Jūsų likutis</translation>
@@ -258,8 +257,7 @@ dar nebuvo...</translation>
 <translation id="8522669544471808198">Rodyti foninius vaizdus</translation>
 <translation id="3870475560794762985">Rodyti remiamus vaizdus</translation>
 <translation id="8297488609722895137">Nuotraukos autorius <ph name="PHOTO_BY"/></translation>
-<translation id="1605521356929094020">Įjungti „Huhi“ reklamą</translation>
-<translation id="1873603368604736484">Įjungdami „Rewards“ sutinkate su <ph name="TERMS_OF_SERVICE"/>.</translation>
+<translation id="4761229094276239865">Bakstelėdami „Pradėti naudotis „Huhi Rewards“ sutinkate su <ph name="TERMS_OF_SERVICE"/>.</translation>
 <translation id="3794079107601824147">Gaukite užmokestį už šio foninio vaizdo peržiūrą.</translation>
 <translation id="7136586167396205364">Slėpti remiamus vaizdus</translation>
 <translation id="2927095357213611519">Žetonais galite paremti interneto turinio kūrėjus.\nUžsidirbkite žetonų žiūrėdami privatumo nepažeidžiančias reklamas.</translation>
@@ -306,7 +304,7 @@ dar nebuvo...</translation>
 <translation id="8851456134224363571">Šaunu! Gal galėtumėte mus įvertinti „Play Store“?</translation>
 <translation id="8668962040900592974">Pasakykite mums, ką galime daryti geriau</translation>
 <translation id="4406937629441301400">Užsidirbkite žetonų už šio vaizdo peržiūrą ir perveskite juos kūrėjams. <ph name="LEARN_MORE"/></translation>
-<translation id="7894626572714595717">Uždirbkite žetonų už šio vaizdo peržiūrą. Įjunkite „Huhi Ads“ ir gaukite savo dalį.</translation>
+<translation id="1992363542751124282">Gaukite žetonų už šio vaizdo peržiūrą. Naudodami „Huhi Rewards“ palieskite „Pradėti“ ir gaukite savo dalį.</translation>
 <translation id="6632345639591919543">Už šio vaizdo peržiūrą uždirbate žetonų.\n<ph name="LEARN_MORE"/></translation>
 <translation id="1465733111003593696">Už šio vaizdo peržiūrą uždirbate žetonų.</translation>
 <translation id="7877201489035217175">Sužinoti daugiau apie remiamus vaizdus</translation>
@@ -344,7 +342,7 @@ dar nebuvo...</translation>
 <translation id="3286927551967858325">Pasižiūrėkite</translation>
 <translation id="2929661208078053609">Puiku!</translation>
 <translation id="4776948189086901857">„Huhi“ veikia visur</translation>
-<translation id="1606322780901645965">Atsisiųskite „Huhi“ iš huhisoft.com į savo nešiojamąjį ar planšetinį kompiuterį ir naršykite žiniatinklyje sparčiau bei privačiau</translation>
+<translation id="1606322780901645965">Atsisiųskite „Huhi“ iš hnq.vn į savo nešiojamąjį ar planšetinį kompiuterį ir naršykite žiniatinklyje sparčiau bei privačiau</translation>
 <translation id="8374242949413616101">Privatumo apsauga</translation>
 <translation id="4955406228638026265">„Huhi“ neleidžia sekikliams ir reklamoms be jūsų sutikimo rinkti informacijos apie jus.</translation>
 <translation id="752842701893882688">Taupykite duomenis ir akumuliatorių</translation>
@@ -354,7 +352,6 @@ dar nebuvo...</translation>
 <translation id="8903462729414407077">Gaukite savaitinius naujinimus</translation>
 <translation id="8029219208182772618">Būkite informuoti apie tai, kurios jūsų lankomos svetainės labiausiai pažeidžia privatumą.\n\nŠią privatumo statistiką matysite tik jūs. „Huhi“ naršyklė jūsų įrenginyje neviešina jokių asmeninių duomenų ar naršymo istorijos.</translation>
 <translation id="6170159749517116894">Įjungti privatumo ataskaitas</translation>
-<translation id="6165508094623778733">Sužinokite daugiau</translation>
 <translation id="5966707198760109579">Savaitė</translation>
 <translation id="8987927404178983737">Mėnuo</translation>
 <translation id="4302754476737420523">3 mėnesiai</translation>
@@ -373,12 +370,12 @@ dar nebuvo...</translation>
 <translation id="7427567994475794038">Įjunkite privatumo ataskaitas ir matykite, kiek sekiklių ir reklamų užblokavote per pastarąsias 3 valandas.</translation>
 <translation id="2053891538879944400">Naudodami „Huhi“ naršyklę sutaupėte <ph name="DATA"/> <ph name="DATA_TEXT"/> duomenų.</translation>
 <translation id="8640064498452534195">Įjunkite privatumo ataskaitas ir matykite, kiek duomenų sutaupėte.</translation>
-<translation id="2252497442547961651">„Huhi“ naršyklė naudoja vidutiniškai 40 % mažiau baterijos energijos.🔋</translation>
+<translation id="2252497442547961651">„Huhi“ naršyklė naudoja vidutiniškai 40 % mažiau baterijos energijos.&#128267;</translation>
 <translation id="1945330434665345785">Praėjusią savaitę „Huhi“ naršyklėje užblokavote tiek sekiklių ir reklamų: <ph name="COUNT"/>.</translation>
 <translation id="2883868922264431515">Gaukite žetonų už privatumo nepažeidžiančių reklamų peržiūrą ir paremkite mėgstamas svetaines.</translation>
-<translation id="5678925890616256956">Puiku! „Huhi“ naršyklėje užblokavote 250 sekiklių ir reklamų.🔥</translation>
-<translation id="9199047775708635708">Puiku! Naudodami „Huhi“ naršyklę sutaupėte 10 MB.🔋</translation>
-<translation id="1880168210969863408">Puiku! Naudodami „Huhi“ naršyklę sutaupėte 10 minučių įkėlimo laiko.💨💨</translation>
+<translation id="5678925890616256956">Puiku! „Huhi“ naršyklėje užblokavote 250 sekiklių ir reklamų.&#128293;</translation>
+<translation id="9199047775708635708">Puiku! Naudodami „Huhi“ naršyklę sutaupėte 10 MB.&#128267;</translation>
+<translation id="1880168210969863408">Puiku! Naudodami „Huhi“ naršyklę sutaupėte 10 minučių įkėlimo laiko.&#128168;&#128168;</translation>
 <translation id="7408493389591475748">Pradėkite naršyti, kad pamatytumėte privatumo ataskaitas</translation>
 <translation id="9080777565335515917">Nustatykite „Huhi“ kaip numatytąją naršyklę, kad galėtumėte naršyti privačiai ir saugiai.</translation>
 <translation id="7801488941710395275">Suteikia „Huhi“ galimybę rodyti jūsų privatumo statistiką</translation>
@@ -388,11 +385,79 @@ dar nebuvo...</translation>
 <translation id="2718046830255553131">Privatumo ataskaitų duomenys išvalyti.</translation>
 <translation id="7559243474426790340">Atnaujinti būseną</translation>
 <translation id="8376263745431603066">Įgalinti „Naktinis režimas“ (eksperimentinė funkcija)</translation>
-<translation id="1604429341565715601">Vykdoma sinchronizavimo sąranka, bandykite ją nustatyti iš naujo vėliau</translation>
-<translation id="4540198958192073185">Blokuoti visus kontrolinius kodus</translation>
-<translation id="5739030256211745023">Be reklamų ir sekiklių svetainės naudoja mažiau duomenų ir akumuliatoriaus energijos. Netgi galite sutaupyti mokesčio už ryšio paslaugas.</translation>
-<translation id="4591582032282435287">„Huhi“ naršyklė naudoja vidutiniškai 40 % mažiau akumuliatoriaus energijos.</translation>
-<translation id="6840965284166256302">Puiku! „Huhi“ naršyklėje užblokavote 250 sekiklių ir reklamų.</translation>
-<translation id="2076976911561945584">Puiku! Naudodami „Huhi“ naršyklę sutaupėte 10 MB.</translation>
-<translation id="6714550233326888315">Puiku! Naudodami „Huhi“ naršyklę sutaupėte 10 minučių įkėlimo laiko.</translation>
+<translation id="1383876407941801731">Ieškoti</translation>
+<translation id="1972589975368876259">Redaguoti dėklą</translation>
+<translation id="2490330380242414851">Pašalinti valdiklį</translation>
+<translation id="7384441892795736634">Atnaujinti duomenis</translation>
+<translation id="4804818685124855865">Atsijungti</translation>
+<translation id="4789438578712143420">≈ $<ph name="USD_BALANCE"/></translation>
+<translation id="1080611582879541635"><ph name="COIN_ADDRESS"/> Indėlio adresas</translation>
+<translation id="4836242416604533644"><ph name="COIN_MEMO"/> Indėlio priminimas</translation>
+<translation id="5110244215256675209">Pirkti kriptovaliutos</translation>
+<translation id="2271556362602437160">.com</translation>
+<translation id="3727077517986954867">.us</translation>
+<translation id="3414885529641505869">Pirkti <ph name="COIN_NAME"/></translation>
+<translation id="558614325644656740">Prieinama <ph name="COIN_BALANCE"/> <ph name="COIN_NAME"/></translation>
+<translation id="6755546361496900700">Peržiūrėti konvertavimą</translation>
+<translation id="2882813124794301799">Valdiklių dėklas</translation>
+<translation id="13296465911709339">Jūsų tekstas nukopijuotas į iškarpinę.</translation>
+<translation id="7144878232160441200">Kartoti</translation>
+<translation id="2977461003134694205">Privatumo statistiniai duomenys</translation>
+<translation id="4643117005422448078">Populiariausios svetainės</translation>
+<translation id="6966052266404721769">„Binance“</translation>
+<translation id="1392658226187691544">Apskaičiuotas užblokuotų sekiklių ir reklamų skaičius, įrašytas pralaidumas ir sutaupytas laikas.</translation>
+<translation id="74417429503469271">Atverkite dažniausiai lankomas svetaines.</translation>
+<translation id="2956070106555335453">Suvestinė</translation>
+<translation id="1366855498335432549">Depozitas</translation>
+<translation id="1301340234286078471">Konvertuoti</translation>
+<translation id="223536150967420869">Pirkti</translation>
+<translation id="1714829281959608206">Suaktyvinti „Binance“ ryšį, kad būtų galima peržiūrėti „Binance“ sąskaitos balansą ir prekybą kriptovaliutomis.</translation>
+<translation id="4584930231524505442">Noriu konvertuoti...</translation>
+<translation id="5749014321384313843">Noriu išleisti...</translation>
+<translation id="8688672835843460752">Galima</translation>
+<translation id="2480674848181564169">Norint konvertuoti nepakankamas likutis</translation>
+<translation id="2215334405220411393">Minimali konvertuojama suma: <ph name="COIN_BALANCE"/> <ph name="COIN_NAME"/></translation>
+<translation id="6702658079816271889">Nepavyko prisijungti</translation>
+<translation id="7742417737698031726">Mokestis</translation>
+<translation id="2122225204180056042">Gausite</translation>
+<translation id="6432284126416751397">Patvirtinti konvertavimą</translation>
+<translation id="5137723827757859599">Kol kas čia nėra nieko apie geriausias svetaines.</translation>
+<translation id="3891414008432200754">Kaina</translation>
+<translation id="3733576242118819803">Patvirtinti (<ph name="REMAINING_TIME"/>s)</translation>
+<translation id="1627064138060308910">Konvertuoti nepavyko. Bandykite dar kartą.</translation>
+<translation id="1449790603979388000"><ph name="COUNT"/> <ph name="COUNT_TEXT"/></translation>
+<translation id="7465614181960492526">Uždirbkite žetonų ir grąžinkite</translation>
+<translation id="244362569344671266">Gaukite žetonų žiūrėdami privatumo nepažeidžiančias „Huhi“ reklamas ir automatiškai paremkite turinio kūrėjus.</translation>
+<translation id="631124996535890460">Tęsdami sutinkate su <ph name="TERMS_OF_SERVICE"/> ir <ph name="PRIVACY_POLICY"/>.</translation>
+<translation id="8804164990146287819">Privatumo politika</translation>
+<translation id="6318696841371191107">Peržiūrėkite trumpą apžvalgą</translation>
+<translation id="7930505144430343145">Sveiki, tai – „Huhi Rewars“!</translation>
+<translation id="7909111626803226907">Kitaip nei įprastos reklamos atveju, už privatumo nepažeidžiančias „Huhi“ reklamas gaunate žetonų, kuriais galite paremti turinio kūrėjus, o jūsų asmeninė informacija liks privati.</translation>
+<translation id="6973095375773523904">Kur rodomos reklamos?</translation>
+<translation id="3867028444168159102">Privatumo nepažeidžiančios „Huhi“ reklamos bus rodomos kaip įprastas pranešimas. Nuostatų dalyje galite pasirinkti, kaip dažnai norite matyti šias reklamas.</translation>
+<translation id="5816125157889950051">Kada gaunate atlygį</translation>
+<translation id="4649471244559455723">Žetonus, kuriuos uždirbote iš „Huhi Ads“ šį mėnesį, gausite kito mėnesio 5 d.</translation>
+<translation id="7712287524451429139">Atsilyginti dabar paprasta</translation>
+<translation id="105037569026952831">Kūrėjai jūsų skiriamus žetonus gauna automatiškai pagal jūsų susidomėjimo lygį, kurį matuojame kaip „dėmesį“.</translation>
+<translation id="5323267338679539010">Padėkokite skirdami arbatpinigių</translation>
+<translation id="6042317056594735519">Arbatpinigių skyrimas yra būdas asmeniškai paskatinti ir paremti mėgstamą turinį arba kūrėjus. Paaukokite!</translation>
+<translation id="7509452925943421624">Ką galite daryti su žetonais?</translation>
+<translation id="7059157883171259940">Žetonus galima naudoti ne vien kūrėjams paremti. Galite pirkti skaitmenines prekes ir dovanų korteles pasinaudodami pinigų susigrąžinimo premija.</translation>
+<translation id="1402530520078693620">Galiausiai nustatykime pagrindines nuostatas</translation>
+<translation id="3494356595346329740">Tai galite pakeisti vėliau.</translation>
+<translation id="6462814326662189004">Kaip dažnai norite matyti reklamas?\n(Reklamų skaičius per valandą)</translation>
+<translation id="2134244432345596331">Kiek paramos norite skirti savo mėgstamiems kūrėjams?\n(Iš uždarbio už reklamą)</translation>
+<translation id="7456161272236175794">VALIOOOOO!\nBaigėte</translation>
+<translation id="3895246934788932488">Naudodami „Huhi Rewards“, saugote savo privatumą ir padedate padaryti, kad žiniatinklis būtų geresnė vieta visiems. Juk tai puiku!</translation>
+<translation id="5705882733397021510">Grįžti</translation>
+<translation id="5140321319944305531">Peržiūrėkite trumpą apžvalgą</translation>
+<translation id="3808131693704413134">Gavę pirmąją išmoką už reklamas galite grįžti ir skirti arbatpinigių šiam kūrėjui!</translation>
+<translation id="207242986925259074">Trumpa priminimo apžvalga</translation>
+<translation id="8342862030112839977">Pirmojo atlygio išmoką gausite:</translation>
+<translation id="3769645103175790584">Naršydami gaukite žetonų ir atlyginkite kūrėjams už puikų turinį. <ph name="QUICK_TOUR"/>.</translation>
+<translation id="6912901278692845878">Trumpa apžvalga</translation>
+<translation id="1080013038789678738">Dalyvauju!</translation>
+<translation id="3604285424134705930">Konvertavote <ph name="FROM_VALUE"/> <ph name="FROM_CURRENCY"/> į <ph name="TO_VALUE"/> <ph name="TO_CURRENCY"/>!</translation>
+<translation id="392587271502873865">Patikrinkite tinklo ryšį.</translation>
+<translation id="7889432931837317731">Kai galima, atverti automatiškai</translation>
 </translationbundle>

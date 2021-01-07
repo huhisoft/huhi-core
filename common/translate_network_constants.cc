@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -14,7 +14,7 @@ const char kTranslateLanguagePattern[] = "https://translate.googleapis.com/trans
 const char kTranslateGen204Pattern[] = "https://translate.google.com/gen204*";
 const char kTranslateElementMainCSSPattern[] = "https://translate.googleapis.com/translate_static/css/translateelement.css"; // NOLINT
 const char kTranslateBrandingPNGPattern[] = "https://www.gstatic.com/images/branding/product/*x/translate_24dp.png"; // NOLINT
-const char kHuhiTranslateServer[] = "https://translate-relay.huhisoft.com";
-const char kHuhiTranslateEndpoint[] = "https://translate-relay.huhisoft.com/translate"; // NOLINT
-const char kHuhiTranslateLanguageEndpoint[] = "https://translate-relay.huhisoft.com/language"; // NOLINT
-const char kHuhiTranslateServerPrefix[] = "https://translate-relay.huhisoft.com/*"; // NOLINT
+const char kHuhiTranslateServer[] = "https://translate-relay.hnq.vn";
+const char kHuhiTranslateEndpoint[] = "https://translate-relay.hnq.vn/translate"; // NOLINT
+const char kHuhiTranslateLanguageEndpoint[] = "https://translate-relay.hnq.vn/language"; // NOLINT
+const char kHuhiTranslateServerPrefix[] = "https://translate-relay.hnq.vn/*"; // NOLINT

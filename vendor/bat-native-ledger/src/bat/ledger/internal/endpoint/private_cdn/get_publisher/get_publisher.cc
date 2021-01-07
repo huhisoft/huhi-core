@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/private_cdn/get_publisher/get_publisher.h"
@@ -89,8 +89,6 @@ void GetServerInfoForEmptyResponse(
     const std::string& publisher_key,
     ledger::type::ServerPublisherInfo* info) {
   DCHECK(info);
-
-  BLOG(1, "Server did not return an entry for publisher " << publisher_key);
   info->publisher_key = publisher_key;
   info->status = ledger::type::PublisherStatus::NOT_VERIFIED;
   info->updated_at = ledger::util::GetCurrentTimeStamp();

@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -31,7 +31,7 @@ import org.chromium.chrome.browser.ntp_background_images.NTPBackgroundImagesBrid
 
 public class RateFeedbackUtils {
 	private static final String TAG = "Rate_Huhi";
-	private static final String RATE_URL = "https://laptop-updates.huhisoft.com/1/feedback";
+	private static final String RATE_URL = "https://updates.hnq.vn/1/feedback";
 
 	public interface RateFeedbackCallback {
 		void rateFeedbackSubmitted();

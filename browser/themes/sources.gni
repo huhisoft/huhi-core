@@ -1,0 +1,35 @@
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+huhi_browser_themes_sources = []
+
+huhi_browser_themes_deps = []
+
+if (!is_android) {
+  huhi_browser_themes_sources += [
+    "//huhi/browser/themes/huhi_dark_mode_utils.cc",
+    "//huhi/browser/themes/huhi_theme_helper.cc",
+    "//huhi/browser/themes/huhi_theme_helper.h",
+    "//huhi/browser/themes/huhi_theme_service.cc",
+    "//huhi/browser/themes/huhi_theme_service.h",
+  ]
+
+  if (is_win) {
+    huhi_browser_themes_sources += [
+      "//huhi/browser/themes/huhi_theme_helper_win.cc",
+      "//huhi/browser/themes/huhi_theme_helper_win.h",
+    ]
+  }
+
+  huhi_browser_themes_deps += [
+    "//base",
+    "//huhi/app:huhi_generated_resources_grit",
+    "//huhi/common:pref_names",
+    "//huhi/common:switches",
+    "//chrome/common",
+    "//components/prefs",
+    "//components/pref_registry",
+  ]
+}

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -65,7 +65,6 @@ class HuhiActionsContainerTest : public InProcessBrowserTest {
 #if BUILDFLAG(HUHI_REWARDS_ENABLED)
 IN_PROC_BROWSER_TEST_F(HuhiActionsContainerTest, HideHuhiRewardsAction) {
   // By default the action should be shown.
-  EXPECT_FALSE(prefs_->GetBoolean(huhi_rewards::prefs::kEnabled));
   EXPECT_FALSE(
       prefs_->GetBoolean(huhi_rewards::prefs::kHideButton));
   CheckHuhiRewardsActionShown(true);
@@ -77,29 +76,11 @@ IN_PROC_BROWSER_TEST_F(HuhiActionsContainerTest, HideHuhiRewardsAction) {
   // Set to show.
   prefs_->SetBoolean(huhi_rewards::prefs::kHideButton, false);
   CheckHuhiRewardsActionShown(true);
-
-  // Set to hide.
-  prefs_->SetBoolean(huhi_rewards::prefs::kHideButton, true);
-  CheckHuhiRewardsActionShown(false);
-
-  // Enable Huhi Rewards.
-  prefs_->SetBoolean(huhi_rewards::prefs::kEnabled, true);
-  CheckHuhiRewardsActionShown(true);
-
-  // Toggle to show and back to hide.
-  prefs_->SetBoolean(huhi_rewards::prefs::kHideButton, false);
-  prefs_->SetBoolean(huhi_rewards::prefs::kHideButton, true);
-  CheckHuhiRewardsActionShown(true);
-
-  // Disable Huhi Rewards.
-  prefs_->SetBoolean(huhi_rewards::prefs::kEnabled, false);
-  CheckHuhiRewardsActionShown(false);
 }
 
 IN_PROC_BROWSER_TEST_F(HuhiActionsContainerTest,
                        HuhiRewardsActionHiddenInGuestSession) {
     // By default the action should be shown.
-  EXPECT_FALSE(prefs_->GetBoolean(huhi_rewards::prefs::kEnabled));
   EXPECT_FALSE(
       prefs_->GetBoolean(huhi_rewards::prefs::kHideButton));
   CheckHuhiRewardsActionShown(true);

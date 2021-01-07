@@ -1,24 +1,16 @@
-import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/buildflags/buildflags.gni")
 
 assert(huhi_wallet_enabled)
 
 source_set("huhi_wallet") {
-  # Remove when https://github.com/huhisoft/huhi-browser/issues/10657 is resolved
-  check_includes = false
   sources = [
     "huhi_wallet_delegate_impl.cc",
     "huhi_wallet_delegate_impl.h",
-    "huhi_wallet_service_factory.cc",
-    "huhi_wallet_service_factory.h",
-    "huhi_wallet_utils.cc",
-    "huhi_wallet_utils.h",
   ]
   deps = [
     "//huhi/browser/extensions",
-    "//components/keyed_service/content:content",
-    "//components/pref_registry",
-    "//components/prefs",
+    "//huhi/components/huhi_wallet:huhi_wallet",
+    "//chrome/browser/extensions:extensions",
     "//extensions/browser",
-    "//extensions/common:common_constants",
   ]
 }

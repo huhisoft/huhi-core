@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -12,20 +12,19 @@
 #include "base/metrics/histogram_macros.h"
 #include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/tor/buildflags.h"
-#include "huhi/browser/tor/tor_profile_service.h"
-#include "huhi/browser/tor/tor_profile_service_factory.h"
 #include "huhi/browser/translate/buildflags/buildflags.h"
 #include "huhi/common/pref_names.h"
-#include "huhi/common/tor/pref_names.h"
-#include "huhi/common/tor/tor_constants.h"
 #include "huhi/components/huhi_ads/browser/ads_service_factory.h"
 #include "huhi/components/huhi_shields/browser/ad_block_regional_service.h"
 #include "huhi/components/huhi_shields/browser/ad_block_service.h"
 #include "huhi/components/huhi_shields/browser/huhi_shields_util.h"
-#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
 #include "huhi/components/huhi_webtorrent/browser/buildflags/buildflags.h"
-#include "huhi/components/ipfs/browser/buildflags/buildflags.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
+#include "huhi/components/tor/pref_names.h"
+#include "huhi/components/tor/tor_constants.h"
+#include "huhi/components/tor/tor_profile_service.h"
 #include "huhi/content/browser/webui/huhi_shared_resources_data_source.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/chrome_notification_types.h"
@@ -64,6 +63,10 @@
 
 #if BUILDFLAG(IPFS_ENABLED)
 #include "huhi/browser/ipfs/ipfs_service_factory.h"
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/browser/tor/tor_profile_service_factory.h"
 #endif
 
 using content::BrowserThread;
@@ -129,6 +132,8 @@ void HuhiProfileManager::InitProfileUserPrefs(Profile* profile) {
     InitTorProfileUserPrefs(profile);
   } else {
     ProfileManager::InitProfileUserPrefs(profile);
+    huhi::RecordInitialP3AValues(profile);
+    huhi::SetDefaultSearchVersion(profile, profile->IsNewProfile());
   }
 }
 
@@ -178,6 +183,8 @@ void HuhiProfileManager::AddProfileToStorage(Profile* profile) {
   ProfileManager::AddProfileToStorage(profile);
 }
 
+// Profile can be loaded sync or async; if sync, there is a matching block
+// in `browser/profiles/huhi_profile_impl.cc` (constructor)
 void HuhiProfileManager::OnProfileCreated(Profile* profile,
                                            bool success,
                                            bool is_new_profile) {
@@ -203,7 +210,7 @@ void HuhiProfileManager::OnProfileCreated(Profile* profile,
 
     // We need to wait until OnProfileCreated to
     // ensure that the request context is available.
-    TorProfileServiceFactory::GetForProfile(profile);
+    TorProfileServiceFactory::GetForContext(profile);
   }
 #endif
 }

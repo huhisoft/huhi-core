@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -37,14 +37,14 @@ class HuhiHTTPSENetworkDelegateHelperTest: public testing::Test {
 
 TEST_F(HuhiHTTPSENetworkDelegateHelperTest, AlreadySetNewURLNoOp) {
   net::TestDelegate test_delegate;
-  GURL url("http://bradhatesprimes.huhisoft.com/composite_numbers_ftw");
+  GURL url("http://hnq.vn");
   std::unique_ptr<net::URLRequest> request =
       context()->CreateRequest(url, net::IDLE, &test_delegate,
                                TRAFFIC_ANNOTATION_FOR_TESTS);
   std::shared_ptr<huhi::HuhiRequestInfo>
       huhi_request_info(new huhi::HuhiRequestInfo());
   request->set_site_for_cookies(net::SiteForCookies::FromUrl(
-      GURL("http://brad.huhisoft.com/hide_all_primes_in_ui/composites_forever")));
+      GURL("http://brad.hnq.vn/hide_all_primes_in_ui/composites_forever")));
   huhi_request_info->new_url_spec = "data:image/png;base64,iVB";
   huhi::ResponseCallback callback;
   int ret =

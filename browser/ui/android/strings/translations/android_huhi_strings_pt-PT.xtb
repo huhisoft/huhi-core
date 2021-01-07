@@ -12,6 +12,11 @@
 <translation id="6754976710186182237">Métodos de impressão digital</translation>
 <translation id="2313532038420432247">Atualizações HTTPS</translation>
 <translation id="7461425058443653485">Scripts bloqueados</translation>
+<translation id="6052725679982758334">Bloqueio de Redes Sociais</translation>
+<translation id="7498695072878479744">Permitir botões de login do Google em sites de terceiros</translation>
+<translation id="863171915776379000">Permitir logins e posts incorporados do Facebook</translation>
+<translation id="5165042248369837294">Permitir tweets incorporados do Twitter</translation>
+<translation id="958971637207126733">Permitir publicações integradas LinkedIn</translation>
 <translation id="3834924998750356151">Monitor de bloqueios</translation>
 <translation id="1713450908129883784">Controlos individuais</translation>
 <translation id="6302422639282249274">Gerir Recompensas Huhi</translation>
@@ -26,6 +31,8 @@
 <translation id="5787084571334399599">Evita que o navegador utilize a impressão digital</translation>
 <translation id="7459000603787995422">Fechar separadores ao sair</translation>
 <translation id="1680858055899097121">Não manter separadores entre sessões de navegação</translation>
+<translation id="6469509880167172749">Envie automaticamente análises de produtos totalmente confidenciais à Huhi</translation>
+<translation id="7090566321964540749">Esta informação anónima apenas permite que o Huhi estime a utilização geral de certas funcionalidades.</translation>
 <translation id="453601949003770390">Rastreadores &amp; Anúncios Bloquados</translation>
 <translation id="347604927162577559">Dados\nEconomizados</translation>
 <translation id="9008534313521214777">Estimativa Tempo\nEconomizado</translation>
@@ -45,10 +52,8 @@
 <translation id="4150201353443180367">Exibição</translation>
 <translation id="2433507940547922241">Aspeto</translation>
 <translation id="2804710924397009224">Ocultar Ícone de Recompensas Huhi</translation>
-<translation id="7358991116457217836">Oculta o ícone de «Recompenas Huhi» quando esta opção não estiver ativada</translation>
+<translation id="7289740269305509613">Ocultar o Ícone do Huhi Rewards</translation>
 <translation id="8495235435594442882">Ativar a barra de ferramentas em baixo</translation>
-<translation id="5916664084637901428">Ativada</translation>
-<translation id="5860033963881614850">Desativada</translation>
 <translation id="6587448235155023666">As suas modificações terão efeito da próxima vez que reiniciar o Huhi</translation>
 <translation id="8701563696941209024">Reiniciar agora</translation>
 <translation id="834487290629916192">Depois</translation>
@@ -57,7 +62,6 @@
 <translation id="986879628471635371">Integração de resolução de problemas</translation>
 <translation id="5808759341041733958">Escolher o motor de busca padrão</translation>
 <translation id="1331593888918588693">Posteriormente, pode sempre alterar as suas preferências nas configurações da aplicação.</translation>
-<translation id="5317780077021120954">Guardar</translation>
 <translation id="7053983685419859001">Bloquear</translation>
 <translation id="5806601733251372221">Proteções Huhi</translation>
 <translation id="2880356288762235261">anúncios que invadem a privacidade e rastreadores para que possa navegar sem ser seguido na Internet.</translation>
@@ -65,7 +69,6 @@
 <translation id="3333887201479867589">Recompensas Huhi</translation>
 <translation id="5870330605209713397">pela visualização de anúncios que respeitam a privacidade e apoiam os seus sites e criadores preferidos por defeito.</translation>
 <translation id="821707262661492716">por ver anúncios que respeitam a privacidade.</translation>
-<translation id="8267692331246948056">Ao clicar em Ganhar &amp; Dar, concorda com</translation>
 <translation id="4281844954008187215">termos de serviço</translation>
 <translation id="6871397658902960384">Iniciar navegação</translation>
 <translation id="454386012157232640">Não vi um anúncio</translation>
@@ -74,10 +77,7 @@
 <translation id="6511854390690723657">Este é o seu primeiro anúncio Huhi. Toque para ficar a saber mais.</translation>
 <translation id="4930714375720679147">Ativar</translation>
 <translation id="2453860139492968684">Concluir</translation>
-<translation id="7983303953939627894">Ganhar &amp; Dar</translation>
 <translation id="48520986898237073">Continuar para a wallet (carteira)</translation>
-<translation id="2359808026110333948">Continuar</translation>
-<translation id="7658239707568436148">Cancelar</translation>
 <translation id="3570367516044491911">Definir como navegador predefinido</translation>
 <translation id="7493053924837150477">Selecione Huhi Browser na lista e toque em "Sempre"</translation>
 <translation id="3546439402724649282">Huhi já está definido como o seu navegador predefinido.</translation>
@@ -183,7 +183,7 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="8038539967102225446">Chegaram os aAnúncios Huhi!</translation>
 <translation id="8985635554450124959">Não foi possível configurar a sincronização</translation>
 <translation id="222883304157347087">(este dispositivo)</translation>
-<translation id="8193724030871339658">OUTROS DISPOSITIVOS NA CADEIA</translation>
+<translation id="4157741509680155021">DISPOSITIVOS NA CADEIA DE SINCRONIZAÇÃO</translation>
 <translation id="279635009973773843">A CARREGAR DISPOSITIVOS...</translation>
 <translation id="6394333525003604181">A SAIR DA CORRENTE DE SINCRONIZAÇÃO…</translation>
 <translation id="2569646144216067185">Contagem de palavras: <ph name="WORD_COUNT"/></translation>
@@ -193,11 +193,10 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="3149880132460839085">Sincronização do Huhi</translation>
 <translation id="3680755684186855422">A opção de «Sincronização» do Huhi permite-lhe  sincronizar os dados dos marcadores de forma privada entre os «Navegadores Huhi» em vários dispositivos.</translation>
 <translation id="3735228155296883311">Digitalize simplesmente o código da sua cadeia de sincronização que criou noutro dispositivo. Ou inicie uma nova cadeia de sincronização.</translation>
-<translation id="4690880825349994619">Utilizando um dispositivo sincronizado existente, abra as Definições Huhi e navegue para Definições &gt; Sincronizar. Escolha "Adicionar Dispositivo" e digitalize o Código QR exibido no ecrã.</translation>
+<translation id="2614069607859982576">Usando um dispositivo sincronizado existente, abra as Definições do Huhi e selecione Sincronização &gt; de Definições. Clique em "Adicionar Novo Dispositivo" e use o QR Code exibido no ecrã.</translation>
 <translation id="5241263629636958324">Copiado para a Área de transferência</translation>
 <translation id="5817918615728894473">Sincronizar</translation>
-<translation id="3394474617110693560">Categorias</translation>
-<translation id="2004365171440701679">Remover este dispositivo</translation>
+<translation id="728334460283296316">Remover dispositivo</translation>
 <translation id="1178128181015923849">Tem a certeza de que deseja eliminar o dispositivo '<ph name="DEVICE_NAME"/>'?</translation>
 <translation id="7745082336226088126">Digitalizar ou introduzir o código de sincronização</translation>
 <translation id="1602067095281698985">Criar uma nova cadeia de sincronização</translation>
@@ -216,9 +215,9 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="8730621377337864115">Concluído</translation>
 <translation id="6174119914106813304">SINCRONIZAR NESTE DISPOSITIVO</translation>
 <translation id="6776430845975754238">Alterar as definições só irá afetar dados que este dispositivo partilha com outros.</translation>
-<translation id="6450924769151530465">Adicionar outro dispositivo</translation>
+<translation id="1061533051865606843">Adicionar Novo Dispositivo</translation>
 <translation id="7539985410310934287">Introduzir palavras de código</translation>
-<translation id="6270614677029463366">Utilizando um dispositivo sincronizado existente, abra as Definições Huhi e navegue para Definições &gt; Sincronizar. Escolha "Adicionar Dispositivo" depois "Exibir palavras de código em vez disso".</translation>
+<translation id="2886391679017857869">Usando um dispositivo sincronizado existente, abra as Definições do Huhi e selecione Sincronização &gt; de Definições. Clique em "Adicionar Novo Dispositivo" e, de seguida, em "Exibir texto de código".</translation>
 <translation id="8131740175452115882">Confirmar</translation>
 <translation id="4973653569293835178">Vou utilizar a minha câmara...</translation>
 <translation id="326454632686131209">Sincronizar dispositivo</translation>
@@ -234,6 +233,10 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="6810078320346589989">Criar um marcador</translation>
 <translation id="3396347744975515056">A Huhi Sync foi atualizada e precisa ser configurada</translation>
 <translation id="7473245612074035141">Iniciar Configuração</translation>
+<translation id="1872784258300710671">O Huhi usa análises de produtos totalmente confidenciais para estimar a utilização geral de certas funcionalidades</translation>
+<translation id="8712637175834984815">Entendido</translation>
+<translation id="4394049700291259645">Desactivar</translation>
+<translation id="8446884382197647889">Obter mais informações</translation>
 <translation id="597993392929850353">Licença Huhi</translation>
 <translation id="6336451774241870485">Nova Tabela Privada</translation>
 <translation id="6199596294742117349">Este é um separador privado</translation>
@@ -243,7 +246,6 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="844921671123185605">As suas gorjetas mensais foram processadas!</translation>
 <translation id="3124090095880236567">Ative os anúncios</translation>
 <translation id="2975780980638932742">Chegou o Huhi Ads!</translation>
-<translation id="7655723274266132226">Agora já pode ganhar por ver anúncios.</translation>
 <translation id="7541582550122501404">Contribuição pendente</translation>
 <translation id="8520059774736886747">Criador <ph name="PUBLISHER_NAME"/> recentemente verificado</translation>
 <translation id="7924320838799747606">O seu saldo</translation>
@@ -261,8 +263,8 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="8522669544471808198">Mostrar imagens de fundo</translation>
 <translation id="3870475560794762985">Mostrar imagens patrocinadas</translation>
 <translation id="8297488609722895137">Foto de <ph name="PHOTO_BY"/></translation>
-<translation id="1605521356929094020">Ativar o Huhi Ads</translation>
-<translation id="1873603368604736484">Ao ativas as Recompensas, concorda com os <ph name="TERMS_OF_SERVICE"/>.</translation>
+<translation id="2070991379950719711">Comece a usar o Huhi Rewards</translation>
+<translation id="4761229094276239865">Ao clicar em Começar a usar o Huhi Rewards, concorda com os <ph name="TERMS_OF_SERVICE"/>.</translation>
 <translation id="3794079107601824147">Seja pago para ver esta imagem de fundo.</translation>
 <translation id="7136586167396205364">Ocultar imagens patrocinadas</translation>
 <translation id="2927095357213611519">Pode apoiar os criadores digitais com tokens.\nGanhe tokens a visualizar anúncios que respeitam a privacidade.</translation>
@@ -309,7 +311,7 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="8851456134224363571">Excelente! Importar-se-ia de classificar-nos na Play Store?</translation>
 <translation id="8668962040900592974">Diga-nos como podemos melhorar</translation>
 <translation id="4406937629441301400">Ganhe pela visualização desta imagem e pague-a aos seus criadores. <ph name="LEARN_MORE"/></translation>
-<translation id="7894626572714595717">Ganhe tokens pela visualização desta imagem. Ative os Anúncios Huhi para reivindicar a sua parte.</translation>
+<translation id="1992363542751124282">Ganhe tokens por visualizar esta imagem.  Clique em Comece a usar o Huhi Rewards para reivindicar a sua parte.</translation>
 <translation id="6632345639591919543">Ganha tokens pela visualização desta imagem.\n<ph name="LEARN_MORE"/></translation>
 <translation id="1465733111003593696">Ganha tokens pela visualização desta imagem.</translation>
 <translation id="7877201489035217175">Saiba mais sobre imagens patrocinadas</translation>
@@ -347,7 +349,7 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="3286927551967858325">Dê uma olhada</translation>
 <translation id="2929661208078053609">Excelente!</translation>
 <translation id="4776948189086901857">Huhi funciona em qualquer lugar</translation>
-<translation id="1606322780901645965">Descarregue Huhi para o seu computador ou tablet em  huhisoft.com, para uma net mais rápida e privada</translation>
+<translation id="1606322780901645965">Descarregue Huhi para o seu computador ou tablet em  hnq.vn, para uma net mais rápida e privada</translation>
 <translation id="8374242949413616101">Proteção de privacidade</translation>
 <translation id="4955406228638026265">Huhi impede que anúncios &amp; rastreadores recolham informação sobre si sem o seu consentimento.</translation>
 <translation id="752842701893882688">Salvar dados e bateria.</translation>
@@ -357,7 +359,6 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="8903462729414407077">Obtenha atualizações semanais</translation>
 <translation id="8029219208182772618">Saiba quais os sites por si visitados que menos respeitam a privacidade.\n\nEstas estatísticas de privacidade são visíveis apenas por si.  Nenhuns dados pessoais ou histórico de navegação permanecem no browser Huhi do seu dispositivo.</translation>
 <translation id="6170159749517116894">Ativar relatórios de privacidade</translation>
-<translation id="6165508094623778733">Saiba mais</translation>
 <translation id="5966707198760109579">Semana</translation>
 <translation id="8987927404178983737">Mês</translation>
 <translation id="4302754476737420523">3 Meses</translation>
@@ -376,12 +377,12 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="7427567994475794038">Ative os Relatórios de Privacidade para visualizar quantos rastreadores&amp; anúncios bloqueou nas últimas 3 horas.</translation>
 <translation id="2053891538879944400">Economizou <ph name="DATA"/> <ph name="DATA_TEXT"/> dados com o navegador Huhi .</translation>
 <translation id="8640064498452534195">Ative os Relatórios de Privacidade para visualizar quantos dados guardou.</translation>
-<translation id="2252497442547961651">O browser Huhi usa, em média, menos 40% de bateria.🔋</translation>
+<translation id="2252497442547961651">O browser Huhi usa, em média, menos 40% de bateria.&#128267;</translation>
 <translation id="1945330434665345785">Bloqueou <ph name="COUNT"/> rastreadores &amp; anúncios com o browser Huhi na última semana.</translation>
 <translation id="2883868922264431515">Ganhe tokens pela visualização de anúncios que respeitam a sua privacidade e apoie os seus sites favoritos.</translation>
-<translation id="5678925890616256956">Fantástico! Bloqueou 250 rastreadores &amp; anúncios com o browser Huhi.🔥</translation>
-<translation id="9199047775708635708">Fantástico! Economizou 10 MB com o browser Huhi.🔋</translation>
-<translation id="1880168210969863408">Fantástico! Economizou 10 minutos a carregar com o browser Huhi.💨💨</translation>
+<translation id="5678925890616256956">Fantástico! Bloqueou 250 rastreadores &amp; anúncios com o browser Huhi.&#128293;</translation>
+<translation id="9199047775708635708">Fantástico! Economizou 10 MB com o browser Huhi.&#128267;</translation>
+<translation id="1880168210969863408">Fantástico! Economizou 10 minutos a carregar com o browser Huhi.&#128168;&#128168;</translation>
 <translation id="7408493389591475748">Comece a navegar para visualizar os relatórios de privacidade</translation>
 <translation id="9080777565335515917">Defina Huhi como o seu browser padrão para uma navegação privada e segura.</translation>
 <translation id="7801488941710395275">Permita à huhi apresentar-lhe as suas estatísticas de privacidade</translation>
@@ -391,11 +392,79 @@ até que a verificação ocorra ou tenham decorrido 90 dias.</translation>
 <translation id="2718046830255553131">Os dados dos relatórios de privacidade foram apagados.</translation>
 <translation id="7559243474426790340">Atualizar Estado</translation>
 <translation id="8376263745431603066">Ativar "modo noturno" (experimental)</translation>
-<translation id="1604429341565715601">Configuração da sincronização em progresso; por favor, procure redefini-la mais tarde</translation>
-<translation id="4540198958192073185">Bloquear toda a recolha de impressões digitais</translation>
-<translation id="5739030256211745023">Sem anúncios &amp;rastreadores, os sites usam menos dados e bateria.   Pode, inclusive, salvar dinheiro em taxas da transportafora.</translation>
-<translation id="4591582032282435287">O browser Huhi usa, em média, menos 40% de bateria.</translation>
-<translation id="6840965284166256302">Fantástico! Bloqueou 250 rastreadores &amp; anúncios com o browser da Huhi.</translation>
-<translation id="2076976911561945584">Fantástico! Economizou 10 MB com o browser Huhi.</translation>
-<translation id="6714550233326888315">Fantástico! Economizou 10 minutos a carregar com o browser Huhi.</translation>
+<translation id="1383876407941801731">Pesquisar</translation>
+<translation id="1972589975368876259">Editar Alinhamento</translation>
+<translation id="2490330380242414851">Remover Widget</translation>
+<translation id="7384441892795736634">Atualizar Informações</translation>
+<translation id="4804818685124855865">Desligar</translation>
+<translation id="4789438578712143420">≈ $<ph name="USD_BALANCE"/></translation>
+<translation id="1080611582879541635"><ph name="COIN_ADDRESS"/> Endereço do Depósito</translation>
+<translation id="4836242416604533644"><ph name="COIN_MEMO"/> Registo de Depósitos</translation>
+<translation id="5110244215256675209">Comprar Crypto</translation>
+<translation id="2271556362602437160">.com</translation>
+<translation id="3727077517986954867">.us</translation>
+<translation id="3414885529641505869">Comprar <ph name="COIN_NAME"/></translation>
+<translation id="558614325644656740">Disponível <ph name="COIN_BALANCE"/> <ph name="COIN_NAME"/></translation>
+<translation id="6755546361496900700">Pré-visualizar Conversão</translation>
+<translation id="2882813124794301799">Alinhamento de Widgets</translation>
+<translation id="13296465911709339">O texto foi copiado para a área de transferência.</translation>
+<translation id="7144878232160441200">Tentar Novamente</translation>
+<translation id="2977461003134694205">Estatísticas de Privacidade</translation>
+<translation id="4643117005422448078">Principais Sítios</translation>
+<translation id="6966052266404721769">Binance</translation>
+<translation id="1392658226187691544">Estimativas de Rastreadores &amp; Anúncios Bloqueados, poupança de Largura de Banda e Tempo economizado.</translation>
+<translation id="74417429503469271">Abrir os sites principais que visita frequentemente.</translation>
+<translation id="2956070106555335453">Resumo</translation>
+<translation id="1366855498335432549">Depositar</translation>
+<translation id="1301340234286078471">Converter</translation>
+<translation id="223536150967420869">Comprar</translation>
+<translation id="1714829281959608206">Ative a ligação Binance para ver o saldo da conta Binance e negociar ''crypto''.</translation>
+<translation id="4584930231524505442">Desejo converter...</translation>
+<translation id="5749014321384313843">Desejo gastar...</translation>
+<translation id="8688672835843460752">Disponível</translation>
+<translation id="2480674848181564169">Sem saldo suficiente para conversão</translation>
+<translation id="2215334405220411393">O valor mínimo a ser convertido é : <ph name="COIN_BALANCE"/> <ph name="COIN_NAME"/></translation>
+<translation id="6702658079816271889">Impossível conectar</translation>
+<translation id="7742417737698031726">Taxa</translation>
+<translation id="2122225204180056042">Receberá</translation>
+<translation id="6432284126416751397">Confirmar Conversão</translation>
+<translation id="5137723827757859599">Ainda não tem nada nos sites principais.</translation>
+<translation id="3891414008432200754">Preço</translation>
+<translation id="3733576242118819803">Confirmar (<ph name="REMAINING_TIME"/>s)</translation>
+<translation id="1627064138060308910">Falha na conversão. Tente de novo, por favor.</translation>
+<translation id="1449790603979388000"><ph name="COUNT"/> <ph name="COUNT_TEXT"/></translation>
+<translation id="7465614181960492526">Ganhe Tokens &amp; Recue</translation>
+<translation id="244362569344671266">Ganhe tokens ao visualizar os Anúncios Privados Huhi e apoie os criadores de conteúdo automaticamente.</translation>
+<translation id="631124996535890460">Ao continuar, concorda com os <ph name="TERMS_OF_SERVICE"/> and <ph name="PRIVACY_POLICY"/>.</translation>
+<translation id="8804164990146287819">Política de Privacidade</translation>
+<translation id="6318696841371191107">Faça uma visita rápida</translation>
+<translation id="7930505144430343145">Bem-vindo ao Huhi Rewards!</translation>
+<translation id="7909111626803226907">Ao contrário dos anúncios tradicionais, os anúncios privados do Huhi recompensam-no com tokens por apoiar os criadores de conteúdo e mantêm as suas informações pessoais privadas.</translation>
+<translation id="6973095375773523904">Onde é que os anúncios são apresentados?</translation>
+<translation id="3867028444168159102">Os anúncios privados do Huhi aparecerão como uma notificação normal.  Nas configurações pode controlar o quão frequentemente visualiza esses anúncios.</translation>
+<translation id="5816125157889950051">Quando recebe as recompensas</translation>
+<translation id="4649471244559455723">Os tokens ganhos no presente mês com os anúncios Huhi serão pagos no dia 5 do mês seguinte.</translation>
+<translation id="7712287524451429139">Contribua sem esforço</translation>
+<translation id="105037569026952831">Os criadores recebem automaticamente as suas contribuições em tokens, com base nos seus níveis de participação, por nós avaliados como ‘Atençãon’.</translation>
+<translation id="5323267338679539010">Agradeça com uma gorjeta</translation>
+<translation id="6042317056594735519">Dar gorjetas é uma forma de encorajar pessoalmente o conteúdo ou os criadores da sua preferência.  Receba gorjetas!</translation>
+<translation id="7509452925943421624">O que pode fazer com os tokens?</translation>
+<translation id="7059157883171259940">Os tokens podem ser usados para além do apoio aos criadores.  Pode comprar bens digitais e cartões-presente com um bónus em cashback.</translation>
+<translation id="1402530520078693620">Por último, vamos’ ajudá-lo a definir as configurações básicas</translation>
+<translation id="3494356595346329740">Pode alterar isto mais tarde.</translation>
+<translation id="6462814326662189004">Quão frequentemente quer ver anúncios?\n(Anúncios por hora)</translation>
+<translation id="2134244432345596331">Com quanto deseja apoiar os seus criadores preferidos?\n(com os ganhos dos seus anúncios)</translation>
+<translation id="7456161272236175794">WWOOOOHOOOOO!\nJá’está.</translation>
+<translation id="3895246934788932488">Ao usar o Huhi Rewards, protege a sua privacidade e ajuda a fazer da net um lugar melhor para todos.  O que é’ fantástido!</translation>
+<translation id="5705882733397021510">Volte</translation>
+<translation id="5140321319944305531">Vamos a uma Visita Rápida</translation>
+<translation id="3808131693704413134">Depois de receber o pagamento pelos seus primeiros anúncios, pode voltar e presentear este criador!</translation>
+<translation id="207242986925259074">Visita rápida de atualização</translation>
+<translation id="8342862030112839977">As suas primeiras recompensas serão pagas a:</translation>
+<translation id="3769645103175790584">Ganhe tokens e recompense os criadores pelo excelente conteúdo enquanto navega. <ph name="QUICK_TOUR"/>.</translation>
+<translation id="6912901278692845878">Visita rápida</translation>
+<translation id="1080013038789678738">I’Estou dentro!</translation>
+<translation id="3604285424134705930">Converteu <ph name="FROM_VALUE"/> <ph name="FROM_CURRENCY"/> to <ph name="TO_VALUE"/> <ph name="TO_CURRENCY"/>!</translation>
+<translation id="392587271502873865">Por favor, verifique a sua ligação à internet.</translation>
+<translation id="7889432931837317731">Abrir automaticamente quando possível.</translation>
 </translationbundle>

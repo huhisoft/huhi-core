@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -9,6 +9,7 @@ import { Reducer } from 'redux'
 import { types, DismissBrandedWallpaperNotificationPayload } from '../constants/new_tab_types'
 import { Stats } from '../api/stats'
 import { PrivateTabData } from '../api/privateTabData'
+import { TorTabData } from '../api/torTabData'
 
 // API
 import * as backgroundAPI from '../api/background'
@@ -16,6 +17,10 @@ import { InitialData } from '../api/initialData'
 import { registerViewCount } from '../api/brandedWallpaper'
 import * as preferencesAPI from '../api/preferences'
 import * as storage from '../storage/new_tab_storage'
+import { setMostVisitedSettings } from '../api/topSites'
+
+// Utils
+import { handleWidgetPrefsChange } from './stack_widget_reducer'
 
 let sideEffectState: NewTab.State = storage.load()
 
@@ -38,9 +43,12 @@ export const newTabReducer: Reducer<NewTab.State | undefined> = (state: NewTab.S
         stats: initialDataPayload.stats,
         brandedWallpaperData: initialDataPayload.brandedWallpaperData,
         ...initialDataPayload.privateTabData,
+        ...initialDataPayload.torTabData,
         togetherSupported: initialDataPayload.togetherSupported,
         geminiSupported: initialDataPayload.geminiSupported,
-        bitcoinDotComSupported: initialDataPayload.bitcoinDotComSupported
+        bitcoinDotComSupported: initialDataPayload.bitcoinDotComSupported,
+        cryptoDotComSupported: initialDataPayload.cryptoDotComSupported,
+        binanceSupported: initialDataPayload.binanceSupported
       }
       if (state.brandedWallpaperData && !state.brandedWallpaperData.isSponsored) {
         // Update feature flag if this is super referral wallpaper.
@@ -92,6 +100,15 @@ export const newTabReducer: Reducer<NewTab.State | undefined> = (state: NewTab.S
       }
       break
 
+    case types.NEW_TAB_TOR_TAB_DATA_UPDATED:
+      const torTabData = payload as TorTabData
+      state = {
+        ...state,
+        torCircuitEstablished: torTabData.torCircuitEstablished,
+        torInitProgress: torTabData.torInitProgress
+      }
+      break
+
     case types.NEW_TAB_DISMISS_BRANDED_WALLPAPER_NOTIFICATION:
       const { isUserAction } = payload as DismissBrandedWallpaperNotificationPayload
       // Save persisted data.
@@ -132,42 +149,43 @@ export const newTabReducer: Reducer<NewTab.State | undefined> = (state: NewTab.S
       if (shouldChangeBackgroundImage) {
         newState.backgroundImage = backgroundAPI.randomBackgroundImage()
       }
-      state = newState
+      // Handle updated widget prefs
+      state = handleWidgetPrefsChange(newState, state)
       break
 
-    case types.REMOVE_STACK_WIDGET:
-      const widget: NewTab.StackWidget = payload.widget
-      let { removedStackWidgets, widgetStackOrder } = state
-
-      if (!widgetStackOrder.length) {
-        break
-      }
-
-      if (!removedStackWidgets.includes(widget)) {
-        removedStackWidgets.push(widget)
-      }
-
-      state = {
-        ...state,
-        removedStackWidgets
-      }
-      break
-
-    case types.SET_FOREGROUND_STACK_WIDGET:
-      const frontWidget: NewTab.StackWidget = payload.widget
-      let newWidgetStackOrder = state.widgetStackOrder
-
-      newWidgetStackOrder = newWidgetStackOrder.filter((widget: NewTab.StackWidget) => {
-        return widget !== frontWidget
+    case types.UPDATE_CLOCK_WIDGET: {
+      const { showClockWidget, clockFormat } = payload
+      performSideEffect(async function (state) {
+        preferencesAPI.saveShowClock(showClockWidget)
+        preferencesAPI.saveClockFormat(clockFormat)
       })
+      break
+    }
 
-      newWidgetStackOrder.push(frontWidget)
+    case types.SET_MOST_VISITED_SITES: {
+      const { showTopSites, customLinksEnabled } = payload
+      performSideEffect(async function (state) {
+        setMostVisitedSettings(customLinksEnabled, showTopSites)
+      })
+      break
+    }
 
+    case types.TOP_SITES_STATE_UPDATED: {
+      const { newShowTopSites, newCustomLinksEnabled } = payload
       state = {
         ...state,
-        widgetStackOrder: newWidgetStackOrder
+        showTopSites: newShowTopSites,
+        customLinksEnabled: newCustomLinksEnabled
       }
       break
+    }
+
+    case types.CUSTOMIZE_CLICKED: {
+      performSideEffect(async function (state) {
+        chrome.send('customizeClicked', [])
+      })
+      break
+    }
 
     default:
       break

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,20 +17,6 @@
 namespace extensions {
 namespace api {
 
-class HuhiRewardsCreateWalletFunction : public ExtensionFunction {
- public:
-  HuhiRewardsCreateWalletFunction();
-  DECLARE_EXTENSION_FUNCTION("huhiRewards.createWallet", UNKNOWN)
-
- protected:
-  ~HuhiRewardsCreateWalletFunction() override;
-
-  ResponseAction Run() override;
- private:
-  base::WeakPtrFactory<HuhiRewardsCreateWalletFunction> weak_factory_;
-  void OnCreateWallet(const ledger::type::Result result);
-};
-
 class HuhiRewardsOpenBrowserActionUIFunction :
     public ExtensionFunction {
  public:
@@ -40,6 +26,59 @@ class HuhiRewardsOpenBrowserActionUIFunction :
   ~HuhiRewardsOpenBrowserActionUIFunction() override;
 
   ResponseAction Run() override;
+};
+
+class HuhiRewardsUpdateMediaDurationFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("huhiRewards.updateMediaDuration", UNKNOWN)
+
+ protected:
+  ~HuhiRewardsUpdateMediaDurationFunction() override;
+
+  ResponseAction Run() override;
+};
+
+class HuhiRewardsGetPublisherInfoFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("huhiRewards.getPublisherInfo", UNKNOWN)
+
+ protected:
+  ~HuhiRewardsGetPublisherInfoFunction() override;
+
+  ResponseAction Run() override;
+
+ private:
+  void OnGetPublisherInfo(
+      const ledger::type::Result result,
+      ledger::type::PublisherInfoPtr info);
+};
+
+class HuhiRewardsGetPublisherPanelInfoFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("huhiRewards.getPublisherPanelInfo", UNKNOWN)
+
+ protected:
+  ~HuhiRewardsGetPublisherPanelInfoFunction() override;
+
+  ResponseAction Run() override;
+
+ private:
+  void OnGetPublisherPanelInfo(
+      const ledger::type::Result result,
+      ledger::type::PublisherInfoPtr info);
+};
+
+class HuhiRewardsSavePublisherInfoFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("huhiRewards.savePublisherInfo", UNKNOWN)
+
+ protected:
+  ~HuhiRewardsSavePublisherInfoFunction() override;
+
+  ResponseAction Run() override;
+
+ private:
+  void OnSavePublisherInfo(const ledger::type::Result result);
 };
 
 class HuhiRewardsTipSiteFunction : public ExtensionFunction {
@@ -52,48 +91,27 @@ class HuhiRewardsTipSiteFunction : public ExtensionFunction {
   ResponseAction Run() override;
 };
 
-class HuhiRewardsTipTwitterUserFunction
-    : public ExtensionFunction {
+class HuhiRewardsTipUserFunction : public ExtensionFunction {
  public:
-  HuhiRewardsTipTwitterUserFunction();
-  DECLARE_EXTENSION_FUNCTION("huhiRewards.tipTwitterUser", UNKNOWN)
+  HuhiRewardsTipUserFunction();
+  DECLARE_EXTENSION_FUNCTION("huhiRewards.tipUser", UNKNOWN)
 
  protected:
-  ~HuhiRewardsTipTwitterUserFunction() override;
+  ~HuhiRewardsTipUserFunction() override;
 
   ResponseAction Run() override;
 
  private:
-  base::WeakPtrFactory<HuhiRewardsTipTwitterUserFunction> weak_factory_;
-  void OnTwitterPublisherInfoSaved(ledger::type::PublisherInfoPtr publisher);
-};
+  void OnTipUserStartProcess(
+      const std::string& publisher_key,
+      ledger::type::Result result);
+  void OnTipUserGetPublisherInfo(
+      const ledger::type::Result result,
+      ledger::type::PublisherInfoPtr info);
+  void OnTipUserSavePublisherInfo(const ledger::type::Result result);
+  void ShowTipDialog();
 
-class HuhiRewardsTipGitHubUserFunction : public ExtensionFunction {
- public:
-  HuhiRewardsTipGitHubUserFunction();
-  DECLARE_EXTENSION_FUNCTION("huhiRewards.tipGitHubUser", UNKNOWN)
-
- protected:
-  ~HuhiRewardsTipGitHubUserFunction() override;
-
-  ResponseAction Run() override;
- private:
-  base::WeakPtrFactory<HuhiRewardsTipGitHubUserFunction> weak_factory_;
-  void OnGitHubPublisherInfoSaved(ledger::type::PublisherInfoPtr publisher);
-};
-
-class HuhiRewardsTipRedditUserFunction : public ExtensionFunction {
- public:
-  HuhiRewardsTipRedditUserFunction();
-  DECLARE_EXTENSION_FUNCTION("huhiRewards.tipRedditUser", UNKNOWN)
-
- protected:
-  ~HuhiRewardsTipRedditUserFunction() override;
-
-  ResponseAction Run() override;
- private:
-  base::WeakPtrFactory<HuhiRewardsTipRedditUserFunction> weak_factory_;
-  void OnRedditPublisherInfoSaved(ledger::type::PublisherInfoPtr publisher);
+  base::WeakPtrFactory<HuhiRewardsTipUserFunction> weak_factory_;
 };
 
 class HuhiRewardsGetPublisherDataFunction : public ExtensionFunction {
@@ -203,26 +221,22 @@ class HuhiRewardsGetPendingContributionsTotalFunction
   void OnGetPendingTotal(double amount);
 };
 
-class HuhiRewardsGetRewardsMainEnabledFunction
-    : public ExtensionFunction {
- public:
-  DECLARE_EXTENSION_FUNCTION("huhiRewards.getRewardsMainEnabled", UNKNOWN)
-
- protected:
-  ~HuhiRewardsGetRewardsMainEnabledFunction() override;
-
-  ResponseAction Run() override;
-
- private:
-  void OnGetRewardsMainEnabled(bool enabled);
-};
-
 class HuhiRewardsSaveAdsSettingFunction : public ExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("huhiRewards.saveAdsSetting", UNKNOWN)
 
  protected:
   ~HuhiRewardsSaveAdsSettingFunction() override;
+
+  ResponseAction Run() override;
+};
+
+class HuhiRewardsSetAutoContributeEnabledFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("huhiRewards.setAutoContributeEnabled", UNKNOWN)
+
+ protected:
+  ~HuhiRewardsSetAutoContributeEnabledFunction() override;
 
   ResponseAction Run() override;
 };
@@ -238,16 +252,6 @@ class HuhiRewardsGetACEnabledFunction : public ExtensionFunction {
 
  private:
   void OnGetACEnabled(bool enabled);
-};
-
-class HuhiRewardsSaveSettingFunction : public ExtensionFunction {
- public:
-  DECLARE_EXTENSION_FUNCTION("huhiRewards.saveSetting", UNKNOWN)
-
- protected:
-  ~HuhiRewardsSaveSettingFunction() override;
-
-  ResponseAction Run() override;
 };
 
 class HuhiRewardsSaveRecurringTipFunction : public ExtensionFunction {
@@ -367,9 +371,9 @@ class HuhiRewardsGetExternalWalletFunction : public ExtensionFunction {
   ResponseAction Run() override;
 
  private:
-  void OnExternalWalet(
+  void OnGetUpholdWallet(
       const ledger::type::Result result,
-      ledger::type::ExternalWalletPtr wallet);
+      ledger::type::UpholdWalletPtr wallet);
 };
 
 class HuhiRewardsDisconnectWalletFunction : public ExtensionFunction {
@@ -420,20 +424,6 @@ class HuhiRewardsGetAdsEstimatedEarningsFunction
       const uint64_t ad_notifications_received_this_month);
 };
 
-class HuhiRewardsGetWalletExistsFunction
-    : public ExtensionFunction {
- public:
-  DECLARE_EXTENSION_FUNCTION("huhiRewards.getWalletExists", UNKNOWN)
-
- protected:
-  ~HuhiRewardsGetWalletExistsFunction() override;
-
-  ResponseAction Run() override;
-
- private:
-  void OnGetWalletExists(const bool exists);
-};
-
 class HuhiRewardsGetAdsSupportedFunction : public ExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("huhiRewards.getAdsSupported", UNKNOWN)
@@ -464,6 +454,26 @@ class HuhiRewardsIsInitializedFunction : public ExtensionFunction {
 
  protected:
   ~HuhiRewardsIsInitializedFunction() override;
+
+  ResponseAction Run() override;
+};
+
+class HuhiRewardsShouldShowOnboardingFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("huhiRewards.shouldShowOnboarding", UNKNOWN)
+
+ protected:
+  ~HuhiRewardsShouldShowOnboardingFunction() override;
+
+  ResponseAction Run() override;
+};
+
+class HuhiRewardsSaveOnboardingResultFunction : public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("huhiRewards.saveOnboardingResult", UNKNOWN)
+
+ protected:
+  ~HuhiRewardsSaveOnboardingResultFunction() override;
 
   ResponseAction Run() override;
 };

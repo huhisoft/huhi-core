@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -21,7 +21,7 @@
 using huhi::ResponseCallback;
 
 namespace {
-const char kComponentUpdaterProxy[] = "https://componentupdater.huhisoft.com";
+const char kComponentUpdaterProxy[] = "https://componentupdater.hnq.vn";
 }
 
 TEST(HuhiCommonStaticRedirectNetworkDelegateHelperTest,
@@ -112,7 +112,7 @@ TEST(HuhiCommonStaticRedirectNetworkDelegateHelperTest,
   const GURL redirect = GURL(request_info->new_url_spec);
   EXPECT_EQ(redirect.host(), "github.com");
   EXPECT_TRUE(redirect.SchemeIs(url::kHttpsScheme));
-  EXPECT_EQ(redirect.path(), "/huhi/huhi-browser/issues/new");
+  EXPECT_EQ(redirect.path(), "/huhisoft/huhi-browser/issues/new");
   EXPECT_EQ(redirect.query(),
             "title=Crash%20Report&labels=crash&body=IMPORTANT%20Huhi");
   EXPECT_EQ(rc, net::OK);

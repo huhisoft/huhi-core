@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -19,6 +19,10 @@
 #include "chrome/browser/ui/views/location_bar/location_bar_view.h"
 #include "components/version_info/channel.h"
 #include "ui/views/controls/highlight_path_generator.h"
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "huhi/browser/ui/views/location_bar/onion_location_view.h"
+#endif
 
 namespace {
 
@@ -48,6 +52,10 @@ void HuhiLocationBarView::Init() {
         std::make_unique<
             HuhiLocationBarViewFocusRingHighlightPathGenerator>());
   }
+#if BUILDFLAG(ENABLE_TOR)
+  onion_location_view_ = new OnionLocationView(browser_->profile());
+  AddChildView(onion_location_view_);
+#endif
   // huhi action buttons
   huhi_actions_ = new HuhiActionsContainer(browser_, profile());
   huhi_actions_->Init();
@@ -60,16 +68,16 @@ void HuhiLocationBarView::Init() {
     content_setting_view->disable_animation();
 }
 
-void HuhiLocationBarView::Layout() {
-  LocationBarView::Layout(huhi_actions_ ? huhi_actions_ : nullptr);
-}
-
 void HuhiLocationBarView::Update(content::WebContents* contents) {
   // base Init calls update before our Init is run, so our children
   // may not be initialized yet
   if (huhi_actions_) {
     huhi_actions_->Update();
   }
+#if BUILDFLAG(ENABLE_TOR)
+  if (onion_location_view_)
+    onion_location_view_->Update(contents);
+#endif
   LocationBarView::Update(contents);
 }
 
@@ -80,9 +88,26 @@ void HuhiLocationBarView::OnChanged() {
         ShouldHidePageActionIcons() && !omnibox_view_->GetText().empty();
     huhi_actions_->SetShouldHide(should_hide);
   }
+#if BUILDFLAG(ENABLE_TOR)
+  if (onion_location_view_)
+    onion_location_view_->Update(
+        browser_->tab_strip_model()->GetActiveWebContents());
+#endif
 
   // OnChanged calls Layout
   LocationBarView::OnChanged();
+}
+
+std::vector<views::View*> HuhiLocationBarView::GetTrailingViews() {
+  std::vector<views::View*> views;
+#if BUILDFLAG(ENABLE_TOR)
+  if (onion_location_view_)
+    views.push_back(onion_location_view_);
+#endif
+  if (huhi_actions_)
+    views.push_back(huhi_actions_);
+
+  return views;
 }
 
 gfx::Size HuhiLocationBarView::CalculatePreferredSize() const {
@@ -93,6 +118,13 @@ gfx::Size HuhiLocationBarView::CalculatePreferredSize() const {
                               GetLayoutConstant(LOCATION_BAR_ELEMENT_PADDING);
     min_size.Enlarge(extra_width, 0);
   }
+#if BUILDFLAG(ENABLE_TOR)
+  if (onion_location_view_ && onion_location_view_->GetVisible()) {
+    const int extra_width = GetLayoutConstant(LOCATION_BAR_ELEMENT_PADDING) +
+        onion_location_view_->GetMinimumSize().width();
+    min_size.Enlarge(extra_width, 0);
+  }
+#endif
   return min_size;
 }
 
@@ -131,11 +163,3 @@ HuhiLocationBarView::GetContentSettingsImageViewForTesting(size_t idx) {
   DCHECK(idx < content_setting_views_.size());
   return content_setting_views_[idx];
 }
-
-// Provide base class implementation for Update override that has been added to
-// header via a patch. This should never be called as the only instantiated
-// implementation should be our |HuhiLocationBarView|.
-void LocationBarView::Layout() {
-  Layout(nullptr);
-}
-

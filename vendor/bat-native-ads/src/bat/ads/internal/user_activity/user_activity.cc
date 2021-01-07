@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,7 +11,7 @@
 namespace ads {
 
 namespace {
-const uint64_t kMaximumUserActivityEntries = 100;
+const size_t kMaximumUserActivityEntries = 100;
 }
 
 UserActivity::UserActivity() = default;
@@ -26,7 +26,6 @@ void UserActivity::RecordActivityForType(
 
   const uint64_t timestamp =
       static_cast<uint64_t>(base::Time::Now().ToDoubleT());
-
   history_.at(type).push_front(timestamp);
 
   if (history_.at(type).size() > kMaximumUserActivityEntries) {

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -43,7 +43,8 @@ class Publisher {
 
   void SaveVisit(const std::string& publisher_key,
                  const type::VisitData& visit_data,
-                 const uint64_t& duration,
+                 const uint64_t duration,
+                 const bool first_visit,
                  uint64_t window_id,
                  const ledger::PublisherInfoCallback callback);
 
@@ -51,6 +52,7 @@ class Publisher {
       const std::string& publisher_id,
       const type::VisitData& visit_data,
       uint64_t duration,
+      const bool first_visit,
       uint64_t window_id,
       ledger::PublisherInfoCallback callback);
 
@@ -96,7 +98,37 @@ class Publisher {
       const std::string& publisher_key,
       client::GetServerPublisherInfoCallback callback);
 
+  void UpdateMediaDuration(
+      const uint64_t window_id,
+      const std::string& publisher_key,
+      const uint64_t duration,
+      const bool first_visit);
+
+  void GetPublisherPanelInfo(
+      const std::string& publisher_key,
+      ledger::GetPublisherInfoCallback callback);
+
+  void SavePublisherInfo(
+      const uint64_t window_id,
+      type::PublisherInfoPtr publisher_info,
+      ledger::ResultCallback callback);
+
+  static std::string GetShareURL(
+      const std::map<std::string, std::string>& args);
+
  private:
+  void OnGetPublisherInfoForUpdateMediaDuration(
+      type::Result result,
+      type::PublisherInfoPtr info,
+      const uint64_t window_id,
+      const uint64_t duration,
+      const bool first_visit);
+
+  void OnGetPanelPublisherInfo(
+      const type::Result result,
+      type::PublisherInfoPtr info,
+      ledger::GetPublisherInfoCallback callback);
+
   void onPublisherActivitySave(
       uint64_t windowId,
       const type::VisitData& visit_data,
@@ -112,7 +144,8 @@ class Publisher {
       const type::PublisherStatus,
       const std::string& publisher_key,
       const type::VisitData& visit_data,
-      uint64_t duration,
+      const uint64_t duration,
+      const bool first_visit,
       uint64_t window_id,
       const ledger::PublisherInfoCallback callback,
       type::Result result,
@@ -122,7 +155,8 @@ class Publisher {
     type::ServerPublisherInfoPtr server_info,
     const std::string& publisher_key,
     const type::VisitData& visit_data,
-    uint64_t duration,
+    const uint64_t duration,
+    const bool first_visit,
     uint64_t window_id,
     const ledger::PublisherInfoCallback callback);
 
@@ -170,6 +204,13 @@ class Publisher {
       const type::PublisherBanner& banner,
       type::Result result,
       type::PublisherInfoPtr publisher_info);
+
+  void OnGetPublisherBannerForSavePublisherInfo(
+      type::PublisherBannerPtr banner,
+      const uint64_t window_id,
+      const std::string& publisher_key,
+      const type::VisitData& visit_data,
+      ledger::ResultCallback callback);
 
   type::PublisherStatus ParsePublisherStatus(const std::string& status);
 

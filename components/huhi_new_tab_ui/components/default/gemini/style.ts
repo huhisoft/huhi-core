@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License. v. 2.0. If a copy of the MPL was not distributed with this file.
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -90,23 +90,27 @@ export const ActionsWrapper = styled<StyleProps, 'div'>('div')`
   text-align: center;
 `
 
-export const ConnectButton = styled<StyleProps, 'a'>('a')`
+export const ConnectButton = styled<StyleProps, 'button'>('button')`
   font-size: 14px;
   font-weight: bold;
   border-radius: 20px;
   width: 100%;
   background: #3D3D3D;
   border: 0;
-  padding: 10px 60px;
+  padding: 10px;
   cursor: pointer;
   color: #fff;
-  margin-bottom: 10px;
   text-decoration: none;
-  width: ${p => p.isSmall ? 50 : 100}%;
+  min-width: 245px;
 
   &:focus {
     outline: 0;
   }
+`
+
+export const SmallButton = styled(ConnectButton)`
+  width: 50%;
+  margin-bottom: 10px;
 `
 
 export const NavigationBar = styled<{}, 'div'>('div')`

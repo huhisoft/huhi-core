@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,10 +7,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, BATAdsConfirmationType) {
-  BATAdsConfirmationTypeNone,       // = ads::ConfirmationType::kNone
-  BATAdsConfirmationTypeClick,      // = ads::ConfirmationType::kClicked
-  BATAdsConfirmationTypeDismiss,    // = ads::ConfirmationType::kDismissed
-  BATAdsConfirmationTypeView,       // = ads::ConfirmationType::kViewed
+  BATAdsConfirmationTypeUndefined,  // = ads::ConfirmationType::kUndefined
+  BATAdsConfirmationTypeClicked,    // = ads::ConfirmationType::kClicked
+  BATAdsConfirmationTypeDismissed,  // = ads::ConfirmationType::kDismissed
+  BATAdsConfirmationTypeViewed,     // = ads::ConfirmationType::kViewed
   BATAdsConfirmationTypeLanded,     // = ads::ConfirmationType::kLanded
   BATAdsConfirmationTypeFlagged,    // = ads::ConfirmationType::kFlagged
   BATAdsConfirmationTypeUpvoted,    // = ads::ConfirmationType::kUpvoted
@@ -21,7 +21,6 @@ typedef NS_ENUM(NSInteger, BATAdsConfirmationType) {
 NS_SWIFT_NAME(AdsNotification)
 @interface BATAdNotification : NSObject
 @property (nonatomic, readonly, copy) NSString *uuid;
-@property (nonatomic, readonly, copy) NSString *parentUuid;
 @property (nonatomic, readonly, copy) NSString *creativeInstanceID;
 @property (nonatomic, readonly, copy) NSString *creativeSetID;
 @property (nonatomic, readonly, copy) NSString *campaignID;
@@ -29,7 +28,6 @@ NS_SWIFT_NAME(AdsNotification)
 @property (nonatomic, readonly, copy) NSString *title;
 @property (nonatomic, readonly, copy) NSString *body;
 @property (nonatomic, readonly, copy) NSString *targetURL;
-@property (nonatomic, readonly, copy) NSString *geoTarget;
 @end
 
 @interface BATAdNotification (MyFirstAd)

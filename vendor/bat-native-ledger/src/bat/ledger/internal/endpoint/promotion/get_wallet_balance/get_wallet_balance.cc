@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/get_wallet_balance/get_wallet_balance.h"
@@ -27,10 +27,15 @@ GetWalletBalance::GetWalletBalance(LedgerImpl* ledger):
 GetWalletBalance::~GetWalletBalance() = default;
 
 std::string GetWalletBalance::GetUrl() {
-  const std::string payment_id = ledger_->state()->GetPaymentId();
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    return "";
+  }
+
   const std::string path = base::StringPrintf(
       "/v3/wallet/uphold/%s",
-      payment_id.c_str());
+      wallet->payment_id.c_str());
 
   return GetServerUrl(path);
 }

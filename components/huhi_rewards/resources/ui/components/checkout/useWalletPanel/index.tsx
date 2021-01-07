@@ -1,11 +1,11 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import * as React from 'react'
 import { PlusIcon } from 'huhi-ui/components/icons'
 
-import { LocaleContext, LocaleData } from '../localeContext'
+import { LocaleContext, LocaleData, getLocaleWithTag } from '../localeContext'
 import { FormSection } from '../formSection'
 
 import {
@@ -72,6 +72,7 @@ export function UseWalletPanel (props: UseWalletPanelProps) {
   }
 
   const locale = React.useContext(LocaleContext)
+  const tags = getLocaleWithTag(locale.get('payWithBatTermsOfSale'))
 
   return (
     <>
@@ -100,7 +101,11 @@ export function UseWalletPanel (props: UseWalletPanelProps) {
       {
         props.hasSufficientFunds &&
           <TermsOfSale>
-            <span dangerouslySetInnerHTML={{ __html: locale.get('payWithBatTermsOfSale') }} />
+            <span>
+              {tags.beforeTag}
+              <a href='javascript:void 0'>{tags.duringTag}</a>
+              {tags.afterTag}
+            </span>
           </TermsOfSale>
       }
     </>

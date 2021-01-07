@@ -64,9 +64,11 @@ source_set("browser") {
     ]
 
     deps += [
+      "//huhi/app:huhi_generated_resources_grit",
       "//huhi/components/huhi_ads/browser/buildflags",
       "//huhi/components/resources",
       "//huhi/components/services/bat_ledger/public/cpp",
+      "//huhi/vendor/bat-native-ads",
       "//mojo/public/cpp/bindings",
       "//net",
       "//services/network/public/cpp",
@@ -86,13 +88,11 @@ source_set("browser") {
 
 source_set("testutil") {
   testonly = true
-  # Remove when https://github.com/huhisoft/huhi-browser/issues/10618 is resolved
-  check_includes = false
-
   deps = [
     "//huhi/vendor/bat-native-ledger:headers",
     ":browser",
     "//base",
+    "//huhi/browser:browser_process",
     "//content/public/browser",
     "//chrome/test:test_support",
     "//testing/gtest",

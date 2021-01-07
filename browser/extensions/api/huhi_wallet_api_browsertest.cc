@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,8 +7,9 @@
 #include "base/scoped_observer.h"
 #include "huhi/browser/infobars/crypto_wallets_infobar_delegate.h"
 #include "huhi/common/huhi_paths.h"
-#include "huhi/common/huhi_wallet_constants.h"
 #include "huhi/common/pref_names.h"
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
+#include "huhi/components/huhi_wallet/pref_names.h"
 #include "chrome/browser/infobars/infobar_service.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
@@ -68,7 +69,7 @@ class HuhiWalletAPIBrowserTest : public InProcessBrowserTest,
     ASSERT_TRUE(embedded_test_server()->Start());
   }
 
-  void AddFakeMetaMaskExtension() {
+  void AddFakeMetaMaskExtension(bool is_update) {
     DictionaryBuilder manifest;
     manifest.Set("name", "ext")
         .Set("version", "0.1")
@@ -78,9 +79,25 @@ class HuhiWalletAPIBrowserTest : public InProcessBrowserTest,
                      .SetID(metamask_extension_id)
                      .Build();
     ASSERT_TRUE(extension_);
-    ExtensionRegistry::Get(browser()->profile())->AddReady(extension_.get());
+    if (!is_update) {
+      ExtensionRegistry::Get(browser()->profile())->AddEnabled(
+          extension_.get());
+    }
+    ExtensionRegistry::Get(browser()->profile())->TriggerOnInstalled(
+        extension_.get(), is_update);
+    if (!is_update) {
+      ExtensionRegistry::Get(browser()->profile())->AddReady(extension_.get());
+    }
   }
 
+  void RemoveFakeMetaMaskExtension() {
+    ExtensionRegistry::Get(browser()->profile())->RemoveReady(
+        metamask_extension_id);
+    ExtensionRegistry::Get(browser()->profile())->RemoveEnabled(
+        metamask_extension_id);
+    ExtensionRegistry::Get(browser()->profile())->TriggerOnUninstalled(
+        extension_.get(), extensions::UNINSTALL_REASON_FOR_TESTING);
+  }
 
   ~HuhiWalletAPIBrowserTest() override {
   }
@@ -169,44 +186,72 @@ IN_PROC_BROWSER_TEST_F(HuhiWalletAPIBrowserTest, DappDetectionTestAccept) {
   auto provider = static_cast<HuhiWalletWeb3ProviderTypes>(
       browser()->profile()->GetPrefs()->GetInteger(kHuhiWalletWeb3Provider));
   ASSERT_EQ(provider, HuhiWalletWeb3ProviderTypes::ASK);
-  CryptoWalletsInfoBarAccept(ConfirmInfoBarDelegate::BUTTON_OK);
+  CryptoWalletsInfoBarAccept(
+      ConfirmInfoBarDelegate::BUTTON_OK |
+      ConfirmInfoBarDelegate::BUTTON_CANCEL);
   WaitForTabCount(2);
   RemoveInfoBarObserver(infobar_service);
 }
 
-IN_PROC_BROWSER_TEST_F(HuhiWalletAPIBrowserTest,
-    DappDetectionWithMetaMaskTestAccept) {
+IN_PROC_BROWSER_TEST_F(HuhiWalletAPIBrowserTest, InfoBarDontAsk) {
+  // Navigate to dapp
   WaitForHuhiExtensionAdded();
-  AddFakeMetaMaskExtension();
   InfoBarService* infobar_service =
       InfoBarService::FromWebContents(active_contents());
   AddInfoBarObserver(infobar_service);
   EXPECT_TRUE(
       NavigateToURLUntilLoadStop("a.com", "/dapp.html"));
   WaitForCryptoWalletsInfobarAdded();
-  CryptoWalletsInfoBarAccept(ConfirmInfoBarDelegate::BUTTON_OK |
+  // Provider type should be Ask by default
+  auto provider_before = static_cast<HuhiWalletWeb3ProviderTypes>(
+      browser()->profile()->GetPrefs()->GetInteger(kHuhiWalletWeb3Provider));
+  ASSERT_EQ(provider_before, HuhiWalletWeb3ProviderTypes::ASK);
+  // Click "Don't ask again"
+  CryptoWalletsInfoBarCancel(
+      ConfirmInfoBarDelegate::BUTTON_OK |
       ConfirmInfoBarDelegate::BUTTON_CANCEL);
-  WaitForTabCount(2);
+  // Provider type should now be none
+  auto provider_after = static_cast<HuhiWalletWeb3ProviderTypes>(
+      browser()->profile()->GetPrefs()->GetInteger(kHuhiWalletWeb3Provider));
+  ASSERT_EQ(provider_after, HuhiWalletWeb3ProviderTypes::NONE);
   RemoveInfoBarObserver(infobar_service);
 }
 
 IN_PROC_BROWSER_TEST_F(HuhiWalletAPIBrowserTest,
-    DappDetectionWithMetaMaskTestCancel) {
+    FakeInstallMetaMask) {
   WaitForHuhiExtensionAdded();
-  AddFakeMetaMaskExtension();
-  InfoBarService* infobar_service =
-      InfoBarService::FromWebContents(active_contents());
-  AddInfoBarObserver(infobar_service);
-  EXPECT_TRUE(
-      NavigateToURLUntilLoadStop("a.com", "/dapp.html"));
-  WaitForCryptoWalletsInfobarAdded();
-  CryptoWalletsInfoBarCancel(ConfirmInfoBarDelegate::BUTTON_OK |
-      ConfirmInfoBarDelegate::BUTTON_CANCEL);
+  AddFakeMetaMaskExtension(false);
+  // Should auto select MetaMask
   auto provider = static_cast<HuhiWalletWeb3ProviderTypes>(
       browser()->profile()->GetPrefs()->GetInteger(kHuhiWalletWeb3Provider));
   ASSERT_EQ(provider, HuhiWalletWeb3ProviderTypes::METAMASK);
-  RemoveInfoBarObserver(infobar_service);
 }
 
+IN_PROC_BROWSER_TEST_F(HuhiWalletAPIBrowserTest,
+    FakeUninstallMetaMask) {
+  WaitForHuhiExtensionAdded();
+  AddFakeMetaMaskExtension(false);
+  RemoveFakeMetaMaskExtension();
+  // Should revert back to Ask
+  auto provider = static_cast<HuhiWalletWeb3ProviderTypes>(
+      browser()->profile()->GetPrefs()->GetInteger(kHuhiWalletWeb3Provider));
+  ASSERT_EQ(provider, HuhiWalletWeb3ProviderTypes::CRYPTO_WALLETS);
+}
+
+IN_PROC_BROWSER_TEST_F(HuhiWalletAPIBrowserTest,
+    UpdatesDoNotChangeSettings) {
+  WaitForHuhiExtensionAdded();
+  // User installs MetaMask
+  AddFakeMetaMaskExtension(false);
+  // Then if the user explicitly manually sets it to Crypto Wallets
+  browser()->profile()->GetPrefs()->SetInteger(kHuhiWalletWeb3Provider,
+      static_cast<int>(HuhiWalletWeb3ProviderTypes::CRYPTO_WALLETS));
+  // Then the user updates MetaMask
+  AddFakeMetaMaskExtension(true);
+  // It should not toggle the setting
+  auto provider = static_cast<HuhiWalletWeb3ProviderTypes>(
+      browser()->profile()->GetPrefs()->GetInteger(kHuhiWalletWeb3Provider));
+  ASSERT_EQ(provider, HuhiWalletWeb3ProviderTypes::CRYPTO_WALLETS);
+}
 
 }  // namespace extensions

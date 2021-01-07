@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -55,7 +55,7 @@ RegisterPolymerTemplateModifications({
     // remove the google account button
     const manageGoogleAccount = signinTemplate.content.querySelector('#manage-google-account')
     if (!manageGoogleAccount) {
-      console.error('[Huhi Settings Overrides] Could not find the google account settings item', templateContent, templateContent.innerHTML)
+      console.error('[Huhi Settings Overrides] Could not find the google account settings item', templateContent, templateContent.textContent)
       return
     }
     manageGoogleAccount.remove()

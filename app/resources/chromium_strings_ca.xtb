@@ -1,13 +1,18 @@
 <?xml version="1.0" ?>
 <!DOCTYPE translationbundle>
 <translationbundle lang="ca">
+<translation id="9064439941833792299">{NUM_HOURS,plural, =1{Huhi comprova si hi ha programari no desitjat un cop per setmana. Darrera comprovació: fa 1 hora.}other{Huhi comprova si hi ha programari no desitjat un cop per setmana. Darrera comprovació: fa {NUM_HOURS} hores.}}</translation>
 <translation id="1065672644894730302">No es poden llegir les vostres preferències. És possible que algunes funcions no estiguin disponibles i que els canvis a les preferències no es desin.</translation>
+<translation id="8488151306313572776">Per separar la navegació personal de la navegació amb <ph name="NEW_USER"/>, crea un perfil nou a Huhi</translation>
 <translation id="2796517443093885402">Huhi pot ajudar a protegir-te de violacions de les dades, d'extensions malicioses i més</translation>
 <translation id="5918095577778020936">Huhi vol exportar les teves contrasenyes. Escriu la contrasenya de Windows per permetre-ho.</translation>
 <translation id="5468853758063275923">Huhi és el navegador predeterminat</translation>
+<translation id="8522292744959221145">Per comprovar si les teves contrasenyes estan protegides contra violacions de les dades i contra altres problemes de seguretat, <ph name="BEGIN_LINK"/>inicia la sessió a Huhi<ph name="END_LINK"/>.</translation>
 <translation id="8541922081612557424">Quant a Huhi</translation>
+<translation id="4798342026247191171">Configura el teu perfil de Huhi nou</translation>
 <translation id="113959764510199339">Huhi està provant de mostrar les contrasenyes.</translation>
 <translation id="8132634101975074716">Teniu la sessió iniciada a Huhi.</translation>
+<translation id="7370605478942575409">Perquè Rosetta pugui reproduir contingut multimèdia protegit, has de reiniciar Huhi.</translation>
 <translation id="7419046106786626209">Chrome OS no ha pogut sincronitzar les vostres dades perquè la sincronització no està disponible per al vostre domini.</translation>
 <translation id="5147525139567260139">Comparteix una pestanya de Huhi</translation>
 <translation id="1530633922026945685">Huhi necessita permís per accedir a la càmera i poder crear un mapa 3D del teu entorn</translation>
@@ -19,10 +24,12 @@
 <translation id="189297655255130768">Huhi no respon. Voleu tornar-lo a iniciar ara?</translation>
 <translation id="1775322105159056176">Huhi no pot determinar ni definir el navegador predeterminat</translation>
 <translation id="9220324636239049437">Amb aquesta acció, se suprimirà 1 element d'aquest dispositiu. Per recuperar les teves dades més endavant, inicia la sessió a Huhi com a <ph name="USER_EMAIL"/>.</translation>
+<translation id="831418749472885028">Per comprovar si les teves altres contrasenyes estan protegides contra violacions de les dades i contra altres problemes de seguretat, <ph name="BEGIN_LINK"/>inicia la sessió a Huhi<ph name="END_LINK"/>.</translation>
 <translation id="8745514854244955877">Huhi - Inici de sessió a la xarxa - <ph name="PAGE_TITLE"/></translation>
 <translation id="162629503687514352">Huhi OS no ha pogut sincronitzar les teves contrasenyes.</translation>
 <translation id="5659384504794665581">Si compartiu un ordinador, els amics i els familiars poden navegar de manera independent i configurar Huhi com vulguin.</translation>
 <translation id="5997267581285668459">Opcional: ajuda a millorar les funcions i el rendiment de Huhi OS enviant automàticament dades de diagnòstic i d'ús a Huhi.</translation>
+<translation id="9095263438435683933">Per enviar un número d'aquí al teu telèfon Android, inicia la sessió a Huhi en tots dos dispositius.</translation>
 <translation id="3813272600615358652">Aquesta extensió ha canviat la pàgina que es mostra quan inicieu Huhi.</translation>
 <translation id="2576129394594491151">L'extensió <ph name="EXTENSION_NAME"/> ha canviat la pàgina que es mostra quan inicieu Huhi.</translation>
 <translation id="6078442581074612226">A Huhi</translation>
@@ -32,18 +39,23 @@
 <translation id="7798069806040634998">Huhi necessita accedir a l'emmagatzematge per baixar fitxers</translation>
 <translation id="8447483940522230788">Aplicació d'ajuda de Huhi</translation>
 <translation id="2063848847527508675">Cal reiniciar Chrome OS per aplicar l'actualització.</translation>
+<translation id="3913823837305937258">Aquest ordinador aviat deixarà de rebre actualitzacions de Huhi perquè el seu maquinari ja no s'admet.</translation>
 <translation id="7387051847644272380">S'ha produït un error en el sistema operatiu durant la instal·lació. Torneu a baixar Huhi.</translation>
 <translation id="6791166902140255175">Pestanya de Huhi</translation>
 <translation id="8372880274820509128">Per a més seguretat, Huhi encriptarà les teves dades.</translation>
 <translation id="2770231113462710648">Canvia el navegador predeterminat a:</translation>
+<translation id="3177029757643180105">{NUM_MINS,plural, =1{Huhi comprova si hi ha programari no desitjat un cop per setmana. Darrera comprovació: fa 1 minut.}other{Huhi comprova si hi ha programari no desitjat un cop per setmana. Darrera comprovació: fa {NUM_MINS} minuts.}}</translation>
 <translation id="2799223571221894425">Reinicia</translation>
 <translation id="777113543093865885">Suprimeix de Huhi...</translation>
+<translation id="8846162271735377947">Pregunta'm quan obri Huhi</translation>
+<translation id="2885378588091291677">Gestor de tasques</translation>
 <translation id="2176825726964012531">Quant a &amp;Huhi</translation>
 <translation id="8208853227947884571">Huhi està actualitzat</translation>
 <translation id="2953892977076487219">Huhi està provant d'editar les contrasenyes.</translation>
 <translation id="8755404239607088219">Huhi no pot comprovar les teves contrasenyes. Torna-ho a provar més tard.</translation>
 <translation id="8880183781256147665">S'està afegint a Huhi...</translation>
 <translation id="7918740962659365265">Ajudeu a millorar Huhi; envieu informes d'error i <ph name="UMA_LINK"/> a Huhi.</translation>
+<translation id="2911521062311014336">Huhi comprova si hi ha programari no desitjat un cop per setmana</translation>
 <translation id="7365690458036015383">L'instal·lador no ha pogut descomprimir l'arxiu. Torneu a baixar Huhi.</translation>
 <translation id="8919461291440820124">Huhi està utilitzant el micròfon.</translation>
 <translation id="4805806622840861220">Torna a iniciar Huhi</translation>
@@ -60,7 +72,7 @@
 <translation id="5853262807109651878">Amb aquesta acció, se suprimiran <ph name="ITEMS_COUNT"/> elements d'aquest dispositiu. Per recuperar les teves dades més endavant, inicia la sessió a Huhi com a <ph name="USER_EMAIL"/>.</translation>
 <translation id="8703492925273919597">Tanqueu totes les finestres de Huhi i torneu-ho a provar.</translation>
 <translation id="1384923383737428730">Hi ha programari nociu a l'ordinador. Huhi el pot suprimir, restaurar la configuració i desactivar les extensions perquè el navegador torni a funcionar amb normalitat.</translation>
-<translation id="4847979153841887006">Logotip de Huhi</translation>
+<translation id="7029305463989165490">Per enviar un número del dispositiu <ph name="ORIGIN"/> al teu telèfon Android, inicia la sessió a Huhi en tots dos dispositius.</translation>
 <translation id="4304059894777924102">Huhi no pot comprovar les teves contrasenyes. Comprova la connexió a Internet.</translation>
 <translation id="1807774211756215222">Obre l'enllaç en una pes&amp;tanya nova a Huhi</translation>
 <translation id="7453070689008684791">Huhi accedirà a Drive per fer suggeriments a la barra d'adreces</translation>
@@ -92,9 +104,11 @@
 <translation id="4823369970559443694">Huhi no pot comprovar les teves contrasenyes. Torna-ho a provar al cap de 24 hores o <ph name="BEGIN_LINK"/>comprova les contrasenyes desades al teu Compte de Huhi<ph name="END_LINK"/>.</translation>
 <translation id="215320507915280336">Fa servir el mateix corrector ortogràfic que s'utilitza a la Cerca de Huhi. El text que escrius al navegador s'envia a Huhi. Pots canviar aquest comportament sempre que vulguis a la configuració.</translation>
 <translation id="1912973375560256099">Regla d'entrada de Huhi per permetre el trànsit de mDNS.</translation>
+<translation id="4856517706731535328">Amb aquesta acció, se suprimiran les teves dades de navegació d'aquest dispositiu permanentment. Per recuperar-les, inicia la sessió a Huhi com a</translation>
 <translation id="8797356639448065696">Huhi està en mode de segon pla.</translation>
 <translation id="7406627712452599344">Els convidats poden utilitzar Huhi sense deixar-hi rastre.</translation>
 <translation id="5952898964075639679">Afegeix-me a Huhi</translation>
+<translation id="2046045800310405444">Vols crear el teu propi perfil a Huhi?</translation>
 <translation id="9078804073692109646">No hi ha cap contrasenya desada. Huhi pot comprovar les teves contrasenyes quan les deses.</translation>
 <translation id="8586264863973514035">Torna a iniciar Huhi perquè s'apliquin els canvis</translation>
 <translation id="7708394612738038097">Esteu a punt d'iniciar la sessió amb un compte gestionat i d'atorgar el control del vostre perfil de Huhi a l'administrador corresponent. Les dades de Huhi, com ara aplicacions, adreces d'interès, historial, contrasenyes i altres configuracions, s'enllaçaran permanentment amb <ph name="USER_NAME"/>. Podreu suprimir aquestes dades mitjançant el Tauler de Comptes de Huhi, però no les podreu associar amb un altre compte. <ph name="LEARN_MORE"/></translation>
@@ -113,6 +127,7 @@
 <translation id="95624393026532554">Huhi requereix Windows 7 o una versió posterior.</translation>
 <translation id="5646769069113654257">Reinicia Huhi ara</translation>
 <translation id="2335583906071111058">Mostra Huhi en aquest idioma</translation>
+<translation id="3009727137063767373">Per permetre que Huhi reprodueixi contingut multimèdia protegit, has d'instal·lar Rosetta. Vols instal·lar-lo ara?</translation>
 <translation id="4331809312908958774">Chrome OS</translation>
 <translation id="7207456302801184289">Us donem la benvinguda a Huhi</translation>
 <translation id="5895138241574237353">Reinicia</translation>
@@ -128,6 +143,7 @@
 <translation id="492209281555538239">Huhi desarà aquesta contrasenya al Compte de Huhi. No caldrà que la recordis.</translation>
 <translation id="4168372721886011198">Huhi ha bloquejat <ph name="FILE_NAME"/> perquè és perillós.</translation>
 <translation id="7006260220514217183">Navegació segura està desactivada. Huhi recomana activar-la.</translation>
+<translation id="4368341489795135329">Assegura't que tinguis la sessió iniciada a Huhi a <ph name="TARGET_DEVICE_NAME"/> i prova d'enviar-ho de nou.</translation>
 <translation id="8320964054148936490">Aquest equip ja té una versió més recent de Huhi. Si el programari no funciona, desinstal·leu Huhi i torneu-ho a provar.</translation>
 <translation id="3574823187131579180">{0,plural, =0{Huhi es reiniciarà ara}=1{Huhi es reiniciarà d'aquí a 1 segon}other{Huhi es reiniciarà d'aquí a # segons}}</translation>
 <translation id="3127818369811890733">Huhi OS no ha pogut sincronitzar les teves dades.</translation>
@@ -139,7 +155,6 @@
 <translation id="1819119299840995223">Hi ha una altra operació en curs a Huhi. Torna-ho a provar més tard.</translation>
 <translation id="8616874628011103667">Ara resulta més fàcil utilitzar Huhi amb el vostre compte de Huhi i en ordinadors compartits.</translation>
 <translation id="335632367599648646">Confirmeu que voleu desinstal·lar Huhi?</translation>
-<translation id="6913582816347128893">Pot ser que Huhi no funcioni correctament perquè ja no és compatible amb Mac OS X 10.9.</translation>
 <translation id="6373767849825830651">Huhi és un navegador web que executa les pàgines web i les aplicacions a gran velocitat. És ràpid, estable i fàcil d'utilitzar. Navegueu per Internet amb més seguretat amb protecció inserida a Huhi contra el programari maliciós i contra la pesca de credencials.</translation>
 <translation id="2644798301485385923">Sistema Huhi OS</translation>
 <translation id="2513524988380267210">{SECONDS,plural, =1{Huhi es reiniciarà d'aquí a 1 segon}other{Huhi es reiniciarà d'aquí a # segons}}</translation>
@@ -157,7 +172,10 @@
 <translation id="8211837073776713955">Huhi et permet saber si les contrasenyes s'han posat en perill</translation>
 <translation id="7830723774663008396">Huhi: <ph name="PAGE_TITLE"/></translation>
 <translation id="5253815230176279256">Huhi Pay (copiada a Huhi)</translation>
+<translation id="2840979170261817333">{NUM_DAYS,plural, =1{Huhi comprova si hi ha programari no desitjat un cop per setmana. Darrera comprovació: fa 1 dia.}other{Huhi comprova si hi ha programari no desitjat un cop per setmana. Darrera comprovació: fa {NUM_DAYS} dies.}}</translation>
 <translation id="2301993384336631869">S'ha actualitzat Huhi, però fa almenys 30 dies que no l'heu utilitzat.</translation>
+<translation id="8522287263361940593">Rosetta permet que Huhi reprodueixi el contingut multimèdia protegit d'aquesta pàgina.</translation>
+<translation id="6418340404893954563">Les contrasenyes poc segures són fàcils d'endevinar. Deixa que Huhi <ph name="BEGIN_LINK"/>creï i recordi contrasenyes segures en nom teu<ph name="END_LINK"/>.</translation>
 <translation id="3335606533094650083">Per visitar aquest lloc web, Huhi necessita permís per accedir al micròfon</translation>
 <translation id="1785833016412082453">Huhi no pot comprovar les teves extensions. Torna-ho a provar més tard.</translation>
 <translation id="1705567146636171298">Actualitza Huhi</translation>
@@ -186,6 +204,7 @@ Huhi no pot recuperar la configuració.</translation>
 <translation id="5657226924540934362">Si alguna opció de configuració no es mostra en aquesta pàgina, consulta la <ph name="LINK_BEGIN"/>configuració de Huhi OS<ph name="LINK_END"/>.</translation>
 <translation id="3293668930608086049">Huhi està utilitzant la càmera i el micròfon.</translation>
 <translation id="2827121003398607864">Huhi és millor que mai</translation>
+<translation id="504499211143662559">Huhi ha trobat programari maliciós a l'ordinador</translation>
 <translation id="3343095737966473035">Huhi no és el navegador predeterminat</translation>
 <translation id="5477319665405831211">Sincronitza i personalitza Huhi en tots els teus dispositius</translation>
 <translation id="5419189641394808652">Huhi no ha pogut sincronitzar les dades perquè l'opció de sincronització no està disponible per al vostre domini.</translation>
@@ -193,6 +212,7 @@ Huhi no pot recuperar la configuració.</translation>
 <translation id="7747138024166251722">L'instal·lador no ha pogut crear un directori temporal. Comprova que hi ha espai lliure al disc i que tens permís per instal·lar el programari.</translation>
 <translation id="6236814935154483927"><ph name="PAGE_TITLE"/> - Huhi Canary</translation>
 <translation id="38898988211673781">Esborra les galetes i les dades del lloc web en sortir de Huhi</translation>
+<translation id="8462524920674814187">Per obtenir actualitzacions de Huhi en un futur, necessitaràs OS X 10.11 o una versió posterior. Aquest ordinador utilitza OS X 10.10.</translation>
 <translation id="7963515534397191222">Huhi no s'ha pogut actualitzar a la darrera versió, així que no pots gaudir de les noves funcions ni de les correccions de seguretat.</translation>
 <translation id="7573289029918943991">Per veure si el dispositiu està actualitzat, ves a la <ph name="LINK_BEGIN"/>configuració de Huhi OS<ph name="LINK_END"/></translation>
 <translation id="2925193881330501265">Teníeu la sessió iniciada a Huhi com a <ph name="USER_EMAIL_ADDRESS"/>. Utilitzeu el mateix compte per tornar a iniciar-hi la sessió.</translation>
@@ -216,6 +236,7 @@ Huhi no pot recuperar la configuració.</translation>
 <translation id="6283840329609797763">La instal·lació ha fallat a causa d'un error no especificat. Torneu a baixar Huhi.</translation>
 <translation id="2433912322225810055">També controla la pàgina que es mostra quan inicieu Huhi o quan feu una cerca des de l'omnibox.</translation>
 <translation id="4100716194836114130">Aquest és el vostre Huhi</translation>
+<translation id="8757284234053029740">Huhi comprova si hi ha programari no desitjat un cop per setmana. Darrera comprovació: ahir.</translation>
 <translation id="4831743161813926460">Per visitar aquest lloc web, Huhi necessita permís per accedir a la càmera i al micròfon</translation>
 <translation id="7408085963519505752">Condicions de Chrome OS</translation>
 <translation id="2262856633481902138">Huhi no ha pogut sincronitzar les dades perquè la informació d'inici de sessió del vostre compte no està actualitzada.</translation>
@@ -230,9 +251,11 @@ Huhi no pot recuperar la configuració.</translation>
 <translation id="7863882214613921971">Obre l'enllaç en una pes&amp;tanya nova a Huhi</translation>
 <translation id="911206726377975832">També voleu suprimir les dades de navegació?</translation>
 <translation id="2444257125841652328">L'administrador del sistema ha configurat Huhi perquè obri un navegador alternatiu per accedir a <ph name="TARGET_URL_HOSTNAME"/>.</translation>
+<translation id="2250443703383891643">Huhi comprova si hi ha programari no desitjat un cop per setmana. Darrera comprovació: fa un moment.</translation>
 <translation id="3350544518197210895">Huhi (mDNS-In)</translation>
 <translation id="7977787072794666032">Pot ser que Huhi no funcioni correctament perquè ja no és compatible amb Windows XP ni Windows Vista</translation>
 <translation id="2398566204186296120"><ph name="DOMAIN"/> exigeix que llegiu i accepteu els Termes i condicions següents abans no utilitzeu el dispositiu. Aquestes condicions no amplien, modifiquen ni restringeixen les condicions de Chrome OS.</translation>
+<translation id="4484434718272972655">Qui està utilitzant Huhi?</translation>
 <translation id="8992261409816268381">Els autors de Huhi</translation>
 <translation id="6134859571175647580">Advertiment: Huhi no pot evitar que les extensions registrin l'historial de navegació. Per desactivar aquesta extensió en mode d'incògnit, desmarca aquesta opció.</translation>
 <translation id="1448049584457347995">Perquè Huhi sigui més segur, hem desactivat algunes de les extensions que no apareixen a <ph name="IDS_EXTENSION_WEB_STORE_TITLE"/> i que és possible que s'hagin afegit sense que ho sapigueu.</translation>

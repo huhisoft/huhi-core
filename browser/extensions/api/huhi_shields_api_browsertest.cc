@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -197,11 +197,11 @@ IN_PROC_BROWSER_TEST_F(HuhiShieldsAPIBrowserTest, AllowScriptsOnceIframe) {
 }
 
 constexpr char kJavascriptSetParams[] =
-    "[\"block\", \"https://www.huhisoft.com/\"]";
-constexpr char kJavascriptGetParams[] = "[\"https://www.huhisoft.com/\"]";
+    "[\"block\", \"https://www.hnq.vn/\"]";
+constexpr char kJavascriptGetParams[] = "[\"https://www.hnq.vn/\"]";
 
 const GURL& GetHuhiURL() {
-  static const GURL kHuhiURL("https://www.huhisoft.com");
+  static const GURL kHuhiURL("https://www.hnq.vn");
   return kHuhiURL;
 }
 

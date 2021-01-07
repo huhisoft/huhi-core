@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/post_captcha/post_captcha.h"
@@ -31,10 +31,16 @@ std::string PostCaptcha::GetUrl() {
 }
 
 std::string PostCaptcha::GeneratePayload() {
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    return "";
+  }
+
   base::Value body(base::Value::Type::DICTIONARY);
   body.SetStringKey(
       "paymentId",
-      ledger_->state()->GetPaymentId());
+      wallet->payment_id);
 
   std::string json;
   base::JSONWriter::Write(body, &json);

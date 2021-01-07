@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "bat/ads/internal/catalog/catalog_creative_set_info.h"
-#include "bat/ads/internal/catalog/catalog_day_part_info.h"
+#include "bat/ads/internal/catalog/catalog_daypart_info.h"
 #include "bat/ads/internal/catalog/catalog_geo_target_info.h"
 
 namespace ads {
@@ -30,7 +30,7 @@ struct CatalogCampaignInfo {
   unsigned int daily_cap = 0;
   std::string advertiser_id;
   CatalogCreativeSetList creative_sets;
-  CatalogDayPartList day_parts;
+  CatalogDaypartList dayparts;
   CatalogGeoTargetList geo_targets;
 };
 

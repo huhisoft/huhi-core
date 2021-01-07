@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,15 +12,18 @@
 #include <string>
 
 #include "base/values.h"
-#include "bat/ads/internal/catalog/catalog_issuers_info.h"
 #include "bat/ads/internal/confirmations/confirmation_info.h"
-#include "bat/ads/internal/privacy/unblinded_tokens/unblinded_tokens.h"
+#include "bat/ads/internal/catalog/catalog_issuers_info.h"
 #include "bat/ads/internal/time_util.h"
 #include "bat/ads/transaction_info.h"
 
 namespace ads {
 
 class AdsImpl;
+
+namespace privacy {
+class UnblindedTokens;
+}  // namespace privacy
 
 class ConfirmationsState {
  public:

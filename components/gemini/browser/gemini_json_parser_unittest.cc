@@ -1,10 +1,13 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "huhi/components/gemini/browser/gemini_json_parser.h"
 
+#include <map>
+
+#include "huhi/components/gemini/browser/gemini_service.h"
 #include "huhi/components/content_settings/core/common/content_settings_util.h"
 #include "chrome/test/base/chrome_render_view_host_test_harness.h"
 
@@ -27,7 +30,7 @@ std::string GetValueFromStringMap(
 typedef testing::Test GeminiJSONParserTest;
 
 TEST_F(GeminiJSONParserTest, GetAccountBalancesFromJSON) {
-  std::map<std::string, std::string> balances;
+  GeminiAccountBalances balances;
   ASSERT_TRUE(GeminiJSONParser::GetAccountBalancesFromJSON(R"(
       {
         "data": [

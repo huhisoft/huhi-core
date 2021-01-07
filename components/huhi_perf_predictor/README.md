@@ -1,6 +1,6 @@
 # Huhi Performance Predictor
 
-This component is based on our [blog post](https://huhisoft.com/accurately-predicting-ad-blocker-savings/).
+This component is based on our [blog post](https://hnq.vn/accurately-predicting-ad-blocker-savings/).
 
 The current implementation is only for bandwidth prediction and uses a subset of the features discussed in the post for better cross-platform support. Key groups of features used are:
 

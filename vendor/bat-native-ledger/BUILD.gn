@@ -1,5 +1,5 @@
-# Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-# This Source Code Form is subject to the terms of the Huhi Software
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -284,8 +284,6 @@ source_set("ledger") {
     "src/bat/ledger/internal/legacy/media/reddit.cc",
     "src/bat/ledger/internal/legacy/media/twitch.h",
     "src/bat/ledger/internal/legacy/media/twitch.cc",
-    "src/bat/ledger/internal/legacy/media/twitter.h",
-    "src/bat/ledger/internal/legacy/media/twitter.cc",
     "src/bat/ledger/internal/legacy/media/vimeo.h",
     "src/bat/ledger/internal/legacy/media/vimeo.cc",
     "src/bat/ledger/internal/legacy/media/youtube.h",
@@ -367,6 +365,8 @@ source_set("ledger") {
     "src/bat/ledger/internal/endpoint/promotion/post_bat_loss/post_bat_loss.h",
     "src/bat/ledger/internal/endpoint/promotion/post_captcha/post_captcha.cc",
     "src/bat/ledger/internal/endpoint/promotion/post_captcha/post_captcha.h",
+    "src/bat/ledger/internal/endpoint/promotion/post_claim_huhi/post_claim_huhi.cc",
+    "src/bat/ledger/internal/endpoint/promotion/post_claim_huhi/post_claim_huhi.h",
     "src/bat/ledger/internal/endpoint/promotion/post_claim_uphold/post_claim_uphold.cc",
     "src/bat/ledger/internal/endpoint/promotion/post_claim_uphold/post_claim_uphold.h",
     "src/bat/ledger/internal/endpoint/promotion/post_clobbered_claims/post_clobbered_claims.cc",
@@ -449,6 +449,12 @@ source_set("ledger") {
     "src/bat/ledger/internal/state/state_migration_v4.h",
     "src/bat/ledger/internal/state/state_migration_v5.cc",
     "src/bat/ledger/internal/state/state_migration_v5.h",
+    "src/bat/ledger/internal/state/state_migration_v6.cc",
+    "src/bat/ledger/internal/state/state_migration_v6.h",
+    "src/bat/ledger/internal/state/state_migration_v7.cc",
+    "src/bat/ledger/internal/state/state_migration_v7.h",
+    "src/bat/ledger/internal/state/state_migration_v8.cc",
+    "src/bat/ledger/internal/state/state_migration_v8.h",
     "src/bat/ledger/internal/uphold/uphold.h",
     "src/bat/ledger/internal/uphold/uphold.cc",
     "src/bat/ledger/internal/uphold/uphold_authorization.h",
@@ -473,8 +479,6 @@ source_set("ledger") {
     "src/bat/ledger/internal/wallet/wallet_create.cc",
     "src/bat/ledger/internal/wallet/wallet_recover.h",
     "src/bat/ledger/internal/wallet/wallet_recover.cc",
-    "src/bat/ledger/internal/wallet/wallet_util.h",
-    "src/bat/ledger/internal/wallet/wallet_util.cc",
     "src/bat/ledger/ledger.cc",
     "src/bat/ledger/ledger_database.cc",
   ]

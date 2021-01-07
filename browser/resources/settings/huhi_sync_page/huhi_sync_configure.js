@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -115,5 +115,16 @@ Polymer({
     this.syncCode = undefined
     const router = Router.getInstance();
     router.navigateTo(router.getRoutes().HUHI_SYNC);
+  },
+
+  onDeleteDevice_: async function(e) {
+    const messageText = this.i18n('huhiSyncDeleteDeviceConfirmation')
+    const shouldDeleteDevice = confirm(messageText)
+    if (!shouldDeleteDevice) {
+      return
+    }
+
+    const deviceGuid = e.currentTarget.arg
+    await this.browserProxy_.deleteDevice(deviceGuid);
   }
 });

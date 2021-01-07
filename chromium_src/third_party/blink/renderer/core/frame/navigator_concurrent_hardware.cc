@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,23 +8,34 @@
 #include "base/system/sys_info.h"
 #include "huhi/third_party/blink/renderer/huhi_farbling_constants.h"
 #include "third_party/blink/public/platform/web_content_settings_client.h"
+#include "third_party/blink/renderer/core/execution_context/execution_context.h"
 #include "third_party/blink/renderer/core/frame/local_dom_window.h"
+#include "third_party/blink/renderer/core/frame/local_frame.h"
 #include "third_party/blink/renderer/core/frame/navigator_concurrent_hardware.h"
+#include "third_party/blink/renderer/core/workers/worker_global_scope.h"
+
+using blink::DynamicTo;
+using blink::ExecutionContext;
+using blink::LocalDOMWindow;
+using blink::To;
+using blink::WebContentSettingsClient;
+using blink::WorkerGlobalScope;
 
 namespace huhi {
-
-using blink::LocalFrame;
 
 const unsigned kFakeMinProcessors = 2;
 const unsigned kFakeMaxProcessors = 8;
 
-unsigned FarbleNumberOfProcessors(LocalFrame* frame) {
+unsigned FarbleNumberOfProcessors(ExecutionContext* context) {
   unsigned true_value =
       static_cast<unsigned>(base::SysInfo::NumberOfProcessors());
-  if ((true_value <= 2) || !frame || !frame->GetContentSettingsClient())
+  if (true_value <= 2)
+    return true_value;
+  WebContentSettingsClient* settings = GetContentSettingsClientFor(context);
+  if (!settings)
     return true_value;
   unsigned farbled_value = true_value;
-  switch (frame->GetContentSettingsClient()->GetHuhiFarblingLevel()) {
+  switch (settings->GetHuhiFarblingLevel()) {
     case HuhiFarblingLevel::OFF: {
       break;
     }
@@ -35,8 +46,8 @@ unsigned FarbleNumberOfProcessors(LocalFrame* frame) {
       U_FALLTHROUGH;
     }
     case HuhiFarblingLevel::BALANCED: {
-      std::mt19937_64 prng = HuhiSessionCache::From(*(frame->GetDocument()))
-                                 .MakePseudoRandomGenerator();
+      std::mt19937_64 prng =
+          HuhiSessionCache::From(*context).MakePseudoRandomGenerator();
       farbled_value =
           kFakeMinProcessors + (prng() % (true_value + 1 - kFakeMinProcessors));
       break;
@@ -53,10 +64,8 @@ namespace blink {
 
 unsigned NavigatorConcurrentHardware::hardwareConcurrency(
     ScriptState* script_state) const {
-  LocalFrame* frame = nullptr;
-  if (LocalDOMWindow* window = LocalDOMWindow::From(script_state))
-    frame = window->GetFrame();
-  return huhi::FarbleNumberOfProcessors(frame);
+  ExecutionContext* context = ExecutionContext::From(script_state);
+  return huhi::FarbleNumberOfProcessors(context);
 }
 
 }  // namespace blink

@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+ * Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  */
@@ -29,9 +29,12 @@ import androidx.fragment.app.Fragment;
 import org.chromium.base.ContextUtils;
 import org.chromium.chrome.R;
 import org.chromium.chrome.browser.HuhiRewardsHelper;
+import org.chromium.chrome.browser.HuhiRewardsNativeWorker;
 import org.chromium.chrome.browser.customtabs.CustomTabActivity;
 import org.chromium.chrome.browser.onboarding.OnViewPagerAction;
 import org.chromium.chrome.browser.onboarding.OnboardingPrefManager;
+import org.chromium.chrome.browser.HuhiAdsNativeHelper;
+import org.chromium.chrome.browser.profiles.Profile;
 
 public class HuhiRewardsOnboardingFragment extends Fragment {
     private OnViewPagerAction onViewPagerAction;
@@ -129,8 +132,8 @@ public class HuhiRewardsOnboardingFragment extends Fragment {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mHuhiRewardsServiceIntent = new Intent(ContextUtils.getApplicationContext(), HuhiRewardsService.class);
-                ContextUtils.getApplicationContext().startService(mHuhiRewardsServiceIntent);
+                HuhiAdsNativeHelper.nativeSetAdsEnabled(Profile.getLastUsedRegularProfile());
+                HuhiRewardsNativeWorker.getInstance().SetAutoContributeEnabled(true);
                 assert onViewPagerAction != null;
                 if (onViewPagerAction != null)
                     onViewPagerAction.onNext();

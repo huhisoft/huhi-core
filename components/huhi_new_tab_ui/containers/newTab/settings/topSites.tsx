@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.*/
 
@@ -16,11 +16,20 @@ import { getLocale } from '../../../../common/locale'
 interface Props {
   toggleShowTopSites: () => void
   showTopSites: boolean
+  toggleCustomLinksEnabled: () => void
+  customLinksEnabled: boolean
 }
 
 class TopSitesSettings extends React.PureComponent<Props, {}> {
   render () {
-    const { toggleShowTopSites, showTopSites } = this.props
+    const {
+      toggleShowTopSites,
+      showTopSites,
+      toggleCustomLinksEnabled,
+      customLinksEnabled
+    } = this.props
+    // Enable when we're ready to use add shortcut feature to topsite.
+    const showCustomizedLink = false
     return (
       <div>
         <SettingsRow>
@@ -31,6 +40,17 @@ class TopSitesSettings extends React.PureComponent<Props, {}> {
             size='large'
           />
         </SettingsRow>
+        {
+          showCustomizedLink ?
+          (<SettingsRow>
+            <SettingsText>{getLocale('topSiteCustomLinksEnabled')}</SettingsText>
+            <Toggle
+              onChange={toggleCustomLinksEnabled}
+              checked={customLinksEnabled}
+              size='large'
+            />
+          </SettingsRow>) : null
+        }
       </div>
     )
   }

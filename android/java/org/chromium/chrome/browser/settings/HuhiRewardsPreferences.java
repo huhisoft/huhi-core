@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -65,7 +65,6 @@ public class HuhiRewardsPreferences extends HuhiPreferenceFragment
         if (mHuhiRewardsNativeWorker != null) {
             mHuhiRewardsNativeWorker.AddObserver(this);
         }
-        mHuhiRewardsNativeWorker.GetRewardsMainEnabled();
         super.onStart();
     }
 
@@ -115,45 +114,6 @@ public class HuhiRewardsPreferences extends HuhiPreferenceFragment
     }
 
     @Override
-    public void OnWalletInitialized(int error_code) {}
-
-    @Override
-    public void OnPublisherInfo(int tabId) {}
-
-    @Override
-    public void OnGetCurrentBalanceReport(double[] report) {}
-
-    @Override
-    public void OnNotificationAdded(String id, int type, long timestamp, String[] args) {}
-
-    @Override
-    public void OnNotificationsCount(int count) {}
-
-    @Override
-    public void OnGetLatestNotification(String id, int type, long timestamp, String[] args) {}
-
-    @Override
-    public void OnNotificationDeleted(String id) {}
-
-    @Override
-    public void OnIsWalletCreated(boolean created) {}
-
-    @Override
-    public void OnGetPendingContributionsTotal(double amount) {}
-
-    @Override
-    public void OnGetRewardsMainEnabled(boolean enabled) {}
-
-    @Override
-    public void OnGetAutoContributeProperties() {}
-
-    @Override
-    public void OnGetReconcileStamp(long timestamp) {}
-
-    @Override
-    public void OnRecurringDonationUpdated() {}
-
-    @Override
     public void OnResetTheWholeState(boolean success) {
         if (success) {
             SharedPreferences sharedPreferences = ContextUtils.getAppSharedPreferences();
@@ -165,15 +125,6 @@ public class HuhiRewardsPreferences extends HuhiPreferenceFragment
             sharedPreferencesEditor.apply();
             HuhiPrefServiceBridge.getInstance().setSafetynetCheckFailed(false);
             HuhiRelaunchUtils.askForRelaunch(getActivity());
-        } else {
-            HuhiRelaunchUtils.askForRelaunchCustom(getActivity());
-        }
-    }
-
-    @Override
-    public void OnRewardsMainEnabled(boolean enabled) {
-        if (!enabled) {
-            mHuhiRewardsNativeWorker.ResetTheWholeState();
         } else {
             HuhiRelaunchUtils.askForRelaunchCustom(getActivity());
         }

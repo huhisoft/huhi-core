@@ -1,5 +1,5 @@
 
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,7 +8,7 @@ import * as cosmeticFilterAPI from '../../../../huhi_extension/extension/huhi_ex
 
 describe('cosmeticFilter API', () => {
   describe('addSiteCosmeticFilter', () => {
-    const url = 'https://www.huhisoft.com'
+    const url = 'https://www.hnq.vn'
     const filter = '#cssFilter'
     let getStorageStub: any
     let setStorageStub: any
@@ -45,7 +45,7 @@ describe('cosmeticFilter API', () => {
         })
       expect(setStorageStub.getCall(0).args[0]).toEqual({
         cosmeticFilterList: {
-          'https://www.huhisoft.com': ['#cssFilter']
+          'https://www.hnq.vn': ['#cssFilter']
         }
       })
     })
@@ -57,7 +57,7 @@ describe('cosmeticFilter API', () => {
         })
       expect(setStorageStub.getCall(0).args[0]).toEqual({
         cosmeticFilterList: {
-          'https://www.huhisoft.com': ['#cssFilter']
+          'https://www.hnq.vn': ['#cssFilter']
         }
       })
     })
@@ -79,7 +79,7 @@ describe('cosmeticFilter API', () => {
     })
   })
   describe('removeSiteFilter', () => {
-    const url = 'https://www.huhisoft.com'
+    const url = 'https://www.hnq.vn'
     const filter = '#cssFilter'
     let getStorageStub: any
     let setStorageStub: any
@@ -109,14 +109,14 @@ describe('cosmeticFilter API', () => {
     it('removes the correct filter', () => {
       getStorageStub.yields({
         cosmeticFilterList: {
-          'https://www.huhisoft.com': ['#cssFilter'],
-          'https://nothuhisoft.com': ['notACSSFilter']
+          'https://www.hnq.vn': ['#cssFilter'],
+          'https://nothnq.vn': ['notACSSFilter']
         }
       })
       cosmeticFilterAPI.removeSiteFilter(url)
       expect(setStorageStub.getCall(0).args[0]).toEqual({
         cosmeticFilterList: {
-          'https://nothuhisoft.com': ['notACSSFilter']
+          'https://nothnq.vn': ['notACSSFilter']
         }
       })
     })
@@ -203,10 +203,10 @@ describe('cosmeticFilter API', () => {
     it('applies the correct filter', () => {
       getStorageStub.yields({
         cosmeticFilterList: {
-          'huhisoft.com': [filter]
+          'hnq.vn': [filter]
         }
       })
-      cosmeticFilterAPI.applyCSSCosmeticFilters(1, 'huhisoft.com')
+      cosmeticFilterAPI.applyCSSCosmeticFilters(1, 'hnq.vn')
       expect(insertCSSStub.getCall(0).args[0]).toEqual(1)
       expect(insertCSSStub.getCall(0).args[1]).toEqual({
         code: `${filter} {display: none !important;}`,
@@ -217,10 +217,10 @@ describe('cosmeticFilter API', () => {
     it('applies multiple filters correctly', () => {
       getStorageStub.yields({
         cosmeticFilterList: {
-          'huhisoft.com': [filter, filter2]
+          'hnq.vn': [filter, filter2]
         }
       })
-      cosmeticFilterAPI.applyCSSCosmeticFilters(1, 'huhisoft.com')
+      cosmeticFilterAPI.applyCSSCosmeticFilters(1, 'hnq.vn')
       expect(insertCSSStub.getCall(0).args[0]).toEqual(1)
       expect(insertCSSStub.getCall(0).args[1]).toEqual({
         code: `${filter } {display: none !important;}`,
@@ -239,16 +239,16 @@ describe('cosmeticFilter API', () => {
       getStorageStub.yields({
         cosmeticFilterList: {}
       })
-      cosmeticFilterAPI.applyCSSCosmeticFilters(1, 'huhisoft.com')
+      cosmeticFilterAPI.applyCSSCosmeticFilters(1, 'hnq.vn')
       expect(insertCSSStub.called).toBe(false)
     })
     it('doesn\'t apply filters if storage is explicitly undefined', () => {
       getStorageStub.yields({
         cosmeticFilterList: {
-          'huhisoft.com': undefined
+          'hnq.vn': undefined
         }
       })
-      cosmeticFilterAPI.applyCSSCosmeticFilters(1, 'huhisoft.com')
+      cosmeticFilterAPI.applyCSSCosmeticFilters(1, 'hnq.vn')
       expect(insertCSSStub.called).toBe(false)
     })
   })

@@ -1,13 +1,11 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "base/path_service.h"
-#include "huhi/browser/huhi_content_browser_client.h"
 #include "huhi/common/huhi_paths.h"
 #include "chrome/browser/ui/browser.h"
-#include "chrome/common/chrome_content_client.h"
 #include "chrome/test/base/in_process_browser_test.h"
 #include "chrome/test/base/ui_test_utils.h"
 #include "content/public/test/browser_test.h"
@@ -20,12 +18,6 @@ class NavigatorGetBatteryDisabledTest : public InProcessBrowserTest {
   void SetUpOnMainThread() override {
     InProcessBrowserTest::SetUpOnMainThread();
 
-    content_client_.reset(new ChromeContentClient);
-    content::SetContentClient(content_client_.get());
-    browser_content_client_.reset(new HuhiContentBrowserClient());
-    content::SetBrowserClientForTesting(browser_content_client_.get());
-    content::SetupCrossSiteRedirector(embedded_test_server());
-
     huhi::RegisterPathProvider();
     base::FilePath test_data_dir;
     base::PathService::Get(huhi::DIR_TEST_DATA, &test_data_dir);
@@ -33,16 +25,6 @@ class NavigatorGetBatteryDisabledTest : public InProcessBrowserTest {
 
     ASSERT_TRUE(embedded_test_server()->Start());
   }
-
-  void TearDown() override {
-    browser_content_client_.reset();
-    content_client_.reset();
-  }
-
- private:
-  std::unique_ptr<ChromeContentClient> content_client_;
-  std::unique_ptr<HuhiContentBrowserClient> browser_content_client_;
-  base::ScopedTempDir temp_user_data_dir_;
 };
 
 IN_PROC_BROWSER_TEST_F(NavigatorGetBatteryDisabledTest, IsDisabled) {

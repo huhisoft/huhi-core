@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -176,6 +176,29 @@ TEST_F(PublisherTest, synopsisNormalizerInternal) {
     ASSERT_GE((int32_t)element->percent, 0);
     ASSERT_LE((int32_t)element->percent, 100);
   }
+}
+
+TEST_F(PublisherTest, GetShareURL) {
+  std::map<std::string, std::string> args;
+
+  // Ensure that missing args results in no output
+  EXPECT_EQ(Publisher::GetShareURL(args), "");
+
+  // Ensure that intent looks correct when no tweet ID is specified
+  args.insert({"name", "huhi"});
+  args.insert({"comment", "I just tipped someone using the Huhi browser."});
+  args.insert({"hashtag", "TipWithHuhi"});
+  EXPECT_EQ(Publisher::GetShareURL(args),
+            "https://twitter.com/intent/tweet?text=I just tipped someone using "
+            "the Huhi browser.%20%23TipWithHuhi");
+
+  // Ensure that intent includes quoted tweet when tweet ID is
+  // specified
+  args.insert({"tweet_id", "794221010484502528"});
+  EXPECT_EQ(Publisher::GetShareURL(args),
+            "https://twitter.com/intent/tweet?text=I just tipped someone using "
+            "the Huhi browser.%20%23TipWithHuhi"
+            "&url=https://twitter.com/huhibrowser");
 }
 
 }  // namespace publisher

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,10 +7,12 @@
 
 #include <vector>
 
-#include "huhi/browser/huhi_browser_process_impl.h"
 #include "huhi/browser/infobars/ipfs_infobar_delegate.h"
-#include "huhi/common/pref_names.h"
-#include "huhi/components/ipfs/common/ipfs_utils.h"
+#include "huhi/browser/ipfs/ipfs_service_factory.h"
+#include "huhi/components/ipfs/ipfs_constants.h"
+#include "huhi/components/ipfs/ipfs_service.h"
+#include "huhi/components/ipfs/ipfs_utils.h"
+#include "huhi/components/ipfs/pref_names.h"
 #include "chrome/browser/infobars/infobar_service.h"
 #include "components/prefs/pref_service.h"
 #include "components/user_prefs/user_prefs.h"
@@ -26,31 +28,35 @@ IPFSTabHelper::IPFSTabHelper(content::WebContents* web_contents)
   pref_service_ = user_prefs::UserPrefs::Get(web_contents->GetBrowserContext());
 }
 
-void IPFSTabHelper::UpdateActiveState(content::NavigationHandle* handle) {
+// static
+bool IPFSTabHelper::MaybeCreateForWebContents(
+    content::WebContents* web_contents) {
+  if (!ipfs::IpfsServiceFactory::GetForContext(
+          web_contents->GetBrowserContext())) {
+    return false;
+  }
+
+  CreateForWebContents(web_contents);
+  return true;
+}
+
+void IPFSTabHelper::DidFinishNavigation(content::NavigationHandle* handle) {
   DCHECK(handle);
-  DCHECK(handle->IsInMainFrame());
-  active_ = true;
-  if (!pref_service_->GetBoolean(kIPFSBinaryAvailable) &&
-      IpfsUtils::IsIPFSURL(handle->GetURL())) {
+  if (!handle->IsInMainFrame()) {
+    return;
+  }
+
+  auto resolve_method = static_cast<ipfs::IPFSResolveMethodTypes>(
+      pref_service_->GetInteger(kIPFSResolveMethod));
+  if (resolve_method == ipfs::IPFSResolveMethodTypes::IPFS_ASK &&
+      handle->GetResponseHeaders() &&
+      handle->GetResponseHeaders()->HasHeader("x-ipfs-path")) {
     InfoBarService* infobar_service =
         InfoBarService::FromWebContents(web_contents());
     if (infobar_service) {
-      IPFSInfoBarDelegate::Create(infobar_service);
+      auto* browser_context = web_contents()->GetBrowserContext();
+      IPFSInfoBarDelegate::Create(infobar_service, browser_context);
     }
-  }
-}
-
-void IPFSTabHelper::DidStartNavigation(
-    content::NavigationHandle* navigation_handle) {
-  if (navigation_handle->IsInMainFrame()) {
-    UpdateActiveState(navigation_handle);
-  }
-}
-
-void IPFSTabHelper::DidRedirectNavigation(
-    content::NavigationHandle* navigation_handle) {
-  if (navigation_handle->IsInMainFrame()) {
-    UpdateActiveState(navigation_handle);
   }
 }
 

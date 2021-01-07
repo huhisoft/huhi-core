@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -10,7 +10,7 @@
 
 #include "huhi/browser/huhi_browser_process_impl.h"
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/tor/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "huhi/grit/huhi_generated_resources.h"
 #include "chrome/app/vector_icons/vector_icons.h"
 #include "chrome/browser/profiles/profile.h"
@@ -25,8 +25,8 @@
 #include "ui/base/models/image_model.h"
 
 #if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/extensions/huhi_tor_client_updater.h"
-#include "huhi/browser/tor/tor_profile_service.h"
+#include "huhi/browser/tor/tor_profile_service_factory.h"
+#include "huhi/components/tor/huhi_tor_client_updater.h"
 #endif
 
 namespace {
@@ -34,7 +34,7 @@ namespace {
 bool ShouldShowTorProfileButton(Profile* profile) {
   DCHECK(profile);
 #if BUILDFLAG(ENABLE_TOR)
-  return !tor::TorProfileService::IsTorDisabled() &&
+  return !TorProfileServiceFactory::IsTorDisabled() &&
          !huhi::IsTorProfile(profile) &&
          !g_huhi_browser_process->tor_client_updater()
               ->GetExecutablePath()

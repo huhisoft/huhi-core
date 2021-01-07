@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,12 +7,14 @@
 
 #include "base/strings/stringprintf.h"
 #include "bat/ads/internal/ads_impl.h"
-#include "bat/ads/internal/client/preferences/flagged_ad.h"
+#include "bat/ads/internal/bundle/creative_ad_info.h"
+#include "bat/ads/internal/client/client.h"
+#include "bat/ads/internal/client/preferences/flagged_ad_info.h"
 
 namespace ads {
 
 MarkedAsInappropriateFrequencyCap::MarkedAsInappropriateFrequencyCap(
-    const AdsImpl* const ads)
+    AdsImpl* ads)
     : ads_(ads) {
   DCHECK(ads_);
 }
@@ -37,14 +39,14 @@ std::string MarkedAsInappropriateFrequencyCap::get_last_message() const {
 }
 
 bool MarkedAsInappropriateFrequencyCap::DoesRespectCap(
-      const CreativeAdInfo& ad) {
-  const FlaggedAdsList flagged_ads = ads_->get_client()->get_flagged_ads();
+    const CreativeAdInfo& ad) {
+  const FlaggedAdList flagged_ads = ads_->get_client()->get_flagged_ads();
   if (flagged_ads.empty()) {
     return true;
   }
 
   const auto iter = std::find_if(flagged_ads.begin(), flagged_ads.end(),
-      [&ad](const FlaggedAd& flagged_ad) {
+      [&ad](const FlaggedAdInfo& flagged_ad) {
     return flagged_ad.creative_set_id == ad.creative_set_id;
   });
 

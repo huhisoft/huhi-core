@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -29,37 +29,14 @@ class BatAdsClientMojoBridge
   BatAdsClientMojoBridge& operator=(const BatAdsClientMojoBridge&) = delete;
 
   // AdsClient implementation
-  bool IsEnabled() const override;
-
-  bool ShouldAllowAdConversionTracking() const override;
-
   bool CanShowBackgroundNotifications() const override;
 
-  uint64_t GetAdsPerHour() override;
-  uint64_t GetAdsPerDay() override;
-
-  bool ShouldAllowAdsSubdivisionTargeting() const override;
-  void SetAllowAdsSubdivisionTargeting(
-      const bool should_allow) override;
-
-  std::string GetAdsSubdivisionTargetingCode() const override;
-  void SetAdsSubdivisionTargetingCode(
-      const std::string& subdivision_targeting_code) override;
-
-  std::string
-  GetAutomaticallyDetectedAdsSubdivisionTargetingCode() const override;
-  void SetAutomaticallyDetectedAdsSubdivisionTargetingCode(
-      const std::string& subdivision_targeting_code) override;
-
   bool IsNetworkConnectionAvailable() const override;
-
-  void SetIdleThreshold(
-      const int threshold) override;
 
   bool IsForeground() const override;
 
   void ShowNotification(
-      std::unique_ptr<ads::AdNotificationInfo> info) override;
+      const ads::AdNotificationInfo& ad_notification) override;
   bool ShouldShowNotifications() override;
   void CloseNotification(
       const std::string& uuid) override;
@@ -75,6 +52,12 @@ class BatAdsClientMojoBridge
   void LoadUserModelForId(
       const std::string& id,
       ads::LoadCallback callback) override;
+
+  void RecordP2AEvent(
+      const std::string& name,
+      const ads::P2AEventType type,
+      const std::string& value) override;
+
   void Load(
       const std::string& name,
       ads::LoadCallback callback) override;
@@ -93,6 +76,51 @@ class BatAdsClientMojoBridge
       const int line,
       const int verbose_level,
       const std::string& message) override;
+
+  bool GetBooleanPref(
+      const std::string& path) const override;
+
+  void SetBooleanPref(
+      const std::string& path,
+      const bool value) override;
+
+  int GetIntegerPref(
+      const std::string& path) const override;
+
+  void SetIntegerPref(
+      const std::string& path,
+      const int value) override;
+
+  double GetDoublePref(
+      const std::string& path) const override;
+
+  void SetDoublePref(
+      const std::string& path,
+      const double value) override;
+
+  std::string GetStringPref(
+      const std::string& path) const override;
+
+  void SetStringPref(
+      const std::string& path,
+      const std::string& value) override;
+
+  int64_t GetInt64Pref(
+      const std::string& path) const override;
+
+  void SetInt64Pref(
+      const std::string& path,
+      const int64_t value) override;
+
+  uint64_t GetUint64Pref(
+      const std::string& path) const override;
+
+  void SetUint64Pref(
+      const std::string& path,
+      const uint64_t value) override;
+
+  void ClearPref(
+      const std::string& path) override;
 
  private:
   bool connected() const;

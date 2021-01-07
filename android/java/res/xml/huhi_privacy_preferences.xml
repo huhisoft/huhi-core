@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-     This Source Code Form is subject to the terms of the Huhi Software
+<!-- Copyright (c) 2020 The Huhi Authors. All rights reserved.
+     This Source Code Form is subject to the terms of the Mozilla Public
      License, v. 2.0. If a copy of the MPL was not distributed with this file,
      You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <org.chromium.components.browser_ui.settings.ChromeBaseCheckBoxPreference
         android:key="close_tabs_on_exit"
         android:title="@string/close_tabs_on_exit_title"
@@ -40,4 +39,25 @@
         android:key="autocomplete_huhi_suggested_sites"
         android:title="@string/autocomplete_huhi_suggested_sites_title"
         android:persistent="false"/>
+    <PreferenceCategory
+        android:key="huhi_shields_social_blocking"
+        android:title="@string/huhi_shields_social_blocking_title">
+        
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="social_blocking_google"
+            android:title="@string/huhi_shields_social_blocking_google"
+            android:defaultValue="true" />
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="social_blocking_facebook"
+            android:title="@string/huhi_shields_social_blocking_facebook"
+            android:defaultValue="true" />
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="social_blocking_twitter"
+            android:title="@string/huhi_shields_social_blocking_twitter"
+            android:defaultValue="true" />
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="social_blocking_linkedin"
+            android:title="@string/huhi_shields_social_blocking_linkedin"
+            android:defaultValue="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

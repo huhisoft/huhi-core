@@ -1,11 +1,12 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "huhi/components/huhi_wallet/browser/buildflags/buildflags.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
 
 #if BUILDFLAG(HUHI_WALLET_ENABLED)
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
 #include "content/public/common/url_constants.h"
 #include "extensions/common/constants.h"
 #include "url/gurl.h"

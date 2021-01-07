@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -128,7 +128,6 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
     private ImageButton mPasteButton;
     private Button mCopyButton;
     private Button mAddDeviceButton;
-    private Button mRemoveDeviceButton;
     private Button mShowCategoriesButton;
     private Button mQRCodeButton;
     private Button mCodeWordsButton;
@@ -144,7 +143,6 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
     private TextView mHuhiSyncAddDeviceCodeWords;
     private CameraSource mCameraSource;
     private CameraSourcePreview mCameraSourcePreview;
-    private String mDeviceName = "";
     private ListView mDevicesListView;
     private ArrayAdapter<String> mDevicesAdapter;
     private List<String> mDevicesList;
@@ -195,6 +193,8 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ProfileSyncService.get().addSyncStateChangedListener(this);
+
         InvalidateCodephrase();
 
         if (ensureCameraPermission()) {
@@ -289,13 +289,7 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
                             TextView textView = (TextView) listItemView.findViewById(
                                     R.id.huhi_sync_device_text);
                             if (null != textView) {
-                                textView.setText(device.mName);
-                            }
-
-                            if (device.mIsCurrentDevice) {
-                                mDeviceName = device.mName;
-                                // Current device is deleted by button on the bottom
-                                if (null != textView) {
+                                if (device.mIsCurrentDevice) {
                                     // Highlight curret device
                                     textView.setTextColor(ApiCompatibilityUtils.getColor(
                                             getActivity().getResources(),
@@ -304,10 +298,25 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
                                             + getResources().getString(
                                                     R.string.huhi_sync_this_device_text);
                                     textView.setText(currentDevice);
+                                } else {
+                                    textView.setText(device.mName);
                                 }
-                                // mRemoveDeviceButton is always visible, we can leave the chain
-                                // in any time with sync v2 (except we are now doing reset)
                             }
+
+                            AppCompatImageView deleteButton =
+                                    (AppCompatImageView) listItemView.findViewById(
+                                            R.id.huhi_sync_remove_device);
+                            if (device.mSupportsSelfDelete || device.mIsCurrentDevice) {
+                                deleteButton.setTag(device);
+                                deleteButton.setOnClickListener(v -> {
+                                    HuhiSyncDevices.SyncDeviceInfo deviceToDelete =
+                                            (HuhiSyncDevices.SyncDeviceInfo) v.getTag();
+                                    deleteDeviceDialog(deviceToDelete);
+                                });
+                            } else {
+                                deleteButton.setVisibility(View.GONE);
+                            }
+
                             insertPoint.addView(separator, index++);
                             insertPoint.addView(listItemView, index++);
                         }
@@ -439,11 +448,6 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
             mAddDeviceButton.setOnClickListener(this);
         }
 
-        mRemoveDeviceButton = (Button) getView().findViewById(R.id.huhi_sync_btn_remove_device);
-        if (null != mRemoveDeviceButton) {
-            mRemoveDeviceButton.setOnClickListener(this);
-        }
-
         mShowCategoriesButton =
                 (Button) getView().findViewById(R.id.huhi_sync_btn_show_categories);
         if (null != mShowCategoriesButton) {
@@ -550,9 +554,8 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
                         && v != mEnterCodeWordsButton && v != mDoneButton && v != mDoneLaptopButton
                         && v != mUseCameraButton && v != mConfirmCodeWordsButton
                         && v != mMobileButton && v != mLaptopButton && v != mPasteButton
-                        && v != mCopyButton && v != mRemoveDeviceButton
-                        && v != mShowCategoriesButton && v != mAddDeviceButton && v != mQRCodeButton
-                        && v != mCodeWordsButton))
+                        && v != mCopyButton && v != mShowCategoriesButton && v != mAddDeviceButton
+                        && v != mQRCodeButton && v != mCodeWordsButton))
             return;
 
         if (mScanChainCodeButton == v) {
@@ -683,8 +686,6 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
                     }
                 });
             }
-        } else if (mRemoveDeviceButton == v) {
-            deleteDeviceDialog(mDeviceName);
         } else if (mShowCategoriesButton == v) {
             SettingsLauncher settingsLauncher = new SettingsLauncherImpl();
             settingsLauncher.launchSettingsActivity(getContext(), HuhiManageSyncSettings.class);
@@ -877,6 +878,9 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
         if (mCameraSourcePreview != null) {
             mCameraSourcePreview.release();
         }
+
+        ProfileSyncService.get().removeSyncStateChangedListener(this);
+
         if (deviceInfoObserverSet) {
             HuhiSyncDevices.get().removeDeviceInfoChangedListener(this);
             deviceInfoObserverSet = false;
@@ -949,8 +953,7 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
         alertDialog.show();
     }
 
-    private void deleteDeviceDialog(String deviceName) {
-        Log.v(TAG, "deleteDeviceDialog deviceName=" + deviceName);
+    private void deleteDeviceDialog(HuhiSyncDevices.SyncDeviceInfo device) {
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity(), R.style.Theme_Chromium_AlertDialog);
         if (null == alert) {
             return;
@@ -960,14 +963,21 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
             public void onClick(DialogInterface dialog, int button) {
                 if (button == AlertDialog.BUTTON_POSITIVE) {
                     if (getHuhiSyncWorker() != null) {
-                        getHuhiSyncWorker().ResetSync();
-                        startLeaveSyncChainOperations();
+                        if (device.mIsCurrentDevice) {
+                            getHuhiSyncWorker().ResetSync();
+                            startLeaveSyncChainOperations();
+                        } else {
+                            HuhiSyncDevices.get().DeleteDevice(device.mGuid);
+                        }
                     }
                 }
             }
         };
-        String deviceNameToDisplay =
-                deviceName + " " + getResources().getString(R.string.huhi_sync_this_device_text);
+        String deviceNameToDisplay = device.mName;
+        if (device.mIsCurrentDevice) {
+            deviceNameToDisplay = deviceNameToDisplay + " "
+                    + getResources().getString(R.string.huhi_sync_this_device_text);
+        }
         AlertDialog alertDialog =
                 alert.setTitle(getResources().getString(R.string.huhi_sync_remove_device_text))
                         .setMessage(
@@ -990,9 +1000,6 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
 
         mShowCategoriesButton.setVisibility(View.GONE);
         mAddDeviceButton.setVisibility(View.GONE);
-        mRemoveDeviceButton.setVisibility(View.GONE);
-
-        ProfileSyncService.get().addSyncStateChangedListener(this);
 
         PostTask.postDelayedTask(
                 UiThreadTaskTraits.USER_VISIBLE, () -> leaveSyncChainComplete(), 5 * 1000);
@@ -1007,11 +1014,8 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
         if (mLeaveSyncChainInProgress) {
             mLeaveSyncChainInProgress = false;
 
-            ProfileSyncService.get().removeSyncStateChangedListener(this);
-
             mShowCategoriesButton.setVisibility(View.VISIBLE);
             mAddDeviceButton.setVisibility(View.VISIBLE);
-            mRemoveDeviceButton.setVisibility(View.VISIBLE);
 
             setAppropriateView();
         }
@@ -1019,8 +1023,13 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
 
     @Override
     public void syncStateChanged() {
-        if (ProfileSyncService.get().isFirstSetupComplete() == false && mLeaveSyncChainInProgress) {
-            leaveSyncChainComplete();
+        if (ProfileSyncService.get().isFirstSetupComplete() == false) {
+            if (mLeaveSyncChainInProgress) {
+                leaveSyncChainComplete();
+            } else {
+                InvalidateCodephrase();
+                setAppropriateView();
+            }
         }
     }
 
@@ -1239,10 +1248,6 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
           return;
       }
 
-      boolean firstSetupComplete = getHuhiSyncWorker().IsFirstSetupComplete();
-      getHuhiSyncWorker().SaveCodephrase(GetCodephrase());
-      getHuhiSyncWorker().FinalizeSyncSetup();
-
       if (!deviceInfoObserverSet) {
           HuhiSyncDevices.get().addDeviceInfoChangedListener(this);
           deviceInfoObserverSet = true;
@@ -1275,8 +1280,7 @@ public class HuhiSyncScreensPreference extends HuhiPreferenceFragment
           adjustWidth(mScrollViewSyncDone, false);
           mScrollViewSyncDone.setVisibility(View.VISIBLE);
       }
-      // With sync v2 we may leave the sync chain even if we don't see other
-      // devices in chain, mRemoveDeviceButton is always visible
+
       HuhiActivity mainActivity = HuhiActivity.getHuhiActivity();
       if (null != mainActivity) {
           mHuhiSyncTextDevicesTitle.setText(getResources().getString(R.string.huhi_sync_loading_devices_title));

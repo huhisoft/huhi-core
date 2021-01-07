@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,26 +17,36 @@ namespace content {
 class WebContents;
 }  // namespace content
 
-namespace rewards_browsertest_helper {
+namespace rewards_browsertest {
 
-content::WebContents* OpenRewardsPopup(Browser* browser);
+class RewardsBrowserTestContextHelper {
+ public:
+  explicit RewardsBrowserTestContextHelper(Browser* browser);
+  ~RewardsBrowserTestContextHelper();
 
-void EnableRewards(Browser* browser, const bool use_new_tab = false);
+  content::WebContents* OpenRewardsPopup();
 
-content::WebContents* OpenSiteBanner(
-    Browser* browser,
-    rewards_browsertest_util::ContributionType banner_type);
+  content::WebContents* OpenSiteBanner(
+      rewards_browsertest_util::TipAction tip_action);
 
-void VisitPublisher(
-    Browser* browser,
-    const GURL& url,
-    const bool verified,
-    const bool last_add = false);
+  void VisitPublisher(
+      const GURL& url,
+      const bool verified,
+      const bool last_add = false);
 
-void LoadURL(Browser* browser, GURL url);
+  void LoadURL(GURL url);
 
-void ReloadCurrentSite(Browser* browser);
+  void ReloadCurrentSite();
 
-}  // namespace rewards_browsertest_helper
+ private:
+  void OpenPopup();
+
+  void OpenPopupFirstTime();
+
+  Browser* browser_;  // NOT OWNED
+  bool loaded_ = false;
+};
+
+}  // namespace rewards_browsertest
 
 #endif  // HUHI_COMPONENTS_HUHI_REWARDS_BROWSER_TEST_COMMON_REWARDS_BROWSERTEST_CONTEXT_HELPER_H_

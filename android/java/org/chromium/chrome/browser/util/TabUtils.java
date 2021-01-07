@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+ * Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
@@ -17,12 +17,15 @@ import android.widget.PopupMenu;
 
 import org.chromium.base.ApplicationStatus;
 import org.chromium.chrome.R;
+import org.chromium.chrome.browser.app.HuhiActivity;
 import org.chromium.chrome.browser.app.ChromeActivity;
 import org.chromium.chrome.browser.night_mode.GlobalNightModeStateProviderHolder;
+import org.chromium.chrome.browser.tab.TabLaunchType;
+import org.chromium.content_public.browser.LoadUrlParams;
 
 public class TabUtils {
     public static void showTabPopupMenu(Context context, View view) {
-        ChromeActivity chromeActivity = getChromeActivity();
+        HuhiActivity huhiActivity = HuhiActivity.getHuhiActivity();
         Context wrapper = new ContextThemeWrapper(context,
                 GlobalNightModeStateProviderHolder.getInstance().isInNightMode()
                         ? R.style.NewTabPopupMenuDark
@@ -32,7 +35,7 @@ public class TabUtils {
         // Inflating the Popup using xml file
         popup.getMenuInflater().inflate(R.menu.new_tab_menu, popup.getMenu());
 
-        if (chromeActivity != null && chromeActivity.getCurrentTabModel().isIncognito()) {
+        if (huhiActivity != null && huhiActivity.getCurrentTabModel().isIncognito()) {
             popup.getMenu().findItem(R.id.new_tab_menu_id).setVisible(false);
         }
         // registering popup with OnMenuItemClickListener
@@ -41,9 +44,9 @@ public class TabUtils {
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.new_tab_menu_id) {
-                    openNewTab(chromeActivity, false);
+                    openNewTab(huhiActivity, false);
                 } else if (id == R.id.new_incognito_tab_menu_id) {
-                    openNewTab(chromeActivity, true);
+                    openNewTab(huhiActivity, true);
                 }
                 return true;
             }
@@ -52,32 +55,39 @@ public class TabUtils {
     }
 
     public static void openNewTab() {
-        ChromeActivity chromeActivity = getChromeActivity();
+        HuhiActivity huhiActivity = HuhiActivity.getHuhiActivity();
         boolean isIncognito =
-                chromeActivity != null ? chromeActivity.getCurrentTabModel().isIncognito() : false;
-        openNewTab(chromeActivity, isIncognito);
+                huhiActivity != null ? huhiActivity.getCurrentTabModel().isIncognito() : false;
+        openNewTab(huhiActivity, isIncognito);
     }
 
-    private static void openNewTab(ChromeActivity chromeActivity, boolean isIncognito) {
-        if (chromeActivity == null) return;
-        chromeActivity.getTabModelSelector().getModel(isIncognito).commitAllTabClosures();
-        chromeActivity.getTabCreator(isIncognito).launchNTP();
+    private static void openNewTab(HuhiActivity huhiActivity, boolean isIncognito) {
+        if (huhiActivity == null) return;
+        huhiActivity.getTabModelSelector().getModel(isIncognito).commitAllTabClosures();
+        huhiActivity.getTabCreator(isIncognito).launchNTP();
     }
 
-    public static ChromeActivity getChromeActivity() {
-        for (Activity ref : ApplicationStatus.getRunningActivities()) {
-            if (!(ref instanceof ChromeActivity)) continue;
-            return (ChromeActivity) ref;
+    public static void openUrlInNewTab(boolean isIncognito, String url) {
+        HuhiActivity huhiActivity = HuhiActivity.getHuhiActivity();
+        if (huhiActivity != null) {
+            huhiActivity.getTabCreator(isIncognito).launchUrl(url, TabLaunchType.FROM_CHROME_UI);
         }
-        return null;
+    }
+
+    public static void openUrlInSameTab(String url) {
+        HuhiActivity huhiActivity = HuhiActivity.getHuhiActivity();
+        if (huhiActivity != null) {
+            LoadUrlParams loadUrlParams = new LoadUrlParams(url);
+            huhiActivity.getActivityTab().loadUrl(loadUrlParams);
+        }
     }
 
     public static void enableRewardsButton() {
-        ChromeActivity chromeActivity = getChromeActivity();
-        if (chromeActivity == null || chromeActivity.getToolbarManager() == null) {
+        HuhiActivity huhiActivity = HuhiActivity.getHuhiActivity();
+        if (huhiActivity == null || huhiActivity.getToolbarManager() == null) {
             return;
         }
-        View toolbarView = chromeActivity.findViewById(R.id.toolbar);
+        View toolbarView = huhiActivity.findViewById(R.id.toolbar);
         if (toolbarView == null) {
             return;
         }

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -288,8 +288,7 @@ void Twitch::OnMediaActivityError(const ledger::type::VisitData& visit_data,
     ledger_->publisher()->GetPublisherActivityFromUrl(
         window_id, ledger::type::VisitData::New(new_visit_data), std::string());
   } else {
-      BLOG(0, "Media activity error for " << TWITCH_MEDIA_TYPE << " (name: "
-          << name << ", url: " << visit_data.url << ")");
+      BLOG(0, "Media activity error");
   }
 }
 
@@ -618,7 +617,7 @@ void Twitch::SavePublisherInfo(const uint64_t duration,
                                const std::string& channel_id,
                                const std::string& publisher_key) {
   if (channel_id.empty() && publisher_key.empty()) {
-    BLOG(0, "author id is missing for: " << media_key);
+    BLOG(0, "author id is missing");
     return;
   }
 
@@ -628,7 +627,7 @@ void Twitch::SavePublisherInfo(const uint64_t duration,
   }
 
   if (key.empty()) {
-    BLOG(0, "Publisher id is missing for: " << media_key);
+    BLOG(0, "Publisher id is missing");
     return;
   }
 
@@ -650,6 +649,7 @@ void Twitch::SavePublisherInfo(const uint64_t duration,
       key,
       new_visit_data,
       duration,
+      true,
       window_id,
       [](ledger::type::Result, ledger::type::PublisherInfoPtr) {});
 

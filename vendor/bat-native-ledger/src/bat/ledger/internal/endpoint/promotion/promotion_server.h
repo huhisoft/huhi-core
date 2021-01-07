@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -15,6 +15,7 @@
 #include "bat/ledger/internal/endpoint/promotion/get_wallet_balance/get_wallet_balance.h"
 #include "bat/ledger/internal/endpoint/promotion/post_bat_loss/post_bat_loss.h"
 #include "bat/ledger/internal/endpoint/promotion/post_captcha/post_captcha.h"
+#include "bat/ledger/internal/endpoint/promotion/post_claim_huhi/post_claim_huhi.h"
 #include "bat/ledger/internal/endpoint/promotion/post_claim_uphold/post_claim_uphold.h"
 #include "bat/ledger/internal/endpoint/promotion/post_clobbered_claims/post_clobbered_claims.h"
 #include "bat/ledger/internal/endpoint/promotion/post_creds/post_creds.h"
@@ -74,6 +75,8 @@ class PromotionServer {
 
   promotion::PostSuggestionsClaim* post_suggestions_claim() const;
 
+  promotion::PostClaimHuhi* post_claim_huhi() const;
+
  private:
   std::unique_ptr<promotion::GetAvailable> get_available_;
   std::unique_ptr<promotion::PostCreds> post_creds_;
@@ -93,6 +96,7 @@ class PromotionServer {
   std::unique_ptr<promotion::PutDevicecheck> put_devicecheck_;
   std::unique_ptr<promotion::PostSuggestions> post_suggestions_;
   std::unique_ptr<promotion::PostSuggestionsClaim> post_suggestions_claim_;
+  std::unique_ptr<promotion::PostClaimHuhi> post_claim_huhi_;
 };
 
 }  // namespace endpoint

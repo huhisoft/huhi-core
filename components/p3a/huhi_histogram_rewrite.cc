@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -24,9 +24,11 @@ constexpr const char* kHuhizationHistograms[] = {
 
 // TODO(iefremov): Replace a bunch of 'if's with something more elegant.
 // Records the given sample using the proper Huhi way.
-void DoHistogramHuhization(base::StringPiece histogram_name,
+void DoHistogramHuhization(const char* histogram_name,
+                            uint64_t name_hash,
                             base::HistogramBase::Sample sample) {
-  if ("Bookmarks.Count.OnProfileLoad" == histogram_name) {
+  DCHECK(histogram_name);
+  if (strcmp("Bookmarks.Count.OnProfileLoad", histogram_name) == 0) {
     constexpr int kIntervals[] = {5, 20, 100, 500, 1000, 5000, 10000};
     const int* it =
         std::lower_bound(kIntervals, std::end(kIntervals), sample);
@@ -36,7 +38,7 @@ void DoHistogramHuhization(base::StringPiece histogram_name,
     return;
   }
 
-  if ("DefaultBrowser.State" == histogram_name) {
+  if (strcmp("DefaultBrowser.State", histogram_name) == 0) {
     int answer = 0;
     switch (sample) {
       case 0:  // Not default.
@@ -55,7 +57,7 @@ void DoHistogramHuhization(base::StringPiece histogram_name,
     UMA_HISTOGRAM_BOOLEAN("Huhi.Core.IsDefault", answer);
   }
 
-  if ("Extensions.LoadExtension" == histogram_name) {
+  if (strcmp("Extensions.LoadExtension", histogram_name) == 0) {
     int answer = 0;
     if (sample == 1)
       answer = 1;
@@ -68,7 +70,7 @@ void DoHistogramHuhization(base::StringPiece histogram_name,
     return;
   }
 
-  if ("Tabs.TabCount" == histogram_name) {
+  if (strcmp("Tabs.TabCount", histogram_name) == 0) {
     int answer = 0;
     if (0 <= sample && sample <= 1) {
       answer = 0;
@@ -86,7 +88,7 @@ void DoHistogramHuhization(base::StringPiece histogram_name,
     return;
   }
 
-  if ("Tabs.WindowCount" == histogram_name) {
+  if (strcmp("Tabs.WindowCount", histogram_name) == 0) {
     int answer = 0;
     if (sample <= 0) {
       answer = 0;
@@ -109,7 +111,7 @@ void SetupHistogramsHuhiization() {
   for (const char* histogram_name : kHuhizationHistograms) {
     base::StatisticsRecorder::SetCallback(
         histogram_name,
-        base::BindRepeating(&DoHistogramHuhization, histogram_name));
+        base::BindRepeating(&DoHistogramHuhization));
   }
 }
 

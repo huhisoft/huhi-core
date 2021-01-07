@@ -9,6 +9,7 @@ pipeline {
         choice(name: 'CHANNEL', choices: ['nightly', 'dev', 'beta', 'release', 'development'])
         choice(name: 'BUILD_TYPE', choices: ['Release', 'Debug'])
         choice(name: 'BUILD_STATUS', choices: ['', 'SUCCESS', 'FAILURE', 'UNSTABLE', 'ABORTED'])
+        booleanParam(name: 'TERMINATE_NODE', defaultValue: false)
         booleanParam(name: 'WIPE_WORKSPACE', defaultValue: false)
         booleanParam(name: 'SKIP_INIT', defaultValue: false)
         booleanParam(name: 'DISABLE_SCCACHE', defaultValue: false)
@@ -22,7 +23,6 @@ pipeline {
             agent { label 'master' }
             steps {
                 script {
-                    GITHUB_API = 'https://api.github.com/repos/huhisoft'
                     REPO = JOB_NAME.substring(0, JOB_NAME.indexOf('-build-pr'))
                     OTHER_REPO = REPO.equals('huhi-browser') ? 'huhi-core' : 'huhi-browser'
                     PLATFORM = JOB_NAME.substring(JOB_NAME.indexOf('-build-pr') + 10, JOB_NAME.indexOf('/PR-'))
@@ -42,12 +42,14 @@ pipeline {
                     }
 
                     withCredentials([usernamePassword(credentialsId: 'huhi-builds-github-token-for-pr-builder', usernameVariable: 'PR_BUILDER_USER', passwordVariable: 'PR_BUILDER_TOKEN')]) {
-                        def prDetails = readJSON(text: httpRequest(url: GITHUB_API + '/' + REPO + '/pulls?head=huhi:' + CHANGE_BRANCH, customHeaders: [[name: 'Authorization', value: 'token ' + PR_BUILDER_TOKEN]]).content)[0]
+                        GITHUB_API = 'https://api.github.com/repos/huhisoft'
+                        GITHUB_AUTH_HEADERS = [[name: 'Authorization', value: 'token ' + PR_BUILDER_TOKEN]]
+                        def prDetails = readJSON(text: httpRequest(url: GITHUB_API + '/' + REPO + '/pulls?head=huhi:' + CHANGE_BRANCH, customHeaders: GITHUB_AUTH_HEADERS, quiet: true).content)[0]
                         SKIP = prDetails.draft.equals(true) || prDetails.labels.count { label -> label.name.equalsIgnoreCase('CI/skip') }.equals(1) || prDetails.labels.count { label -> label.name.equalsIgnoreCase("CI/skip-${PLATFORM}") }.equals(1)
                         RUN_NETWORK_AUDIT = prDetails.labels.count { label -> label.name.equalsIgnoreCase('CI/run-network-audit') }.equals(1)
-                        def branchExistsInOtherRepo = httpRequest(url: GITHUB_API + '/' + OTHER_REPO + '/branches/' + CHANGE_BRANCH, validResponseCodes: '100:499', customHeaders: [[name: 'Authorization', value: 'token ' + PR_BUILDER_TOKEN]]).status.equals(200)
+                        def branchExistsInOtherRepo = httpRequest(url: GITHUB_API + '/' + OTHER_REPO + '/branches/' + CHANGE_BRANCH, validResponseCodes: '100:499', customHeaders: GITHUB_AUTH_HEADERS, quiet: true).status.equals(200)
                         if (branchExistsInOtherRepo) {
-                            def otherPrDetails = readJSON(text: httpRequest(url: GITHUB_API + '/' + OTHER_REPO + '/pulls?head=huhi:' + CHANGE_BRANCH, customHeaders: [[name: 'Authorization', value: 'token ' + PR_BUILDER_TOKEN]]).content)[0]
+                            def otherPrDetails = readJSON(text: httpRequest(url: GITHUB_API + '/' + OTHER_REPO + '/pulls?head=huhi:' + CHANGE_BRANCH, customHeaders: GITHUB_AUTH_HEADERS, quiet: true).content)[0]
                             if (otherPrDetails) {
                                 env.OTHER_PR_NUMBER = otherPrDetails.number
                                 SKIP = SKIP || otherPrDetails.draft.equals(true) || otherPrDetails.labels.count { label -> label.name.equalsIgnoreCase('CI/skip') }.equals(1) || otherPrDetails.labels.count { label -> label.name.equalsIgnoreCase("CI/skip-${PLATFORM}") }.equals(1)
@@ -75,6 +77,7 @@ pipeline {
                             parameters {
                                 choiceParam('CHANNEL', ['nightly', 'dev', 'beta', 'release', 'development'])
                                 choiceParam('BUILD_TYPE', ['Release', 'Debug'])
+                                booleanParam('TERMINATE_NODE', false)
                                 booleanParam('WIPE_WORKSPACE', false)
                                 booleanParam('SKIP_INIT', false)
                                 booleanParam('DISABLE_SCCACHE', false)
@@ -91,7 +94,7 @@ pipeline {
                                         git {
                                             remote {
                                                 credentials('huhi-builds-github-token-for-pr-builder')
-                                                github('huhisoft/devops', 'https')
+                                                github('huhi/devops', 'https')
                                             }
                                             branch('master')
                                         }
@@ -105,6 +108,7 @@ pipeline {
                     params = [
                         string(name: 'CHANNEL', value: params.CHANNEL),
                         string(name: 'BUILD_TYPE', value: params.BUILD_TYPE),
+                        booleanParam(name: "TERMINATE_NODE", value: params.TERMINATE_NODE),
                         booleanParam(name: 'WIPE_WORKSPACE', value: params.WIPE_WORKSPACE),
                         booleanParam(name: 'SKIP_INIT', value: params.SKIP_INIT),
                         booleanParam(name: 'DISABLE_SCCACHE', value: params.DISABLE_SCCACHE),

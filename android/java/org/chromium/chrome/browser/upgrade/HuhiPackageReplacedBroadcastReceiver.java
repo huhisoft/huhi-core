@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -23,11 +23,15 @@ public final class HuhiPackageReplacedBroadcastReceiver extends BroadcastReceive
     public void onReceive(final Context context, Intent intent) {
         if (!Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction())) return;
         HuhiUpgradeJobIntentService.maybePerformUpgradeTasks(context);
-        SharedPreferencesManager.getInstance().writeInt(HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT, 0);
         try {
-            NotificationIntent.fireNotificationIfNecessary(context);
+            SharedPreferencesManager.getInstance().writeInt(HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT, 0);
         } catch (Exception exc) {
-            // Just ignore if we could not send a notification
+            // Sometimes the pref is not registered yet in the app
         }
+        // try {
+        //     NotificationIntent.fireNotificationIfNecessary(context);
+        // } catch (Exception exc) {
+        //     // Just ignore if we could not send a notification
+        // }
     }
 }

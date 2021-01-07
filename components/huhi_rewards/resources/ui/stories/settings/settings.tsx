@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,30 +11,15 @@ import DonationsBox from './donationsBox'
 import Grant from './grant'
 import PageWallet, { Props as WalletProps } from './pageWallet'
 import { Grid, Column } from 'huhi-ui/components'
-import { DisabledBox, MainToggle, SettingsPage } from '../../components'
+import { MainToggle, SettingsPage } from '../../components'
 
 export interface Props {
   walletProps: WalletProps
 }
 
-interface State {
-  mainToggle: boolean
-}
-
-class Settings extends React.PureComponent<Props, State> {
-  constructor (props: Props) {
-    super(props)
-    this.state = {
-      mainToggle: true
-    }
-  }
-
+class Settings extends React.PureComponent<Props> {
   doNothing = () => {
     console.log('nothing')
-  }
-
-  onMainToggle = () => {
-    this.setState({ mainToggle: !this.state.mainToggle })
   }
 
   render () {
@@ -46,14 +31,7 @@ class Settings extends React.PureComponent<Props, State> {
             <MainToggle
               onTOSClick={this.doNothing}
               onPrivacyClick={this.doNothing}
-              onToggle={this.onMainToggle}
-              enabled={this.state.mainToggle}
             />
-            {
-              !this.state.mainToggle
-                ? <DisabledBox />
-                : null
-            }
             <AdsBox />
             <ContributeBox />
             <DonationsBox />

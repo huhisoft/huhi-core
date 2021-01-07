@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,7 +17,8 @@ import {
   StyledSettingTitleWrapper,
   StyledContentWrapper,
   StyledFlip,
-  StyledSettingsToggleContainer
+  StyledSettingsToggleContainer,
+  StyledTOS
 } from './style'
 import { Tooltip } from '../'
 import Toggle from 'huhi-ui/components/formControls/toggle/index'
@@ -41,6 +42,7 @@ export interface Props {
   type: Type
   onSettingsClick?: () => void
   settingsOpened?: boolean
+  tos?: React.ReactNode
 }
 
 /*
@@ -85,7 +87,6 @@ export default class Box extends React.PureComponent<Props, {}> {
                   {
                     settingsChild && ((toggle && checked) || !toggle) ?
                       <Tooltip
-                        id={'huhi-ads-tip'}
                         content={this.getSettingsTitle(title)}
                       >
                         <StyledSettingsIcon onClick={onSettingsClick}>
@@ -101,6 +102,11 @@ export default class Box extends React.PureComponent<Props, {}> {
                   }
                 </StyledSettingsToggleContainer>
               </StyledSettingTitleWrapper>
+              {
+                disabledContent && toggle ?
+                  <StyledTOS title={title} />
+                  : null
+              }
               <StyledDescription>
                 {description}
               </StyledDescription>

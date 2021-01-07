@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -22,6 +22,7 @@
 #include "bat/ads/ads_client.h"
 #include "bat/ads/database.h"
 #include "bat/ads/mojom.h"
+#include "bat/ledger/mojom_structs.h"
 #include "huhi/components/huhi_ads/browser/ads_service.h"
 #include "huhi/components/huhi_ads/browser/background_helper.h"
 #include "huhi/components/huhi_ads/browser/notification_helper.h"
@@ -76,15 +77,34 @@ class AdsServiceImpl : public AdsService,
   bool IsSupportedLocale() const override;
   bool IsNewlySupportedLocale() override;
 
+  bool IsEnabled() const override;
   void SetEnabled(
       const bool is_enabled) override;
 
-  void SetAllowAdConversionTracking(
-      const bool should_allow) override;
-
+  uint64_t GetAdsPerHour() const override;
   void SetAdsPerHour(
       const uint64_t ads_per_hour) override;
 
+  uint64_t GetAdsPerDay() const override;
+
+  bool ShouldAllowAdsSubdivisionTargeting() const override;
+  std::string GetAdsSubdivisionTargetingCode() const override;
+  void SetAdsSubdivisionTargetingCode(
+      const std::string& subdivision_targeting_code) override;
+  std::string
+  GetAutoDetectedAdsSubdivisionTargetingCode() const override;
+  void SetAutoDetectedAdsSubdivisionTargetingCode(
+      const std::string& subdivision_targeting_code) override;
+
+  void OnNewTabPageAdEvent(
+      const std::string& wallpaper_id,
+      const std::string& creative_instance_id,
+      const ads::NewTabPageAdEventType event_type) override;
+
+  void SetAllowConversionTracking(
+      const bool should_allow) override;
+
+  // AdsClient implementation
   void ChangeLocale(
       const std::string& locale) override;
 
@@ -109,8 +129,9 @@ class AdsServiceImpl : public AdsService,
 
   void OnWalletUpdated();
 
-  void UpdateAdRewards(
-      const bool should_reconcile) override;
+  void OnGetHuhiWallet(ledger::type::HuhiWalletPtr wallet);
+
+  void ReconcileAdRewards() override;
 
   void GetAdsHistory(
       const uint64_t from_timestamp,
@@ -151,27 +172,6 @@ class AdsServiceImpl : public AdsService,
 
   void ResetAllState(
       const bool should_shutdown) override;
-
-  // AdsClient implementation
-  bool IsEnabled() const override;
-
-  bool ShouldAllowAdConversionTracking() const override;
-
-  uint64_t GetAdsPerHour() override;
-  uint64_t GetAdsPerDay() override;
-
-  bool ShouldAllowAdsSubdivisionTargeting() const override;
-  void SetAllowAdsSubdivisionTargeting(
-      const bool should_allow) override;
-
-  std::string GetAdsSubdivisionTargetingCode() const override;
-  void SetAdsSubdivisionTargetingCode(
-      const std::string& subdivision_targeting_code) override;
-
-  std::string
-  GetAutomaticallyDetectedAdsSubdivisionTargetingCode() const override;
-  void SetAutomaticallyDetectedAdsSubdivisionTargetingCode(
-      const std::string& subdivision_targeting_code) override;
 
   // HuhiUserModelInstaller::Observer implementation
   void OnUserModelUpdated(
@@ -326,6 +326,8 @@ class AdsServiceImpl : public AdsService,
   void MigratePrefsVersion4To5();
   void MigratePrefsVersion5To6();
   void MigratePrefsVersion6To7();
+  void MigratePrefsVersion7To8();
+  void MigratePrefsVersion8To9();
   int GetPrefsVersion() const;
 
   bool IsUpgradingFromPreHuhiAdsBuild();
@@ -334,53 +336,12 @@ class AdsServiceImpl : public AdsService,
   void DisableAdsForUnsupportedCountryCodes(
       const std::string& country_code,
       const std::vector<std::string>& country_codes);
-  void MayBeShowOnboardingForSupportedCountryCode(
-      const std::string& country_code,
-      const std::vector<std::string>& country_codes);
   uint64_t MigrateTimestampToDoubleT(
       const uint64_t timestamp_in_seconds) const;
-
-  void MaybeShowOnboarding();
-  bool ShouldShowOnboarding();
-  void ShowOnboarding();
-  void RemoveOnboarding();
-  void MaybeStartRemoveOnboardingTimer();
-  bool ShouldRemoveOnboarding() const;
-  void StartRemoveOnboardingTimer();
 
   void MaybeShowMyFirstAdNotification();
   bool ShouldShowMyFirstAdNotification() const;
 
-  bool GetBooleanPref(
-      const std::string& path) const;
-  void SetBooleanPref(
-      const std::string& path,
-      const bool value);
-  int GetIntegerPref(
-      const std::string& path) const;
-  void SetIntegerPref(
-      const std::string& path,
-      const int value);
-  double GetDoublePref(
-      const std::string& path) const;
-  void SetDoublePref(
-      const std::string& path,
-      const double value);
-  std::string GetStringPref(
-      const std::string& path) const;
-  void SetStringPref(
-      const std::string& path,
-      const std::string& value);
-  int64_t GetInt64Pref(
-      const std::string& path) const;
-  void SetInt64Pref(
-      const std::string& path,
-      const int64_t value);
-  uint64_t GetUint64Pref(
-      const std::string& path) const;
-  void SetUint64Pref(
-      const std::string& path,
-      const uint64_t value);
   bool PrefExists(
       const std::string& path) const;
   void OnPrefsChanged(
@@ -396,13 +357,10 @@ class AdsServiceImpl : public AdsService,
   // AdsClient implementation
   bool IsNetworkConnectionAvailable() const override;
 
-  void SetIdleThreshold(
-      const int threshold) override;
-
   bool IsForeground() const override;
 
   void ShowNotification(
-      std::unique_ptr<ads::AdNotificationInfo> info) override;
+      const ads::AdNotificationInfo& ad_notification) override;
   bool ShouldShowNotifications() override;
   void StartNotificationTimeoutTimer(
       const std::string& uuid);
@@ -424,6 +382,12 @@ class AdsServiceImpl : public AdsService,
   void LoadUserModelForId(
       const std::string& id,
       ads::LoadCallback callback) override;
+
+  void RecordP2AEvent(
+      const std::string& name,
+      const ads::P2AEventType type,
+      const std::string& value) override;
+
   void Load(
       const std::string& name,
       ads::LoadCallback callback) override;
@@ -449,6 +413,51 @@ class AdsServiceImpl : public AdsService,
       const int verbose_level,
       const std::string& message) override;
 
+  bool GetBooleanPref(
+      const std::string& path) const override;
+
+  void SetBooleanPref(
+      const std::string& path,
+      const bool value) override;
+
+  int GetIntegerPref(
+      const std::string& path) const override;
+
+  void SetIntegerPref(
+      const std::string& path,
+      const int value) override;
+
+  double GetDoublePref(
+      const std::string& path) const override;
+
+  void SetDoublePref(
+      const std::string& path,
+      const double value) override;
+
+  std::string GetStringPref(
+      const std::string& path) const override;
+
+  void SetStringPref(
+      const std::string& path,
+      const std::string& value) override;
+
+  int64_t GetInt64Pref(
+      const std::string& path) const override;
+
+  void SetInt64Pref(
+      const std::string& path,
+      const int64_t value) override;
+
+  uint64_t GetUint64Pref(
+      const std::string& path) const override;
+
+  void SetUint64Pref(
+      const std::string& path,
+      const uint64_t value) override;
+
+  void ClearPref(
+      const std::string& path) override;
+
   // BackgroundHelper::Observer implementation
   void OnBackground() override;
   void OnForeground() override;
@@ -457,7 +466,7 @@ class AdsServiceImpl : public AdsService,
 
   Profile* profile_;  // NOT OWNED
 
-  bool is_initialized_;
+  bool is_initialized_ = false;
 
   bool is_upgrading_from_pre_huhi_ads_build_;
 

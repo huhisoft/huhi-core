@@ -1,10 +1,11 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "huhi/browser/tor/buildflags.h"
+#include "huhi/browser/tor/tor_profile_service_factory.h"
 #include "huhi/common/pref_names.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
@@ -14,10 +15,6 @@
 #include "components/policy/policy_constants.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/test/browser_test.h"
-
-#if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/tor/tor_profile_service.h"
-#endif
 
 using testing::_;
 using testing::Return;
@@ -60,8 +57,8 @@ class TorDisabledPolicyBrowserTest : public HuhiPolicyTest {
 
 IN_PROC_BROWSER_TEST_F(TorDisabledPolicyBrowserTest, TorDisabledPrefValueTest) {
   // When policy is set, explicit setting doesn't change its pref value.
-  tor::TorProfileService::SetTorDisabled(false);
-  EXPECT_TRUE(tor::TorProfileService::IsTorDisabled());
+  TorProfileServiceFactory::SetTorDisabled(false);
+  EXPECT_TRUE(TorProfileServiceFactory::IsTorDisabled());
 }
 
 class TorEnabledPolicyBrowserTest : public HuhiPolicyTest {
@@ -82,9 +79,9 @@ class TorEnabledPolicyBrowserTest : public HuhiPolicyTest {
 
 IN_PROC_BROWSER_TEST_F(TorEnabledPolicyBrowserTest, TorDisabledPrefValueTest) {
   // When policy is set, explicit setting doesn't change its pref value.
-  tor::TorProfileService::SetTorDisabled(true);
-  EXPECT_FALSE(tor::TorProfileService::IsTorDisabled());
+  TorProfileServiceFactory::SetTorDisabled(true);
+  EXPECT_FALSE(TorProfileServiceFactory::IsTorDisabled());
 }
-#endif  // ENABLE_TOR
+#endif
 
 }  // namespace policy

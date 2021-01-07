@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -63,8 +63,7 @@ bool BinanceJSONParser::GetTokensFromJSON(
 // }
 //
 bool BinanceJSONParser::GetAccountBalancesFromJSON(
-    const std::string& json,
-    std::map<std::string, std::vector<std::string>>* balances) {
+    const std::string& json, BinanceAccountBalances* balances) {
   if (!balances) {
     return false;
   }
@@ -301,7 +300,7 @@ bool BinanceJSONParser::GetConfirmStatusFromJSON(
 //   "success":true
 // }
 bool BinanceJSONParser::GetConvertAssetsFromJSON(const std::string& json,
-    std::map<std::string, std::vector<std::string>>* assets) {
+    BinanceConvertAsserts* assets) {
   if (!assets) {
     return false;
   }
@@ -321,15 +320,20 @@ bool BinanceJSONParser::GetConvertAssetsFromJSON(const std::string& json,
     for (const base::Value &val : data_arr->GetList()) {
       const base::Value* asset_code = val.FindKey("assetCode");
       if (asset_code && asset_code->is_string()) {
-        std::vector<std::string> sub_selectors;
+        std::vector<std::map<std::string, std::string>> sub_selectors;
         std::string asset_symbol = asset_code->GetString();
         const base::Value* selectors = val.FindKey("subSelector");
         if (selectors && selectors->is_list()) {
           for (const base::Value &selector : selectors->GetList()) {
+            std::map<std::string, std::string> sub_selector;
             const base::Value* sub_code = selector.FindKey("assetCode");
-            if (sub_code && sub_code->is_string()) {
-              sub_selectors.push_back(sub_code->GetString());
+            const base::Value* min_limit = selector.FindKey("perTimeMinLimit");
+            if (sub_code && sub_code->is_string() &&
+                min_limit && min_limit->is_string()) {
+              sub_selector.insert({"asset", sub_code->GetString()});
+              sub_selector.insert({"minAmount", min_limit->GetString()});
             }
+            sub_selectors.push_back(sub_selector);
           }
           assets->insert({asset_symbol, sub_selectors});
         }
@@ -397,7 +401,7 @@ bool BinanceJSONParser::RevokeTokenFromJSON(
 // }
 //
 bool BinanceJSONParser::GetCoinNetworksFromJSON(
-    const std::string& json, std::map<std::string, std::string>* networks) {
+    const std::string& json, BinanceCoinNetworks* networks) {
   if (!networks) {
     return false;
   }

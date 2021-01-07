@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -25,7 +25,7 @@ net::NetworkTrafficAnnotationTag GetNetworkTrafficAnnotation(
           sender: "Huhi Privacy-Preserving Product Analytics Uploader"
           description:
             "Report of anonymized usage statistics. For more info, see "
-            "https://huhisoft.com/P3A"
+            "https://hnq.vn/P3A"
           trigger:
             "Reports are automatically generated on startup and at intervals "
             "while Huhi is running."
@@ -47,7 +47,7 @@ net::NetworkTrafficAnnotationTag GetNetworkTrafficAnnotation(
         sender: "Huhi Privacy-Preserving Ad Analytics Uploader"
         description:
           "Report of anonymized usage statistics. For more info, see "
-          "https://huhisoft.com/P2A"
+          "https://hnq.vn/P2A"
         trigger:
           "Reports are automatically generated on startup and at intervals "
           "while Huhi is running."

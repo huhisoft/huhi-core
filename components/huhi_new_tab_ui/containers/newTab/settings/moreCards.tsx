@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -22,6 +22,7 @@ import binanceBanner from './assets/binance.png'
 import rewardsBanner from './assets/huhirewards.png'
 import geminiBanner from './assets/gemini.png'
 import bitcoinDotComBanner from './assets/bitcoin-dot-com.png'
+import cryptoDotComBanner from './assets/crypto-dot-com.png'
 import HideIcon from './assets/hide-icon'
 import AddIcon from '../../../components/default/addCard/assets/add-icon'
 
@@ -42,6 +43,9 @@ interface Props {
   showBitcoinDotCom: boolean
   bitcoinDotComSupported: boolean
   toggleShowBitcoinDotCom: () => void
+  toggleShowCryptoDotCom: () => void
+  showCryptoDotCom: boolean
+  cryptoDotComSupported: boolean
 }
 
 class MoreCardsSettings extends React.PureComponent<Props, {}> {
@@ -86,7 +90,10 @@ class MoreCardsSettings extends React.PureComponent<Props, {}> {
       showGemini,
       toggleShowBitcoinDotCom,
       showBitcoinDotCom,
-      bitcoinDotComSupported
+      bitcoinDotComSupported,
+      cryptoDotComSupported,
+      toggleShowCryptoDotCom,
+      showCryptoDotCom
     } = this.props
     return (
       <StyledWidgetSettings>
@@ -151,6 +158,22 @@ class MoreCardsSettings extends React.PureComponent<Props, {}> {
                 </StyledSettingsCopy>
               </StyledSettingsInfo>
               {this.renderToggleButton(showBitcoinDotCom, toggleShowBitcoinDotCom, false)}
+            </SettingsWidget>
+          : null
+        }
+        {
+          cryptoDotComSupported
+          ? <SettingsWidget>
+              <StyledBannerImage src={cryptoDotComBanner} />
+              <StyledSettingsInfo>
+                <StyledSettingsTitle>
+                  {'Crypto.com'}
+                </StyledSettingsTitle>
+                <StyledSettingsCopy>
+                  {getLocale('cryptoDotComWidgetDesc')}
+                </StyledSettingsCopy>
+              </StyledSettingsInfo>
+              {this.renderToggleButton(showCryptoDotCom, toggleShowCryptoDotCom, false)}
             </SettingsWidget>
           : null
         }

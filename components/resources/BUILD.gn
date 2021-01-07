@@ -1,9 +1,11 @@
 import("//huhi/components/huhi_perf_predictor/browser/buildflags/buildflags.gni")
 import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
-import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
-import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/buildflags/buildflags.gni")
+import("//huhi/components/crypto_dot_com/browser/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/buildflags/buildflags.gni")
 import("//huhi/components/moonpay/browser/buildflags/buildflags.gni")
 import("//huhi/components/speedreader/buildflags.gni")
+import("//huhi/components/tor/buildflags/buildflags.gni")
 import("//build/config/locales.gni")
 import("//extensions/buildflags/buildflags.gni")
 import("//tools/grit/grit_rule.gni")
@@ -43,6 +45,7 @@ grit("static_resources") {
     "enable_speedreader=$enable_speedreader",
     "ipfs_enabled=$ipfs_enabled",
     "moonpay_enabled=$moonpay_enabled",
+    "crypto_dot_com_enabled=$crypto_dot_com_enabled",
   ]
 
   grit_flags = [
@@ -103,6 +106,8 @@ grit("strings") {
     "enable_speedreader=$enable_speedreader",
     "ipfs_enabled=$ipfs_enabled",
     "moonpay_enabled=$moonpay_enabled",
+    "crypto_dot_com_enabled=$crypto_dot_com_enabled",
+    "enable_tor=$enable_tor",
   ]
 
   foreach(locale, locales_with_fake_bidi) {

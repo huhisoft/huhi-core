@@ -1,25 +1,33 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "huhi/browser/ui/webui/settings/huhi_appearance_handler.h"
 
 #include "base/bind.h"
+#include "base/metrics/histogram_macros.h"
 #include "base/strings/string_number_conversions.h"
+#include "huhi/browser/new_tab/new_tab_shows_options.h"
 #include "huhi/browser/ntp_background_images/view_counter_service_factory.h"
+#include "huhi/browser/profiles/profile_util.h"
 #include "huhi/browser/themes/huhi_dark_mode_utils.h"
+#include "huhi/common/pref_names.h"
 #include "huhi/components/binance/browser/buildflags/buildflags.h"
 #include "huhi/components/huhi_together/buildflags/buildflags.h"
+#include "huhi/components/crypto_dot_com/browser/buildflags/buildflags.h"
 #include "huhi/components/gemini/browser/buildflags/buildflags.h"
 #include "huhi/components/moonpay/browser/buildflags/buildflags.h"
-#include "huhi/components/ntp_widget_utils/browser/ntp_widget_utils_region.h"
-#include "huhi/common/pref_names.h"
 #include "huhi/components/ntp_background_images/browser/ntp_background_images_data.h"
 #include "huhi/components/ntp_background_images/browser/view_counter_service.h"
 #include "huhi/components/ntp_background_images/common/pref_names.h"
+#include "huhi/components/ntp_widget_utils/browser/ntp_widget_utils_region.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/search/instant_service.h"
+#include "chrome/browser/search/instant_service_factory.h"
+#include "chrome/common/pref_names.h"
+#include "components/prefs/pref_service.h"
 #include "content/public/browser/web_ui.h"
 
 #if BUILDFLAG(BINANCE_ENABLED)
@@ -36,6 +44,10 @@
 
 #if BUILDFLAG(MOONPAY_ENABLED)
 #include "huhi/components/moonpay/browser/regions.h"
+#endif
+
+#if BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
+#include "huhi/components/crypto_dot_com/browser/regions.h"
 #endif
 
 using ntp_background_images::ViewCounterServiceFactory;
@@ -68,14 +80,41 @@ HuhiAppearanceHandler::HuhiAppearanceHandler() {
 
 HuhiAppearanceHandler::~HuhiAppearanceHandler() = default;
 
+// TODO(simonhong): Use separate handler for NTP settings.
 void HuhiAppearanceHandler::RegisterMessages() {
   profile_ = Profile::FromWebUI(web_ui());
   profile_state_change_registrar_.Init(profile_->GetPrefs());
   profile_state_change_registrar_.Add(
       kNewTabPageSuperReferralThemesOption,
       base::BindRepeating(&HuhiAppearanceHandler::OnPreferenceChanged,
+                          base::Unretained(this)));
+  profile_state_change_registrar_.Add(
+      ntp_background_images::prefs::kNewTabPageShowBackgroundImage,
+      base::BindRepeating(
+          &HuhiAppearanceHandler::OnBackgroundPreferenceChanged,
+          base::Unretained(this)));
+  profile_state_change_registrar_.Add(
+      ntp_background_images::prefs::
+          kNewTabPageShowSponsoredImagesBackgroundImage,
+      base::BindRepeating(
+          &HuhiAppearanceHandler::OnBackgroundPreferenceChanged,
+          base::Unretained(this)));
+  profile_state_change_registrar_.Add(
+      kNewTabPageShowsOptions,
+      base::BindRepeating(&HuhiAppearanceHandler::OnPreferenceChanged,
       base::Unretained(this)));
-
+  profile_state_change_registrar_.Add(
+      prefs::kHomePageIsNewTabPage,
+      base::BindRepeating(&HuhiAppearanceHandler::OnPreferenceChanged,
+      base::Unretained(this)));
+  profile_state_change_registrar_.Add(
+      prefs::kHomePage,
+      base::BindRepeating(&HuhiAppearanceHandler::OnPreferenceChanged,
+      base::Unretained(this)));
+  profile_state_change_registrar_.Add(
+      prefs::kNtpShortcutsVisible,
+      base::BindRepeating(&HuhiAppearanceHandler::TopSitesVisibleChanged,
+                          base::Unretained(this)));
   web_ui()->RegisterMessageCallback(
       "setHuhiThemeType",
       base::BindRepeating(&HuhiAppearanceHandler::SetHuhiThemeType,
@@ -104,6 +143,29 @@ void HuhiAppearanceHandler::RegisterMessages() {
       "getIsBitcoinDotComSupported",
       base::BindRepeating(&HuhiAppearanceHandler::GetIsBitcoinDotComSupported,
                           base::Unretained(this)));
+  web_ui()->RegisterMessageCallback(
+      "toggleTopSitesVisible",
+      base::BindRepeating(&HuhiAppearanceHandler::ToggleTopSitesVisible,
+                          base::Unretained(this)));
+  web_ui()->RegisterMessageCallback(
+      "getShowTopSites",
+      base::BindRepeating(&HuhiAppearanceHandler::GetShowTopSites,
+                          base::Unretained(this)));
+  web_ui()->RegisterMessageCallback(
+      "getNewTabShowsOptionsList",
+      base::BindRepeating(&HuhiAppearanceHandler::GetNewTabShowsOptionsList,
+                          base::Unretained(this)));
+  web_ui()->RegisterMessageCallback(
+      "shouldShowNewTabDashboardSettings",
+      base::BindRepeating(
+          &HuhiAppearanceHandler::ShouldShowNewTabDashboardSettings,
+          base::Unretained(this)));
+#if BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
+  web_ui()->RegisterMessageCallback(
+      "getIsCryptoDotComSupported",
+      base::BindRepeating(&HuhiAppearanceHandler::GetIsCryptoDotComSupported,
+                          base::Unretained(this)));
+#endif
 }
 
 void HuhiAppearanceHandler::SetHuhiThemeType(const base::ListValue* args) {
@@ -162,7 +224,7 @@ void HuhiAppearanceHandler::GetIsHuhiTogetherSupported(
   bool is_supported = false;
 #else
   bool is_supported = ntp_widget_utils::IsRegionSupported(
-      profile_->GetPrefs(), huhi_together::supported_regions, true);
+      profile_->GetPrefs(), huhi_together::unsupported_regions, false);
 #endif
 
   ResolveJavascriptCallback(args->GetList()[0], base::Value(is_supported));
@@ -200,6 +262,22 @@ void HuhiAppearanceHandler::GetIsBitcoinDotComSupported(
   ResolveJavascriptCallback(args->GetList()[0], base::Value(is_supported));
 }
 
+void HuhiAppearanceHandler::GetIsCryptoDotComSupported(
+    const base::ListValue* args) {
+  CHECK_EQ(args->GetSize(), 1U);
+
+  AllowJavascript();
+
+#if !BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
+  bool is_supported = false;
+#else
+  bool is_supported = ntp_widget_utils::IsRegionSupported(
+      profile_->GetPrefs(), crypto_dot_com::unsupported_regions, false);
+#endif
+
+  ResolveJavascriptCallback(args->GetList()[0], base::Value(is_supported));
+}
+
 void HuhiAppearanceHandler::OnHuhiDarkModeChanged() {
   // GetHuhiThemeType() should be used because settings option displays all
   // available options including default.
@@ -210,10 +288,75 @@ void HuhiAppearanceHandler::OnHuhiDarkModeChanged() {
   }
 }
 
+void HuhiAppearanceHandler::OnBackgroundPreferenceChanged(
+    const std::string& pref_name) {
+  huhi::RecordSponsoredImagesEnabledP3A(profile_);
+}
+
 void HuhiAppearanceHandler::OnPreferenceChanged(const std::string& pref_name) {
-  DCHECK_EQ(kNewTabPageSuperReferralThemesOption, pref_name);
   if (IsJavascriptAllowed()) {
-    FireWebUIListener("super-referral-active-state-changed",
-                      base::Value(IsSuperReferralActive(profile_)));
+    if (pref_name == kNewTabPageSuperReferralThemesOption) {
+      FireWebUIListener("super-referral-active-state-changed",
+                        base::Value(IsSuperReferralActive(profile_)));
+      return;
+    }
+
+    if (pref_name == kNewTabPageShowsOptions ||
+        pref_name == prefs::kHomePage ||
+        pref_name == prefs::kHomePageIsNewTabPage) {
+      FireWebUIListener(
+          "show-new-tab-dashboard-settings-changed",
+          base::Value(huhi::ShouldNewTabShowDashboard(profile_)));
+      return;
+    }
   }
+}
+
+void HuhiAppearanceHandler::ToggleTopSitesVisible(
+    const base::ListValue* args) {
+  AllowJavascript();
+  InstantService* instant_service =
+      InstantServiceFactory::GetForProfile(profile_);
+  // true means to notify observers
+  instant_service->ToggleShortcutsVisibility(true);
+}
+
+void HuhiAppearanceHandler::GetShowTopSites(const base::ListValue* args) {
+  CHECK_EQ(args->GetSize(), 1U);
+  AllowJavascript();
+  InstantService* instant_service =
+      InstantServiceFactory::GetForProfile(profile_);
+  auto pair = instant_service->GetCurrentShortcutSettings();
+  bool top_sites_visible = pair.second;
+  ResolveJavascriptCallback(args->GetList()[0], base::Value(top_sites_visible));
+}
+
+void HuhiAppearanceHandler::TopSitesVisibleChanged(
+    const std::string& pref_name) {
+  InstantService* instant_service =
+      InstantServiceFactory::GetForProfile(profile_);
+  auto pair = instant_service->GetCurrentShortcutSettings();
+  bool top_sites_visible = pair.second;
+  if (IsJavascriptAllowed()) {
+    // This event will be picked up by huhi_new_tab_page.js
+    FireWebUIListener("ntp-shortcut-visibility-changed",
+        base::Value(top_sites_visible));
+  }
+}
+
+void HuhiAppearanceHandler::GetNewTabShowsOptionsList(
+    const base::ListValue* args) {
+  CHECK_EQ(args->GetSize(), 1U);
+  AllowJavascript();
+  ResolveJavascriptCallback(args->GetList()[0],
+                            huhi::GetNewTabShowsOptionsList(profile_));
+}
+
+void HuhiAppearanceHandler::ShouldShowNewTabDashboardSettings(
+    const base::ListValue* args) {
+  CHECK_EQ(args->GetSize(), 1U);
+  AllowJavascript();
+  ResolveJavascriptCallback(
+      args->GetList()[0],
+      base::Value(huhi::ShouldNewTabShowDashboard(profile_)));
 }

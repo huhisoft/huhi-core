@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -6,6 +6,7 @@ package org.chromium.chrome.browser;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -23,16 +24,21 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import org.chromium.base.ContextUtils;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.chrome.R;
 import org.chromium.chrome.browser.ChromeTabbedActivity;
 import org.chromium.chrome.browser.app.HuhiActivity;
+import org.chromium.chrome.browser.HuhiFeatureList;
+import org.chromium.chrome.browser.preferences.HuhiPreferenceKeys;
+import org.chromium.chrome.browser.preferences.SharedPreferencesManager;
 import org.chromium.chrome.browser.profiles.Profile;
+import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.tab.Tab;
 import org.chromium.chrome.browser.tab.TabImpl;
+import org.chromium.components.browser_ui.widget.RoundedIconGenerator;
 import org.chromium.chrome.browser.ui.favicon.IconType;
 import org.chromium.chrome.browser.ui.favicon.LargeIconBridge;
-import org.chromium.components.browser_ui.widget.RoundedIconGenerator;
 import org.chromium.url.GURL;
 
 import java.math.BigDecimal;
@@ -40,6 +46,16 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class HuhiRewardsHelper implements LargeIconBridge.LargeIconCallback{
+    private static final String PREF_HUHI_REWARDS_APP_OPEN_COUNT = "huhi_rewards_app_open_count";
+    private static final String PREF_SHOW_HUHI_REWARDS_ONBOARDING_MODAL =
+            "show_huhi_rewards_onboarding_modal";
+    private static final String PREF_SHOW_HUHI_REWARDS_ONBOARDING_ONCE =
+            "show_huhi_rewards_onboarding_once";
+    private static final String PREF_SHOW_ONBOARDING_MINI_MODAL = "show_onboarding_mini_modal";
+    private static final String PREF_NEXT_REWARDS_ONBOARDING_MODAL_DATE =
+            "next_rewards_onboarding_modal_date";
+    private static final String PREF_REWARDS_ENV_CHANGE = "rewards_env_change";
+    private static final String PREF_REWARDS_ONBOARDING_MODAL = "rewards_onboarding_modal";
     private static final int FAVICON_CIRCLE_MEASUREMENTS = 70; // dp
     private static final int FAVICON_TEXT_SIZE = 50; // dp
     private static final int FAVICON_FETCH_INTERVAL = 1000; // In milliseconds
@@ -58,6 +74,104 @@ public class HuhiRewardsHelper implements LargeIconBridge.LargeIconCallback{
     private static final float DP_PER_INCH_MDPI = 160f;
     private Tab mTab;
 
+    public static void setRewardsEnvChange(boolean isEnabled) {
+        SharedPreferences.Editor sharedPreferencesEditor =
+                ContextUtils.getAppSharedPreferences().edit();
+        sharedPreferencesEditor.putBoolean(PREF_REWARDS_ENV_CHANGE, isEnabled);
+        sharedPreferencesEditor.apply();
+    }
+
+    public static boolean hasRewardsEnvChange() {
+        return ContextUtils.getAppSharedPreferences().getBoolean(PREF_REWARDS_ENV_CHANGE, false);
+    }
+
+    public static long getNextRewardsOnboardingModalDate() {
+        return ContextUtils.getAppSharedPreferences().getLong(
+                PREF_NEXT_REWARDS_ONBOARDING_MODAL_DATE, 0);
+    }
+
+    public static void setNextRewardsOnboardingModalDate(long nextDate) {
+        SharedPreferences.Editor sharedPreferencesEditor =
+                ContextUtils.getAppSharedPreferences().edit();
+        sharedPreferencesEditor.putLong(PREF_NEXT_REWARDS_ONBOARDING_MODAL_DATE, nextDate);
+        sharedPreferencesEditor.apply();
+    }
+
+    public static void setRewardsOnboardingModalShown(boolean isShown) {
+        SharedPreferences.Editor sharedPreferencesEditor =
+                ContextUtils.getAppSharedPreferences().edit();
+        sharedPreferencesEditor.putBoolean(PREF_REWARDS_ONBOARDING_MODAL, isShown);
+        sharedPreferencesEditor.apply();
+    }
+
+    public static boolean hasRewardsOnboardingModalShown() {
+        return ContextUtils.getAppSharedPreferences().getBoolean(
+                PREF_REWARDS_ONBOARDING_MODAL, false);
+    }
+
+    public static boolean shouldShowRewardsOnboardingModalOnDay4() {
+        if (!hasRewardsOnboardingModalShown()
+                && (getNextRewardsOnboardingModalDate() > 0
+                        && System.currentTimeMillis() > getNextRewardsOnboardingModalDate())
+                && shouldShowHuhiRewardsOnboardingModal()
+                && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS)) {
+            if (HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(Profile.getLastUsedRegularProfile())) {
+                setRewardsOnboardingModalShown(true);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static int getHuhiRewardsAppOpenCount() {
+        return ContextUtils.getAppSharedPreferences().getInt(PREF_HUHI_REWARDS_APP_OPEN_COUNT, 0);
+    }
+
+    public static void updateHuhiRewardsAppOpenCount() {
+        SharedPreferences.Editor sharedPreferencesEditor = ContextUtils.getAppSharedPreferences().edit();
+        sharedPreferencesEditor.putInt(PREF_HUHI_REWARDS_APP_OPEN_COUNT,
+                SharedPreferencesManager.getInstance().readInt(
+                        HuhiPreferenceKeys.HUHI_APP_OPEN_COUNT));
+        sharedPreferencesEditor.apply();
+    }
+
+    public static boolean shouldShowMiniOnboardingModal() {
+        return ContextUtils.getAppSharedPreferences().getBoolean(
+                PREF_SHOW_ONBOARDING_MINI_MODAL, true);
+    }
+
+    public static void setShowMiniOnboardingModal(boolean enabled) {
+        SharedPreferences.Editor sharedPreferencesEditor =
+                ContextUtils.getAppSharedPreferences().edit();
+        sharedPreferencesEditor.putBoolean(PREF_SHOW_ONBOARDING_MINI_MODAL, enabled);
+        sharedPreferencesEditor.apply();
+    }
+
+    public static boolean shouldShowHuhiRewardsOnboardingModal() {
+        return ContextUtils.getAppSharedPreferences().getBoolean(
+                PREF_SHOW_HUHI_REWARDS_ONBOARDING_MODAL, true);
+    }
+
+    public static void setShowHuhiRewardsOnboardingModal(boolean enabled) {
+        SharedPreferences.Editor sharedPreferencesEditor =
+                ContextUtils.getAppSharedPreferences().edit();
+        sharedPreferencesEditor.putBoolean(PREF_SHOW_HUHI_REWARDS_ONBOARDING_MODAL, enabled);
+        sharedPreferencesEditor.apply();
+    }
+
+    public static boolean shouldShowHuhiRewardsOnboardingOnce() {
+        return ContextUtils.getAppSharedPreferences().getBoolean(
+                PREF_SHOW_HUHI_REWARDS_ONBOARDING_ONCE, false);
+    }
+
+    public static void setShowHuhiRewardsOnboardingOnce(boolean enabled) {
+        SharedPreferences.Editor sharedPreferencesEditor =
+                ContextUtils.getAppSharedPreferences().edit();
+        sharedPreferencesEditor.putBoolean(PREF_SHOW_HUHI_REWARDS_ONBOARDING_ONCE, enabled);
+        sharedPreferencesEditor.apply();
+    }
 
     public interface LargeIconReadyCallback {
         void onLargeIconReady(Bitmap icon);

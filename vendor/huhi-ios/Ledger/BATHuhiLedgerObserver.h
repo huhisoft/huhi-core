@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -21,9 +21,6 @@ NS_SWIFT_NAME(LedgerObserver)
 @property (nonatomic, readonly, weak) BATHuhiLedger *ledger;
 
 - (instancetype)initWithLedger:(BATHuhiLedger *)ledger;
-
-/// Rewards was enabled or disabled globally
-@property (nonatomic, copy, nullable) void (^rewardsEnabledStateUpdated)(BOOL enabled);
 
 /// Executed when the wallet is first initialized
 @property (nonatomic, copy, nullable) void (^walletInitalized)(BATResult result);

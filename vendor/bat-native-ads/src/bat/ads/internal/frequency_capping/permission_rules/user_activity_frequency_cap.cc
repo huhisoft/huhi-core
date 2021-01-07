@@ -1,9 +1,11 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "bat/ads/internal/frequency_capping/permission_rules/user_activity_frequency_cap.h"
+
+#include <stdint.h>
 
 #include "bat/ads/internal/ads_impl.h"
 #include "bat/ads/internal/frequency_capping/frequency_capping_util.h"
@@ -13,14 +15,14 @@
 namespace ads {
 
 UserActivityFrequencyCap::UserActivityFrequencyCap(
-    const AdsImpl* const ads)
+    AdsImpl* ads)
     : ads_(ads) {
   DCHECK(ads_);
 }
 
 UserActivityFrequencyCap::~UserActivityFrequencyCap() = default;
 
-bool UserActivityFrequencyCap::IsAllowed() {
+bool UserActivityFrequencyCap::ShouldAllow() {
   const UserActivityHistoryMap history =
       ads_->get_user_activity()->get_history();
   if (!DoesRespectCap(history)) {
@@ -44,8 +46,8 @@ bool UserActivityFrequencyCap::DoesRespectCap(
 
   double total_score = 0.0;
 
-  for (const auto& entry : history) {
-    const UserActivityHistory user_activity_history = entry.second;
+  for (const auto& item : history) {
+    const UserActivityHistory user_activity_history = item.second;
 
     const uint64_t occurrences = OccurrencesForRollingTimeConstraint(
         user_activity_history, time_constraint);
@@ -56,7 +58,7 @@ bool UserActivityFrequencyCap::DoesRespectCap(
 
     double score;
 
-    const UserActivityType user_activity_type = entry.first;
+    const UserActivityType user_activity_type = item.first;
 
     switch (user_activity_type) {
       case UserActivityType::kOpenedNewOrFocusedOnExistingTab:

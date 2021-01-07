@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -17,6 +17,7 @@
 #include "huhi/build/android/jni_headers/HuhiSyncWorker_jni.h"
 #include "huhi/components/huhi_sync/huhi_sync_prefs.h"
 #include "huhi/components/huhi_sync/crypto/crypto.h"
+#include "huhi/components/huhi_sync/profile_sync_service_helper.h"
 #include "huhi/components/sync/driver/huhi_sync_profile_sync_service.h"
 
 #include "chrome/browser/profiles/profile.h"
@@ -198,9 +199,9 @@ void HuhiSyncWorker::ResetSync(
 
   auto* device_info_sync_service =
       DeviceInfoSyncServiceFactory::GetForProfile(profile_);
-  sync_service->ResetSync(device_info_sync_service,
-                          base::BindOnce(&HuhiSyncWorker::OnResetDone,
-                                         weak_ptr_factory_.GetWeakPtr()));
+  huhi_sync::ResetSync(sync_service, device_info_sync_service,
+                        base::BindOnce(&HuhiSyncWorker::OnResetDone,
+                                       weak_ptr_factory_.GetWeakPtr()));
 }
 
 bool HuhiSyncWorker::GetSyncV1WasEnabled(

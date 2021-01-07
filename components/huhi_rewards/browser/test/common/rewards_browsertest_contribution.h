@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -38,7 +38,7 @@ class RewardsBrowserTestContribution
 
   void TipPublisher(
       const GURL& url,
-      rewards_browsertest_util::ContributionType type,
+      rewards_browsertest_util::TipAction tip_action,
       const int32_t number_of_contributions = 0,
       const int32_t selection = 0);
 
@@ -80,8 +80,9 @@ class RewardsBrowserTestContribution
   std::vector<ledger::type::Result> GetMultipleACStatus();
 
   void SetUpUpholdWallet(
-    const double balance,
-    const ledger::type::WalletStatus status =
+      huhi_rewards::RewardsServiceImpl* rewards_service,
+      const double balance,
+      const ledger::type::WalletStatus status =
         ledger::type::WalletStatus::VERIFIED);
 
   std::vector<ledger::type::Result> GetMultipleTipStatus();
@@ -145,6 +146,7 @@ class RewardsBrowserTestContribution
 
   Browser* browser_;  // NOT OWNED
   huhi_rewards::RewardsServiceImpl* rewards_service_;  // NOT OWNED
+  std::unique_ptr<RewardsBrowserTestContextHelper> context_helper_;
 };
 
 }  // namespace rewards_browsertest

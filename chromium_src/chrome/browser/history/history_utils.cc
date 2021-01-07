@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,10 +8,11 @@
 #undef CanAddURLToHistory
 
 #include "huhi/common/url_constants.h"
+#include "huhi/components/huhi_wallet/buildflags/buildflags.h"
 #include "extensions/buildflags/buildflags.h"
 
-#if BUILDFLAG(ENABLE_EXTENSIONS)
-#include "extensions/common/constants.h"
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
+#include "huhi/components/huhi_wallet/huhi_wallet_constants.h"
 #endif
 
 bool CanAddURLToHistory(const GURL& url) {
@@ -19,14 +20,12 @@ bool CanAddURLToHistory(const GURL& url) {
     return false;
 
   bool is_huhi_scheme = url.SchemeIs(content::kHuhiUIScheme);
-
-#if !BUILDFLAG(ENABLE_EXTENSIONS)
-  return !is_huhi_scheme;
-#else
+#if BUILDFLAG(HUHI_WALLET_ENABLED)
   bool is_wallet_host =
-    url.SchemeIs(kChromeExtensionScheme) &&
-    url.host() == ethereum_remote_client_extension_id;
-
+      url.SchemeIs(kChromeExtensionScheme) &&
+      url.host() == ethereum_remote_client_extension_id;
   return !is_huhi_scheme && !is_wallet_host;
+#else
+  return !is_huhi_scheme;
 #endif
 }

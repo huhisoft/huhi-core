@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 
 import org.chromium.base.ContextUtils;
 import org.chromium.chrome.R;
@@ -34,6 +35,11 @@ public class HuhiPrivacySettings extends PrivacySettings {
     private static final String PREF_AUTOCOMPLETE_TOP_SITES = "autocomplete_top_sites";
     private static final String PREF_AUTOCOMPLETE_HUHI_SUGGESTED_SITES = "autocomplete_huhi_suggested_sites";
     private static final String PREF_CLEAR_BROWSING_DATA = "clear_browsing_data";
+    private static final String PREF_SOCIAL_BLOCKING = "huhi_shields_social_blocking";
+    private static final String PREF_SOCIAL_BLOCKING_GOOGLE = "social_blocking_google";
+    private static final String PREF_SOCIAL_BLOCKING_FACEBOOK = "social_blocking_facebook";
+    private static final String PREF_SOCIAL_BLOCKING_TWITTER = "social_blocking_twitter";
+    private static final String PREF_SOCIAL_BLOCKING_LINKEDIN = "social_blocking_linkedin";
 
     private final PrefService mPrefServiceBridge = UserPrefs.get(Profile.getLastUsedRegularProfile());
     private final ChromeManagedPreferenceDelegate mManagedPreferenceDelegate =
@@ -45,6 +51,11 @@ public class HuhiPrivacySettings extends PrivacySettings {
     private ChromeBaseCheckBoxPreference mAdBlockPref;
     private ChromeBaseCheckBoxPreference mFingerprintingProtectionPref;
     private ChromeBaseCheckBoxPreference mCloseTabsOnExitPref;
+    private PreferenceCategory mSocialBlockingCategory;
+    private ChromeSwitchPreference mSocialBlockingGoogle;
+    private ChromeSwitchPreference mSocialBlockingFacebook;
+    private ChromeSwitchPreference mSocialBlockingTwitter;
+    private ChromeSwitchPreference mSocialBlockingLinkedin;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -76,6 +87,21 @@ public class HuhiPrivacySettings extends PrivacySettings {
         mAutocompleteHuhiSuggestedSites = (ChromeSwitchPreference) findPreference(PREF_AUTOCOMPLETE_HUHI_SUGGESTED_SITES);
         mAutocompleteHuhiSuggestedSites.setOnPreferenceChangeListener(this);
 
+        mSocialBlockingCategory = (PreferenceCategory) findPreference(PREF_SOCIAL_BLOCKING);
+        mSocialBlockingCategory.setOnPreferenceChangeListener(this);
+
+        mSocialBlockingGoogle = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_GOOGLE);
+        mSocialBlockingGoogle.setOnPreferenceChangeListener(this);
+
+        mSocialBlockingFacebook = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_FACEBOOK);
+        mSocialBlockingFacebook.setOnPreferenceChangeListener(this);
+
+        mSocialBlockingTwitter = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_TWITTER);
+        mSocialBlockingTwitter.setOnPreferenceChangeListener(this);
+
+        mSocialBlockingLinkedin = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_LINKEDIN);
+        mSocialBlockingLinkedin.setOnPreferenceChangeListener(this);
+
         updatePreferences();
     }
 
@@ -103,6 +129,18 @@ public class HuhiPrivacySettings extends PrivacySettings {
         } else if (PREF_AUTOCOMPLETE_HUHI_SUGGESTED_SITES.equals(key)) {
             UserPrefs.get(Profile.getLastUsedRegularProfile()).setBoolean(HuhiPref.HUHI_SUGGESTED_SITE_SUGGESTIONS_ENABLED,
                     (boolean) newValue);
+        } else if (PREF_SOCIAL_BLOCKING_GOOGLE.equals(key)) {
+            HuhiPrefServiceBridge.getInstance().setThirdPartyGoogleLoginEnabled(
+                    (boolean) newValue);
+        } else if (PREF_SOCIAL_BLOCKING_FACEBOOK.equals(key)) {
+            HuhiPrefServiceBridge.getInstance().setThirdPartyFacebookEmbedEnabled(
+                    (boolean) newValue);
+        } else if (PREF_SOCIAL_BLOCKING_TWITTER.equals(key)) {
+            HuhiPrefServiceBridge.getInstance().setThirdPartyTwitterEmbedEnabled(
+                    (boolean) newValue);
+        } else if (PREF_SOCIAL_BLOCKING_LINKEDIN.equals(key)) {
+            HuhiPrefServiceBridge.getInstance().setThirdPartyLinkedinEmbedEnabled(
+                    (boolean) newValue);
         }
 
         return true;
@@ -129,6 +167,7 @@ public class HuhiPrivacySettings extends PrivacySettings {
         mAutocompleteHuhiSuggestedSites.setChecked(
                 UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.HUHI_SUGGESTED_SITE_SUGGESTIONS_ENABLED));
         mAutocompleteHuhiSuggestedSites.setOrder(++order);
+        mSocialBlockingCategory.setOrder(++order);
     }
 
     private void removePreferenceIfPresent(String key) {

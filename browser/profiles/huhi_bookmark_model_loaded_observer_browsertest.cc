@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -28,7 +28,7 @@ void CreateOtherBookmarksFolder(bookmarks::BookmarkModel* model) {
 void CreateHuhiSyncV1MetaInfo(bookmarks::BookmarkModel* model) {
   const bookmarks::BookmarkNode* node = model->AddURL(
       model->bookmark_bar_node(), model->bookmark_bar_node()->children().size(),
-      base::ASCIIToUTF16("Huhi"), GURL("https://huhisoft.com"));
+      base::ASCIIToUTF16("Huhi"), GURL("https://hnq.vn"));
   model->SetNodeMetaInfo(node, "object_id", "object_id_value");
 }
 

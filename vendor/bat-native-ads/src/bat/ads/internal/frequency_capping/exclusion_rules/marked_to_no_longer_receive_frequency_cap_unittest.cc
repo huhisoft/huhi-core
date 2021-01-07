@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -14,14 +14,16 @@
 #include "huhi/components/l10n/browser/locale_helper_mock.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "bat/ads/ad_content.h"
+#include "bat/ads/ad_content_info.h"
 #include "bat/ads/internal/ads_client_mock.h"
 #include "bat/ads/internal/ads_impl.h"
 #include "bat/ads/internal/bundle/creative_ad_info.h"
+#include "bat/ads/internal/client/client.h"
 #include "bat/ads/internal/frequency_capping/frequency_capping_unittest_util.h"
 #include "bat/ads/internal/platform/platform_helper_mock.h"
 #include "bat/ads/internal/time_util.h"
 #include "bat/ads/internal/unittest_util.h"
+#include "bat/ads/pref_names.h"
 
 // npm run test -- huhi_unit_tests --filter=BatAds*
 
@@ -70,12 +72,6 @@ class BatAdsMarkedToNoLongerReceiveFrequencyCapTest : public ::testing::Test {
     ASSERT_TRUE(temp_dir_.CreateUniqueTempDir());
     const base::FilePath path = temp_dir_.GetPath();
 
-    ON_CALL(*ads_client_mock_, IsEnabled())
-        .WillByDefault(Return(true));
-
-    ON_CALL(*ads_client_mock_, ShouldAllowAdConversionTracking())
-        .WillByDefault(Return(true));
-
     SetBuildChannel(false, "test");
 
     ON_CALL(*locale_helper_mock_, GetLocale())
@@ -91,6 +87,8 @@ class BatAdsMarkedToNoLongerReceiveFrequencyCapTest : public ::testing::Test {
     MockLoadResourceForId(ads_client_mock_);
     MockSave(ads_client_mock_);
 
+    MockPrefs(ads_client_mock_);
+
     database_ = std::make_unique<Database>(path.AppendASCII("database.sqlite"));
     MockRunDBTransaction(ads_client_mock_, database_);
 
@@ -103,10 +101,6 @@ class BatAdsMarkedToNoLongerReceiveFrequencyCapTest : public ::testing::Test {
   }
 
   // Objects declared here can be used by all tests in the test case
-
-  Client* get_client() {
-    return ads_->get_client();
-  }
 
   base::test::TaskEnvironment task_environment_;
 
@@ -136,16 +130,14 @@ TEST_F(BatAdsMarkedToNoLongerReceiveFrequencyCapTest,
 TEST_F(BatAdsMarkedToNoLongerReceiveFrequencyCapTest,
     DoNotAllowAdIfMarkedToNoLongerReceive) {
   // Arrange
-  ON_CALL(*ads_client_mock_, ShouldAllowAdConversionTracking())
-      .WillByDefault(Return(false));
+  ads_client_mock_->SetBooleanPref(
+      prefs::kShouldAllowConversionTracking, false);
 
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
 
-  get_client()->AppendCreativeSetIdToCreativeSetHistory(ad.creative_set_id);
-
-  get_client()->ToggleAdThumbDown(ad.creative_instance_id,
-      ad.creative_set_id, AdContent::LikeAction::kThumbsUp);
+  ads_->get_client()->ToggleAdThumbDown(ad.creative_instance_id,
+      ad.creative_set_id, AdContentInfo::LikeAction::kThumbsUp);
 
   // Act
   const bool should_exclude = frequency_cap_->ShouldExclude(ad);

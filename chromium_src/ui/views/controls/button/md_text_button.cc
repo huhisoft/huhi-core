@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -33,9 +33,14 @@ class HuhiTextButtonHighlightPathGenerator
 namespace views {
 
 MdTextButton::MdTextButton(ButtonListener* listener,
-                                 const base::string16& text,
-                                 int button_context)
-    : MdTextButtonBase(listener, text, button_context) {
+                           const base::string16& text,
+                           int button_context)
+    : MdTextButton(PressedCallback(listener, this), text, button_context) {}
+
+MdTextButton::MdTextButton(PressedCallback callback,
+                           const base::string16& text,
+                           int button_context)
+    : MdTextButtonBase(std::move(callback), text, button_context) {
   SetCornerRadius(100);
   views::HighlightPathGenerator::Install(
       this, std::make_unique<HuhiTextButtonHighlightPathGenerator>());
@@ -53,7 +58,7 @@ SkPath MdTextButton::GetHighlightPath() const {
 
 void MdTextButton::OnPaintBackground(gfx::Canvas* canvas) {
   // Set huhi-style hover colors
-  LabelButton::OnPaintBackground(canvas);
+  MdTextButtonBase::OnPaintBackground(canvas);
   if (GetProminent() && (
         hover_animation().is_animating() || GetState() == STATE_HOVERED)) {
     constexpr SkColor normal_color = kHuhiBrandColor;

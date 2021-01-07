@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -37,4 +37,7 @@ const char kHuhiIpfsDescription[] =
 const char kHuhiSuperReferralName[] = "Enable Huhi Super Referral";
 const char kHuhiSuperReferralDescription[] =
     "Use custom theme for Huhi Super Referral";
+const char kHuhiEphemeralStorageName[] = "Enable Ephemeral Storage";
+const char kHuhiEphemeralStorageDescription[] =
+    "Use ephemeral storage for third-party frames";
 }  // namespace flag_descriptions

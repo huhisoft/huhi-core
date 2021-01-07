@@ -1,9 +1,0 @@
-import("//build/buildflag_header.gni")
-import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
-
-buildflag_header("buildflags") {
-  header = "buildflags.h"
-  flags = [
-    "IPFS_ENABLED=$ipfs_enabled",
-  ]
-}

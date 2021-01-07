@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -95,4 +95,46 @@ TEST_F(WeeklyStorageTest, InfrequentUsage) {
   clock_->Advance(base::TimeDelta::FromDays(6));
   state_->AddDelta(saving);
   EXPECT_EQ(state_->GetWeeklySum(), 2 * saving);
+}
+
+TEST_F(WeeklyStorageTest, GetHighestValueInWeek) {
+  uint64_t lowest_value = 20;
+  uint64_t low_value = 50;
+  uint64_t high_value = 75;
+  state_->AddDelta(low_value);
+  clock_->Advance(base::TimeDelta::FromDays(1));
+  state_->AddDelta(high_value);
+  clock_->Advance(base::TimeDelta::FromDays(1));
+  state_->AddDelta(lowest_value);
+  EXPECT_EQ(state_->GetHighestValueInWeek(), high_value);
+  clock_->Advance(base::TimeDelta::FromDays(1));
+  EXPECT_EQ(state_->GetHighestValueInWeek(), high_value);
+}
+
+TEST_F(WeeklyStorageTest, RecordsHigherValueForToday) {
+  uint64_t low_value = 50;
+  uint64_t high_value = 75;
+  state_->ReplaceTodaysValueIfGreater(low_value);
+  EXPECT_EQ(state_->GetHighestValueInWeek(), low_value);
+  // Replace with higher value
+  state_->ReplaceTodaysValueIfGreater(high_value);
+  EXPECT_EQ(state_->GetHighestValueInWeek(), high_value);
+  // Sanity check value was replaced and not added.
+  EXPECT_EQ(state_->GetWeeklySum(), high_value);
+  // Should not replace with lower value
+  state_->ReplaceTodaysValueIfGreater(low_value);
+  EXPECT_EQ(state_->GetHighestValueInWeek(), high_value);
+}
+
+TEST_F(WeeklyStorageTest, GetsHighestValueInWeekFromReplacement) {
+  // Add a low value a couple days after a high value,
+  // should return highest day value.
+  uint64_t low_value = 50;
+  uint64_t high_value = 75;
+  state_->ReplaceTodaysValueIfGreater(high_value);
+  clock_->Advance(base::TimeDelta::FromDays(2));
+  state_->ReplaceTodaysValueIfGreater(low_value);
+  EXPECT_EQ(state_->GetHighestValueInWeek(), high_value);
+  // Sanity check disparate days were not replaced
+  EXPECT_EQ(state_->GetWeeklySum(), high_value + low_value);
 }

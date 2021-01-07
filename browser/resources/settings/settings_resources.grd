@@ -79,6 +79,11 @@
           compress="false"
           preprocess="true"
           type="BINDATA" />
+      <include name="IDR_SETTINGS_HUHI_OVERRIDES_PASSWORDS_SECTION_JS"
+          file="huhi_overrides/passwords_section.js"
+          compress="false"
+          preprocess="true"
+          type="BINDATA" />
       <include name="IDR_SETTINGS_HUHI_OVERRIDES_PAYMENTS_SECTION_JS"
           file="huhi_overrides/payments_section.js"
           compress="false"

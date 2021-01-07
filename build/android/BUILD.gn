@@ -6,7 +6,8 @@ action("sign_app") {
   _apksigner = "$android_sdk_build_tools/apksigner"
   _zipalign = "$android_sdk_build_tools/zipalign"
 
-  deps = []
+  deps = [ "//huhi/app/android:create_dist_zips" ]
+
   target_sign_app_path = ""
   if (target_cpu == "arm64" || target_cpu == "x64" ||
       target_apk_base == "mono") {
@@ -23,7 +24,7 @@ action("sign_app") {
     rebase_path("$huhi_android_keystore_path", root_out_dir),
     "$huhi_android_keystore_password",
     "$huhi_android_key_password",
-    "$huhi_android_keystore_name"
+    "$huhi_android_keystore_name",
   ]
 }
 
@@ -33,19 +34,13 @@ copy("huhi") {
   sources = []
   if (target_cpu == "arm64" || target_cpu == "x64" ||
       target_apk_base == "mono") {
-    deps += ["//chrome/android:monochrome_public_apk"]
-    sources += [
-      "$root_out_dir/apks/MonochromePublic.apk"
-    ]
+    deps += [ "//chrome/android:monochrome_public_apk" ]
+    sources += [ "$root_out_dir/apks/MonochromePublic.apk" ]
   } else {
-    deps += ["//chrome/android:chrome_public_apk"]
-    sources += [
-      "$root_out_dir/apks/ChromePublic.apk"
-    ]
+    deps += [ "//chrome/android:chrome_public_apk" ]
+    sources += [ "$root_out_dir/apks/ChromePublic.apk" ]
   }
-  outputs = [
-    huhi_apk_output
-  ]
+  outputs = [ huhi_apk_output ]
 }
 
 java_strings_grd("android_huhi_strings_grd") {
@@ -145,11 +140,12 @@ generate_jni("jni_headers") {
     "//huhi/android/java/org/chromium/chrome/browser/ntp_background_images/NTPBackgroundImagesBridge.java",
     "//huhi/android/java/org/chromium/chrome/browser/preferences/HuhiPrefServiceBridge.java",
     "//huhi/android/java/org/chromium/chrome/browser/preferences/website/HuhiShieldsContentSettings.java",
-    "//huhi/android/java/org/chromium/chrome/browser/signin/HuhiSigninManager.java",
     "//huhi/android/java/org/chromium/chrome/browser/settings/developer/HuhiQAPreferences.java",
+    "//huhi/android/java/org/chromium/chrome/browser/signin/HuhiSigninManager.java",
+    "//huhi/android/java/org/chromium/chrome/browser/widget/crypto/binance/BinanceNativeWorker.java",
   ]
 
-  if (enable_huhi_sync ) {
+  if (enable_huhi_sync) {
     sources += [
       "//huhi/android/java/org/chromium/chrome/browser/HuhiSyncWorker.java",
       "//huhi/android/java/org/chromium/chrome/browser/sync/HuhiSyncDevices.java",

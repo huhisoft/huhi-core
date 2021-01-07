@@ -1,5 +1,5 @@
-/** Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-  * This Source Code Form is subject to the terms of the Huhi Software
+/** Copyright (c) 2020 The Huhi Authors. All rights reserved.
+  * This Source Code Form is subject to the terms of the Mozilla Public
   * License, v. 2.0. If a copy of the MPL was not distributed with this file,
   * You can obtain one at http://mozilla.org/MPL/2.0/.
   */
@@ -24,7 +24,6 @@ class HuhiRewardsExternalWallet {
     public static final String ADDRESS = "address";
     public static final String STATUS = "status";
     public static final String TOKEN = "token";
-    public static final String TYPE = "type";
     public static final String USER_NAME = "user_name";
     public static final String VERIFY_URL = "verify_url";
     public static final String WITHDRAW_URL = "withdraw_url";
@@ -64,7 +63,6 @@ class HuhiRewardsExternalWallet {
         mAddress = jsonObj.getString(ADDRESS);
         mStatus = jsonObj.getInt(STATUS);
         mToken = jsonObj.getString(TOKEN);
-        mType = jsonObj.getString(TYPE);
         mUser_name = jsonObj.getString(USER_NAME);
         mVerify_url = jsonObj.getString(VERIFY_URL);
         mWithdraw_url = jsonObj.getString(WITHDRAW_URL);
@@ -79,7 +77,6 @@ class HuhiRewardsExternalWallet {
                 ", mAddress='" + mAddress + '\'' +
                 ", mStatus=" + mStatus +
                 ", mToken='" + mToken + '\'' +
-                ", mType='" + mType + '\'' +
                 ", mUser_name='" + mUser_name + '\'' +
                 ", mVerify_url='" + mVerify_url + '\'' +
                 ", mWithdraw_url='" + mWithdraw_url + '\'' +

@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+ * Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  */
@@ -67,8 +67,9 @@ public class OnboardingPrefManager {
     private static final String DUCKDUCKGOLITE = "DuckDuckGo Lite";
     private static final String QWANT = "Qwant";
     private static final String BING = "Bing";
-    private static final String STARTPAGE = "StartPage";
+    private static final String STARTPAGE = "Startpage";
     private static final String YAHOO = "Yahoo";
+    public static final String YANDEX = "Yandex";
 
     private OnboardingPrefManager() {
         mSharedPreferences = ContextUtils.getAppSharedPreferences();
@@ -191,8 +192,8 @@ public class OnboardingPrefManager {
     public boolean showOnboardingForSkip(Context context) {
         boolean shouldShow = PackageUtils.isFirstInstall(context)
                              && !hasOnboardingShownForSkip()
-                             && (ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS) && !UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(HuhiPref.ENABLED))
                              && !HuhiAdsNativeHelper.nativeIsHuhiAdsEnabled(Profile.getLastUsedRegularProfile())
+                             && ChromeFeatureList.isEnabled(HuhiFeatureList.HUHI_REWARDS)
                              && (getNextOnboardingDate() > 0 && System.currentTimeMillis() > getNextOnboardingDate());
         return shouldShow;
     }
@@ -250,6 +251,7 @@ public class OnboardingPrefManager {
             put(QWANT, SearchEngineEnum.QWANT);
             put(BING, SearchEngineEnum.BING);
             put(STARTPAGE, SearchEngineEnum.STARTPAGE);
+            put(YANDEX, SearchEngineEnum.YANDEX);
         }
     };
 

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,18 +11,17 @@
 #include "base/logging.h"
 #include "huhi/components/huhi_sync/crypto/crypto.h"
 #include "huhi/components/sync/driver/huhi_sync_auth_manager.h"
+#include "huhi/components/sync/driver/profile_sync_service_delegate.h"
 #include "components/prefs/pref_service.h"
-#include "components/sync_device_info/device_info_sync_service.h"
-#include "components/sync_device_info/device_info_tracker.h"
-#include "components/sync_device_info/local_device_info_provider.h"
 
 namespace syncer {
 
-class DeviceInfo;
-
-HuhiProfileSyncService::HuhiProfileSyncService(InitParams init_params)
+HuhiProfileSyncService::HuhiProfileSyncService(
+    InitParams init_params,
+    std::unique_ptr<ProfileSyncServiceDelegate> profile_service_delegate)
     : ProfileSyncService(std::move(init_params)),
       huhi_sync_prefs_(sync_client_->GetPrefService()),
+      profile_service_delegate_(std::move(profile_service_delegate)),
       weak_ptr_factory_(this) {
   huhi_sync_prefs_change_registrar_.Init(sync_client_->GetPrefService());
   huhi_sync_prefs_change_registrar_.Add(
@@ -63,25 +62,13 @@ bool HuhiProfileSyncService::SetSyncCode(const std::string& sync_code) {
   return true;
 }
 
-void HuhiProfileSyncService::ResetSync(
-    DeviceInfoSyncService* device_info_service, base::OnceClosure cb) {
-  DCHECK(device_info_service);
-  // Do not send self deleted commit if engine is not up and running
-  if (GetTransportState() != SyncService::TransportState::ACTIVE) {
-    std::move(cb).Run();
-    return;
-  }
-  syncer::DeviceInfoTracker* tracker =
-    device_info_service->GetDeviceInfoTracker();
-  DCHECK(tracker);
-
-  const syncer::DeviceInfo* local_device_info =
-      device_info_service->GetLocalDeviceInfoProvider()->GetLocalDeviceInfo();
-
-  tracker->DeleteDeviceInfo(
-      local_device_info,
-      base::BindOnce(&HuhiProfileSyncService::OnSelfDeleted,
-                     weak_ptr_factory_.GetWeakPtr(), std::move(cb)));
+void HuhiProfileSyncService::OnSelfDeviceInfoDeleted(base::OnceClosure cb) {
+  // This function will follow normal reset process and set SyncRequested to
+  // false
+  StopAndClear();
+  huhi_sync_prefs_.Clear();
+  // Sync prefs will be clear in ProfileSyncService::StopImpl
+  std::move(cb).Run();
 }
 
 HuhiSyncAuthManager* HuhiProfileSyncService::GetHuhiSyncAuthManager() {
@@ -105,13 +92,12 @@ void HuhiProfileSyncService::OnHuhiSyncPrefsChanged(const std::string& path) {
   }
 }
 
-void HuhiProfileSyncService::OnSelfDeleted(base::OnceClosure cb) {
-  // This function will follow normal reset process and set SyncRequested to
-  // false
-  StopAndClear();
-  huhi_sync_prefs_.Clear();
-  // Sync prefs will be clear in ProfileSyncService::StopImpl
-  std::move(cb).Run();
+void HuhiProfileSyncService::SuspendDeviceObserverForOwnReset() {
+  profile_service_delegate_->SuspendDeviceObserverForOwnReset();
+}
+
+void HuhiProfileSyncService::ResumeDeviceObserver() {
+  profile_service_delegate_->ResumeDeviceObserver();
 }
 
 }  // namespace syncer

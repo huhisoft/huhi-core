@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "huhi/browser/huhi_wallet/huhi_wallet_delegate_impl.h"
-#include "huhi/components/huhi_wallet/browser/huhi_wallet_service.h"
+#include "huhi/components/huhi_wallet/huhi_wallet_service.h"
 #include "chrome/browser/profiles/incognito_helpers.h"
 #include "chrome/browser/profiles/profile.h"
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
@@ -37,16 +37,15 @@ HuhiWalletServiceFactory::HuhiWalletServiceFactory()
       extensions::ExtensionsBrowserClient::Get()->GetExtensionSystemFactory());
 }
 
-HuhiWalletServiceFactory::~HuhiWalletServiceFactory() {
-}
+HuhiWalletServiceFactory::~HuhiWalletServiceFactory() {}
 
 KeyedService* HuhiWalletServiceFactory::BuildServiceInstanceFor(
     content::BrowserContext* context) const {
   return new HuhiWalletService(Profile::FromBrowserContext(context),
-      std::make_unique<HuhiWalletDelegateImpl>());
+                                std::make_unique<HuhiWalletDelegateImpl>());
 }
 
 content::BrowserContext* HuhiWalletServiceFactory::GetBrowserContextToUse(
-      content::BrowserContext* context) const {
+    content::BrowserContext* context) const {
   return chrome::GetBrowserContextRedirectedInIncognito(context);
 }

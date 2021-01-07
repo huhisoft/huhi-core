@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -89,7 +89,6 @@ void AttestationIOS::Start(
     const std::string& payload,
     StartCallback callback) {
   const std::string key = ParseStartPayload(payload);
-  const std::string payment_id = ledger_->state()->GetPaymentId();
 
   if (key.empty()) {
     BLOG(0, "Key is empty");

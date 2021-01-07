@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,13 +9,10 @@ const keyName = 'rewards-data'
 
 export const defaultState: Rewards.State = {
   createdTimestamp: null,
-  enabledMain: false,
   enabledAds: false,
   enabledAdsMigrated: false,
   enabledContribute: false,
   firstLoad: null,
-  walletCreated: false,
-  walletCreateFailed: false,
   contributionMinTime: 8,
   contributionMinVisits: 1,
   contributionMonthly: 0,
@@ -23,17 +20,15 @@ export const defaultState: Rewards.State = {
   contributionVideos: true,
   donationAbilityYT: true,
   donationAbilityTwitter: true,
-  recoveryKey: '',
   reconcileStamp: 0,
   ui: {
     emptyWallet: true,
     modalBackup: false,
     modalRedirect: 'hide',
     paymentIdCheck: true,
-    walletCorrupted: false,
     walletRecoveryStatus: null,
     walletServerProblem: false,
-    onBoardingDisplayed: false,
+    verifyOnboardingDisplayed: false,
     promosDismissed: {}
   },
   autoContributeList: [],
@@ -79,7 +74,10 @@ export const defaultState: Rewards.State = {
     autoContributeChoices: [],
     rate: 0
   },
-  initializing: true
+  initializing: true,
+  paymentId: '',
+  recoveryKey: '',
+  showOnboarding: false
 }
 
 const cleanData = (state: Rewards.State) => {
@@ -89,6 +87,15 @@ const cleanData = (state: Rewards.State) => {
 
   if (!state.parameters) {
     state.parameters = defaultState.parameters
+  }
+
+  // Name change: onBoardingDisplayed -> verifyOnboardingDisplayed
+  if (state.ui.verifyOnboardingDisplayed === undefined) {
+    const { ui } = state as any
+    if (ui.onBoardingDisplayed) {
+      ui.verifyOnboardingDisplayed = true
+      ui.onBoardingDisplayed = undefined
+    }
   }
 
   state.ui.modalRedirect = 'hide'

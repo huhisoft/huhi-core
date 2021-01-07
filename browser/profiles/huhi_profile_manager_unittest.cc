@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,13 +11,13 @@
 #include "base/files/file_path.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/strings/utf_string_conversions.h"
+#include "huhi/browser/profiles/huhi_unittest_profile_manager.h"
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/profiles/tor_unittest_profile_manager.h"
-#include "huhi/browser/tor/tor_launcher_factory.h"
+#include "huhi/browser/tor/tor_profile_service_factory.h"
 #include "huhi/browser/translate/buildflags/buildflags.h"
-#include "huhi/common/tor/pref_names.h"
-#include "huhi/common/tor/tor_constants.h"
 #include "huhi/components/huhi_webtorrent/browser/webtorrent_util.h"
+#include "huhi/components/tor/tor_constants.h"
+#include "huhi/components/tor/tor_profile_service_impl.h"
 #include "chrome/browser/net/proxy_config_monitor.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_avatar_icon_util.h"
@@ -67,7 +67,7 @@ class HuhiProfileManagerTest : public testing::Test {
     // Create a new temporary directory, and store the path
     ASSERT_TRUE(temp_dir_.CreateUniqueTempDir());
     TestingBrowserProcess::GetGlobal()->SetProfileManager(
-        new TorUnittestProfileManager(temp_dir_.GetPath()));
+        new HuhiUnittestProfileManager(temp_dir_.GetPath()));
   }
 
   void TearDown() override {
@@ -136,7 +136,7 @@ TEST_F(HuhiProfileManagerTest, InitProfileUserPrefs) {
   ASSERT_TRUE(tor_profile);
   EXPECT_EQ(huhi::GetParentProfile(tor_profile), profile);
 
-  tor_profile = tor_profile->GetOffTheRecordProfile();
+  tor_profile = tor_profile->GetPrimaryOTRProfile();
 
   // Check that the tor_profile name is non empty
   std::string profile_name =
@@ -246,7 +246,7 @@ TEST_F(HuhiProfileManagerTest, ProxyConfigMonitorInTorProfile) {
   Profile* parent_profile = profile_manager->GetProfile(dest_path);
   base::FilePath tor_path = HuhiProfileManager::GetTorProfilePath();
   Profile* profile =
-      profile_manager->GetProfile(tor_path)->GetOffTheRecordProfile();
+      profile_manager->GetProfile(tor_path)->GetPrimaryOTRProfile();
   ASSERT_TRUE(profile);
   EXPECT_EQ(huhi::GetParentProfile(profile), parent_profile);
 
@@ -254,8 +254,15 @@ TEST_F(HuhiProfileManagerTest, ProxyConfigMonitorInTorProfile) {
   auto* proxy_config_service = monitor->GetProxyConfigServiceForTesting();
   net::ProxyConfigWithAnnotation config;
   proxy_config_service->GetLatestProxyConfig(&config);
+  EXPECT_TRUE(config.value().proxy_rules().empty());
+
+  // Emulate get socks info from tor control
+  auto* tor_profile_service = TorProfileServiceFactory::GetForContext(profile);
+  static_cast<tor::TorProfileServiceImpl*>(tor_profile_service)
+    ->NotifyTorNewProxyURI("socks5://127.0.0.1:5566");
+
+  proxy_config_service->GetLatestProxyConfig(&config);
   const std::string& proxy_uri =
-      config.value().proxy_rules().single_proxies.Get().ToURI();
-  EXPECT_EQ(proxy_uri, g_browser_process->local_state()
-            ->GetString(tor::prefs::kTorProxyString));
+    config.value().proxy_rules().single_proxies.Get().ToURI();
+  EXPECT_EQ(proxy_uri, "socks5://127.0.0.1:5566");
 }

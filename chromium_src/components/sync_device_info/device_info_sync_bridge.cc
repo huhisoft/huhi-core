@@ -1,19 +1,57 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
+#include "huhi/components/sync_device_info/huhi_device_info.h"
+
+#define HUHI_MAKE_LOCAL_DEVICE_SPECIFICS \
+  specifics->mutable_huhi_fields()->set_is_self_delete_supported(true);
+
 #include "../../../../components/sync_device_info/device_info_sync_bridge.cc"
+
+#undef HUHI_MAKE_LOCAL_DEVICE_SPECIFICS
 
 #include "base/threading/sequenced_task_runner_handle.h"
 
 namespace syncer {
 
-void DeviceInfoSyncBridge::DeleteDeviceInfo(
-    const syncer::DeviceInfo* local_device_info,
-    base::OnceClosure callback) {
-  DCHECK(local_device_info);
-  const std::string& client_id = local_device_info->guid();
+namespace {
+
+std::unique_ptr<HuhiDeviceInfo> HuhiSpecificsToModel(
+    const DeviceInfoSpecifics& specifics) {
+  ModelTypeSet data_types;
+  for (const int field_number :
+       specifics.invalidation_fields().interested_data_type_ids()) {
+    ModelType data_type = GetModelTypeFromSpecificsFieldNumber(field_number);
+    if (!IsRealDataType(data_type)) {
+      DLOG(WARNING) << "Unknown field number " << field_number;
+      continue;
+    }
+    data_types.Put(data_type);
+  }
+  // The code is duplicated from SpecificsToModel by intent to avoid use of
+  // extra patch
+  return std::make_unique<HuhiDeviceInfo>(
+      specifics.cache_guid(), specifics.client_name(),
+      specifics.chrome_version(), specifics.sync_user_agent(),
+      specifics.device_type(), specifics.signin_scoped_device_id(),
+      specifics.manufacturer(), specifics.model(),
+      ProtoTimeToTime(specifics.last_updated_timestamp()),
+      GetPulseIntervalFromSpecifics(specifics),
+      specifics.feature_fields().send_tab_to_self_receiving_enabled(),
+      SpecificsToSharingInfo(specifics),
+      specifics.invalidation_fields().instance_id_token(),
+      data_types,
+      specifics.has_huhi_fields() &&
+          specifics.huhi_fields().has_is_self_delete_supported() &&
+          specifics.huhi_fields().is_self_delete_supported());
+}
+
+}  // namespace
+
+void DeviceInfoSyncBridge::DeleteDeviceInfo(const std::string& client_id,
+                                            base::OnceClosure callback) {
   std::unique_ptr<WriteBatch> batch = store_->CreateWriteBatch();
   change_processor()->Delete(client_id, batch->GetMetadataChangeList());
   DeleteSpecifics(client_id, batch.get());
@@ -40,6 +78,15 @@ void DeviceInfoSyncBridge::OnDeviceInfoDeleted(const std::string& client_id,
   } else {
     std::move(callback).Run();
   }
+}
+
+std::vector<std::unique_ptr<HuhiDeviceInfo>>
+DeviceInfoSyncBridge::GetAllHuhiDeviceInfo() const {
+  std::vector<std::unique_ptr<HuhiDeviceInfo>> list;
+  for (auto iter = all_data_.begin(); iter != all_data_.end(); ++iter) {
+    list.push_back(HuhiSpecificsToModel(*iter->second));
+  }
+  return list;
 }
 
 }  // namespace syncer

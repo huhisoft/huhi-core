@@ -1,5 +1,5 @@
-// Copyright 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -8,10 +8,12 @@
 #include "base/path_service.h"
 #include "base/strings/utf_string_conversions.h"
 #include "huhi/browser/huhi_browser_process_impl.h"
-#include "huhi/browser/extensions/huhi_tor_client_updater.h"
+#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/tor/buildflags.h"
 #include "huhi/common/huhi_paths.h"
+#include "huhi/components/huhi_ads/browser/ads_service_factory.h"
+#include "huhi/components/ipfs/buildflags/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/bookmarks/bookmark_model_factory.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/chrome_notification_types.h"
@@ -23,6 +25,7 @@
 #include "chrome/browser/profiles/profile_window.h"
 #include "chrome/browser/ui/browser_list.h"
 #include "chrome/test/base/in_process_browser_test.h"
+#include "chrome/test/base/ui_test_utils.h"
 #include "components/bookmarks/browser/bookmark_model.h"
 #include "components/bookmarks/common/bookmark_pref_names.h"
 #include "components/bookmarks/test/bookmark_test_helpers.h"
@@ -34,7 +37,8 @@
 #include "content/public/test/test_utils.h"
 
 #if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/tor/tor_launcher_factory.h"
+#include "huhi/components/tor/huhi_tor_client_updater.h"
+#include "huhi/components/tor/tor_launcher_factory.h"
 #endif
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
@@ -43,6 +47,12 @@
 #include "extensions/browser/extension_registry.h"
 #include "extensions/browser/extension_util.h"
 #include "extensions/common/extension_id.h"
+#endif
+
+#if BUILDFLAG(IPFS_ENABLED)
+#include "base/test/scoped_feature_list.h"
+#include "huhi/browser/ipfs/ipfs_service_factory.h"
+#include "huhi/components/ipfs/features.h"
 #endif
 
 namespace {
@@ -102,6 +112,12 @@ Profile* SwitchToTorProfile() {
 
 class HuhiProfileManagerTest : public InProcessBrowserTest {
  public:
+  HuhiProfileManagerTest() {
+#if BUILDFLAG(IPFS_ENABLED)
+    feature_list_.InitAndEnableFeature(ipfs::features::kIpfsFeature);
+#endif
+  }
+
   void SetUpOnMainThread() override {
     InProcessBrowserTest::SetUpOnMainThread();
 #if BUILDFLAG(ENABLE_TOR)
@@ -123,6 +139,11 @@ class HuhiProfileManagerTest : public InProcessBrowserTest {
     return content_settings->GetContentSetting(
         primary_url, GURL(), ContentSettingsType::JAVASCRIPT, "");
   }
+
+ private:
+#if BUILDFLAG(IPFS_ENABLED)
+  base::test::ScopedFeatureList feature_list_;
+#endif
 };
 
 // Test that legacy profile names (Person X) that have
@@ -185,6 +206,43 @@ IN_PROC_BROWSER_TEST_F(HuhiProfileManagerTest, MigrateProfileNames) {
   }
 }
 
+IN_PROC_BROWSER_TEST_F(HuhiProfileManagerTest,
+                       ExcludeServicesInOTRAndGuestProfiles) {
+  ProfileManager* profile_manager = g_browser_process->profile_manager();
+  ASSERT_TRUE(profile_manager);
+  Profile* profile = ProfileManager::GetActiveUserProfile();
+  Profile* otr_profile = profile->GetPrimaryOTRProfile();
+
+  profiles::SwitchToGuestProfile(ProfileManager::CreateCallback());
+  ui_test_utils::WaitForBrowserToOpen();
+
+  Profile* guest_profile =
+      profile_manager->GetProfileByPath(ProfileManager::GetGuestProfilePath());
+  ASSERT_TRUE(otr_profile->IsOffTheRecord());
+  ASSERT_TRUE(guest_profile->IsGuestSession());
+
+  EXPECT_NE(
+      huhi_rewards::RewardsServiceFactory::GetForProfile(profile), nullptr);
+  EXPECT_EQ(
+      huhi_rewards::RewardsServiceFactory::GetForProfile(otr_profile),
+      nullptr);
+  EXPECT_EQ(
+      huhi_rewards::RewardsServiceFactory::GetForProfile(guest_profile),
+      nullptr);
+
+  EXPECT_NE(huhi_ads::AdsServiceFactory::GetForProfile(profile), nullptr);
+  EXPECT_EQ(huhi_ads::AdsServiceFactory::GetForProfile(otr_profile),
+            nullptr);
+  EXPECT_EQ(huhi_ads::AdsServiceFactory::GetForProfile(guest_profile),
+            nullptr);
+
+#if BUILDFLAG(IPFS_ENABLED)
+  EXPECT_NE(ipfs::IpfsServiceFactory::GetForContext(profile), nullptr);
+  EXPECT_EQ(ipfs::IpfsServiceFactory::GetForContext(otr_profile), nullptr);
+  EXPECT_EQ(ipfs::IpfsServiceFactory::GetForContext(guest_profile), nullptr);
+#endif
+}
+
 #if BUILDFLAG(ENABLE_TOR)
 IN_PROC_BROWSER_TEST_F(HuhiProfileManagerTest,
                        SwitchToTorProfileShareBookmarks) {
@@ -237,6 +295,38 @@ IN_PROC_BROWSER_TEST_F(HuhiProfileManagerTest,
 }
 
 IN_PROC_BROWSER_TEST_F(HuhiProfileManagerTest,
+                       SwitchToTorProfileExcludeServices) {
+  ScopedTorLaunchPreventerForTest prevent_tor_process;
+
+  ProfileManager* profile_manager = g_browser_process->profile_manager();
+  ASSERT_TRUE(profile_manager);
+  Profile* parent_profile = ProfileManager::GetActiveUserProfile();
+
+  Profile* tor_otr_profile = SwitchToTorProfile();
+  Profile* tor_reg_profile = tor_otr_profile->GetOriginalProfile();
+  EXPECT_EQ(huhi::GetParentProfile(tor_otr_profile), parent_profile);
+  ASSERT_TRUE(huhi::IsTorProfile(tor_otr_profile));
+  ASSERT_TRUE(huhi::IsTorProfile(tor_reg_profile));
+  EXPECT_TRUE(tor_otr_profile->IsOffTheRecord());
+  EXPECT_FALSE(tor_reg_profile->IsOffTheRecord());
+
+  EXPECT_EQ(
+      huhi_rewards::RewardsServiceFactory::GetForProfile(tor_otr_profile),
+      nullptr);
+  EXPECT_EQ(
+      huhi_rewards::RewardsServiceFactory::GetForProfile(tor_reg_profile),
+      nullptr);
+  EXPECT_EQ(huhi_ads::AdsServiceFactory::GetForProfile(tor_otr_profile),
+            nullptr);
+  EXPECT_EQ(huhi_ads::AdsServiceFactory::GetForProfile(tor_reg_profile),
+            nullptr);
+#if BUILDFLAG(IPFS_ENABLED)
+  EXPECT_EQ(ipfs::IpfsServiceFactory::GetForContext(tor_otr_profile), nullptr);
+  EXPECT_EQ(ipfs::IpfsServiceFactory::GetForContext(tor_reg_profile), nullptr);
+#endif
+}
+
+IN_PROC_BROWSER_TEST_F(HuhiProfileManagerTest,
                        SwitchToTorProfileInheritPrefs) {
   ScopedTorLaunchPreventerForTest prevent_tor_process;
 
@@ -265,7 +355,7 @@ IN_PROC_BROWSER_TEST_F(HuhiProfileManagerTest,
 
 IN_PROC_BROWSER_TEST_F(HuhiProfileManagerTest,
                        SwitchToTorProfileInheritContentSettings) {
-  const GURL huhi_url("https://www.huhisoft.com");
+  const GURL huhi_url("https://www.hnq.vn");
   ScopedTorLaunchPreventerForTest prevent_tor_process;
   ProfileManager* profile_manager = g_browser_process->profile_manager();
   ASSERT_TRUE(profile_manager);

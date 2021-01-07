@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -20,9 +20,9 @@ const state: State = deepFreeze({
   tabs: {
     2: {
       id: 2,
-      hostname: 'https://huhisoft.com',
-      origin: 'https://huhisoft.com',
-      url: 'https://huhisoft.com',
+      hostname: 'https://hnq.vn',
+      origin: 'https://hnq.vn',
+      url: 'https://hnq.vn',
       ads: 'block',
       adsBlocked: 0,
       adsBlockedResources: [],
@@ -272,7 +272,7 @@ describe('shieldsPanelState test', () => {
   describe('updateResourceBlocked', () => {
     it('can update ads blocked count', () => {
       this.tabId = 2
-      expect(shieldsPanelState.updateResourceBlocked(state, this.tabId, 'ads', 'https://test.huhisoft.com')).toEqual({
+      expect(shieldsPanelState.updateResourceBlocked(state, this.tabId, 'ads', 'https://test.hnq.vn')).toEqual({
         ...state,
         tabs: {
           ...state.tabs,
@@ -280,7 +280,7 @@ describe('shieldsPanelState test', () => {
             ...state.tabs[this.tabId],
             adsBlocked: 1,
             adsBlockedResources: [
-              'https://test.huhisoft.com'
+              'https://test.hnq.vn'
             ]
           }
         }
@@ -288,7 +288,7 @@ describe('shieldsPanelState test', () => {
     })
     it('can update tracking protection blocked count', () => {
       this.tabId = 2
-      expect(shieldsPanelState.updateResourceBlocked(state, this.tabId, 'trackers', 'https://test.huhisoft.com'))
+      expect(shieldsPanelState.updateResourceBlocked(state, this.tabId, 'trackers', 'https://test.hnq.vn'))
       .toEqual({
         ...state,
         tabs: {
@@ -297,7 +297,7 @@ describe('shieldsPanelState test', () => {
             ...state.tabs[this.tabId],
             trackersBlocked: 1,
             trackersBlockedResources: [
-              'https://test.huhisoft.com'
+              'https://test.hnq.vn'
             ]
           }
         }
@@ -305,7 +305,7 @@ describe('shieldsPanelState test', () => {
     })
     it('can update javascript blocked count and noScriptInfo', () => {
       this.tabId = 2
-      expect(shieldsPanelState.updateResourceBlocked(state, this.tabId, 'javascript', 'https://test.huhisoft.com')).toEqual({
+      expect(shieldsPanelState.updateResourceBlocked(state, this.tabId, 'javascript', 'https://test.hnq.vn')).toEqual({
         ...state,
         tabs: {
           ...state.tabs,
@@ -313,7 +313,7 @@ describe('shieldsPanelState test', () => {
             ...state.tabs[this.tabId],
             javascriptBlocked: 1,
             noScriptInfo: {
-              'https://test.huhisoft.com': { actuallyBlocked: true, willBlock: true, userInteracted: false }
+              'https://test.hnq.vn': { actuallyBlocked: true, willBlock: true, userInteracted: false }
             }
           }
         }
@@ -345,7 +345,7 @@ describe('shieldsPanelState test', () => {
     it('reset noScriptInfo for a specific tab without navigating away', () => {
       this.tabId = 2
       expect(noScriptState.resetNoScriptInfo(
-        stateWithAllowedScriptOrigins, this.tabId, 'https://huhisoft.com')).toEqual({
+        stateWithAllowedScriptOrigins, this.tabId, 'https://hnq.vn')).toEqual({
           ...state,
           tabs: {
             ...state.tabs,
@@ -370,7 +370,7 @@ describe('shieldsPanelState test', () => {
     it('reset noScriptInfo for a specific tab with navigating away', () => {
       this.tabId = 2
       expect(noScriptState.resetNoScriptInfo(
-        stateWithAllowedScriptOrigins, this.tabId, 'https://test.huhisoft.com')).toEqual({
+        stateWithAllowedScriptOrigins, this.tabId, 'https://test.hnq.vn')).toEqual({
           ...state,
           tabs: {
             ...state.tabs,

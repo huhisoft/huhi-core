@@ -1,9 +1,0 @@
-import("//build/buildflag_header.gni")
-import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
-
-buildflag_header("buildflags") {
-  header = "buildflags.h"
-  flags = [
-    "HUHI_WALLET_ENABLED=$huhi_wallet_enabled",
-  ]
-}

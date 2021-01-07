@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-     This Source Code Form is subject to the terms of the Huhi Software
+<!-- Copyright (c) 2020 The Huhi Authors. All rights reserved.
+     This Source Code Form is subject to the terms of the Mozilla Public
      License, v. 2.0. If a copy of the MPL was not distributed with this file,
      You can obtain one at http://mozilla.org/MPL/2.0/.
 -->
@@ -57,25 +57,18 @@
             android:layout_width="match_parent"
             android:visibility="invisible" />
 
-        <Button android:id="@+id/huhi_sync_btn_show_categories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/huhi_sync_categories_text"
-            style="@style/HuhiSyncButton" />
-
         <Button android:id="@+id/huhi_sync_btn_add_device"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/huhi_sync_add_device_text"
             style="@style/HuhiSyncButton" />
 
-        <Button android:id="@+id/huhi_sync_btn_remove_device"
+        <Button android:id="@+id/huhi_sync_btn_show_categories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/huhi_sync_remove_device_text"
-            style="@style/HuhiSyncBottomButton"
+            android:text="@string/huhi_sync_categories_text"
+            style="@style/HuhiSyncButton"
             android:background="@android:color/transparent"
-            android:textColor="@color/google_red_600" />
-
+            android:textColor="@color/modern_grey_600" />
     </LinearLayout>
 </ScrollView>

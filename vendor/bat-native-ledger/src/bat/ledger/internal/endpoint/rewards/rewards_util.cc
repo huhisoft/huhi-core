@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/rewards/rewards_util.h"
@@ -11,8 +11,8 @@ namespace endpoint {
 namespace rewards {
 
 const char kDevelopment[] = "https://rewards-dev.huhi.software";
-const char kStaging[] = "https://rewards-stg.huhisoft.com";
-const char kProduction[] = "https://rewards.huhisoft.com";
+const char kStaging[] = "https://rewards-stg.huhisoftware.com";
+const char kProduction[] = "https://rewards.hnq.vn";
 
 std::string GetServerUrl(const std::string& path) {
   DCHECK(!path.empty());

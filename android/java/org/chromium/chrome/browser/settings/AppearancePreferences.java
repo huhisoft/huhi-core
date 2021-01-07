@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,6 +9,7 @@ import static org.chromium.chrome.browser.settings.MainSettings.PREF_UI_THEME;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.preference.Preference;
 
 import org.chromium.base.ContextUtils;
@@ -20,10 +21,10 @@ import org.chromium.chrome.browser.HuhiRewardsObserver;
 import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.night_mode.NightModeUtils;
 import org.chromium.chrome.browser.preferences.HuhiPreferenceKeys;
+import org.chromium.chrome.browser.settings.HuhiPreferenceFragment;
 import org.chromium.chrome.browser.toolbar.bottom.BottomToolbarConfiguration;
 import org.chromium.components.browser_ui.settings.ChromeSwitchPreference;
 import org.chromium.components.browser_ui.settings.SettingsUtils;
-import org.chromium.chrome.browser.settings.HuhiPreferenceFragment;
 import org.chromium.ui.base.DeviceFormFactor;
 
 public class AppearancePreferences extends HuhiPreferenceFragment
@@ -64,9 +65,10 @@ public class AppearancePreferences extends HuhiPreferenceFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Preference hideHuhiRewardsIconPref = findPreference(PREF_HIDE_HUHI_REWARDS_ICON);
+        ChromeSwitchPreference hideHuhiRewardsIconPref = (ChromeSwitchPreference) findPreference(PREF_HIDE_HUHI_REWARDS_ICON);
         if (hideHuhiRewardsIconPref != null) {
-            hideHuhiRewardsIconPref.setEnabled(false);
+            SharedPreferences sharedPreferences = ContextUtils.getAppSharedPreferences();
+            hideHuhiRewardsIconPref.setChecked(sharedPreferences.getBoolean(PREF_HIDE_HUHI_REWARDS_ICON, false));
             hideHuhiRewardsIconPref.setOnPreferenceChangeListener(this);
         }
 
@@ -99,7 +101,6 @@ public class AppearancePreferences extends HuhiPreferenceFragment
         if (mHuhiRewardsNativeWorker != null) {
             mHuhiRewardsNativeWorker.AddObserver(this);
         }
-        mHuhiRewardsNativeWorker.GetRewardsMainEnabled();
         super.onStart();
     }
 
@@ -125,7 +126,7 @@ public class AppearancePreferences extends HuhiPreferenceFragment
         } else if (PREF_HIDE_HUHI_REWARDS_ICON.equals(key)) {
             SharedPreferences sharedPreferences = ContextUtils.getAppSharedPreferences();
             SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-            sharedPreferencesEditor.putBoolean(PREF_HIDE_HUHI_REWARDS_ICON, (boolean) newValue);
+            sharedPreferencesEditor.putBoolean(PREF_HIDE_HUHI_REWARDS_ICON, !(boolean) newValue);
             sharedPreferencesEditor.apply();
             HuhiRelaunchUtils.askForRelaunch(getActivity());
         } else if (PREF_HUHI_NIGHT_MODE_ENABLED.equals(key)) {
@@ -136,58 +137,4 @@ public class AppearancePreferences extends HuhiPreferenceFragment
 
         return true;
     }
-
-    @Override
-    public void OnWalletInitialized(int error_code) {}
-
-    @Override
-    public void OnPublisherInfo(int tabId) {}
-
-    @Override
-    public void OnGetCurrentBalanceReport(double[] report) {}
-
-    @Override
-    public void OnNotificationAdded(String id, int type, long timestamp, String[] args) {}
-
-    @Override
-    public void OnNotificationsCount(int count) {}
-
-    @Override
-    public void OnGetLatestNotification(String id, int type, long timestamp, String[] args) {}
-
-    @Override
-    public void OnNotificationDeleted(String id) {}
-
-    @Override
-    public void OnIsWalletCreated(boolean created) {}
-
-    @Override
-    public void OnGetPendingContributionsTotal(double amount) {}
-
-    @Override
-    public void OnGetRewardsMainEnabled(boolean enabled) {
-        ChromeSwitchPreference hideHuhiRewardsIconPref =
-                (ChromeSwitchPreference) findPreference(PREF_HIDE_HUHI_REWARDS_ICON);
-        if (hideHuhiRewardsIconPref == null) return;
-
-        hideHuhiRewardsIconPref.setEnabled(!enabled);
-        if (enabled) {
-            hideHuhiRewardsIconPref.setChecked(false);
-        }
-    }
-
-    @Override
-    public void OnGetAutoContributeProperties() {}
-
-    @Override
-    public void OnGetReconcileStamp(long timestamp) {}
-
-    @Override
-    public void OnRecurringDonationUpdated() {}
-
-    @Override
-    public void OnResetTheWholeState(boolean success) {}
-
-    @Override
-    public void OnRewardsMainEnabled(boolean enabled) {}
 }

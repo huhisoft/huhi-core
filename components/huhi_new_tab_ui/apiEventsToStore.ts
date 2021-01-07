@@ -1,13 +1,15 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
 import getActions from './api/getActions'
 import * as preferencesAPI from './api/preferences'
 import * as statsAPI from './api/stats'
+import * as topSitesAPI from './api/topSites'
 import * as privateTabDataAPI from './api/privateTabData'
-import { getInitialData, getRewardsInitialData, getRewardsPreInitialData, getBinanceBlackList } from './api/initialData'
+import * as torTabDataAPI from './api/torTabData'
+import { getInitialData, getRewardsInitialData, getRewardsPreInitialData } from './api/initialData'
 
 async function updatePreferences (prefData: preferencesAPI.Preferences) {
   getActions().preferencesUpdated(prefData)
@@ -21,10 +23,19 @@ async function updatePrivateTabData (data: privateTabDataAPI.PrivateTabData) {
   getActions().privateTabDataUpdated(data)
 }
 
+async function updateTorTabData (data: torTabDataAPI.TorTabData) {
+  getActions().torTabDataUpdated(data)
+}
+
 function onRewardsToggled (prefData: preferencesAPI.Preferences): void {
   if (prefData.showRewards) {
     rewardsInitData()
   }
+}
+
+async function onMostVisitedInfoChanged (topSites: topSitesAPI.MostVisitedInfoChanged) {
+  getActions().tilesUpdated(topSites.tiles)
+  getActions().topSitesStateUpdated(topSites.visible, topSites.custom_links_enabled)
 }
 
 // Not marked as async so we don't return a promise
@@ -36,14 +47,18 @@ export function wireApiEventsToStore () {
     if (initialData.preferences.showRewards) {
       rewardsInitData()
     }
-    binanceInitData()
     getActions().setInitialData(initialData)
-    getActions().setFirstRenderGridSitesData(initialData)
+    if (initialData.preferences.showToday) {
+      getActions().today.todayInit()
+    }
     // Listen for API changes and dispatch to store
+    topSitesAPI.addMostVistedInfoChangedListener(onMostVisitedInfoChanged)
+    topSitesAPI.updateMostVisitedInfo()
     statsAPI.addChangeListener(updateStats)
     preferencesAPI.addChangeListener(updatePreferences)
     preferencesAPI.addChangeListener(onRewardsToggled)
     privateTabDataAPI.addChangeListener(updatePrivateTabData)
+    torTabDataAPI.addChangeListener(updateTorTabData)
   })
   .catch(e => {
     console.error('New Tab Page fatal error:', e)
@@ -54,54 +69,21 @@ export function rewardsInitData () {
   getRewardsPreInitialData()
   .then((preInitialRewardsData) => {
     getActions().setPreInitialRewardsData(preInitialRewardsData)
-
-    chrome.huhiRewards.getWalletExists((exists: boolean) => {
-      getActions().onWalletExists(exists)
-      if (exists) {
-        if (!preInitialRewardsData.enabledMain) {
-          return
-        }
-
-        fetchCreatedWalletData()
-        setRewardsFetchInterval()
-      }
-    })
+    fetchRewardsData()
+    setRewardsFetchInterval()
   })
   .catch(e => {
     console.error('Error fetching pre-initial rewards data: ', e)
   })
 }
 
-function binanceInitData () {
-  getBinanceBlackList()
-  .then(({ isSupportedRegion, onlyAnonWallet }) => {
-    if (onlyAnonWallet || !isSupportedRegion) {
-      getActions().removeStackWidget('binance')
-    }
-    getActions().setOnlyAnonWallet(onlyAnonWallet)
-    getActions().setBinanceSupported(isSupportedRegion && !onlyAnonWallet)
-  })
-  .catch(e => {
-    console.error('Error fetching binance init data')
-  })
-}
-
 function setRewardsFetchInterval () {
   window.setInterval(() => {
-    chrome.huhiRewards.getRewardsMainEnabled((enabledMain: boolean) => {
-      if (!enabledMain) {
-        return
-      }
-      chrome.huhiRewards.getWalletExists((exists: boolean) => {
-        if (exists) {
-          fetchCreatedWalletData()
-        }
-      })
-    })
+    fetchRewardsData()
   }, 30000)
 }
 
-function fetchCreatedWalletData () {
+function fetchRewardsData () {
   chrome.huhiRewards.isInitialized((initialized: boolean) => {
     if (!initialized) {
       return
@@ -117,26 +99,8 @@ function fetchCreatedWalletData () {
   })
 }
 
-chrome.huhiRewards.walletCreated.addListener(() => {
-  getActions().onWalletInitialized(12)
-})
-
-chrome.huhiRewards.walletCreationFailed.addListener((result: any | NewTab.RewardsResult) => {
-  getActions().onWalletInitialized(result)
-})
-
 chrome.huhiRewards.initialized.addListener((result: any | NewTab.RewardsResult) => {
   rewardsInitData()
-})
-
-chrome.huhiRewards.onEnabledMain.addListener((enabledMain: boolean) => {
-  if (enabledMain) {
-    chrome.huhiRewards.getAdsEnabled((enabledAds: boolean) => {
-      getActions().onEnabledMain(enabledMain, enabledAds)
-    })
-  } else {
-    getActions().onEnabledMain(false, false)
-  }
 })
 
 chrome.huhiRewards.onAdsEnabled.addListener((enabled: boolean) => {

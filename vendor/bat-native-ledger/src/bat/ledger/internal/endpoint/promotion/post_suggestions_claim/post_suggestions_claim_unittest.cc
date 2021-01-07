@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/post_suggestions_claim/post_suggestions_claim.h"
@@ -42,14 +42,12 @@ class PostSuggestionsClaimTest : public testing::Test {
   }
 
   void SetUp() override {
-    const std::string payment_id = "this_is_id";
-    ON_CALL(*mock_ledger_client_, GetStringState(state::kPaymentId))
-      .WillByDefault(testing::Return(payment_id));
-
-    const std::string wallet_passphrase =
-        "AN6DLuI2iZzzDxpzywf+IKmK1nzFRarNswbaIDI3pQg=";
-    ON_CALL(*mock_ledger_client_, GetStringState(state::kRecoverySeed))
-      .WillByDefault(testing::Return(wallet_passphrase));
+    const std::string wallet = R"({
+      "payment_id":"fa5dea51-6af4-44ca-801b-07b6df3dcfe4",
+      "recovery_seed":"AN6DLuI2iZzzDxpzywf+IKmK1nzFRarNswbaIDI3pQg="
+    })";
+    ON_CALL(*mock_ledger_client_, GetEncryptedStringState(state::kWalletHuhi))
+      .WillByDefault(testing::Return(wallet));
   }
 };
 
@@ -71,7 +69,7 @@ TEST_F(PostSuggestionsClaimTest, ServerOK) {
   token.public_key = "dvpysTSiJdZUPihius7pvGOfngRWfDiIbrowykgMi1I=";
 
   credential::CredentialsRedeem redeem;
-  redeem.publisher_key = "huhisoft.com";
+  redeem.publisher_key = "hnq.vn";
   redeem.type = type::RewardsType::ONE_TIME_TIP;
   redeem.processor = type::ContributionProcessor::HUHI_TOKENS;
   redeem.token_list = {token};
@@ -103,7 +101,7 @@ TEST_F(PostSuggestionsClaimTest, ServerError400) {
   token.public_key = "dvpysTSiJdZUPihius7pvGOfngRWfDiIbrowykgMi1I=";
 
   credential::CredentialsRedeem redeem;
-  redeem.publisher_key = "huhisoft.com";
+  redeem.publisher_key = "hnq.vn";
   redeem.type = type::RewardsType::ONE_TIME_TIP;
   redeem.processor = type::ContributionProcessor::HUHI_TOKENS;
   redeem.token_list = {token};
@@ -135,7 +133,7 @@ TEST_F(PostSuggestionsClaimTest, ServerError500) {
   token.public_key = "dvpysTSiJdZUPihius7pvGOfngRWfDiIbrowykgMi1I=";
 
   credential::CredentialsRedeem redeem;
-  redeem.publisher_key = "huhisoft.com";
+  redeem.publisher_key = "hnq.vn";
   redeem.type = type::RewardsType::ONE_TIME_TIP;
   redeem.processor = type::ContributionProcessor::HUHI_TOKENS;
   redeem.token_list = {token};

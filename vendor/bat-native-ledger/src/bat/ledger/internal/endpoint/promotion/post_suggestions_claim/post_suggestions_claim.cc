@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/post_suggestions_claim/post_suggestions_claim.h"
@@ -34,15 +34,20 @@ std::string PostSuggestionsClaim::GetUrl() {
 
 std::string PostSuggestionsClaim::GeneratePayload(
     const credential::CredentialsRedeem& redeem) {
-  const std::string payment_id = ledger_->state()->GetPaymentId();
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    return "";
+  }
+
   base::Value credentials(base::Value::Type::LIST);
   credential::GenerateCredentials(
       redeem.token_list,
-      payment_id,
+      wallet->payment_id,
       &credentials);
 
   base::Value body(base::Value::Type::DICTIONARY);
-  body.SetStringKey("paymentId", payment_id);
+  body.SetStringKey("paymentId", wallet->payment_id);
   body.SetKey("credentials", std::move(credentials));
 
   std::string json;
@@ -78,11 +83,18 @@ void PostSuggestionsClaim::Request(
 
   const std::string payload = GeneratePayload(redeem);
 
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    callback(type::Result::LEDGER_ERROR);
+    return;
+  }
+
   auto headers = util::BuildSignHeaders(
       "post /v1/suggestions/claim",
       payload,
-      ledger_->state()->GetPaymentId(),
-      ledger_->state()->GetRecoverySeed());
+      wallet->payment_id,
+      wallet->recovery_seed);
 
   auto request = type::UrlRequest::New();
   request->url = GetUrl();

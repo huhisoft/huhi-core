@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -13,6 +13,13 @@ import binanceReducer from './binance_reducer'
 import rewardsReducer from './rewards_reducer'
 import geminiReducer from './gemini_reducer'
 import bitcoinDotComReducer from './bitcoin_dot_com_reducer'
+import cryptoDotComReducer from './cryptoDotCom_reducer'
+import { stackWidgetReducer } from './stack_widget_reducer'
+import todayReducer, { HuhiTodayState } from './today'
+
+export type ApplicationState = NewTab.ApplicationState & {
+  today: HuhiTodayState
+}
 
 export const newTabReducers = (state: NewTab.State | undefined, action: any) => {
   if (state === undefined) {
@@ -25,6 +32,8 @@ export const newTabReducers = (state: NewTab.State | undefined, action: any) => 
   state = rewardsReducer(state, action)
   state = geminiReducer(state, action)
   state = bitcoinDotComReducer(state, action)
+  state = cryptoDotComReducer(state, action)
+  state = stackWidgetReducer(state, action)
 
   if (state !== startingState) {
     storage.debouncedSave(state)
@@ -33,9 +42,10 @@ export const newTabReducers = (state: NewTab.State | undefined, action: any) => 
   return state
 }
 
-export const mainNewTabReducer = combineReducers<NewTab.ApplicationState>({
+export const mainNewTabReducer = combineReducers<ApplicationState>({
   newTabData: newTabReducers,
-  gridSitesData: gridSitesReducer
+  gridSitesData: gridSitesReducer,
+  today: todayReducer
 })
 
 export const newTabReducer = newTabStateReducer

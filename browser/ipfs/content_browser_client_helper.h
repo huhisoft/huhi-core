@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -27,9 +27,12 @@ namespace ipfs {
 
 class ContentBrowserClientHelper {
  public:
-  static bool TranslateIPFSURL(const GURL& url, GURL* new_url, bool local);
+  static bool ShouldNavigateIPFSURI(const GURL& url,
+                                    GURL* new_url,
+                                    content::BrowserContext* browser_context);
 
-  static bool HandleIPFSURLReverseRewrite(GURL* url,
+  static bool HandleIPFSURLReverseRewrite(
+      GURL* url,
       content::BrowserContext* browser_context);
 
   static void LoadOrLaunchIPFSURL(
@@ -40,7 +43,7 @@ class ContentBrowserClientHelper {
       const base::Optional<url::Origin>& initiating_origin);
 
   static bool HandleIPFSURLRewrite(GURL* url,
-      content::BrowserContext* browser_context);
+                                   content::BrowserContext* browser_context);
 
   static void HandleIPFSProtocol(
       const GURL& url,

@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -168,7 +168,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           provider: 'youtube',
           src: favicon
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 40,
         onRemove: this.doNothing
       },
@@ -178,7 +178,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           verified: true,
           src: ddgo
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 20,
         onRemove: this.doNothing
       },
@@ -188,7 +188,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           verified: false,
           src: buzz
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 10,
         onRemove: this.doNothing
       },
@@ -198,7 +198,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           verified: true,
           src: guardian
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 5,
         onRemove: this.doNothing
       },
@@ -208,7 +208,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           verified: false,
           src: wiki
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 4,
         onRemove: this.doNothing
       },
@@ -218,7 +218,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           verified: true,
           src: ddgo
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 20,
         onRemove: this.doNothing
       },
@@ -228,7 +228,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           verified: false,
           src: buzz
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 10,
         onRemove: this.doNothing
       },
@@ -238,7 +238,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           verified: true,
           src: guardian
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 5,
         onRemove: this.doNothing
       },
@@ -248,7 +248,7 @@ class ContributeBoxMobile extends React.Component<Props, State> {
           verified: false,
           src: wiki
         },
-        url: 'https://huhisoft.com',
+        url: 'https://hnq.vn',
         attention: 4,
         onRemove: this.doNothing
       }

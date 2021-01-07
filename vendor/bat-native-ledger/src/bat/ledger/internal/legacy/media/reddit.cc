@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -319,7 +319,7 @@ void Reddit::SavePublisherInfo(
   const std::string media_key = GetMediaKey(user_name, REDDIT_MEDIA_TYPE);
   if (publisher_key.empty()) {
     callback(ledger::type::Result::LEDGER_ERROR, nullptr);
-    BLOG(0, "Publisher key is missing for: " << media_key);
+    BLOG(0, "Publisher key is missing");
     return;
   }
 
@@ -336,6 +336,7 @@ void Reddit::SavePublisherInfo(
       publisher_key,
       *visit_data,
       0,
+      true,
       window_id,
       callback);
 

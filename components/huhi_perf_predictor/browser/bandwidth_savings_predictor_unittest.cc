@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -79,10 +79,10 @@ TEST_F(BandwidthSavingsPredictorTest, FeaturiseTiming) {
 TEST_F(BandwidthSavingsPredictorTest, FeaturiseResourceLoading) {
   EXPECT_EQ(predictor_->feature_map_["resources.third-party.requestCount"], 0);
 
-  const GURL main_frame("https://huhisoft.com/");
+  const GURL main_frame("https://hnq.vn/");
 
   auto fp_style = predictors::CreateResourceLoadInfo(
-      "https://huhisoft.com/style.css",
+      "https://hnq.vn/style.css",
       network::mojom::RequestDestination::kStyle);
   fp_style->raw_body_bytes = 1000;
   predictor_->OnResourceLoadComplete(main_frame, *fp_style);
@@ -121,7 +121,7 @@ TEST_F(BandwidthSavingsPredictorTest, PredictZeroInternalUrl) {
 TEST_F(BandwidthSavingsPredictorTest, PredictZeroBadFrame) {
   const GURL main_frame("");
   auto res = predictors::CreateResourceLoadInfo(
-      "https://huhisoft.com/style.css",
+      "https://hnq.vn/style.css",
       network::mojom::RequestDestination::kStyle);
   res->raw_body_bytes = 1000;
   predictor_->OnResourceLoadComplete(main_frame, *res);
@@ -130,9 +130,9 @@ TEST_F(BandwidthSavingsPredictorTest, PredictZeroBadFrame) {
 }
 
 TEST_F(BandwidthSavingsPredictorTest, PredictZeroNoBlocks) {
-  const GURL main_frame("https://huhisoft.com");
+  const GURL main_frame("https://hnq.vn");
   auto res = predictors::CreateResourceLoadInfo(
-      "https://huhisoft.com/style.css",
+      "https://hnq.vn/style.css",
       network::mojom::RequestDestination::kStyle);
   res->raw_body_bytes = 1000;
   predictor_->OnResourceLoadComplete(main_frame, *res);
@@ -141,9 +141,9 @@ TEST_F(BandwidthSavingsPredictorTest, PredictZeroNoBlocks) {
 }
 
 TEST_F(BandwidthSavingsPredictorTest, PredictNonZero) {
-  const GURL main_frame("https://huhisoft.com");
+  const GURL main_frame("https://hnq.vn");
   auto res = predictors::CreateResourceLoadInfo(
-      "https://huhisoft.com/style.css",
+      "https://hnq.vn/style.css",
       network::mojom::RequestDestination::kStyle);
   res->raw_body_bytes = 200000;
   res->total_received_bytes = 200000;

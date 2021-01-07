@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -33,6 +33,30 @@ cr.define('settings', function() {
      * @return {!Promise<Boolean>}
      */
     getIsBitcoinDotComSupported() {}
+
+    /**
+     * @return {!Promise<Boolean>}
+     */
+    getShowTopSites() {}
+
+    /**
+     */
+    toggleTopSitesVisible() {}
+
+    /**
+     * @return {!Promise<Boolean>}
+     */
+    isCryptoDotComSupported() {}
+
+    /**
+     * @return {!Promise<Array>}
+     */
+    getNewTabShowsOptionsList() {}
+
+    /**
+     * @return {!Promise<Boolean>}
+     */
+    shouldShowNewTabDashboardSettings() {}
   }
 
   /**
@@ -62,6 +86,31 @@ cr.define('settings', function() {
     /** @override */
     getIsBitcoinDotComSupported() {
       return cr.sendWithPromise('getIsBitcoinDotComSupported')
+    }
+
+    /** @override */
+    getShowTopSites() {
+      return cr.sendWithPromise('getShowTopSites')
+    }
+
+    /** @override */
+    toggleTopSitesVisible() {
+      chrome.send('toggleTopSitesVisible', [])
+    }
+
+    /** @override */
+    getIsCryptoDotComSupported() {
+      return cr.sendWithPromise('getIsCryptoDotComSupported')
+    }
+
+    /** @override */
+    getNewTabShowsOptionsList() {
+      return cr.sendWithPromise('getNewTabShowsOptionsList')
+    }
+
+    /** @override */
+    shouldShowNewTabDashboardSettings() {
+      return cr.sendWithPromise('shouldShowNewTabDashboardSettings')
     }
   }
 

@@ -1,4 +1,4 @@
-// This Source Code Form is subject to the terms of the Huhi Software
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -149,8 +149,8 @@
 - (void)testMigratePublisherInfo
 {
   PublisherInfo *publisher = [self coreDataModelOfClass:PublisherInfo.self];
-  publisher.publisherID = @"huhisoft.com";
-  publisher.url = @"https://huhisoft.com";
+  publisher.publisherID = @"hnq.vn";
+  publisher.url = @"https://hnq.vn";
   publisher.faviconURL = @"";
   publisher.name = @"";
   publisher.provider = @"";
@@ -185,10 +185,10 @@
 - (void)testMigratePublisherInfoChannel
 {
   PublisherInfo *publisher = [self coreDataModelOfClass:PublisherInfo.self];
-  publisher.publisherID = @"github#channel:20061990";
+  publisher.publisherID = @"github#channel:12301619";
   publisher.url = @"https://github.com/huhisoft";
   publisher.faviconURL = @"";
-  publisher.name = @"huhisoft";
+  publisher.name = @"Huhi Software";
   publisher.provider = @"github";
   
   const auto migration = [BATLedgerDatabase migrateCoreDataToSQLTransaction];
@@ -222,7 +222,7 @@
 {
   MediaPublisherInfo *media = [self coreDataModelOfClass:MediaPublisherInfo.self];
   media.mediaKey = @"github_huhi";
-  media.publisherID = @"github#channel:20061990";
+  media.publisherID = @"github#channel:12301619";
   
   const auto migration = [BATLedgerDatabase migrateCoreDataToSQLTransaction];
   const auto insertLine = [BATLedgerDatabase mediaPublisherInfoInsertFor:media];
@@ -246,7 +246,7 @@
 - (void)testMigrateActivityInfo
 {
   ActivityInfo *activity = [self coreDataModelOfClass:ActivityInfo.self];
-  activity.publisherID = @"huhisoft.com";
+  activity.publisherID = @"hnq.vn";
   activity.duration = 74270;
   activity.percent = 54;
   activity.visits = 16;
@@ -286,7 +286,7 @@
 - (void)testMigrateContributionInfo
 {
   ContributionInfo *contribution = [self coreDataModelOfClass:ContributionInfo.self];
-  contribution.publisherID = @"huhisoft.com";
+  contribution.publisherID = @"hnq.vn";
   contribution.probi = @"1000000000000000000";
   contribution.date = [[NSDate date] timeIntervalSince1970];
   contribution.type = static_cast<int32_t>(ledger::type::RewardsType::ONE_TIME_TIP);
@@ -370,7 +370,7 @@
   
   ContributionPublisher *queuePublisher = [self coreDataModelOfClass:ContributionPublisher.self];
   queuePublisher.queue = queue;
-  queuePublisher.publisherKey = @"huhisoft.com";
+  queuePublisher.publisherKey = @"hnq.vn";
   queuePublisher.amountPercent = 40;
   
   const auto migration = [BATLedgerDatabase migrateCoreDataToSQLTransaction];
@@ -577,7 +577,7 @@
 - (void)testMigrateRecurringTips
 {
   RecurringDonation *tip = [self coreDataModelOfClass:RecurringDonation.self];
-  tip.publisherID = @"huhisoft.com";
+  tip.publisherID = @"hnq.vn";
   tip.amount = 20;
   tip.addedDate = [[NSDate date] timeIntervalSince1970];
   
@@ -665,7 +665,7 @@
   token.promotionID = promotion.promotionID;
   
   PublisherInfo *publisher = [self coreDataModelOfClass:PublisherInfo.self];
-  publisher.publisherID = @"github#channel:20061990";
+  publisher.publisherID = @"github#channel:12301619";
   publisher.url = @"https://github.com/huhisoft";
   publisher.faviconURL = @"";
   publisher.name = @"Huhi Software";
@@ -688,25 +688,25 @@
 - (void)testInsertedQuotes
 {
   PublisherInfo *publisher = [self coreDataModelOfClass:PublisherInfo.self];
-  publisher.publisherID = @"github#channel:20061990";
+  publisher.publisherID = @"github#channel:12301619";
   publisher.url = @"https://github.com/huhisoft";
   publisher.faviconURL = @"";
   publisher.name = @"'Huhi Software'";
   publisher.provider = @"github";
-
+  
   const auto migration = [BATLedgerDatabase migrateCoreDataToSQLTransaction];
   const auto insert = [BATLedgerDatabase publisherInfoInsertFor:publisher];
   XCTAssert([insert containsString:@"'''Huhi Software'''"]);
-
+  
   const auto migrateResponse = [self executeSQLCommand:migration];
   XCTAssertEqual(migrateResponse->status, ledger::type::DBCommandResponse::Status::RESPONSE_OK);
-
+  
   const auto response = [self readSQL:@"SELECT name FROM publisher_info;" columnTypes:{
     ledger::type::DBCommand::RecordBindingType::STRING_TYPE
   }];
   XCTAssertEqual(response->status, ledger::type::DBCommandResponse::Status::RESPONSE_OK);
   XCTAssertEqual(response->result->get_records().size(), 1);
-
+  
   const auto record = std::move(response->result->get_records()[0]);
   XCTAssertEqual(record->fields[0]->get_string_value(), publisher.name.UTF8String);
 }
@@ -724,23 +724,23 @@
   NSData *jsonData = [NSJSONSerialization dataWithJSONObject:someJSON options:0 error:&error];
   XCTAssertNil(error);
   NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-
+  
   PromotionCredentials *creds = [self coreDataModelOfClass:PromotionCredentials.self];
   creds.promotionID = NSUUID.UUID.UUIDString;
   creds.blindedCredentials = NSUUID.UUID.UUIDString;
   creds.claimID = @"1";
   creds.tokens = jsonString;
-
+  
   const auto migration = [BATLedgerDatabase migrateCoreDataToSQLTransaction];
   const auto migrateResponse = [self executeSQLCommand:migration];
   XCTAssertEqual(migrateResponse->status, ledger::type::DBCommandResponse::Status::RESPONSE_OK);
-
+  
   const auto response = [self readSQL:@"SELECT tokens FROM promotion_creds;" columnTypes:{
     ledger::type::DBCommand::RecordBindingType::STRING_TYPE
   }];
   XCTAssertEqual(response->status, ledger::type::DBCommandResponse::Status::RESPONSE_OK);
   XCTAssertEqual(response->result->get_records().size(), 1);
-
+  
   const auto record = std::move(response->result->get_records()[0]);
   const auto dbJSONString = [NSString stringWithUTF8String:record->fields[0]->get_string_value().c_str()];
   XCTAssert([dbJSONString isEqualToString:creds.tokens]);
@@ -754,10 +754,10 @@
 - (void)testUnicodeInsert
 {
   PublisherInfo *publisher = [self coreDataModelOfClass:PublisherInfo.self];
-  publisher.publisherID = @"github#channel:20061990";
+  publisher.publisherID = @"github#channel:12301619";
   publisher.url = @"https://github.com/huhisoft";
   publisher.faviconURL = @"";
-  publisher.name = @"Huhi Software";
+  publisher.name = @"😲👻  ｂŕᵃ𝕧𝐄 ⓢⓞℱţ𝐖α𝓻έ  ♣✌";
   publisher.provider = @"github";
   
   const auto migration = [BATLedgerDatabase migrateCoreDataToSQLTransaction];
@@ -780,15 +780,15 @@
 - (void)testClearServerPubList
 {
   ServerPublisherInfo *info = [self coreDataModelOfClass:ServerPublisherInfo.self];
-  info.publisherID = @"huhisoft.com";
+  info.publisherID = @"hnq.vn";
   info.address = NSUUID.UUID.UUIDString;
   info.banner = [self coreDataModelOfClass:ServerPublisherBanner.self];
-  info.banner.publisherID = @"huhisoft.com";
+  info.banner.publisherID = @"hnq.vn";
   ServerPublisherAmount *amount = [self coreDataModelOfClass:ServerPublisherAmount.self];
-  amount.publisherID = @"huhisoft.com";
+  amount.publisherID = @"hnq.vn";
   amount.serverPublisherInfo = info;
   ServerPublisherLink *link = [self coreDataModelOfClass:ServerPublisherLink.self];
-  link.publisherID = @"huhisoft.com";
+  link.publisherID = @"hnq.vn";
   link.serverPublisherInfo = info;
   
   // Save it to disk so the batch delete works

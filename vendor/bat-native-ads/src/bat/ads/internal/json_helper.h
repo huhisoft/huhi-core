@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -24,41 +24,45 @@
 
 namespace ads {
 
-struct AdContent;
-struct AdHistory;
+struct AdContentInfo;
+struct AdHistoryInfo;
 struct AdNotificationInfo;
-struct AdPreferences;
-struct AdsHistory;
-struct CategoryContent;
-struct ClientState;
-struct PurchaseIntentSignalHistory;
+struct AdPreferencesInfo;
+struct AdsHistoryInfo;
+struct CategoryContentInfo;
+struct ClientInfo;
+struct NewTabPageAdInfo;
+struct PurchaseIntentSignalHistoryInfo;
 
 using JsonWriter = rapidjson::Writer<rapidjson::StringBuffer>;
 
 void SaveToJson(
     JsonWriter* writer,
-    const AdContent& content);
+    const AdContentInfo& info);
 void SaveToJson(
     JsonWriter* writer,
-    const AdHistory& history);
+    const AdHistoryInfo& info);
 void SaveToJson(
     JsonWriter* writer,
     const AdNotificationInfo& info);
 void SaveToJson(
     JsonWriter* writer,
-    const AdPreferences& prefs);
+    const AdPreferencesInfo& info);
 void SaveToJson(
     JsonWriter* writer,
-    const AdsHistory& history);
+    const AdsHistoryInfo& info);
 void SaveToJson(
     JsonWriter* writer,
-    const CategoryContent& content);
+    const CategoryContentInfo& info);
 void SaveToJson(
     JsonWriter* writer,
-    const ClientState& state);
+    const ClientInfo& state);
 void SaveToJson(
     JsonWriter* writer,
-    const PurchaseIntentSignalHistory& info);
+    const NewTabPageAdInfo& info);
+void SaveToJson(
+    JsonWriter* writer,
+    const PurchaseIntentSignalHistoryInfo& info);
 
 template <typename T>
 void SaveToJson(

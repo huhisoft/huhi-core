@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -9,6 +9,8 @@
 extern const char kHuhiProxyPattern[];
 extern const char kHuhiSoftwareProxyPattern[];
 
+extern const char kHuhiUsageStandardPath[];
+extern const char kHuhiUsageThresholdPath[];
 extern const char kHuhiReferralsServer[];
 extern const char kHuhiReferralsHeadersPath[];
 extern const char kHuhiReferralsInitPath[];
@@ -41,4 +43,6 @@ extern const char kHuhiServicesKeyHeader[];
 
 extern const char kBittorrentMimeType[];
 extern const char kOctetStreamMimeType[];
+
+extern const char kSecGpcHeader[];
 #endif  // HUHI_COMMON_NETWORK_CONSTANTS_H_

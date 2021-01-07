@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,7 +8,10 @@
 #include "huhi/components/huhi_rewards/browser/test/common/rewards_browsertest_context_helper.h"
 #include "huhi/components/huhi_rewards/browser/test/common/rewards_browsertest_context_util.h"
 #include "huhi/components/huhi_rewards/browser/test/common/rewards_browsertest_contribution.h"
+#include "huhi/components/huhi_rewards/common/pref_names.h"
+#include "chrome/browser/profiles/profile.h"
 #include "chrome/test/base/ui_test_utils.h"
+#include "components/prefs/pref_service.h"
 #include "content/public/test/browser_test_utils.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -24,6 +27,7 @@ void RewardsBrowserTestContribution::Initialize(
   DCHECK(browser && rewards_service);
   browser_ = browser;
   rewards_service_ = rewards_service;
+  context_helper_ = std::make_unique<RewardsBrowserTestContextHelper>(browser);
 
   rewards_service_->AddObserver(this);
 }
@@ -71,7 +75,7 @@ void RewardsBrowserTestContribution::TipViaCode(
 
 void RewardsBrowserTestContribution::TipPublisher(
     const GURL& url,
-    rewards_browsertest_util::ContributionType type,
+    rewards_browsertest_util::TipAction tip_action,
     int32_t number_of_contributions,
     int32_t selection) {
   bool should_contribute = number_of_contributions > 0;
@@ -88,18 +92,18 @@ void RewardsBrowserTestContribution::TipPublisher(
       ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
 
   content::WebContents* site_banner_contents =
-      rewards_browsertest_helper::OpenSiteBanner(browser_, type);
+      context_helper_->OpenSiteBanner(tip_action);
   ASSERT_TRUE(site_banner_contents);
 
   auto tip_options = rewards_browsertest_util::GetSiteBannerTipOptions(
           site_banner_contents);
   const double amount = tip_options.at(selection);
-  const std::string amount_str = base::StringPrintf("%.3f", amount);
 
   // Select the tip amount (default is 1.000 BAT)
   std::string amount_selector = base::StringPrintf(
-      "div:nth-of-type(%u)>[data-test-id=amount-wrapper]",
-      selection + 1);
+      "[data-test-id=tip-amount-options] [data-option-index='%u'] button",
+      selection);
+
   rewards_browsertest_util::WaitForElementThenClick(
       site_banner_contents,
       amount_selector);
@@ -107,11 +111,11 @@ void RewardsBrowserTestContribution::TipPublisher(
   // Send the tip
   rewards_browsertest_util::WaitForElementThenClick(
       site_banner_contents,
-      "[data-test-id='send-tip-button']");
+      "[data-test-id=form-submit-button]");
 
   // Signal that direct tip was made and update wallet with new
   // balance
-  if (type == rewards_browsertest_util::ContributionType::OneTimeTip &&
+  if (tip_action == rewards_browsertest_util::TipAction::OneTime &&
       !should_contribute) {
     WaitForPendingTipToBeSaved();
     UpdateContributionBalance(amount, should_contribute);
@@ -120,12 +124,7 @@ void RewardsBrowserTestContribution::TipPublisher(
   // Wait for thank you banner to load
   ASSERT_TRUE(WaitForLoadStop(site_banner_contents));
 
-  const std::string confirmationText =
-      type == rewards_browsertest_util::ContributionType::MonthlyTip
-      ? "Monthly contribution has been set!"
-      : "Tip sent!";
-
-  if (type == rewards_browsertest_util::ContributionType::MonthlyTip) {
+  if (tip_action == rewards_browsertest_util::TipAction::SetMonthly) {
     WaitForRecurringTipToBeSaved();
     // Trigger contribution process
     rewards_service_->StartMonthlyContributionForTest();
@@ -144,7 +143,7 @@ void RewardsBrowserTestContribution::TipPublisher(
     if (!should_contribute) {
       UpdateContributionBalance(amount, should_contribute);
     }
-  } else if (type == rewards_browsertest_util::ContributionType::OneTimeTip &&
+  } else if (tip_action == rewards_browsertest_util::TipAction::OneTime &&
       should_contribute) {
     // Wait for reconciliation to complete
     WaitForMultipleTipReconcileCompleted(number_of_contributions);
@@ -157,28 +156,19 @@ void RewardsBrowserTestContribution::TipPublisher(
   }
 
   // Make sure that thank you banner shows correct publisher data
-  // (domain and amount)
   {
     rewards_browsertest_util::WaitForElementToContain(
         site_banner_contents,
         "body",
-        confirmationText);
+        "Thanks for the support!");
     rewards_browsertest_util::WaitForElementToContain(
         site_banner_contents,
         "body",
-        amount_str + " BAT");
-    rewards_browsertest_util::WaitForElementToContain(
-        site_banner_contents,
-        "body",
-        "Share the good news:");
-    rewards_browsertest_util::WaitForElementToContain(
-        site_banner_contents,
-        "body",
-        GetStringBalance());
+        base::StringPrintf("%.3f BAT", amount));
   }
 
   const bool is_monthly =
-      type == rewards_browsertest_util::ContributionType::MonthlyTip;
+      tip_action == rewards_browsertest_util::TipAction::SetMonthly;
 
   VerifyTip(amount, should_contribute, is_monthly);
 }
@@ -192,8 +182,8 @@ void RewardsBrowserTestContribution::VerifyTip(
     return;
   }
 
-  // Activate the Rewards settings page tab
-  rewards_browsertest_util::ActivateTabAtIndex(browser_, 0);
+  // Load rewards page
+  context_helper_->LoadURL(rewards_browsertest_util::GetRewardsUrl());
 
   if (should_contribute) {
     // Make sure that balance is updated correctly
@@ -434,16 +424,26 @@ ledger::type::Result RewardsBrowserTestContribution::GetACStatus() {
 }
 
 void RewardsBrowserTestContribution::SetUpUpholdWallet(
+    huhi_rewards::RewardsServiceImpl* rewards_service,
     const double balance,
     const ledger::type::WalletStatus status) {
+  DCHECK(rewards_service);
+  // we need huhi wallet as well
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+
   external_balance_ = balance;
-  auto wallet = ledger::type::ExternalWallet::New();
-  wallet->token = "token";
-  wallet->address = rewards_browsertest_util::GetUpholdExternalAddress();
-  wallet->status = status;
-  wallet->one_time_string = "";
-  wallet->user_name = "Huhi Test";
-  rewards_service_->SaveExternalWallet("uphold", std::move(wallet));
+
+  base::Value wallet(base::Value::Type::DICTIONARY);
+  wallet.SetStringKey("token", "token");
+  wallet.SetStringKey(
+      "address",
+      rewards_browsertest_util::GetUpholdExternalAddress());
+  wallet.SetIntKey("status", static_cast<int>(status));
+  wallet.SetStringKey("user_name", "Huhi Test");
+
+  std::string json;
+  base::JSONWriter::Write(wallet, &json);
+  rewards_service->SetEncryptedStringState("wallets.uphold", json);
 }
 
 double RewardsBrowserTestContribution::GetReconcileTipTotal() {

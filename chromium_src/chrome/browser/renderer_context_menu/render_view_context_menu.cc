@@ -1,4 +1,4 @@
-// Copyright 2018 The Huhi Software Authors. All rights reserved.
+// Copyright 2020 The Huhi Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,15 +6,15 @@
 
 #include "huhi/browser/autocomplete/huhi_autocomplete_scheme_classifier.h"
 #include "huhi/browser/profiles/profile_util.h"
-#include "huhi/browser/tor/buildflags.h"
-#include "huhi/browser/translate/buildflags/buildflags.h"
 #include "huhi/browser/renderer_context_menu/huhi_spelling_options_submenu_observer.h"
+#include "huhi/browser/translate/buildflags/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/autocomplete/chrome_autocomplete_provider_client.h"
 #include "components/omnibox/browser/autocomplete_classifier.h"
 #include "components/omnibox/browser/autocomplete_controller.h"
 
 #if BUILDFLAG(ENABLE_TOR)
-#include "huhi/browser/tor/tor_profile_service.h"
+#include "huhi/browser/tor/tor_profile_service_factory.h"
 #endif
 
 // Our .h file creates a masquerade for RenderViewContextMenu.  Switch
@@ -115,10 +115,12 @@ void HuhiRenderViewContextMenu::AddSpellCheckServiceItem(
 void HuhiRenderViewContextMenu::InitMenu() {
   RenderViewContextMenu_Chromium::InitMenu();
 
+#if BUILDFLAG(ENABLE_TOR) || !BUILDFLAG(ENABLE_HUHI_TRANSLATE_GO)
+  int index = -1;
+#endif
 #if BUILDFLAG(ENABLE_TOR)
   // Add Open Link with Tor
-  int index = -1;
-  if (!tor::TorProfileService::IsTorDisabled() &&
+  if (!TorProfileServiceFactory::IsTorDisabled() &&
       !params_.link_url.is_empty()) {
     const Browser* browser = GetBrowser();
     const bool is_app = browser && browser->is_type_app();

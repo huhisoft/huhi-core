@@ -1,5 +1,5 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -85,10 +85,9 @@ void HuhiProxyingWebSocket::Start() {
         weak_factory_.GetWeakPtr());
   }
 
-  ctx_ = std::make_shared<huhi::HuhiRequestInfo>();
-  huhi::HuhiRequestInfo::FillCTX(request_, process_id_,
-                                   frame_tree_node_id_, request_id_,
-                                   browser_context_, ctx_);
+  ctx_ = huhi::HuhiRequestInfo::MakeCTX(request_, process_id_,
+                                          frame_tree_node_id_, request_id_,
+                                          browser_context_, ctx_);
   int result = request_handler_->OnBeforeURLRequest(
       ctx_, continuation, &redirect_url_);
   // TODO(bridiver) - need to handle general case for redirect_url
@@ -135,7 +134,9 @@ void HuhiProxyingWebSocket::WebSocketFactoryRun(
   proxy_url_ = url;
   forwarding_handshake_client_.Bind(std::move(handshake_client));
   proxy_auth_handler_.Bind(std::move(auth_handler));
-  proxy_trusted_header_client_.Bind(std::move(trusted_header_client));
+
+  if (trusted_header_client)
+    proxy_trusted_header_client_.Bind(std::move(trusted_header_client));
 
   if (!proxy_has_extra_headers()) {
     for (const auto& header : additional_headers) {
@@ -156,10 +157,9 @@ void HuhiProxyingWebSocket::ContinueToHeadersReceived() {
   auto continuation = base::BindRepeating(
       &HuhiProxyingWebSocket::OnHeadersReceivedComplete,
       weak_factory_.GetWeakPtr());
-  ctx_ = std::make_shared<huhi::HuhiRequestInfo>();
-  huhi::HuhiRequestInfo::FillCTX(request_, process_id_,
-                                   frame_tree_node_id_, request_id_,
-                                   browser_context_, ctx_);
+  ctx_ = huhi::HuhiRequestInfo::MakeCTX(request_, process_id_,
+                                          frame_tree_node_id_, request_id_,
+                                          browser_context_, ctx_);
   int result = request_handler_->OnHeadersReceived(
       ctx_, continuation, response_.headers.get(),
       &override_headers_, &redirect_url_);
@@ -267,10 +267,9 @@ void HuhiProxyingWebSocket::OnBeforeSendHeadersCompleteFromProxy(
       &HuhiProxyingWebSocket::OnBeforeSendHeadersComplete,
       weak_factory_.GetWeakPtr());
 
-  ctx_ = std::make_shared<huhi::HuhiRequestInfo>();
-  huhi::HuhiRequestInfo::FillCTX(request_, process_id_,
-                                   frame_tree_node_id_, request_id_,
-                                   browser_context_, ctx_);
+  ctx_ = huhi::HuhiRequestInfo::MakeCTX(request_, process_id_,
+                                          frame_tree_node_id_, request_id_,
+                                          browser_context_, ctx_);
   int result = request_handler_->OnBeforeStartTransaction(
       ctx_, continuation, &request_.headers);
 

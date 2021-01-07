@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,7 +12,7 @@ using std::placeholders::_1;
 
 namespace {
 
-const int kCurrentVersionNumber = 5;
+const int kCurrentVersionNumber = 8;
 
 }  // namespace
 
@@ -25,11 +25,41 @@ StateMigration::StateMigration(LedgerImpl* ledger) :
     v3_(std::make_unique<StateMigrationV3>()),
     v4_(std::make_unique<StateMigrationV4>(ledger)),
     v5_(std::make_unique<StateMigrationV5>(ledger)),
+    v6_(std::make_unique<StateMigrationV6>(ledger)),
+    v7_(std::make_unique<StateMigrationV7>(ledger)),
+    v8_(std::make_unique<StateMigrationV8>(ledger)),
     ledger_(ledger) {
-  DCHECK(v1_ && v2_ && v3_ && v4_ && v5_);
+  DCHECK(v1_ && v2_ && v3_ && v4_ && v5_ && v6_ && v7_ && v8_);
 }
 
 StateMigration::~StateMigration() = default;
+
+void StateMigration::Start(ledger::ResultCallback callback) {
+  const int current_version = ledger_->state()->GetVersion();
+  const bool fresh_install = current_version == 0;
+
+  if (fresh_install) {
+    FreshInstall(callback);
+    return;
+  }
+
+  Migrate(callback);
+}
+
+void StateMigration::FreshInstall(ledger::ResultCallback callback) {
+  BLOG(1, "Fresh install, state version set to " << kCurrentVersionNumber);
+  ledger_->state()->SetInlineTippingPlatformEnabled(
+      type::InlineTipsPlatforms::REDDIT,
+      true);
+  ledger_->state()->SetInlineTippingPlatformEnabled(
+      type::InlineTipsPlatforms::TWITTER,
+      true);
+  ledger_->state()->SetInlineTippingPlatformEnabled(
+      type::InlineTipsPlatforms::GITHUB,
+      true);
+  ledger_->state()->SetVersion(kCurrentVersionNumber);
+  callback(type::Result::LEDGER_OK);
+}
 
 void StateMigration::Migrate(ledger::ResultCallback callback) {
   const int current_version = ledger_->state()->GetVersion();
@@ -47,6 +77,11 @@ void StateMigration::Migrate(ledger::ResultCallback callback) {
       callback);
 
   switch (new_version) {
+    case 0: {
+      ledger_->state()->SetVersion(new_version);
+      Migrate(callback);
+      return;
+    }
     case 1: {
       v1_->Migrate(migrate_callback);
       return;
@@ -65,6 +100,18 @@ void StateMigration::Migrate(ledger::ResultCallback callback) {
     }
     case 5: {
       v5_->Migrate(migrate_callback);
+      return;
+    }
+    case 6: {
+      v6_->Migrate(migrate_callback);
+      return;
+    }
+    case 7: {
+      v7_->Migrate(migrate_callback);
+      return;
+    }
+    case 8: {
+      v8_->Migrate(migrate_callback);
       return;
     }
   }

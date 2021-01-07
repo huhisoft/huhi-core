@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,6 +12,11 @@ typedef NS_ENUM(NSInteger, BATAdNotificationEventType) {
   BATAdNotificationEventTypeDismissed,    // = ads::AdNotificationEventType::kDismissed
   BATAdNotificationEventTypeTimedOut      // = ads::AdNotificationEventType::kTimedOut
 } NS_SWIFT_NAME(AdNotificationEventType);
+
+typedef NS_ENUM(NSInteger, BATNewTabPageAdEventType) {
+  BATNewTabPageAdEventTypeViewed,       // = ads::AdNotificationEventType::kViewed
+  BATNewTabPageAdEventTypeClicked       // = ads::AdNotificationEventType::kClicked
+} NS_SWIFT_NAME(NewTabPageAdEventType);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -90,7 +95,7 @@ NS_SWIFT_NAME(HuhiAds)
 @property (nonatomic, copy) NSString * subdivisionTargetingCode;
 
 /// Automatically detected ads subdivision targeting code
-@property (nonatomic, copy) NSString * automaticallyDetectedSubdivisionTargetingCode;
+@property (nonatomic, copy) NSString * autoDetectedSubdivisionTargetingCode;
 
 /// Remove all cached history (should be called when the user clears their browser history)
 - (void)removeAllHistory:(void (^)(BOOL))completion;
@@ -127,12 +132,17 @@ NS_SWIFT_NAME(HuhiAds)
 /// Report that a tab with a given id was closed by the user
 - (void)reportTabClosedWithTabId:(NSInteger)tabId NS_SWIFT_NAME(reportTabClosed(tabId:));
 
-/// Report that a notification event type was triggered for a given id
-- (void)reportAdNotificationEvent:(NSString *)notificationUuid
+/// Report that an ad notification event type was triggered for a given id
+- (void)reportAdNotificationEvent:(NSString *)uuid
                         eventType:(BATAdNotificationEventType)eventType;
 
-/// Update ad totals on month roll over, optionally reconcile with server
-- (void)updateAdRewards:(BOOL)shouldReconcile;
+/// Report that a new tab page ad event type was triggered for a given id
+- (void)reportNewTabPageAdEvent:(NSString *)wallpaperId
+             creativeInstanceId:(NSString *)creativeInstanceId
+                      eventType:(BATNewTabPageAdEventType)eventType;
+
+/// Reconcile ad rewards with server
+- (void)reconcileAdRewards;
 
 /// Get the number of ads received and the estimated earnings of viewing said ads for this cycle
 - (void)detailsForCurrentCycle:(void (^)(NSInteger adsReceived, double estimatedEarnings, NSDate * _Nullable nextPaymentDate))completion NS_SWIFT_NAME(detailsForCurrentCycle(_:));

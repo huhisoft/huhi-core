@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -7,10 +7,9 @@
 #include "base/scoped_observer.h"
 #include "huhi/browser/ipfs/ipfs_tab_helper.h"
 #include "huhi/common/huhi_paths.h"
-#include "huhi/common/huhi_wallet_constants.h"
-#include "huhi/common/pref_names.h"
-#include "huhi/components/ipfs/browser/features.h"
-#include "huhi/components/ipfs/common/ipfs_constants.h"
+#include "huhi/components/ipfs/features.h"
+#include "huhi/components/ipfs/ipfs_constants.h"
+#include "huhi/components/ipfs/pref_names.h"
 #include "chrome/browser/infobars/infobar_service.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
@@ -23,12 +22,29 @@
 #include "content/public/test/browser_test.h"
 #include "content/public/test/browser_test_utils.h"
 #include "net/dns/mock_host_resolver.h"
+#include "net/test/embedded_test_server/http_request.h"
+#include "net/test/embedded_test_server/http_response.h"
 
-class IPFSTabHelperTest: public InProcessBrowserTest,
-    public infobars::InfoBarManager::Observer {
+namespace {
+
+std::unique_ptr<net::test_server::HttpResponse> HandleRequest(
+    const net::test_server::HttpRequest& request) {
+  std::unique_ptr<net::test_server::BasicHttpResponse> http_response(
+      new net::test_server::BasicHttpResponse());
+  http_response->set_code(net::HTTP_OK);
+  http_response->set_content_type("text/html");
+  http_response->set_content("test");
+  http_response->AddCustomHeader(
+      "x-ipfs-path", "/ipfs/QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR");
+  return std::move(http_response);
+}
+
+}  // namespace
+
+class IPFSTabHelperTest : public InProcessBrowserTest,
+                          public infobars::InfoBarManager::Observer {
  public:
-  IPFSTabHelperTest() : infobar_observer_(this),
-      infobar_added_(false) {
+  IPFSTabHelperTest() : infobar_observer_(this), infobar_added_(false) {
     feature_list_.InitAndEnableFeature(ipfs::features::kIpfsFeature);
   }
 
@@ -48,16 +64,15 @@ class IPFSTabHelperTest: public InProcessBrowserTest,
   void SetUpOnMainThread() override {
     InProcessBrowserTest::SetUpOnMainThread();
     host_resolver()->AddRule("*", "127.0.0.1");
-    content::SetupCrossSiteRedirector(embedded_test_server());
     huhi::RegisterPathProvider();
     base::FilePath test_data_dir;
     base::PathService::Get(huhi::DIR_TEST_DATA, &test_data_dir);
-    embedded_test_server()->ServeFilesFromDirectory(test_data_dir);
+    embedded_test_server()->RegisterRequestHandler(
+        base::BindRepeating(&HandleRequest));
     ASSERT_TRUE(embedded_test_server()->Start());
   }
 
-  ~IPFSTabHelperTest() override {
-  }
+  ~IPFSTabHelperTest() override {}
 
   void AddInfoBarObserver(InfoBarService* infobar_service) {
     infobar_observer_.Add(infobar_service);
@@ -78,7 +93,7 @@ class IPFSTabHelperTest: public InProcessBrowserTest,
       infobars::InfoBarDelegate* delegate =
           infobar_service->infobar_at(i)->delegate();
       if (delegate->GetIdentifier() ==
-              infobars::InfoBarDelegate::IPFS_INFOBAR_DELEGATE) {
+          infobars::InfoBarDelegate::IPFS_INFOBAR_DELEGATE) {
         ConfirmInfoBarDelegate* confirm_delegate =
             delegate->AsConfirmInfoBarDelegate();
         ASSERT_EQ(confirm_delegate->GetButtons(), expected_buttons);
@@ -94,20 +109,19 @@ class IPFSTabHelperTest: public InProcessBrowserTest,
       infobars::InfoBarDelegate* delegate =
           infobar_service->infobar_at(i)->delegate();
       if (delegate->GetIdentifier() ==
-              infobars::InfoBarDelegate::IPFS_INFOBAR_DELEGATE) {
+          infobars::InfoBarDelegate::IPFS_INFOBAR_DELEGATE) {
         ConfirmInfoBarDelegate* confirm_delegate =
             delegate->AsConfirmInfoBarDelegate();
-        ASSERT_EQ(confirm_delegate->GetButtons(),
-            expected_buttons);
+        ASSERT_EQ(confirm_delegate->GetButtons(), expected_buttons);
         confirm_delegate->Cancel();
       }
     }
   }
 
   bool NavigateToURLUntilLoadStop(const std::string& origin,
-      const std::string& path) {
+                                  const std::string& path) {
     ui_test_utils::NavigateToURL(browser(),
-        embedded_test_server()->GetURL(origin, path));
+                                 embedded_test_server()->GetURL(origin, path));
     return WaitForLoadStop(active_contents());
   }
 
@@ -121,7 +135,7 @@ class IPFSTabHelperTest: public InProcessBrowserTest,
   // infobars::InfoBarManager::Observer:
   void OnInfoBarAdded(infobars::InfoBar* infobar) override {
     if (infobar->delegate()->GetIdentifier() ==
-            infobars::InfoBarDelegate::IPFS_INFOBAR_DELEGATE) {
+        infobars::InfoBarDelegate::IPFS_INFOBAR_DELEGATE) {
       infobar_added_ = true;
       if (infobar_added_run_loop_) {
         infobar_added_run_loop_->Quit();
@@ -134,8 +148,9 @@ IN_PROC_BROWSER_TEST_F(IPFSTabHelperTest, InfobarAddWithAccept) {
   InfoBarService* infobar_service =
       InfoBarService::FromWebContents(active_contents());
   AddInfoBarObserver(infobar_service);
-  EXPECT_TRUE(NavigateToURLUntilLoadStop("dweb.link",
-                  "/ipfs/QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR"));
+  EXPECT_TRUE(NavigateToURLUntilLoadStop(
+      "cloudflare-ipfs.com",
+      "/ipfs/QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR"));
 
   WaitForInfobarAdded();
   InfoBarAccept(ConfirmInfoBarDelegate::BUTTON_OK |
@@ -151,8 +166,9 @@ IN_PROC_BROWSER_TEST_F(IPFSTabHelperTest, InfobarAddWithSettings) {
   InfoBarService* infobar_service =
       InfoBarService::FromWebContents(active_contents());
   AddInfoBarObserver(infobar_service);
-  EXPECT_TRUE(NavigateToURLUntilLoadStop("dweb.link",
-                  "/ipfs/QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR"));
+  EXPECT_TRUE(NavigateToURLUntilLoadStop(
+      "cloudflare-ipfs.com",
+      "/ipfs/QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR"));
 
   WaitForInfobarAdded();
   InfoBarCancel(ConfirmInfoBarDelegate::BUTTON_OK |
@@ -160,7 +176,7 @@ IN_PROC_BROWSER_TEST_F(IPFSTabHelperTest, InfobarAddWithSettings) {
   // Pref for Wallet should still be ask by default
   auto method = static_cast<ipfs::IPFSResolveMethodTypes>(
       browser()->profile()->GetPrefs()->GetInteger(kIPFSResolveMethod));
-  ASSERT_EQ(method, ipfs::IPFSResolveMethodTypes::IPFS_GATEWAY);
+  ASSERT_EQ(method, ipfs::IPFSResolveMethodTypes::IPFS_ASK);
   WaitForTabCount(2);
   RemoveInfoBarObserver(infobar_service);
 }

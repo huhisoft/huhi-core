@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,7 +11,7 @@
 namespace crashpad {
 
 namespace {
-const char huhi_crash_url[] = "https://cr.huhisoft.com";
+const char huhi_crash_url[] = "https://cr.hnq.vn";
 }
 
 class HuhiCrashpadClient {
@@ -47,6 +47,8 @@ class HuhiCrashpadClient {
       const std::string& url,
       const std::map<std::string, std::string>& annotations,
       const std::vector<std::string>& arguments);
+
+  void SetUnhandledSignals(const std::set<int>& unhandled_signals);
 
   static bool StartHandlerWithLinkerForClient(
       const std::string& handler_trampoline,
@@ -145,6 +147,12 @@ bool HuhiCrashpadClient::StartHandlerWithLinkerAtCrash(
   return crash_reporter::GetCrashpadClient().StartHandlerWithLinkerAtCrash(
       handler_trampoline, handler_library, is_64_bit, env, database,
       metrics_dir, huhi_crash_url, annotations, arguments);
+}
+
+void HuhiCrashpadClient::SetUnhandledSignals(
+    const std::set<int>& unhandled_signals) {
+  return crash_reporter::GetCrashpadClient().SetUnhandledSignals(
+      unhandled_signals);
 }
 
 // static

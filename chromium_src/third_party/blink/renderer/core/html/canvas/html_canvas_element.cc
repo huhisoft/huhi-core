@@ -1,11 +1,22 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#define HUHI_TO_DATA_URL_INTERNAL                             \
-  image_bitmap = huhi::HuhiSessionCache::From(GetDocument()) \
-                     .PerturbPixels(GetDocument().GetFrame(), image_bitmap);
+#include "third_party/blink/public/platform/web_content_settings_client.h"
+#include "third_party/blink/renderer/core/execution_context/execution_context.h"
+#include "third_party/blink/renderer/core/frame/local_dom_window.h"
+#include "third_party/blink/renderer/core/frame/local_frame.h"
+#include "third_party/blink/renderer/core/workers/worker_global_scope.h"
+
+#define HUHI_TO_DATA_URL_INTERNAL                                           \
+  if (ExecutionContext* context = GetExecutionContext()) {                   \
+    if (WebContentSettingsClient* settings =                                 \
+            huhi::GetContentSettingsClientFor(context)) {                   \
+      image_bitmap = huhi::HuhiSessionCache::From(*context).PerturbPixels( \
+          settings, image_bitmap);                                           \
+    }                                                                        \
+  }
 
 #include "../../../../../../../../third_party/blink/renderer/core/html/canvas/html_canvas_element.cc"
 

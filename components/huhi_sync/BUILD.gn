@@ -5,7 +5,7 @@ import("//tools/grit/repack.gni")
 import("buildflags/buildflags.gni")
 
 declare_args() {
-  huhi_sync_endpoint = "https://sync.huhisoft.com"
+  huhi_sync_endpoint = ""
 }
 
 config("huhi_sync_config") {
@@ -73,6 +73,19 @@ source_set("prefs") {
   ]
 }
 
+source_set("profile_sync_service_helper") {
+  sources = [
+    "profile_sync_service_helper.cc",
+    "profile_sync_service_helper.h",
+  ]
+
+  deps = [
+    "//base",
+    "//components/sync_device_info",
+    "//components/sync/driver",
+  ]
+}
+
 group("huhi_sync") {
   deps = [
     ":crypto",
@@ -82,4 +95,8 @@ group("huhi_sync") {
     "buildflags",
     "//base",
   ]
+}
+
+group("constants") {
+  public_configs = [ ":huhi_sync_config" ]
 }

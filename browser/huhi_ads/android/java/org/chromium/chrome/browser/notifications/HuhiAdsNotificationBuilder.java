@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+ * Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  */
@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Process;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -218,8 +219,9 @@ public class HuhiAdsNotificationBuilder extends NotificationBuilderBase {
         Bitmap bitmap = Bitmap.createBitmap(colors, size, size, Bitmap.Config.ARGB_8888);
 
         Drawable inputDrawable = new BitmapDrawable(resources, bitmap);
-        Drawable outputDrawable = ApiCompatibilityUtils.getUserBadgedDrawableForDensity(
-                inputDrawable, null /* badgeLocation */, metrics.densityDpi);
+        Drawable outputDrawable =
+                mContext.getPackageManager().getUserBadgedDrawableForDensity(inputDrawable,
+                        Process.myUserHandle(), null /* badgeLocation */, metrics.densityDpi);
 
         // The input bitmap is immutable, so the output drawable will be a different instance from
         // the input drawable if the work profile badge was applied.

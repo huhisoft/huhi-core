@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -11,8 +11,6 @@
 #include "base/test/thread_test_helper.h"
 #include "huhi/browser/huhi_browser_process_impl.h"
 #include "huhi/common/huhi_paths.h"
-#include "huhi/components/huhi_component_updater/browser/local_data_files_observer.h"
-#include "huhi/components/huhi_component_updater/browser/local_data_files_service.h"
 #include "chrome/browser/extensions/extension_browsertest.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/browser/browser_thread.h"

@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -27,7 +27,7 @@ const noScriptInfo: NoScriptInfo = {
   [url5]: { actuallyBlocked: true, willBlock: true, userInteracted: false }
 }
 
-const url: string = 'https://huhisoft.com'
+const url: string = 'https://hnq.vn'
 const tabId: number = 2
 const state: State = deepFreeze({
   tabs: { [tabId]: { origin: url, id: tabId, noScriptInfo } },

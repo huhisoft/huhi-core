@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/post_suggestions/post_suggestions.h"
@@ -59,7 +59,7 @@ TEST_F(PostSuggestionsTest, ServerOK) {
   token.public_key = "dvpysTSiJdZUPihius7pvGOfngRWfDiIbrowykgMi1I=";
 
   credential::CredentialsRedeem redeem;
-  redeem.publisher_key = "huhisoft.com";
+  redeem.publisher_key = "hnq.vn";
   redeem.type = type::RewardsType::ONE_TIME_TIP;
   redeem.processor = type::ContributionProcessor::HUHI_TOKENS;
   redeem.token_list = {token};
@@ -91,7 +91,7 @@ TEST_F(PostSuggestionsTest, ServerError400) {
   token.public_key = "dvpysTSiJdZUPihius7pvGOfngRWfDiIbrowykgMi1I=";
 
   credential::CredentialsRedeem redeem;
-  redeem.publisher_key = "huhisoft.com";
+  redeem.publisher_key = "hnq.vn";
   redeem.type = type::RewardsType::ONE_TIME_TIP;
   redeem.processor = type::ContributionProcessor::HUHI_TOKENS;
   redeem.token_list = {token};
@@ -123,7 +123,7 @@ TEST_F(PostSuggestionsTest, ServerError500) {
   token.public_key = "dvpysTSiJdZUPihius7pvGOfngRWfDiIbrowykgMi1I=";
 
   credential::CredentialsRedeem redeem;
-  redeem.publisher_key = "huhisoft.com";
+  redeem.publisher_key = "hnq.vn";
   redeem.type = type::RewardsType::ONE_TIME_TIP;
   redeem.processor = type::ContributionProcessor::HUHI_TOKENS;
   redeem.token_list = {token};

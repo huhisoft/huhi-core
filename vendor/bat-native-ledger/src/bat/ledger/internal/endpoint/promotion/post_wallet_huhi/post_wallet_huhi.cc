@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include "bat/ledger/internal/endpoint/promotion/post_wallet_huhi/post_wallet_huhi.h"
@@ -79,12 +79,18 @@ type::Result PostWalletHuhi::ParseBody(
 
 void PostWalletHuhi::Request(
     PostWalletHuhiCallback callback) {
-  const auto seed = ledger_->state()->GetRecoverySeed();
+  const auto wallet = ledger_->wallet()->GetWallet();
+  if (!wallet) {
+    BLOG(0, "Wallet is null");
+    callback(type::Result::LEDGER_ERROR, "");
+    return;
+  }
+
   const auto headers = util::BuildSignHeaders(
       "post /v3/wallet/huhi",
       "",
-      util::Security::GetPublicKeyHexFromSeed(seed),
-      seed);
+      util::Security::GetPublicKeyHexFromSeed(wallet->recovery_seed),
+      wallet->recovery_seed);
 
   auto url_callback = std::bind(&PostWalletHuhi::OnRequest,
       this,

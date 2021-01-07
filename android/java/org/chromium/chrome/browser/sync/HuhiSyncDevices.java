@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -100,8 +100,10 @@ public class HuhiSyncDevices {
     public class SyncDeviceInfo {
         public String mName;
         public boolean mIsCurrentDevice;
+        public boolean mSupportsSelfDelete;
         public String mType;
         public Date mLastUpdatedTimestamp;
+        public String mGuid;
     }
 
     public ArrayList<SyncDeviceInfo> GetSyncDeviceList() {
@@ -121,18 +123,25 @@ public class HuhiSyncDevices {
                 deviceInfo.mType = device.getString("type");
                 long lastUpdatedTimestamp = device.getLong("lastUpdatedTimestamp");
                 deviceInfo.mLastUpdatedTimestamp = new Date(lastUpdatedTimestamp);
+                deviceInfo.mGuid = device.getString("guid");
+                deviceInfo.mSupportsSelfDelete = device.getBoolean("supportsSelfDelete");
                 deviceList.add(deviceInfo);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "GetDeviceNameByObjectId JSONException error " + e);
+            Log.e(TAG, "GetSyncDeviceList JSONException error " + e);
         } catch (IllegalStateException e) {
-            Log.e(TAG, "GetDeviceNameByObjectId IllegalStateException error " + e);
+            Log.e(TAG, "GetSyncDeviceList IllegalStateException error " + e);
         }
         return deviceList;
+    }
+
+    public void DeleteDevice(String deviceGuid) {
+        nativeDeleteDevice(mNativeHuhiSyncDevicesAndroid, deviceGuid);
     }
 
     private native void nativeInit();
     private native void nativeDestroy(long nativeHuhiSyncDevicesAndroid);
 
     private native String nativeGetSyncDeviceListJson(long nativeHuhiSyncDevicesAndroid);
+    private native void nativeDeleteDevice(long nativeHuhiSyncDevicesAndroid, String deviceGuid);
 }

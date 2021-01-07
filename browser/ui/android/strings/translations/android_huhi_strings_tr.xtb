@@ -12,6 +12,11 @@
 <translation id="6754976710186182237">Parmak İzi Yöntemleri</translation>
 <translation id="2313532038420432247">HTTPS Yükseltmeleri</translation>
 <translation id="7461425058443653485">Betikler Engellendi</translation>
+<translation id="6052725679982758334">Sosyal Medya Engelleme</translation>
+<translation id="7498695072878479744">Üçüncü parti sitelerde Google giriş butonlarına izin ver</translation>
+<translation id="863171915776379000">Facebook ile giriş yapmaya ve gömülü gönderilere izin ver</translation>
+<translation id="5165042248369837294">Gömülü Twitter tweetlerine izin ver</translation>
+<translation id="958971637207126733">LinkedIn gömülü gönderilere izin ver</translation>
 <translation id="3834924998750356151">Ekran Engelleniyor</translation>
 <translation id="1713450908129883784">Bireysel Denetimler</translation>
 <translation id="6302422639282249274">Huhi Ödülllerini Yönet</translation>
@@ -26,6 +31,8 @@
 <translation id="5787084571334399599">Tarayıcının parmak izi almasını engeller</translation>
 <translation id="7459000603787995422">Çıkışta sekmeleri kapat</translation>
 <translation id="1680858055899097121">Göz atma oturumları arasında sekmeleri açık bırakmayın</translation>
+<translation id="6469509880167172749">Huhi'e otomatik olarak tamamıyla gizli ürün analizi gönder</translation>
+<translation id="7090566321964540749">Bu anonim bilgi, yalnızca Huhi'in belirli özelliklerin genel kullanımını tahmin etmesine olanak tanır.</translation>
 <translation id="453601949003770390">İzleyiciler &amp; reklam Engellendi</translation>
 <translation id="347604927162577559">Veri\nTasarruf edildi</translation>
 <translation id="9008534313521214777">Tahmini Zaman\nTasarruf edildi</translation>
@@ -45,10 +52,8 @@
 <translation id="4150201353443180367">Ekran</translation>
 <translation id="2433507940547922241">Görünüm</translation>
 <translation id="2804710924397009224">Huhi Ödülleri Simgesini Gizle</translation>
-<translation id="7358991116457217836">Huhi Ödülleri etkinleştirilmediğinde Huhi Ödülleri Simgesini gizler</translation>
+<translation id="7289740269305509613">Huhi Ödülleri Simgesini Gizler</translation>
 <translation id="8495235435594442882">Alt araç çubuğunu etkinleştir</translation>
-<translation id="5916664084637901428">Açık</translation>
-<translation id="5860033963881614850">Kapalı</translation>
 <translation id="6587448235155023666">Yaptığınız değişiklikler cihazı yeniden başlattığınızda etkinleşecektir.</translation>
 <translation id="8701563696941209024">ŞİMDİ YENİDEN BAŞLAT</translation>
 <translation id="834487290629916192">DAHA SONRA</translation>
@@ -57,7 +62,6 @@
 <translation id="986879628471635371">Ekleme sorunlarının giderilmesi</translation>
 <translation id="5808759341041733958">Varsayılan arama motorunu seçin</translation>
 <translation id="1331593888918588693">Tercihinizi daha sonra istediğiniz zaman uygulama içi ayarlardan değiştirebilirsiniz.</translation>
-<translation id="5317780077021120954">Kaydet</translation>
 <translation id="7053983685419859001">Engel</translation>
 <translation id="5806601733251372221">Huhi Kalkanları</translation>
 <translation id="2880356288762235261">web'de takip edilmeden gezinebilmeniz için gizlilik istilacısı reklamlar ve izleyiciler.</translation>
@@ -65,7 +69,7 @@
 <translation id="3333887201479867589">Huhi Ödülleri</translation>
 <translation id="5870330605209713397">gizliliğe duyarlı reklamları görüntüleyerek ve favori siteleriniz ile kurucularını varsayılan olarak destekleyin.</translation>
 <translation id="821707262661492716">gizliliğe saygılı reklamları görmek için.</translation>
-<translation id="8267692331246948056">Kazan &amp; Ver'e dokunarak, şunları kabul etmiş olursunuz:</translation>
+<translation id="5302488867897327287">Huhi Ödülleri'ni Kullanmaya Başla tuşuna dokunarak şunları kabul etmiş olursunuz:</translation>
 <translation id="4281844954008187215">Kullanım Şartları</translation>
 <translation id="6871397658902960384">Taramaya başlayın</translation>
 <translation id="454386012157232640">Bir reklam görmedim</translation>
@@ -74,10 +78,8 @@
 <translation id="6511854390690723657">Bu, ilk Huhi reklamınız. Daha fazla bilgi almak için tıklayın.</translation>
 <translation id="4930714375720679147">Etkinleştir</translation>
 <translation id="2453860139492968684">Tamamlandı</translation>
-<translation id="7983303953939627894">Kazan &amp; Ver</translation>
+<translation id="2070991379950719711">Huhi Ödülleri'ni kullanmaya Başla</translation>
 <translation id="48520986898237073">Cüzdana devam et</translation>
-<translation id="2359808026110333948">Devam et</translation>
-<translation id="7658239707568436148">Vazgeç</translation>
 <translation id="3570367516044491911">Varsayılan tarayıcı olarak ayarla</translation>
 <translation id="7493053924837150477">Listeden Huhi Tarayıcı'yı seçin ve 'Her Zaman'a dokunun</translation>
 <translation id="3546439402724649282">Huhi zaten varsayılan tarayıcınız olarak ayarlandı.</translation>
@@ -178,7 +180,7 @@ yok...</translation>
 <translation id="8038539967102225446">Huhi Reklamları burada!</translation>
 <translation id="8985635554450124959">Eşitleme ayarlanamadı</translation>
 <translation id="222883304157347087">(bu cihaz)</translation>
-<translation id="8193724030871339658">ZİNCİRDEKİ DİĞER CİHAZLAR</translation>
+<translation id="4157741509680155021">EŞİTLEME ZİNCİRİNDEKİ CİHAZLAR</translation>
 <translation id="279635009973773843">CİHAZLAR YÜKLENİYOR...</translation>
 <translation id="6394333525003604181">EŞ ZAMANLAMA ZİNCİRİNDEN AYRILIYOR...</translation>
 <translation id="2569646144216067185">Sözcük sayısı: <ph name="WORD_COUNT"/> yok</translation>
@@ -188,11 +190,11 @@ yok...</translation>
 <translation id="3149880132460839085">Huhi Senkronizasyonu</translation>
 <translation id="3680755684186855422">Huhi Senkronizasyonu, yer imleri verilerini çeşitli cihazlarınızdaki Huhi Tarayıcılarınız arasında özel olarak senkronize etmenize izin verir.</translation>
 <translation id="3735228155296883311">Başka bir cihazda oluşturduğunuz eşitleme zincirinizden alınan kodu taramanız yeterlidir. Ya da yeni bir eşitleme zinciri başlatın.</translation>
-<translation id="4690880825349994619">Var olan eşitlenmiş cihazı kullanarak Huhi Ayarları'nı açın ve Ayarlar &gt; Eşitle'ye gidin. "Cihaz Ekle"yi seçin ve ekranda gösterilen QR Kodunu tarayın.</translation>
+<translation id="2614069607859982576">Mevcut eşitlenmiş cihazı kullnarak, Huhi Ayarlarını açın ve Eşitleme &gt; Ayarlarına gidin. "Yeni Cihaz Ekle"yi seçin ve ekranda gösterilen QR Kodunu tarayın.</translation>
 <translation id="5241263629636958324">Panoya kopyalandı</translation>
 <translation id="5817918615728894473">Eşle</translation>
-<translation id="3394474617110693560">Kategoriler</translation>
-<translation id="2004365171440701679">Bu cihazı kaldır</translation>
+<translation id="7090325819305486658">Veri Tercihleri</translation>
+<translation id="728334460283296316">Cihazı kaldır</translation>
 <translation id="1178128181015923849">'<ph name="DEVICE_NAME"/>' adlı cihazı silmek istediğinizden emin misiniz?</translation>
 <translation id="7745082336226088126">Eşitleme kodunu tarayın veya girin</translation>
 <translation id="1602067095281698985">Yeni bir senkronizasyon zinciri başlat</translation>
@@ -211,9 +213,9 @@ yok...</translation>
 <translation id="8730621377337864115">Bitti</translation>
 <translation id="6174119914106813304">BU CİHAZDA EŞİTLE</translation>
 <translation id="6776430845975754238">Ayarların değiştirilmesi, yalnızca bu cihazın diğerleriyle paylaştığı verileri etkiler.</translation>
-<translation id="6450924769151530465">Başka bir cihaz ekle</translation>
+<translation id="1061533051865606843">Yeni Cihaz Ekle</translation>
 <translation id="7539985410310934287">Kod sözcüklerini girin</translation>
-<translation id="6270614677029463366">Var olan eşitlenmiş cihazı kullanarak Huhi Ayarlarını açın ve Ayarlar &gt; Eşitleme konumuna gidin. "Cihaz Ekle"yi, sonra da "Bunun yerinde kod sözcüklerini göster"i seçin.</translation>
+<translation id="2886391679017857869">Mevcut eşitlenmiş cihazları kullanarak, Huhi Ayarlarını açın ve Eşitleme &gt; Ayarlarına gidin. "Yeni Cihaz Ekle"yi ve sonra "Yerine kod kelimeleri görüntüle"yi seçin.</translation>
 <translation id="8131740175452115882">Onayla</translation>
 <translation id="4973653569293835178">Kameramı kullanacağım...</translation>
 <translation id="326454632686131209">Cihazı eşitle</translation>
@@ -229,6 +231,10 @@ yok...</translation>
 <translation id="6810078320346589989">Bir yer imi oluştur</translation>
 <translation id="3396347744975515056">Huhi Eş Zamanlama güncellendi ve kurulması gerekli</translation>
 <translation id="7473245612074035141">Kuruluma Başla</translation>
+<translation id="1872784258300710671">Huhi, belirli özelliklerin genel kullanımını tahmin etmek için tamamıyla gizli ürün analizi kullanır</translation>
+<translation id="8712637175834984815">Anlaşıldı</translation>
+<translation id="4394049700291259645">Devre dışı bırak</translation>
+<translation id="8446884382197647889">Daha Fazla Bilgi Edinin</translation>
 <translation id="597993392929850353">Huhi Lisans</translation>
 <translation id="6336451774241870485">Yeni gizli sekmesi</translation>
 <translation id="6199596294742117349">Bu bir Gizli Sekme</translation>
@@ -238,7 +244,6 @@ yok...</translation>
 <translation id="844921671123185605">Aylık bahşişleriniz işlendi!</translation>
 <translation id="3124090095880236567">Reklamları Etkinleştir</translation>
 <translation id="2975780980638932742">Huhi Ads geldi!</translation>
-<translation id="7655723274266132226">Artık reklam görüntüleyerek kazanabilirsiniz.</translation>
 <translation id="7541582550122501404">Beklenen Katkı</translation>
 <translation id="8520059774736886747">Oluşturucu <ph name="PUBLISHER_NAME"/> doğrulandı</translation>
 <translation id="7924320838799747606">Bakiyeniz</translation>
@@ -256,8 +261,7 @@ yok...</translation>
 <translation id="8522669544471808198">Arka Plan Resimlerini Göster</translation>
 <translation id="3870475560794762985">Sponsorlu Resimleri Göster</translation>
 <translation id="8297488609722895137">Photo by <ph name="PHOTO_BY"/></translation>
-<translation id="1605521356929094020">Huhi Ads'i Etkinleştir</translation>
-<translation id="1873603368604736484">Ödülleri açarak, <ph name="TERMS_OF_SERVICE"/>'ını kabul etmiş sayılırsınız.</translation>
+<translation id="4761229094276239865">Cesur Ödüllerini Kullanmaya Başla düğmesine dokunarak <ph name="TERMS_OF_SERVICE"/>'yi kabul etmiş olursunuz.</translation>
 <translation id="3794079107601824147">Bu arka plan resmini görmek için ödeme alın.</translation>
 <translation id="7136586167396205364">Sponsorlu Resimleri Gizle</translation>
 <translation id="2927095357213611519">Tokenler ile web tasarımcıları destekleyebilirsiniz.\nGizlilik dostu reklamlar izleyerek token kazanın.</translation>
@@ -304,7 +308,7 @@ yok...</translation>
 <translation id="8851456134224363571">Harika! Play Store'da bize bir puan bırakır mısınız?</translation>
 <translation id="8668962040900592974">Nasıl daha iyi olabileceğimizi bize anlatın</translation>
 <translation id="4406937629441301400">Bu görseli görüntülediğiniz için jeton kazanın, ödemesini oluşturuculara yapın. <ph name="LEARN_MORE"/></translation>
-<translation id="7894626572714595717">Bu görseli görmek için token kazanın. Payınızı almak için Huhi Ads'i açın.</translation>
+<translation id="1992363542751124282">Bu resmi görüntülemek için jeton kazanın. Payınızı talep etmek için Huhi Ödülleri'ni kullanmaya Başla tuşuna dokunun.</translation>
 <translation id="6632345639591919543">Bu görseli görüntülediğiniz için jeton kazanıyorsunuz.\n<ph name="LEARN_MORE"/></translation>
 <translation id="1465733111003593696">Bu görseli görüntülediğiniz için jeton kazanıyorsunuz.</translation>
 <translation id="7877201489035217175">Sponsorlu görseller hakkında daha fazla bilgi edinin</translation>
@@ -342,7 +346,7 @@ yok...</translation>
 <translation id="3286927551967858325">Bir göz atın</translation>
 <translation id="2929661208078053609">Güzel!</translation>
 <translation id="4776948189086901857">Huhi her yerde çalışır</translation>
-<translation id="1606322780901645965">Daha hızlı ve daha mahrem bir web için, Huhi'i huhisoft.com adresinden laptopunuza veya tabletinize indirin</translation>
+<translation id="1606322780901645965">Daha hızlı ve daha mahrem bir web için, Huhi'i hnq.vn adresinden laptopunuza veya tabletinize indirin</translation>
 <translation id="8374242949413616101">Gizlilik koruma</translation>
 <translation id="4955406228638026265">Huhi, reklamların &amp; izleyicilerin sizin hakkınızda rızanız olmadan bilgi toplamalarını engeller.</translation>
 <translation id="752842701893882688">Veriden ve bataryadan tasarruf edin</translation>
@@ -352,7 +356,6 @@ yok...</translation>
 <translation id="8903462729414407077">Haftalık haber alın</translation>
 <translation id="8029219208182772618">Ziyaret ettiğiniz websitelerinden hangilerinin gizliliği en fazla ihlal ettiği hakkında bilgi alın.\n\nBu gizlilik istatistiklerini sadece siz görebilirsiniz. Huhi tarayıcınızdaki hiçbir kişisel veri veya tarama geçmişi cihazınızı terketmeyecektir.</translation>
 <translation id="6170159749517116894">Gizlilik raporlarını açın</translation>
-<translation id="6165508094623778733">Daha fazla bilgi edinin</translation>
 <translation id="5966707198760109579">Hafta</translation>
 <translation id="8987927404178983737">Ay</translation>
 <translation id="4302754476737420523">3 Ay</translation>
@@ -371,12 +374,12 @@ yok...</translation>
 <translation id="7427567994475794038">Son 3 saatte kaç izleyicinin &amp; reklamın engellendiğini görmek için Gizlilik Raporları'nı açın.</translation>
 <translation id="2053891538879944400">Huhi tarayıcı ile <ph name="DATA"/> <ph name="DATA_TEXT"/> veri tasarruf ettiniz.</translation>
 <translation id="8640064498452534195">Ne kadar veri tasarruf ettiğinizi görmek için Gizlilik Raporları'nı açın.</translation>
-<translation id="2252497442547961651">Huhi tarayıcı ortalama %40 daha az pil kullanır.🔋</translation>
+<translation id="2252497442547961651">Huhi tarayıcı ortalama %40 daha az pil kullanır.&#128267;</translation>
 <translation id="1945330434665345785">Huhi tarayıcı ile geçen hafta <ph name="COUNT"/> izleyici &amp; reklamı engellediniz.</translation>
 <translation id="2883868922264431515">Gizlilik dostu reklamlar izleyerek token kazanın ve sevdiğiniz websitelerini destekleyin.</translation>
-<translation id="5678925890616256956">Güzel! Huhi tarayıcı ile 250 izleyici &amp; reklam engellediniz.🔥</translation>
-<translation id="9199047775708635708">Güzel! Huhi tarayıcı ile 10 MB tasarruf ettiniz.🔋</translation>
-<translation id="1880168210969863408">Güzel! Huhi tarayıcı ile yükleme süresinden 10 Dakika tasarruf ettiniz.💨💨</translation>
+<translation id="5678925890616256956">Güzel! Huhi tarayıcı ile 250 izleyici &amp; reklam engellediniz.&#128293;</translation>
+<translation id="9199047775708635708">Güzel! Huhi tarayıcı ile 10 MB tasarruf ettiniz.&#128267;</translation>
+<translation id="1880168210969863408">Güzel! Huhi tarayıcı ile yükleme süresinden 10 Dakika tasarruf ettiniz.&#128168;&#128168;</translation>
 <translation id="7408493389591475748">Gizlilik raporunu görmek için gezinmeye başlayın</translation>
 <translation id="9080777565335515917">Gizli ve güvenli gezinti için, Huhi'i varsayılan tarayıcınız yapın.</translation>
 <translation id="7801488941710395275">Huhi'in, gizlilik istatistiklerinizi göstermesine izin verir</translation>
@@ -386,11 +389,79 @@ yok...</translation>
 <translation id="2718046830255553131">Gizlilik raporları verileri silindi.</translation>
 <translation id="7559243474426790340">Durumu Yenile</translation>
 <translation id="8376263745431603066">"Gece Modu"nu etkinleştir (Deneysel)</translation>
-<translation id="1604429341565715601">Eş Zamanlama kurulumu devam ediyor, yeniden başlatmayı daha sonra deneyin</translation>
-<translation id="4540198958192073185">Tüm parmak izlerini engelle</translation>
-<translation id="5739030256211745023">Reklamlar &amp; izleyiciler olmadan websiteleri daha az veri ve batarya kullanır. Telefon operatörü ücretlerinden bile tasarruf edebilirsiniz.</translation>
-<translation id="4591582032282435287">Huhi tarayıcı ortalama %40 daha az batarya kullanır.</translation>
-<translation id="6840965284166256302">Güzel! Huhi tarayıcı sayesinde 250 izleyici &amp; reklamı engellediniz.</translation>
-<translation id="2076976911561945584">Güzel! Huhi tarayıcı sayesinde 10MB tasarruf ettiniz.</translation>
-<translation id="6714550233326888315">Güzel! Huhi tarayıcı sayesinde yükleme zamanından 10 dk tasarruf ettiniz.</translation>
+<translation id="1383876407941801731">Ara</translation>
+<translation id="1972589975368876259">Yığını düzenle</translation>
+<translation id="2490330380242414851">Arabirim Öğesini Kaldır</translation>
+<translation id="7384441892795736634">Verileri Yenile</translation>
+<translation id="4804818685124855865">Bağlantıyı Kes</translation>
+<translation id="4789438578712143420">≈ $<ph name="USD_BALANCE"/></translation>
+<translation id="1080611582879541635"><ph name="COIN_ADDRESS"/> Mevduat Adresi</translation>
+<translation id="4836242416604533644"><ph name="COIN_MEMO"/> Mevduat Dekontu</translation>
+<translation id="5110244215256675209">Kripto Para Birimi Satın Al</translation>
+<translation id="2271556362602437160">.com</translation>
+<translation id="3727077517986954867">.us</translation>
+<translation id="3414885529641505869">Satın al <ph name="COIN_NAME"/></translation>
+<translation id="558614325644656740">Kullanılabilir <ph name="COIN_BALANCE"/> <ph name="COIN_NAME"/></translation>
+<translation id="6755546361496900700">Dönüşümü Ön İzle</translation>
+<translation id="2882813124794301799">Arabirim Öğesi Yığını</translation>
+<translation id="13296465911709339">Metnin panoya kopyalandı.</translation>
+<translation id="7144878232160441200">Tekrar Dene</translation>
+<translation id="2977461003134694205">Gizlilik İstatistikleri</translation>
+<translation id="4643117005422448078">En İyi Siteler</translation>
+<translation id="6966052266404721769">Binance</translation>
+<translation id="1392658226187691544">İzleyiciler &amp; Engellenen reklamlar, Tasarruf Edilen Bant Genişliği ve Tasarruf Edilen Zaman Tahminleri.</translation>
+<translation id="74417429503469271">Sık ziyaret ettiğiniz en iyi siteleri açın.</translation>
+<translation id="2956070106555335453">Özet</translation>
+<translation id="1366855498335432549">Para Yatır</translation>
+<translation id="1301340234286078471">Dönüştür</translation>
+<translation id="223536150967420869">Satın Al</translation>
+<translation id="1714829281959608206">Binance hesabı bakiyesini görüntülemek ve kripto para birimlerini alıp satmak için Binance bağlantısını etkinleştirin.</translation>
+<translation id="4584930231524505442">Şunu dönüştürmek istiyorum:</translation>
+<translation id="5749014321384313843">Şunu harcamak istiyorum:</translation>
+<translation id="8688672835843460752">Müsait</translation>
+<translation id="2480674848181564169">Çevirme için yeterli bakiye yok</translation>
+<translation id="2215334405220411393">Dönüştürülecek en az miktar : <ph name="COIN_BALANCE"/> <ph name="COIN_NAME"/></translation>
+<translation id="6702658079816271889">Bağlanamadı</translation>
+<translation id="7742417737698031726">Ücret</translation>
+<translation id="2122225204180056042">Şunu alacaksınız:</translation>
+<translation id="6432284126416751397">Dönüşümü Onayla</translation>
+<translation id="5137723827757859599">En iyi sitelerde henüz bir şey yok.</translation>
+<translation id="3891414008432200754">Fiyat</translation>
+<translation id="3733576242118819803">Doğrulayın (<ph name="REMAINING_TIME"/>s)</translation>
+<translation id="1627064138060308910">Dönüştürme Başarısız. Lütfen tekrar deneyin.</translation>
+<translation id="1449790603979388000"><ph name="COUNT"/> <ph name="COUNT_TEXT"/></translation>
+<translation id="7465614181960492526">Jeton Kazanın ve Geri Verin</translation>
+<translation id="244362569344671266">Huhi Özel Reklamları'nı görüntüleyerek jeton kazanın ve içerik üreticilerini otomatik olarak destekleyin.</translation>
+<translation id="631124996535890460">Devam ederek <ph name="TERMS_OF_SERVICE"/> and <ph name="PRIVACY_POLICY"/>. kabul etmiş olursunuz</translation>
+<translation id="8804164990146287819">Gizlilik Şartları</translation>
+<translation id="6318696841371191107">Hızlı bir tur atın</translation>
+<translation id="7930505144430343145">Huhi Ödülleri'ne Hoşgeldiniz!</translation>
+<translation id="7909111626803226907">Huhi özel reklamları, kişisel bilgilerinizi gizli tutarken, geleneksel reklamların aksine içerik üreticileri desteklemek için sizi jetonlarla ödüllendirir.</translation>
+<translation id="6973095375773523904">Reklamlar nerede çıkıyor?</translation>
+<translation id="3867028444168159102">Huhi özel reklamları, normal bir bildirim gibi gözükecektir. Ayarlarda bu reklamları ne sıklıkla göreceğinizi kontrol edersiniz.</translation>
+<translation id="5816125157889950051">Ödülleri ne zaman alırsınız</translation>
+<translation id="4649471244559455723">Mevcut ay boyunca Huhi reklamlarından kazandığınız jetonlarınız önümüzdeki ayın 5'inde hesabınıza yatacak.</translation>
+<translation id="7712287524451429139">Geri vermek zahmetsiz hale geldi</translation>
+<translation id="105037569026952831">İçerik üreticiler, ‘Dikkat’ olarak ölçtüğümüz etkileşim düzeylerinize göre jeton katkılarınızı otomatik olarak alır</translation>
+<translation id="5323267338679539010">Bahşiş vererek teşekkür et</translation>
+<translation id="6042317056594735519">Bahşiş, sevdiğiniz içeriği veya içerik üreticilerini kişisel olarak teşvik etmenin ve desteklemenin bir yoludur. Bahşiş vermeye başlayın!</translation>
+<translation id="7509452925943421624">Jetonlarla neler yapabilirsiniz?</translation>
+<translation id="7059157883171259940">Jetonlar, içerik üretenleri desteklemenin ötesinde kullanılabilir. Geri ödeme bonusuna sahip dijital ürünler ve hediye kartları satın alabilirsiniz.</translation>
+<translation id="1402530520078693620">Son olarak, hadi size temel ayarları yapalım</translation>
+<translation id="3494356595346329740">Bunu daha sonra değiştirebilirsiniz.</translation>
+<translation id="6462814326662189004">Reklamları ne sıklıkla görmek istiyorsunuz? \n (Saat başına reklam)</translation>
+<translation id="2134244432345596331">Favori içerik üreticilerine ne kadar destek vermek istersiniz? \n (reklam kazançlarınızdan)</translation>
+<translation id="7456161272236175794">OLEYY!\n İşleminiz bitti.</translation>
+<translation id="3895246934788932488">Huhi Ödülleri'ni kullanarak, gizliliğinizi koruyor ve internetin herkes için daha iyi bir yer olmasına yardımcı oluyorsunuz. Ve bu harika!</translation>
+<translation id="5705882733397021510">Geri Git</translation>
+<translation id="5140321319944305531">Hadi Hızlı Bir Tur Atalım</translation>
+<translation id="3808131693704413134">İlk reklam ödemenizi aldıktan sonra geri gelip bu içerik üreticisine bahşiş verebilirsiniz!</translation>
+<translation id="207242986925259074">Hızlı bir yeniden hatırlama turu</translation>
+<translation id="8342862030112839977">İlk ödül ödemeniz şu tarihe kadar gelecek:</translation>
+<translation id="3769645103175790584">İnternette gezinirken jeton kazanın ve içerik üreticilerini harika içerikler için ödüllendirin. <ph name="QUICK_TOUR"/>.</translation>
+<translation id="6912901278692845878">Hızlı tur</translation>
+<translation id="1080013038789678738">Ben Varım!</translation>
+<translation id="3604285424134705930"><ph name="FROM_VALUE"/> <ph name="FROM_CURRENCY"/> to <ph name="TO_VALUE"/> <ph name="TO_CURRENCY"/>!  çevirdiniz</translation>
+<translation id="392587271502873865">Lütfen ağ bağlantınızı kontrol edin.</translation>
+<translation id="7889432931837317731">Mümkün olduğunda otomatik olarak aç</translation>
 </translationbundle>

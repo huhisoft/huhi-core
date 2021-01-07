@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -20,6 +20,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/task/post_task.h"
 #include "base/task_runner_util.h"
+#include "base/version.h"
 #include "huhi/components/huhi_component_updater/browser/dat_file_util.h"
 #include "huhi/components/huhi_component_updater/browser/local_data_files_service.h"
 #include "huhi/components/greaselion/browser/switches.h"
@@ -37,9 +38,19 @@ const char kPreconditions[] = "preconditions";
 const char kURLs[] = "urls";
 const char kScripts[] = "scripts";
 const char kRunAt[] = "run_at";
+const char kMessages[] = "messages";
+// Note(petemill): "huhi" instead of "browser" version in order
+// to preserve some sense of cross-browser targetting of the scripts.
+const char kMinimumHuhiVersion[] = "minimum_huhi_version";
 // precondition keys
 const char kRewards[] = "rewards-enabled";
 const char kTwitterTips[] = "twitter-tips-enabled";
+const char kRedditTips[] = "reddit-tips-enabled";
+const char kGithubTips[] = "github-tips-enabled";
+const char kAutoContribution[] = "auto-contribution-enabled";
+const char kAds[] = "ads-enabled";
+const char kSupportsMinimumHuhiVersion[] =
+    "supports-minimum-huhi-version";
 
 GreaselionPreconditionValue GreaselionRule::ParsePrecondition(
     const base::Value& value) {
@@ -57,6 +68,8 @@ void GreaselionRule::Parse(base::DictionaryValue* preconditions_value,
                            base::ListValue* urls_value,
                            base::ListValue* scripts_value,
                            const std::string& run_at_value,
+                           const std::string& minimum_huhi_version_value,
+                           const base::FilePath& messages_value,
                            const base::FilePath& resource_dir) {
   if (preconditions_value) {
     for (const auto& kv : preconditions_value->DictItems()) {
@@ -65,6 +78,16 @@ void GreaselionRule::Parse(base::DictionaryValue* preconditions_value,
         preconditions_.rewards_enabled = condition;
       } else if (kv.first == kTwitterTips) {
         preconditions_.twitter_tips_enabled = condition;
+      } else if (kv.first == kRedditTips) {
+        preconditions_.reddit_tips_enabled = condition;
+      } else if (kv.first == kGithubTips) {
+        preconditions_.github_tips_enabled = condition;
+      } else if (kv.first == kAutoContribution) {
+        preconditions_.auto_contribution_enabled = condition;
+      } else if (kv.first == kAds) {
+        preconditions_.ads_enabled = condition;
+      } else if (kv.first == kSupportsMinimumHuhiVersion) {
+        preconditions_.supports_minimum_huhi_version = condition;
       } else {
         LOG(INFO) << "Greaselion encountered an unknown precondition: "
             << kv.first;
@@ -82,7 +105,6 @@ void GreaselionRule::Parse(base::DictionaryValue* preconditions_value,
       return;
     }
     url_patterns_.push_back(pattern_string);
-    run_at_ = run_at_value;
   }
   for (const auto& scripts_it : scripts_value->GetList()) {
     base::FilePath script_path = resource_dir.AppendASCII(
@@ -92,6 +114,11 @@ void GreaselionRule::Parse(base::DictionaryValue* preconditions_value,
     } else {
       scripts_.push_back(script_path);
     }
+  }
+  run_at_ = run_at_value;
+  minimum_huhi_version_ = minimum_huhi_version_value;
+  if (!messages_value.empty()) {
+    messages_ = resource_dir.Append(messages_value);
   }
 }
 
@@ -110,13 +137,39 @@ bool GreaselionRule::PreconditionFulfilled(
   }
 }
 
-bool GreaselionRule::Matches(GreaselionFeatures state) const {
+bool GreaselionRule::Matches(
+    GreaselionFeatures state, const base::Version& browser_version) const {
+  // Validate against preconditions.
   if (!PreconditionFulfilled(preconditions_.rewards_enabled,
                              state[greaselion::REWARDS]))
     return false;
   if (!PreconditionFulfilled(preconditions_.twitter_tips_enabled,
                              state[greaselion::TWITTER_TIPS]))
     return false;
+  if (!PreconditionFulfilled(preconditions_.reddit_tips_enabled,
+                             state[greaselion::REDDIT_TIPS]))
+    return false;
+  if (!PreconditionFulfilled(preconditions_.github_tips_enabled,
+                             state[greaselion::GITHUB_TIPS]))
+    return false;
+  if (!PreconditionFulfilled(preconditions_.auto_contribution_enabled,
+                             state[greaselion::AUTO_CONTRIBUTION]))
+    return false;
+  if (!PreconditionFulfilled(preconditions_.supports_minimum_huhi_version,
+                          state[greaselion::SUPPORTS_MINIMUM_HUHI_VERSION]))
+    return false;
+  if (!PreconditionFulfilled(preconditions_.ads_enabled,
+                             state[greaselion::ADS]))
+    return false;
+  // Validate against browser version.
+  if (base::Version::IsValidWildcardString(minimum_huhi_version_)) {
+    bool rule_version_is_higher_than_browser =
+        (browser_version.CompareToWildcardString(minimum_huhi_version_) < 0);
+    if (rule_version_is_higher_than_browser) {
+      return false;
+    }
+  }
+  // Rule matches current state.
   return true;
 }
 
@@ -194,11 +247,20 @@ void GreaselionDownloadService::OnDATFileDataReady(std::string contents) {
     rule_dict->GetList(kScripts, &scripts_value);
     const std::string* run_at_ptr = rule_it.FindStringPath(kRunAt);
     const std::string run_at_value = run_at_ptr ? *run_at_ptr : "";
+    const std::string* minimum_huhi_version_ptr = rule_it.FindStringPath(
+        kMinimumHuhiVersion);
+    const std::string minimum_huhi_version_value =
+        minimum_huhi_version_ptr ? *minimum_huhi_version_ptr : "";
+    const std::string* messages = rule_it.FindStringPath(kMessages);
+    base::FilePath messages_path;
+    if (messages) {
+      messages_path = base::FilePath::FromUTF8Unsafe(messages->c_str());
+    }
 
     std::unique_ptr<GreaselionRule> rule = std::make_unique<GreaselionRule>(
         base::StringPrintf(kRuleNameFormat, rules_.size()));
-    rule->Parse(preconditions_value, urls_value, scripts_value,
-        run_at_value, resource_dir_);
+    rule->Parse(preconditions_value, urls_value, scripts_value, run_at_value,
+        minimum_huhi_version_value, messages_path, resource_dir_);
     rules_.push_back(std::move(rule));
   }
   for (Observer& observer : observers_)

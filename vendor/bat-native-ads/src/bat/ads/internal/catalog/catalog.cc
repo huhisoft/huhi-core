@@ -1,12 +1,13 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "bat/ads/internal/catalog/catalog.h"
 
-#include "bat/ads/ads_client.h"
 #include "bat/ads/internal/ads_impl.h"
+#include "bat/ads/internal/catalog/catalog_issuers_info.h"
+#include "bat/ads/internal/catalog/catalog_state.h"
 #include "bat/ads/internal/logging.h"
 #include "bat/ads/internal/json_helper.h"
 

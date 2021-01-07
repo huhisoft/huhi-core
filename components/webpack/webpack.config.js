@@ -1,13 +1,10 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
 const path = require('path')
 const GenerateDepfilePlugin = require('./webpack-plugin-depfile')
-const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default
-
-const styledComponentsTransformer = createStyledComponentsTransformer()
 
 module.exports = (env, argv) => ({
   devtool: argv.mode === 'development' ? '#inline-source-map' : false,
@@ -25,12 +22,16 @@ module.exports = (env, argv) => ({
     // https://github.com/huhisoft/huhi-browser/issues/5587
     aliasFields: ['chromeapp']
   },
-  plugins: [
+  optimization: {
+    // Define NO_CONCATENATE for analyzing module size.
+    concatenateModules: !process.env.NO_CONCATENATE
+  },
+  plugins: process.env.DEPFILE_SOURCE_NAME ? [
     new GenerateDepfilePlugin({
       depfilePath: process.env.DEPFILE_PATH,
       depfileSourceName: process.env.DEPFILE_SOURCE_NAME
     })
-  ],
+  ] : [],
   module: {
     rules: [
       {
@@ -39,7 +40,8 @@ module.exports = (env, argv) => ({
         exclude: /node_modules\/(?!huhi-ui)/,
         options: {
           getCustomTransformers: path.join(__dirname, './webpack-ts-transformers.js'),
-          allowTsInNodeModules: true
+          allowTsInNodeModules: true,
+          configFile: 'tsconfig-webpack.json'
         }
       },
       {
@@ -52,7 +54,7 @@ module.exports = (env, argv) => ({
         loader: 'url-loader?limit=13000&minetype=application/font-woff'
       },
       {
-        test: /\.(ttf|eot|ico|svg|png|jpg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        test: /\.(ttf|eot|ico|svg|png|jpg|gif)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'file-loader'
       }]
   },

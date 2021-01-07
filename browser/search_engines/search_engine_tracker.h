@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -16,7 +16,7 @@
 #include "url/gurl.h"
 
 // Exposed for tests.
-constexpr char kDefaultSearchEngineMetric[] = "Huhi.Search.DefaultEngine.2";
+constexpr char kDefaultSearchEngineMetric[] = "Huhi.Search.DefaultEngine.3";
 
 // Note: append-only enumeration! Never remove any existing values, as this enum
 // is used to bucket a UMA histogram, and removing values breaks that.
@@ -28,7 +28,8 @@ enum class SearchEngineP3A {
   kBing,
   kQwant,
   kYahoo,
-  kMaxValue = kYahoo,
+  kYandex,
+  kMaxValue = kYandex,
 };
 
 class SearchEngineTrackerFactory : public BrowserContextKeyedServiceFactory {

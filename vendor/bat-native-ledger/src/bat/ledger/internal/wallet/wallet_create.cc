@@ -1,16 +1,18 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "bat/ledger/internal/wallet/wallet_create.h"
 
+#include <utility>
 #include <vector>
 
 #include "base/json/json_reader.h"
 #include "bat/ledger/internal/common/security_util.h"
 #include "bat/ledger/internal/common/time_util.h"
 #include "bat/ledger/internal/ledger_impl.h"
+#include "bat/ledger/internal/constants.h"
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -27,16 +29,24 @@ WalletCreate::WalletCreate(LedgerImpl* ledger) :
 WalletCreate::~WalletCreate() = default;
 
 void WalletCreate::Start(ledger::ResultCallback callback) {
-  const auto payment_id = ledger_->state()->GetPaymentId();
+  auto wallet = ledger_->wallet()->GetWallet();
 
-  if (!payment_id.empty()) {
+  if (wallet && !wallet->payment_id.empty()) {
     BLOG(1, "Wallet already exists");
     callback(type::Result::WALLET_CREATED);
     return;
   }
 
+  wallet = type::HuhiWallet::New();
   const auto key_info_seed = util::Security::GenerateSeed();
-  ledger_->state()->SetRecoverySeed(key_info_seed);
+  wallet->recovery_seed = key_info_seed;
+  const bool success = ledger_->wallet()->SetWallet(std::move(wallet));
+
+  if (!success) {
+    BLOG(0, "Wallet couldn't be set");
+    callback(type::Result::LEDGER_ERROR);
+    return;
+  }
 
   auto url_callback = std::bind(&WalletCreate::OnCreate,
       this,
@@ -56,27 +66,22 @@ void WalletCreate::OnCreate(
     return;
   }
 
-  ledger_->state()->SetPaymentId(payment_id);
+  auto wallet = ledger_->wallet()->GetWallet();
+  wallet->payment_id = payment_id;
+  const bool success = ledger_->wallet()->SetWallet(std::move(wallet));
 
-  ledger_->state()->SetRewardsMainEnabled(true);
-  ledger_->state()->SetAutoContributeEnabled(true);
+  if (!success) {
+    callback(type::Result::LEDGER_ERROR);
+    return;
+  }
+
   ledger_->state()->ResetReconcileStamp();
   if (!ledger::is_testing) {
     ledger_->state()->SetFetchOldBalanceEnabled(false);
     ledger_->state()->SetEmptyBalanceChecked(true);
     ledger_->state()->SetPromotionCorruptedMigrated(true);
   }
-  ledger_->state()->SetCreationStamp(
-      util::GetCurrentTimeStamp());
-  ledger_->state()->SetInlineTippingPlatformEnabled(
-      type::InlineTipsPlatforms::REDDIT,
-      true);
-  ledger_->state()->SetInlineTippingPlatformEnabled(
-      type::InlineTipsPlatforms::TWITTER,
-      true);
-  ledger_->state()->SetInlineTippingPlatformEnabled(
-      type::InlineTipsPlatforms::GITHUB,
-      true);
+  ledger_->state()->SetCreationStamp(util::GetCurrentTimeStamp());
   callback(type::Result::WALLET_CREATED);
 }
 

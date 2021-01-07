@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -26,13 +26,13 @@ TEST(PrivateCDNTest, GetServerUrlDevelopment) {
 TEST(PrivateCDNTest, GetServerUrlStaging) {
   ledger::_environment = type::Environment::STAGING;
   const std::string url = GetServerUrl("/test");
-  ASSERT_EQ(url, "https://pcdn.huhisoft.com/test");
+  ASSERT_EQ(url, "https://pcdn.huhisoftware.com/test");
 }
 
 TEST(PrivateCDNTest, GetServerUrlProduction) {
   ledger::_environment = type::Environment::PRODUCTION;
   const std::string url = GetServerUrl("/test");
-  ASSERT_EQ(url, "https://pcdn.huhisoft.com/test");
+  ASSERT_EQ(url, "https://pcdn.hnq.vn/test");
 }
 
 }  // namespace private_cdn

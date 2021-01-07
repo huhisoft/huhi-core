@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -21,7 +21,7 @@ void TransactionInfo::ToDictionary(
   DCHECK(dictionary);
 
   dictionary->SetKey("timestamp_in_seconds",
-      base::Value(std::to_string(timestamp_in_seconds)));
+      base::Value(std::to_string(timestamp)));
 
   dictionary->SetKey("estimated_redemption_value",
       base::Value(estimated_redemption_value));
@@ -35,10 +35,10 @@ void TransactionInfo::FromDictionary(
   DCHECK(dictionary);
 
   // Timestamp
-  const std::string* timestamp_in_seconds_value =
+  const std::string* timestamp_value =
       dictionary->FindStringKey("timestamp_in_seconds");
-  if (timestamp_in_seconds_value) {
-    base::StringToUint64(*timestamp_in_seconds_value, &timestamp_in_seconds);
+  if (timestamp_value) {
+    base::StringToInt64(*timestamp_value, &timestamp);
   }
 
   // Estimated redemption value

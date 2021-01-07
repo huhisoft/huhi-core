@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 /* global chrome */
@@ -23,26 +23,23 @@ describe('rewards panel reducer', () => {
     describe('persist publisher info', () => {
       it('url is the same', () => {
         const initState: Rewards.State = {
-          ...defaultState,
-          walletCreated: true,
-          enabledMain: true
+          ...defaultState
         }
         const payload = {
           tab: {
             url: 'https://clifton.io',
             incognito: false,
             active: true,
-            windowId: 1
+            id: 1
           }
         }
 
         // first visit
         const expectedState1: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
-          enabledMain: true,
           publishers: {
-            id_1: {
+            key_1: {
+              tabId: 1,
               tabUrl: 'https://clifton.io'
             }
           }
@@ -57,9 +54,9 @@ describe('rewards panel reducer', () => {
 
         // imitates ON_PUBLISHER_DATA
         state.rewardsPanelData.publishers = {
-          id_1: {
+          key_1: {
             tabUrl: 'https://clifton.io',
-            publisher_key: 'clifton.io',
+            publisherKey: 'clifton.io',
             name: 'Clifton'
           }
         }
@@ -67,12 +64,11 @@ describe('rewards panel reducer', () => {
         // second visit
         const expectedState2: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
-          enabledMain: true,
           publishers: {
-            id_1: {
+            key_1: {
+              tabId: 1,
               tabUrl: 'https://clifton.io',
-              publisher_key: 'clifton.io',
+              publisherKey: 'clifton.io',
               name: 'Clifton'
             }
           }
@@ -87,22 +83,22 @@ describe('rewards panel reducer', () => {
       })
 
       it('url is the same, but publisher was not saved correctly', () => {
-        const initState: Rewards.State = { ...defaultState, walletCreated: true }
+        const initState: Rewards.State = { ...defaultState }
         const payload = {
           tab: {
             url: 'https://clifton.io',
             incognito: false,
             active: true,
-            windowId: 1
+            id: 1
           }
         }
 
         // first visit
         const expectedState1: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
           publishers: {
-            id_1: {
+            key_1: {
+              tabId: 1,
               tabUrl: 'https://clifton.io'
             }
           }
@@ -117,7 +113,7 @@ describe('rewards panel reducer', () => {
 
         // imitates ON_PUBLISHER_DATA
         state.rewardsPanelData.publishers = {
-          id_1: {
+          key_1: {
             tabUrl: 'https://clifton.io'
           }
         }
@@ -125,9 +121,9 @@ describe('rewards panel reducer', () => {
         // second visit
         const expectedState2: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
           publishers: {
-            id_1: {
+            key_1: {
+              tabId: 1,
               tabUrl: 'https://clifton.io'
             }
           }
@@ -143,18 +139,15 @@ describe('rewards panel reducer', () => {
 
       it('url is not the same', () => {
         const initState: Rewards.State = {
-          ...defaultState,
-          walletCreated: true,
-          enabledMain: true
+          ...defaultState
         }
 
         // first visit
         const expectedState1: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
-          enabledMain: true,
           publishers: {
-            id_1: {
+            key_1: {
+              tabId: 1,
               tabUrl: 'https://clifton.io'
             }
           }
@@ -167,7 +160,7 @@ describe('rewards panel reducer', () => {
               url: 'https://clifton.io',
               incognito: false,
               active: true,
-              windowId: 1
+              id: 1
             }
           }
         })
@@ -176,9 +169,9 @@ describe('rewards panel reducer', () => {
 
         // imitates ON_PUBLISHER_DATA
         state.rewardsPanelData.publishers = {
-          id_1: {
+          key_1: {
             tabUrl: 'clifton.io',
-            publisher_key: 'clifton.io',
+            publisherKey: 'clifton.io',
             name: 'Clifton'
           }
         }
@@ -186,11 +179,10 @@ describe('rewards panel reducer', () => {
         // second visit
         const expectedState2: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
-          enabledMain: true,
           publishers: {
-            id_1: {
-              tabUrl: 'https://huhisoft.com'
+            key_1: {
+              tabId: 1,
+              tabUrl: 'https://hnq.vn'
             }
           }
         }
@@ -199,10 +191,10 @@ describe('rewards panel reducer', () => {
           type: types.ON_TAB_RETRIEVED,
           payload: {
             tab: {
-              url: 'https://huhisoft.com',
+              url: 'https://hnq.vn',
               incognito: false,
               active: true,
-              windowId: 1
+              id: 1
             }
           }
         })
@@ -210,41 +202,11 @@ describe('rewards panel reducer', () => {
         expect(state.rewardsPanelData).toEqual(expectedState2)
       })
 
-      it('rewards are disabled', () => {
-        const initState: Rewards.State = {
-          ...defaultState,
-          walletCreated: true,
-          enabledMain: false
-        }
-
-        const expectedState: Rewards.State = {
-          ...defaultState,
-          walletCreated: true,
-          enabledMain: false
-        }
-
-        let state = reducers({ rewardsPanelData: initState }, {
-          type: types.ON_TAB_RETRIEVED,
-          payload: {
-            tab: {
-              url: 'https://clifton.io',
-              incognito: false,
-              active: true,
-              windowId: 1
-            }
-          }
-        })
-
-        expect(state.rewardsPanelData).toEqual(expectedState)
-      })
-
       it('publisher is empty', () => {
         const initState: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
-          enabledMain: true,
           publishers: {
-            id_1: {
+            key_1: {
               tabUrl: 'clifton.io',
               random: 'I need to vanish'
             }
@@ -253,10 +215,9 @@ describe('rewards panel reducer', () => {
 
         const expectedState: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
-          enabledMain: true,
           publishers: {
-            id_1: {
+            key_1: {
+              tabId: 1,
               tabUrl: 'https://clifton.io'
             }
           }
@@ -269,7 +230,7 @@ describe('rewards panel reducer', () => {
               url: 'https://clifton.io',
               incognito: false,
               active: true,
-              windowId: 1
+              id: 1
             }
           }
         })
@@ -277,15 +238,13 @@ describe('rewards panel reducer', () => {
         expect(state.rewardsPanelData).toEqual(expectedState)
       })
 
-      it('switching between two tabs that has the same url', () => {
+      it('switching between two tabs that have the same url', () => {
         const initState: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
-          enabledMain: true,
           publishers: {
-            id_1: {
+            key_1: {
               tabUrl: 'https://clifton.io',
-              publisher_key: 'clifton.io',
+              publisherKey: 'clifton.io',
               tabId: 1
             }
           }
@@ -293,12 +252,14 @@ describe('rewards panel reducer', () => {
 
         const expectedState: Rewards.State = {
           ...defaultState,
-          walletCreated: true,
-          enabledMain: true,
           publishers: {
-            id_1: {
+            key_1: {
               tabUrl: 'https://clifton.io',
-              publisher_key: 'clifton.io',
+              publisherKey: 'clifton.io',
+              tabId: 1
+            },
+            key_2: {
+              tabUrl: 'https://clifton.io',
               tabId: 2
             }
           }
@@ -348,22 +309,22 @@ describe('rewards panel reducer', () => {
     it('publisher is update accordingly', () => {
       const list = [
         {
-          publisher_key: 'huhisoft.com',
+          publisherKey: 'hnq.vn',
           percentage: 50,
           status: 2
         },
         {
-          publisher_key: 'huhisoft.com',
+          publisherKey: 'hnq.vn',
           percentage: 30,
           status: 2
         },
         {
-          publisher_key: 'huhisoft.com',
+          publisherKey: 'hnq.vn',
           percentage: 10,
           status: 2
         },
         {
-          publisher_key: 'huhisoft.com',
+          publisherKey: 'hnq.vn',
           percentage: 10,
           status: 2
         }
@@ -372,16 +333,16 @@ describe('rewards panel reducer', () => {
       let state = {
         ...defaultState,
         publishers: {
-          id_1: {
-            tabUrl: 'https://huhisoft.com',
-            publisher_key: 'huhisoft.com',
+          key_1: {
+            tabUrl: 'https://hnq.vn',
+            publisherKey: 'hnq.vn',
             percentage: 30,
             status: 0,
             excluded: true
           },
-          id_2: {
-            tabUrl: 'https://huhisoft.com',
-            publisher_key: 'huhisoft.com',
+          key_2: {
+            tabUrl: 'https://hnq.vn',
+            publisherKey: 'hnq.vn',
             percentage: 40,
             status: 2
           }
@@ -390,16 +351,16 @@ describe('rewards panel reducer', () => {
       const expectedState: Rewards.State = {
         ...defaultState,
         publishers: {
-          id_1: {
-            tabUrl: 'https://huhisoft.com',
-            publisher_key: 'huhisoft.com',
+          key_1: {
+            tabUrl: 'https://hnq.vn',
+            publisherKey: 'hnq.vn',
             percentage: 50,
             status: 2,
             excluded: false
           },
-          id_2: {
-            tabUrl: 'https://huhisoft.com',
-            publisher_key: 'huhisoft.com',
+          key_2: {
+            tabUrl: 'https://hnq.vn',
+            publisherKey: 'hnq.vn',
             percentage: 0,
             status: 2
           }
@@ -434,7 +395,7 @@ describe('rewards panel reducer', () => {
         type: types.ON_EXCLUDED_SITES_CHANGED,
         payload: {
           properties: {
-            publisher_key: ''
+            publisherKey: ''
           }
         }
       })
@@ -446,16 +407,16 @@ describe('rewards panel reducer', () => {
       let state = {
         ...defaultState,
         publishers: {
-          id_1: {
-            tabUrl: 'https://huhisoft.com',
-            publisher_key: 'huhisoft.com',
+          key_1: {
+            tabUrl: 'https://hnq.vn',
+            publisherKey: 'hnq.vn',
             percentage: 30,
             status: 2,
             excluded: true
           },
-          id_2: {
-            tabUrl: 'https://huhisoft.com',
-            publisher_key: 'huhisoft.com',
+          key_2: {
+            tabUrl: 'https://hnq.vn',
+            publisherKey: 'hnq.vn',
             percentage: 40,
             status: 2
           }
@@ -464,16 +425,16 @@ describe('rewards panel reducer', () => {
       const expectedState: Rewards.State = {
         ...defaultState,
         publishers: {
-          id_1: {
-            tabUrl: 'https://huhisoft.com',
-            publisher_key: 'huhisoft.com',
+          key_1: {
+            tabUrl: 'https://hnq.vn',
+            publisherKey: 'hnq.vn',
             percentage: 30,
             status: 2,
             excluded: false
           },
-          id_2: {
-            tabUrl: 'https://huhisoft.com',
-            publisher_key: 'huhisoft.com',
+          key_2: {
+            tabUrl: 'https://hnq.vn',
+            publisherKey: 'hnq.vn',
             percentage: 40,
             status: 2
           }
@@ -484,7 +445,7 @@ describe('rewards panel reducer', () => {
         type: types.ON_EXCLUDED_SITES_CHANGED,
         payload: {
           properties: {
-            publisher_key: 'huhisoft.com',
+            publisherKey: 'hnq.vn',
             excluded: false
           }
         }

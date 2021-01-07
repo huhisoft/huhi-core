@@ -1,13 +1,14 @@
-import("//huhi/browser/tor/buildflags/buildflags.gni")
 import("//huhi/components/binance/browser/buildflags/buildflags.gni")
 import("//huhi/components/gemini/browser/buildflags/buildflags.gni")
+import("//huhi/components/crypto_dot_com/browser/buildflags/buildflags.gni")
 import("//huhi/components/huhi_rewards/browser/buildflags/buildflags.gni")
-import("//huhi/components/huhi_wallet/browser/buildflags/buildflags.gni")
+import("//huhi/components/huhi_wallet/buildflags/buildflags.gni")
 import("//huhi/components/huhi_wayback_machine/buildflags/buildflags.gni")
 import("//huhi/components/huhi_webtorrent/browser/buildflags/buildflags.gni")
 import("//huhi/components/huhi_together/buildflags/buildflags.gni")
-import("//huhi/components/ipfs/browser/buildflags/buildflags.gni")
+import("//huhi/components/ipfs/buildflags/buildflags.gni")
 import("//huhi/components/moonpay/browser/buildflags/buildflags.gni")
+import("//huhi/components/tor/buildflags/buildflags.gni")
 import("//build/config/features.gni")
 import("//components/gcm_driver/config.gni")
 
@@ -49,21 +50,11 @@ source_set("extensions") {
     "updater/huhi_update_client_config.h",
   ]
 
-  if (huhi_wallet_enabled) {
-    sources += [
-      "api/huhi_wallet_api.cc",
-      "api/huhi_wallet_api.h",
-      "huhi_wallet_util.cc",
-      "huhi_wallet_util.h"
-    ]
-    configs += [ ":infura_config" ]
-  }
-
   deps = [
     ":resources",
     "//base",
     "//huhi/app:huhi_generated_resources_grit",
-    "//huhi/browser/tor:buildflags",
+    "//huhi/browser/profiles",
     "//huhi/browser/webcompat_reporter",
     "//huhi/common",
     "//huhi/common:pref_names",
@@ -73,7 +64,8 @@ source_set("extensions") {
     "//huhi/components/huhi_shields/browser",
     "//huhi/components/huhi_shields/common",
     "//huhi/components/huhi_wayback_machine:buildflags",
-    "//huhi/components/ipfs/browser/buildflags",
+    "//huhi/components/ipfs/buildflags",
+    "//huhi/components/tor/buildflags",
     "//chrome/browser/extensions",
     "//chrome/common",
     "//components/gcm_driver:gcm_driver",
@@ -105,14 +97,24 @@ source_set("extensions") {
     ]
   }
 
+  if (huhi_wallet_enabled) {
+    sources += [
+      "api/huhi_wallet_api.cc",
+      "api/huhi_wallet_api.h",
+      "huhi_wallet_util.cc",
+      "huhi_wallet_util.h"
+    ]
+    configs += [ ":infura_config" ]
+    deps += [ "//huhi/components/huhi_wallet" ]
+  }
+
   if (ipfs_enabled) {
     sources += [
       "api/ipfs_api.cc",
       "api/ipfs_api.h",
     ]
     deps += [
-      "//huhi/components/ipfs/browser",
-      "//huhi/components/ipfs/common",
+      "//huhi/components/ipfs",
     ]
   }
 
@@ -127,6 +129,7 @@ source_set("extensions") {
     deps += [
       "//huhi/components/huhi_rewards/browser",
       "//huhi/vendor/bat-native-ledger:headers",
+      "//huhi/vendor/bat-native-ads:headers",
     ]
   }
   if (enable_huhi_webtorrent) {
@@ -175,6 +178,23 @@ source_set("extensions") {
     deps += [
       "//huhi/components/huhi_together/browser",
       "//huhi/components/ntp_widget_utils/browser",
+    ]
+  }
+  if (crypto_dot_com_enabled) {
+    sources += [
+      "api/crypto_dot_com_api.cc",
+      "api/crypto_dot_com_api.h",
+    ]
+    deps += [
+      "//huhi/browser/profiles",
+      "//huhi/common",
+      "//huhi/components/crypto_dot_com/browser",
+      "//huhi/components/crypto_dot_com/common/",
+      "//huhi/components/ntp_widget_utils/browser",
+      "//chrome/browser/extensions",
+      "//components/prefs",
+      "//extensions/browser",
+      "//extensions/common:common_constants",
     ]
   }
 }

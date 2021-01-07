@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -40,8 +40,12 @@ void WalletDOMHandler::RegisterMessages() {
 }  // namespace
 
 HuhiWalletUI::HuhiWalletUI(content::WebUI* web_ui, const std::string& name)
-    : BasicUI(web_ui, name, kHuhiWalletGenerated,
-        kHuhiWalletGeneratedSize, IDR_HUHI_WALLET_HTML) {
+    : BasicUI(web_ui,
+              name,
+              kHuhiWalletGenerated,
+              kHuhiWalletGeneratedSize,
+              IDR_HUHI_WALLET_HTML,
+              /*disable_trusted_types_csp=*/true) {
   web_ui->AddMessageHandler(std::make_unique<WalletDOMHandler>());
 }
 

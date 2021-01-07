@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -210,13 +210,13 @@ TEST(MediaTwitchTest, GetLinkType) {
   const std::string url("https://k8923479-sub.cdn.ttvnw.net/v1/segment/");
 
   // url is not correct
-  std::string result = Twitch::GetLinkType("https://huhisoft.com",
+  std::string result = Twitch::GetLinkType("https://hnq.vn",
                                                 "https://www.twitch.tv",
                                                 "");
   ASSERT_EQ(result, "");
 
   // first party is off
-  result = Twitch::GetLinkType(url, "https://www.huhisoft.com", "");
+  result = Twitch::GetLinkType(url, "https://www.hnq.vn", "");
   ASSERT_EQ(result, "");
 
   // regular page
@@ -229,7 +229,7 @@ TEST(MediaTwitchTest, GetLinkType) {
 
   // player page
   result = Twitch::GetLinkType(url,
-                                    "https://huhisoft.com/",
+                                    "https://hnq.vn/",
                                     "https://player.twitch.tv/");
   ASSERT_EQ(result, "twitch");
 }

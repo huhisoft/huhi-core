@@ -1,4 +1,4 @@
-/* This Source Code Form is subject to the terms of the Huhi Software
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -22,6 +22,7 @@ import {
 } from './style'
 import { TextArea, Modal, Button } from 'huhi-ui/components'
 import { getLocale } from 'huhi-ui/helpers'
+import { getLocaleWithTag } from '../../../../../common/locale'
 import { Alert, Tab } from '../'
 import ControlWrapper from 'huhi-ui/components/formControls/controlWrapper'
 
@@ -310,13 +311,20 @@ export default class ModalBackupRestore extends React.PureComponent<Props, State
   }
 
   getReset = () => {
+    const tags = getLocaleWithTag('rewardsResetTextFunds', {
+      amount: this.props.internalFunds.toString()
+    })
     return (
       <>
         <StyledTextWrapper>
           <StyledText data-test-id={'reset-text'}>
             {
               this.props.internalFunds > 0
-              ? <span dangerouslySetInnerHTML={{ __html: getLocale('rewardsResetTextFunds', { amount: this.props.internalFunds }) }} />
+              ? <span>
+                {tags.beforeTag}
+                <b>{tags.duringTag}</b>
+                {tags.afterTag}
+              </span>
               : getLocale('rewardsResetTextNoFunds')
             }
           </StyledText>

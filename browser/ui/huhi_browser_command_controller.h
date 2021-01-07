@@ -1,12 +1,12 @@
-/* Copyright 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef HUHI_BROWSER_UI_HUHI_BROWSER_COMMAND_CONTROLLER_H_
 #define HUHI_BROWSER_UI_HUHI_BROWSER_COMMAND_CONTROLLER_H_
 
-#include "huhi/browser/tor/buildflags.h"
+#include "huhi/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/ui/browser_command_controller.h"
 
 // This namespace is needed for a chromium_src override

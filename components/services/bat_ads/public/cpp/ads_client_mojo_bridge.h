@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -31,45 +31,10 @@ class AdsClientMojoBridge
   AdsClientMojoBridge& operator=(const AdsClientMojoBridge&) = delete;
 
   // Overridden from BatAdsClient:
-  bool IsEnabled(
-      bool* out_is_enabled) override;
-  void IsEnabled(
-      IsEnabledCallback callback) override;
-  bool ShouldAllowAdConversionTracking(
-      bool* out_should_allow) override;
-  void ShouldAllowAdConversionTracking(
-      ShouldAllowAdConversionTrackingCallback callback) override;
   bool IsForeground(
       bool* out_is_foreground) override;
   void IsForeground(
       IsForegroundCallback callback) override;
-  bool GetAdsPerHour(
-      uint64_t* out_ads_per_hour) override;
-  void GetAdsPerHour(
-      GetAdsPerHourCallback callback) override;
-  bool GetAdsPerDay(
-      uint64_t* out_ads_per_day) override;
-  void GetAdsPerDay(
-      GetAdsPerDayCallback callback) override;
-  bool ShouldAllowAdsSubdivisionTargeting(
-      bool* out_should_allow) override;
-  void ShouldAllowAdsSubdivisionTargeting(
-      ShouldAllowAdsSubdivisionTargetingCallback callback) override;
-  void SetAllowAdsSubdivisionTargeting(
-      const bool should_allow) override;
-  bool GetAdsSubdivisionTargetingCode(
-      std::string* out_subdivision_targeting_code) override;
-  void GetAdsSubdivisionTargetingCode(
-      GetAdsSubdivisionTargetingCodeCallback callback) override;
-  void SetAdsSubdivisionTargetingCode(
-      const std::string& subdivision_targeting_code) override;
-  bool GetAutomaticallyDetectedAdsSubdivisionTargetingCode(
-      std::string* out_subdivision_targeting_code) override;
-  void GetAutomaticallyDetectedAdsSubdivisionTargetingCode(
-      GetAutomaticallyDetectedAdsSubdivisionTargetingCodeCallback callback)
-          override;
-  void SetAutomaticallyDetectedAdsSubdivisionTargetingCode(
-      const std::string& subdivision_targeting_code) override;
   bool IsNetworkConnectionAvailable(
       bool* out_available) override;
   bool CanShowBackgroundNotifications(
@@ -93,11 +58,15 @@ class AdsClientMojoBridge
       const int32_t line,
       const int32_t verbose_level,
       const std::string& message) override;
-  void SetIdleThreshold(
-      const int32_t threshold) override;
   void LoadUserModelForId(
       const std::string& id,
       LoadCallback callback) override;
+
+  void RecordP2AEvent(
+      const std::string& name,
+      const ads::P2AEventType type,
+      const std::string& out_value) override;
+
   void Load(
       const std::string& name,
       LoadCallback callback) override;
@@ -109,13 +78,52 @@ class AdsClientMojoBridge
       ads::UrlRequestPtr url_request,
       UrlRequestCallback callback) override;
   void ShowNotification(
-      const std::string& notification_info) override;
+      const std::string& json) override;
   void CloseNotification(
       const std::string& uuid) override;
   void RunDBTransaction(
       ads::DBTransactionPtr transaction,
       RunDBTransactionCallback callback) override;
   void OnAdRewardsChanged() override;
+
+  void GetBooleanPref(
+      const std::string& path,
+      GetBooleanPrefCallback callback) override;
+  void SetBooleanPref(
+      const std::string& path,
+      const bool value) override;
+  void GetIntegerPref(
+      const std::string& path,
+      GetIntegerPrefCallback callback) override;
+  void SetIntegerPref(
+      const std::string& path,
+      const int value) override;
+  void GetDoublePref(
+      const std::string& path,
+      GetDoublePrefCallback callback) override;
+  void SetDoublePref(
+      const std::string& path,
+      const double value) override;
+  void GetStringPref(
+      const std::string& path,
+      GetStringPrefCallback callback) override;
+  void SetStringPref(
+      const std::string& path,
+      const std::string& value) override;
+  void GetInt64Pref(
+      const std::string& path,
+      GetInt64PrefCallback callback) override;
+  void SetInt64Pref(
+      const std::string& path,
+      const int64_t value) override;
+  void GetUint64Pref(
+      const std::string& path,
+      GetUint64PrefCallback callback) override;
+  void SetUint64Pref(
+      const std::string& path,
+      const uint64_t value) override;
+  void ClearPref(
+      const std::string& path) override;
 
  private:
   // workaround to pass base::OnceCallback into std::bind

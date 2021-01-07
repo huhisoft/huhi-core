@@ -1,5 +1,5 @@
-// Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
-// This Source Code Form is subject to the terms of the Huhi Software
+// Copyright (c) 2020 The Huhi Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // you can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -26,6 +26,26 @@ export function getSectionElement (templateContent, sectionName) {
     console.error(`[Huhi Settings Overrides] Could not find section '${sectionName}'`)
   }
   return sectionEl
+}
+
+/**
+ * Creates a settings-section element with a single child and returns it.
+ * @param {string} sectionName - value of the section attribute
+ * @param {string} titleName - loadTimeData key for page-title
+ * @param {string} childName - name of child element
+ * @param {Object} childAttributes - key-value pairs of child element attributes
+ * @returns {Element}
+ */
+function createSectionElement (sectionName, titleName, childName, childAttributes) {
+  const el = document.createElement('settings-section')
+  el.setAttribute('page-title', loadTimeData.getString(titleName))
+  el.setAttribute('section', sectionName)
+  const child = document.createElement(childName)
+  for (const attribute in childAttributes) {
+    child.setAttribute(attribute, childAttributes[attribute])
+  }
+  el.appendChild(child)
+  return el
 }
 
 RegisterStyleOverride(
@@ -94,67 +114,86 @@ RegisterPolymerTemplateModifications({
       sectionGetStarted.setAttribute('is', 'dom-if')
       sectionGetStarted.setAttribute('restamp', true)
       sectionGetStarted.setAttribute('if', '[[showPage_(pageVisibility.getStarted)]]')
-      sectionGetStarted.innerHTML = `
-        <settings-section page-title="${loadTimeData.getString('huhiGetStartedTitle')}" section="getStarted">
-          <huhi-settings-getting-started prefs={{prefs}} page-visibility=[[pageVisibility]]></huhi-settings-getting-started>
-        </settings-section>
-      `
+      sectionGetStarted.content.appendChild(createSectionElement(
+        'getStarted',
+        'huhiGetStartedTitle',
+        'huhi-settings-getting-started',
+        {
+          prefs: '{{prefs}}',
+          'page-visibility': '[[pageVisibility]]'
+        }
+      ))
       const sectionExtensions = document.createElement('template')
       sectionExtensions.setAttribute('is', 'dom-if')
       sectionExtensions.setAttribute('restamp', true)
       sectionExtensions.setAttribute('if', '[[showPage_(pageVisibility.extensions)]]')
-      sectionExtensions.innerHTML = `
-        <settings-section page-title="${loadTimeData.getString('huhiDefaultExtensions')}" section="extensions">
-          <settings-huhi-default-extensions-page prefs="{{prefs}}"></settings-huhi-default-extensions-page>
-        </settings-section>
-      `
+      sectionExtensions.content.appendChild(createSectionElement(
+        'extensions',
+        'huhiDefaultExtensions',
+        'settings-huhi-default-extensions-page',
+        {
+          prefs: '{{prefs}}'
+        }
+      ))
       const sectionSync = document.createElement('template')
       sectionSync.setAttribute('is', 'dom-if')
       sectionSync.setAttribute('restamp', true)
       sectionSync.setAttribute('if', '[[showPage_(pageVisibility.huhiSync)]]')
-      sectionSync.innerHTML = `
-        <settings-section page-title="${loadTimeData.getString('huhiSync')}" section="huhiSync">
-          <settings-huhi-sync-page></settings-huhi-sync-page>
-        </settings-section>
-      `
+      sectionSync.content.appendChild(createSectionElement(
+        'huhiSync',
+        'huhiSync',
+        'settings-huhi-sync-page',
+        {}
+      ))
+
       const sectionShields = document.createElement('template')
       sectionShields.setAttribute('is', 'dom-if')
       sectionShields.setAttribute('restamp', true)
       sectionShields.setAttribute('if', '[[showPage_(pageVisibility.shields)]]')
-      sectionShields.innerHTML = `
-        <settings-section page-title="${loadTimeData.getString('huhiShieldsTitle')}"
-            section="shields">
-          <settings-default-huhi-shields-page  prefs="{{prefs}}"></settings-default-huhi-shields-page>
-        </settings-section>
-      `
+      sectionShields.content.appendChild(createSectionElement(
+        'shields',
+        'huhiShieldsTitle',
+        'settings-default-huhi-shields-page',
+        {
+          prefs: '{{prefs}}'
+        }
+      ))
       const sectionSocialBlocking = document.createElement('template')
       sectionSocialBlocking.setAttribute('is', 'dom-if')
       sectionSocialBlocking.setAttribute('restamp', true)
       sectionSocialBlocking.setAttribute('if', '[[showPage_(pageVisibility.socialBlocking)]]')
-      sectionSocialBlocking.innerHTML = `
-        <settings-section page-title="${loadTimeData.getString('socialBlocking')}"
-            section="socialBlocking">
-          <settings-social-blocking-page prefs="{{prefs}}"></settings-social-blocking-page>
-        </settings-section>
-      `
+      sectionSocialBlocking.content.appendChild(createSectionElement(
+        'socialBlocking',
+        'socialBlocking',
+        'settings-social-blocking-page',
+        {
+          prefs: '{{prefs}}'
+        }
+      ))
       const sectionHelpTips = document.createElement('template')
       sectionHelpTips.setAttribute('is', 'dom-if')
       sectionHelpTips.setAttribute('restamp', true)
       sectionHelpTips.setAttribute('if', '[[showPage_(pageVisibility.huhiHelpTips)]]')
-      sectionHelpTips.innerHTML = `
-        <settings-section page-title="${loadTimeData.getString('huhiHelpTips')}" section="huhiHelpTips">
-          <settings-huhi-help-tips-page prefs="{{prefs}}"></settings-huhi-help-tips-page>
-        </settings-section>
-      `
+      sectionHelpTips.content.appendChild(createSectionElement(
+        'huhiHelpTips',
+        'huhiHelpTips',
+        'settings-huhi-help-tips-page',
+        {
+          prefs: '{{prefs}}'
+        }
+      ))
       const sectionNewTab = document.createElement('template')
       sectionNewTab.setAttribute('is', 'dom-if')
       sectionNewTab.setAttribute('restamp', true)
       sectionNewTab.setAttribute('if', '[[showPage_(pageVisibility.newTab)]]')
-      sectionNewTab.innerHTML = `
-        <settings-section page-title="${loadTimeData.getString('huhiNewTab')}" section="newTab">
-          <settings-huhi-new-tab-page prefs="{{prefs}}"></settings-huhi-new-tab-page>
-        </settings-section>
-      `
+      sectionNewTab.content.appendChild(createSectionElement(
+        'newTab',
+        'huhiNewTab',
+        'settings-huhi-new-tab-page',
+        {
+          prefs: '{{prefs}}'
+        }
+      ))
       // Get Started at top
       basicPageEl.insertAdjacentElement('afterbegin', sectionGetStarted)
       // Move Appearance item

@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -8,21 +8,22 @@
 #include "base/task/post_task.h"
 #include "base/test/thread_test_helper.h"
 #include "huhi/browser/huhi_browser_process_impl.h"
+#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "huhi/browser/extensions/huhi_base_local_data_files_browsertest.h"
 #include "huhi/browser/greaselion/greaselion_service_factory.h"
 #include "huhi/common/huhi_paths.h"
 #include "huhi/components/huhi_component_updater/browser/local_data_files_service.h"
-#include "huhi/browser/huhi_rewards/rewards_service_factory.h"
-#include "huhi/components/greaselion/browser/greaselion_download_service.h"
+#include "huhi/components/huhi_rewards/browser/test/common/rewards_browsertest_network_util.h"
 #include "huhi/components/huhi_rewards/browser/test/common/rewards_browsertest_response.h"
 #include "huhi/components/huhi_rewards/browser/test/common/rewards_browsertest_util.h"
-#include "huhi/components/huhi_rewards/browser/test/common/rewards_browsertest_network_util.h"
+#include "huhi/components/greaselion/browser/greaselion_download_service.h"
 #include "huhi/components/greaselion/browser/greaselion_service.h"
 #include "chrome/browser/extensions/extension_browsertest.h"
 #include "chrome/test/base/ui_test_utils.h"
 #include "content/public/test/browser_test.h"
 #include "content/public/test/browser_test_utils.h"
 #include "net/dns/mock_host_resolver.h"
+#include "ui/base/ui_base_switches.h"
 
 using huhi_rewards::RewardsService;
 using huhi_rewards::RewardsServiceFactory;
@@ -119,6 +120,9 @@ class GreaselionServiceTest : public BaseLocalDataFilesBrowserTest {
     GreaselionDownloadServiceWaiter(download_service).Wait();
     GreaselionService* greaselion_service =
         GreaselionServiceFactory::GetForBrowserContext(profile());
+    // Give a consistent browser version for testing.
+    static const base::NoDestructor<base::Version> version("1.2.3.4");
+    greaselion_service->SetBrowserVersionForTesting(*version);
     // wait for the Greaselion service to install all the extensions it creates
     GreaselionServiceWaiter(greaselion_service).Wait();
   }
@@ -143,6 +147,7 @@ class GreaselionServiceTest : public BaseLocalDataFilesBrowserTest {
     // Rewards service
     rewards_service_ = static_cast<huhi_rewards::RewardsServiceImpl*>(
         huhi_rewards::RewardsServiceFactory::GetForProfile(profile()));
+    rewards_browsertest_util::StartProcess(rewards_service_);
 
     // Response mock
     rewards_service_->ForTestingSetTestResponseCallback(
@@ -150,8 +155,6 @@ class GreaselionServiceTest : public BaseLocalDataFilesBrowserTest {
             &GreaselionServiceTest::GetTestResponse,
             base::Unretained(this)));
     rewards_service_->SetLedgerEnvForTesting();
-
-    rewards_browsertest_util::EnableRewardsViaCode(browser(), rewards_service_);
     GreaselionService* greaselion_service =
         GreaselionServiceFactory::GetForBrowserContext(profile());
     // wait for the Greaselion service to install all the extensions it creates
@@ -176,6 +179,37 @@ class GreaselionServiceTest : public BaseLocalDataFilesBrowserTest {
   net::test_server::EmbeddedTestServer https_server_;
   huhi_rewards::RewardsServiceImpl* rewards_service_;
 };
+
+#if !defined(OS_MAC)
+class GreaselionServiceLocaleTest : public GreaselionServiceTest {
+ public:
+  explicit GreaselionServiceLocaleTest(const std::string& locale)
+      : locale_(locale) {}
+
+  void SetUpCommandLine(base::CommandLine* command_line) override {
+    ExtensionBrowserTest::SetUpCommandLine(command_line);
+    command_line->AppendSwitchASCII(switches::kLang, locale_);
+  }
+
+ private:
+  std::string locale_;
+};
+
+class GreaselionServiceLocaleTestEnglish : public GreaselionServiceLocaleTest {
+ public:
+  GreaselionServiceLocaleTestEnglish() : GreaselionServiceLocaleTest("en") {}
+};
+
+class GreaselionServiceLocaleTestGerman : public GreaselionServiceLocaleTest {
+ public:
+  GreaselionServiceLocaleTestGerman() : GreaselionServiceLocaleTest("de") {}
+};
+
+class GreaselionServiceLocaleTestFrench : public GreaselionServiceLocaleTest {
+ public:
+  GreaselionServiceLocaleTestFrench() : GreaselionServiceLocaleTest("fr") {}
+};
+#endif
 
 // Ensure the site specific script service properly clears its cache of
 // precompiled URLPatterns if initialized twice. (This can happen if
@@ -262,15 +296,8 @@ IN_PROC_BROWSER_TEST_F(GreaselionServiceTest, ScriptInjectionRunAtDefault) {
   EXPECT_EQ(title, "PAGE_FIRST");
 }
 
-#if defined(OS_WIN)
-// Disabled in https://github.com/huhisoft/huhi-browser/issues/11433.
-#define MAYBE_ScriptInjectionWithPrecondition \
-    DISABLED_ScriptInjectionWithPrecondition
-#else
-#define MAYBE_ScriptInjectionWithPrecondition ScriptInjectionWithPrecondition
-#endif
 IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
-                       MAYBE_ScriptInjectionWithPrecondition) {
+                       PRE_ScriptInjectionWithPrecondition) {
   ASSERT_TRUE(InstallMockExtension());
 
   GURL url = embedded_test_server()->GetURL("pre1.example.com", "/simple.html");
@@ -290,10 +317,19 @@ IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
   EXPECT_EQ(title, "OK");
 
   StartRewards();
+  rewards_service_->SetAutoContributeEnabled(true);
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest, ScriptInjectionWithPrecondition) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL("pre1.example.com", "/simple.html");
   ui_test_utils::NavigateToURL(browser(), url);
-  contents = browser()->tab_strip_model()->GetActiveWebContents();
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
   ASSERT_TRUE(content::WaitForLoadStop(contents));
   EXPECT_EQ(url, contents->GetURL());
+  std::string title;
   ASSERT_TRUE(
       ExecuteScriptAndExtractString(contents,
                                     "window.domAutomationController.send("
@@ -326,3 +362,248 @@ IN_PROC_BROWSER_TEST_F(GreaselionServiceTest, IsNotGreaselionExtension) {
 
   EXPECT_FALSE(greaselion_service->IsGreaselionExtension("INVALID"));
 }
+
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
+                      ScriptInjectionWithBrowserVersionConditionLowWild) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL(
+      "version-low-wild.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+  EXPECT_EQ(url, contents->GetURL());
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+  // Should be altered because version is lower than current.
+  EXPECT_EQ(title, "Altered");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
+                      ScriptInjectionWithBrowserVersionConditionLowFormat) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL(
+      "version-low-format.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+  EXPECT_EQ(url, contents->GetURL());
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+  // Should be altered because version is lower than current, even though it
+  // omits last component.
+  EXPECT_EQ(title, "Altered");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
+                      ScriptInjectionWithBrowserVersionConditionMatchWild) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL(
+      "version-match-wild.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+  EXPECT_EQ(url, contents->GetURL());
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+  // Should be altered because version is wild match.
+  EXPECT_EQ(title, "Altered");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
+                      ScriptInjectionWithBrowserVersionConditionMatchExact) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL(
+      "version-match-exact.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+  EXPECT_EQ(url, contents->GetURL());
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+  // Should be altered because version is exact match.
+  EXPECT_EQ(title, "Altered");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
+                      ScriptInjectionWithBrowserVersionConditionHighWild) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL(
+      "version-high-wild.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+  EXPECT_EQ(url, contents->GetURL());
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+  // Should be unaltered because version is too high.
+  EXPECT_EQ(title, "OK");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
+                      ScriptInjectionWithBrowserVersionConditionHighExact) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL(
+      "version-high-exact.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+  EXPECT_EQ(url, contents->GetURL());
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+  // Should be unaltered because version is too high.
+  EXPECT_EQ(title, "OK");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
+                      ScriptInjectionWithBrowserVersionConditionEmpty) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL(
+      "version-empty.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+  EXPECT_EQ(url, contents->GetURL());
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+  // Should be altered because version is not good format.
+  EXPECT_EQ(title, "Altered");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceTest,
+                      ScriptInjectionWithBrowserVersionConditionBadFormat) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  GURL url = embedded_test_server()->GetURL(
+      "version-bad-format.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+  EXPECT_EQ(url, contents->GetURL());
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+  // Should be altered because version is not good format.
+  EXPECT_EQ(title, "Altered");
+}
+
+#if !defined(OS_MAC)
+IN_PROC_BROWSER_TEST_F(GreaselionServiceLocaleTestEnglish,
+                       ScriptInjectionWithMessagesDefaultLocale) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  const GURL url =
+      embedded_test_server()->GetURL("messages.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+
+  EXPECT_EQ(url, contents->GetURL());
+
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+
+  // Ensure that English localization is correct
+  EXPECT_EQ(title, "Hello, world!");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceLocaleTestGerman,
+                       ScriptInjectionWithMessagesNonDefaultLocale) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  const GURL url =
+      embedded_test_server()->GetURL("messages.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+
+  EXPECT_EQ(url, contents->GetURL());
+
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+
+  // Ensure that German localization is correct
+  EXPECT_EQ(title, "Hallo, Welt!");
+}
+
+IN_PROC_BROWSER_TEST_F(GreaselionServiceLocaleTestFrench,
+                       ScriptInjectionWithMessagesUnsupportedLocale) {
+  ASSERT_TRUE(InstallMockExtension());
+
+  const GURL url =
+      embedded_test_server()->GetURL("messages.example.com", "/simple.html");
+  ui_test_utils::NavigateToURL(browser(), url);
+  content::WebContents* contents =
+      browser()->tab_strip_model()->GetActiveWebContents();
+  ASSERT_TRUE(content::WaitForLoadStop(contents));
+
+  EXPECT_EQ(url, contents->GetURL());
+
+  std::string title;
+  ASSERT_TRUE(
+      ExecuteScriptAndExtractString(contents,
+                                    "window.domAutomationController.send("
+                                    "document.title)",
+                                    &title));
+
+  // We don't have a French localization, so ensure that the default
+  // (English) localization is shown instead
+  EXPECT_EQ(title, "Hello, world!");
+}
+#endif

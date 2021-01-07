@@ -1,0 +1,13 @@
+# Copyright (c) 2020 The Huhi Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+huhi_chrome_renderer_sources = [
+  "//huhi/renderer/huhi_content_renderer_client.cc",
+  "//huhi/renderer/huhi_content_renderer_client.h",
+]
+huhi_chrome_renderer_public_deps = [
+  "//huhi/components/content_settings/renderer",
+  "//third_party/blink/public:blink"
+]

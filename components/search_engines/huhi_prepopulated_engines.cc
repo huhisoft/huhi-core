@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -12,7 +12,57 @@ namespace TemplateURLPrepopulateData {
 
 // IMPORTANT! Make sure to bump this value if you make changes to the
 // engines below or add/remove engines.
-const int kHuhiCurrentDataVersion = 6;
+const int kHuhiCurrentDataVersion = 8;
+// DO NOT CHANGE THIS ONE. Used for backfilling kHuhiDefaultSearchVersion.
+const int kHuhiFirstTrackedDataVersion = 6;
+
+namespace {
+
+// Maps HuhiPrepopulatedEngineID to Chromium's PrepopulatedEngine.
+const std::map<HuhiPrepopulatedEngineID, const PrepopulatedEngine*>
+    huhi_engines_map = {
+        {PREPOPULATED_ENGINE_ID_GOOGLE, &google},
+        {PREPOPULATED_ENGINE_ID_YAHOO, &huhi_yahoo},
+        {PREPOPULATED_ENGINE_ID_YANDEX, &huhi_yandex},
+        {PREPOPULATED_ENGINE_ID_YAHOO_AR, &huhi_yahoo_ar},
+        {PREPOPULATED_ENGINE_ID_YAHOO_AT, &huhi_yahoo_at},
+        {PREPOPULATED_ENGINE_ID_YAHOO_AU, &huhi_yahoo_au},
+        {PREPOPULATED_ENGINE_ID_YAHOO_BR, &huhi_yahoo_br},
+        {PREPOPULATED_ENGINE_ID_YAHOO_CA, &huhi_yahoo_ca},
+        {PREPOPULATED_ENGINE_ID_YAHOO_CH, &huhi_yahoo_ch},
+        {PREPOPULATED_ENGINE_ID_YAHOO_CL, &huhi_yahoo_cl},
+        {PREPOPULATED_ENGINE_ID_YAHOO_CO, &huhi_yahoo_co},
+        {PREPOPULATED_ENGINE_ID_YAHOO_DE, &huhi_yahoo_de},
+        {PREPOPULATED_ENGINE_ID_YAHOO_DK, &huhi_yahoo_dk},
+        {PREPOPULATED_ENGINE_ID_YAHOO_ES, &huhi_yahoo_es},
+        {PREPOPULATED_ENGINE_ID_YAHOO_FI, &huhi_yahoo_fi},
+        {PREPOPULATED_ENGINE_ID_YAHOO_FR, &huhi_yahoo_fr},
+        {PREPOPULATED_ENGINE_ID_YAHOO_HK, &huhi_yahoo_hk},
+        {PREPOPULATED_ENGINE_ID_YAHOO_ID, &huhi_yahoo_id},
+        {PREPOPULATED_ENGINE_ID_YAHOO_IE, &huhi_yahoo_ie},
+        {PREPOPULATED_ENGINE_ID_YAHOO_IN, &huhi_yahoo_in},
+        {PREPOPULATED_ENGINE_ID_YAHOO_IT, &huhi_yahoo_it},
+        {PREPOPULATED_ENGINE_ID_YAHOO_MX, &huhi_yahoo_mx},
+        {PREPOPULATED_ENGINE_ID_YAHOO_MY, &huhi_yahoo_my},
+        {PREPOPULATED_ENGINE_ID_YAHOO_NL, &huhi_yahoo_nl},
+        {PREPOPULATED_ENGINE_ID_YAHOO_NO, &huhi_yahoo_no},
+        {PREPOPULATED_ENGINE_ID_YAHOO_NZ, &huhi_yahoo_nz},
+        {PREPOPULATED_ENGINE_ID_YAHOO_PE, &huhi_yahoo_pe},
+        {PREPOPULATED_ENGINE_ID_YAHOO_PH, &huhi_yahoo_ph},
+        {PREPOPULATED_ENGINE_ID_YAHOO_SE, &huhi_yahoo_se},
+        {PREPOPULATED_ENGINE_ID_YAHOO_SG, &huhi_yahoo_sg},
+        {PREPOPULATED_ENGINE_ID_YAHOO_TH, &huhi_yahoo_th},
+        {PREPOPULATED_ENGINE_ID_YAHOO_TW, &huhi_yahoo_tw},
+        {PREPOPULATED_ENGINE_ID_YAHOO_UK, &huhi_yahoo_uk},
+        {PREPOPULATED_ENGINE_ID_YAHOO_VE, &huhi_yahoo_ve},
+        {PREPOPULATED_ENGINE_ID_YAHOO_VN, &huhi_yahoo_vn},
+        {PREPOPULATED_ENGINE_ID_BING, &bing},
+        {PREPOPULATED_ENGINE_ID_DUCKDUCKGO, &duckduckgo},
+        {PREPOPULATED_ENGINE_ID_DUCKDUCKGO_DE, &duckduckgo_de},
+        {PREPOPULATED_ENGINE_ID_DUCKDUCKGO_AU_NZ_IE, &duckduckgo_au_nz_ie},
+        {PREPOPULATED_ENGINE_ID_QWANT, &qwant},
+        {PREPOPULATED_ENGINE_ID_STARTPAGE, &startpage},
+};
 
 PrepopulatedEngine ModifyEngineParams(const PrepopulatedEngine& engine,
                                       const wchar_t* const name,
@@ -39,6 +89,8 @@ PrepopulatedEngine ModifyEngineParams(const PrepopulatedEngine& engine,
           engine.type,
           id > 0 ? id : engine.id};
 }
+
+}  // namespace
 
 const PrepopulatedEngine duckduckgo = {
     L"DuckDuckGo",
@@ -122,11 +174,11 @@ const PrepopulatedEngine qwant = {
 };
 
 const PrepopulatedEngine startpage = {
-    L"StartPage",
+    L"Startpage",
     L":sp",
     "https://www.startpage.com/favicon.ico",
     "https://www.startpage.com/do/"
-    "dsearch?query={searchTerms}&cat=web&pl=opensearch",
+    "search?q={searchTerms}&segment=startpage.huhi",
     "UTF-8",
     "https://www.startpage.com/cgi-bin/"
     "csuggest?query={searchTerms}&limit=10&format=json",
@@ -143,6 +195,21 @@ const PrepopulatedEngine startpage = {
     SEARCH_ENGINE_OTHER,
     PREPOPULATED_ENGINE_ID_STARTPAGE,
 };
+
+const PrepopulatedEngine huhi_yandex =
+    ModifyEngineParams(yandex_com,
+                       L"Yandex",
+                       NULL,
+                       "https://yandex.ru/search/?clid="
+#if defined(OS_ANDROID)
+                       "2423859"
+#else
+                       "2353835"
+#endif
+                       "&text={searchTerms}",
+                       "https://suggest.yandex.ru/suggest-ff.cgi?"
+                       "part={searchTerms}&v=3&sn=5&srv=huhi_desktop",
+                       PREPOPULATED_ENGINE_ID_YANDEX);
 
 #define kHuhiYahooName L"Yahoo"
 #define kHuhiYahooKeyword L":y"
@@ -455,5 +522,10 @@ const PrepopulatedEngine huhi_yahoo_vn =
                        HUHI_YAHOO_SEARCH_URL("vn"),
                        HUHI_YAHOO_SUGGEST_URL("vn"),
                        PREPOPULATED_ENGINE_ID_YAHOO_VN);
+
+const std::map<HuhiPrepopulatedEngineID, const PrepopulatedEngine*>&
+GetHuhiEnginesMap() {
+  return huhi_engines_map;
+}
 
 }  // namespace TemplateURLPrepopulateData

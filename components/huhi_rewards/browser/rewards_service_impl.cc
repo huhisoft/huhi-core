@@ -1,5 +1,5 @@
-/* Copyright (c) 2020 The Huhi Software Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Huhi Software
+/* Copyright (c) 2020 The Huhi Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "base/base64.h"
 #include "base/bind.h"
 #include "base/command_line.h"
 #include "base/containers/flat_map.h"
@@ -32,17 +33,15 @@
 #include "base/task_runner_util.h"
 #include "base/threading/sequenced_task_runner_handle.h"
 #include "base/time/time.h"
+#include "bat/ads/pref_names.h"
 #include "bat/ledger/global_constants.h"
-#include "bat/ledger/ledger.h"
 #include "bat/ledger/ledger_database.h"
-#include "bat/ledger/mojom_structs.h"
 #include "huhi/base/containers/utils.h"
 #include "huhi/browser/huhi_rewards/rewards_service_factory.h"
 #include "huhi/browser/ui/webui/huhi_rewards_source.h"
 #include "huhi/components/huhi_ads/browser/ads_service.h"
 #include "huhi/components/huhi_ads/browser/ads_service_factory.h"
 #include "huhi/components/huhi_ads/browser/buildflags/buildflags.h"
-#include "huhi/components/huhi_ads/common/pref_names.h"
 #include "huhi/components/huhi_rewards/browser/android_util.h"
 #include "huhi/components/huhi_rewards/browser/file_util.h"
 #include "huhi/components/huhi_rewards/browser/logging.h"
@@ -55,25 +54,27 @@
 #include "huhi/components/huhi_rewards/browser/switches.h"
 #include "huhi/components/huhi_rewards/common/pref_names.h"
 #include "huhi/components/services/bat_ledger/public/cpp/ledger_client_mojo_bridge.h"
+#include "huhi/grit/huhi_generated_resources.h"
 #include "chrome/browser/bitmap_fetcher/bitmap_fetcher_service_factory.h"
 #include "chrome/browser/browser_process_impl.h"
 #include "chrome/browser/favicon/favicon_service_factory.h"
 #include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/service_sandbox_type.h"
 #include "components/country_codes/country_codes.h"
 #include "components/favicon/core/favicon_service.h"
 #include "components/favicon_base/favicon_types.h"
+#include "components/os_crypt/os_crypt.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/browser/browser_task_traits.h"
+#include "content/public/browser/service_process_host.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/browser/url_data_source.h"
-#include "content/public/common/service_manager_connection.h"
 #include "net/base/escape.h"
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
 #include "net/base/url_util.h"
 #include "net/http/http_status_code.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/cpp/simple_url_loader.h"
-#include "services/service_manager/public/cpp/connector.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image.h"
 #include "url/gurl.h"
@@ -329,14 +330,19 @@ RewardsServiceImpl::~RewardsServiceImpl() {
 }
 
 void RewardsServiceImpl::ConnectionClosed() {
-  if (!profile_->GetPrefs()->GetBoolean(prefs::kEnabled)) {
-    BLOG(1, "Rewards not enabled");
-    return;
-  }
-
+  auto callback = base::BindOnce(&RewardsServiceImpl::OnConnectionClosed,
+      AsWeakPtr());
   base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(FROM_HERE,
-      base::BindOnce(&RewardsServiceImpl::StartLedger, AsWeakPtr()),
+      base::BindOnce(&RewardsServiceImpl::StartLedger,
+          AsWeakPtr(),
+          std::move(callback)),
       base::TimeDelta::FromSeconds(1));
+}
+
+void RewardsServiceImpl::OnConnectionClosed(const ledger::type::Result result) {
+  if (result != ledger::type::Result::LEDGER_OK) {
+    BLOG(0, "Ledger process was not started successfully");
+  }
 }
 
 bool RewardsServiceImpl::IsInitialized() {
@@ -360,14 +366,64 @@ void RewardsServiceImpl::Init(
     private_observers_.AddObserver(private_observer_.get());
   }
 
-  if (profile_->GetPrefs()->GetBoolean(prefs::kEnabled)) {
-    StartLedger();
+  CheckPreferences();
+  InitPrefChangeRegistrar();
+  EnableGreaseLion();
+}
+
+void RewardsServiceImpl::InitPrefChangeRegistrar() {
+  profile_pref_change_registrar_.Init(profile_->GetPrefs());
+  profile_pref_change_registrar_.Add(
+      prefs::kInlineTipTwitterEnabled,
+      base::Bind(
+          &RewardsServiceImpl::OnPreferenceChanged,
+          base::Unretained(this)));
+  profile_pref_change_registrar_.Add(
+      prefs::kInlineTipRedditEnabled,
+      base::Bind(
+          &RewardsServiceImpl::OnPreferenceChanged,
+          base::Unretained(this)));
+  profile_pref_change_registrar_.Add(
+      prefs::kInlineTipGithubEnabled,
+      base::Bind(
+          &RewardsServiceImpl::OnPreferenceChanged,
+          base::Unretained(this)));
+  profile_pref_change_registrar_.Add(
+      prefs::kAutoContributeEnabled,
+      base::Bind(
+          &RewardsServiceImpl::OnPreferenceChanged,
+          base::Unretained(this)));
+}
+
+void RewardsServiceImpl::OnPreferenceChanged(const std::string& key) {
+  if (profile_->GetPrefs()->GetInteger(prefs::kVersion) == -1) {
+    return;
+  }
+
+  if (key == prefs::kAutoContributeEnabled) {
+    if (profile_->GetPrefs()->GetBoolean(prefs::kAutoContributeEnabled)) {
+      StartLedger(base::DoNothing());
+    }
+
+    return;
   }
 }
 
-void RewardsServiceImpl::StartLedger() {
+void RewardsServiceImpl::CheckPreferences() {
+  const bool is_ac_enabled = profile_->GetPrefs()->GetBoolean(
+      huhi_rewards::prefs::kAutoContributeEnabled);
+  const bool is_ads_enabled = profile_->GetPrefs()->GetBoolean(
+      ads::prefs::kEnabled);
+
+  if (is_ac_enabled || is_ads_enabled) {
+    StartLedger(base::DoNothing());
+  }
+}
+
+void RewardsServiceImpl::StartLedger(StartProcessCallback callback) {
   if (Connected()) {
     BLOG(1, "Ledger process is already running");
+    std::move(callback).Run(ledger::type::Result::LEDGER_OK);
     return;
   }
 
@@ -376,16 +432,12 @@ void RewardsServiceImpl::StartLedger() {
 
   BLOG(1, "Starting ledger process");
 
-  auto* connection = content::ServiceManagerConnection::GetForProcess();
-  if (!connection) {
-    BLOG(1, "Connection not found");
-    return;
-  }
-
   if (!bat_ledger_service_.is_bound()) {
-    connection->GetConnector()->Connect(
-        bat_ledger::mojom::kServiceName,
-        bat_ledger_service_.BindNewPipeAndPassReceiver());
+    content::ServiceProcessHost::Launch(
+        bat_ledger_service_.BindNewPipeAndPassReceiver(),
+        content::ServiceProcessHost::Options()
+            .WithDisplayName(IDS_UTILITY_PROCESS_LEDGER_NAME)
+            .Pass());
 
     bat_ledger_service_.set_disconnect_handler(
       base::Bind(&RewardsServiceImpl::ConnectionClosed, AsWeakPtr()));
@@ -416,20 +468,24 @@ void RewardsServiceImpl::StartLedger() {
   bat_ledger_service_->Create(
       bat_ledger_client_receiver_.BindNewEndpointAndPassRemote(),
       bat_ledger_.BindNewEndpointAndPassReceiver(),
-      base::BindOnce(&RewardsServiceImpl::OnCreate, AsWeakPtr()));
+      base::BindOnce(&RewardsServiceImpl::OnCreate,
+          AsWeakPtr(),
+          std::move(callback)));
 }
 
-void RewardsServiceImpl::OnCreate() {
+void RewardsServiceImpl::OnCreate(StartProcessCallback callback) {
   if (!Connected()) {
+    std::move(callback).Run(ledger::type::Result::LEDGER_ERROR);
     return;
   }
 
   PrepareLedgerEnvForTesting();
 
-  auto callback = base::BindOnce(&RewardsServiceImpl::OnWalletInitialized,
-      AsWeakPtr());
+  auto init_callback = base::BindOnce(&RewardsServiceImpl::OnLedgerInitialized,
+      AsWeakPtr(),
+      std::move(callback));
 
-  bat_ledger_->Initialize(false, std::move(callback));
+  bat_ledger_->Initialize(false, std::move(init_callback));
 }
 
 void RewardsServiceImpl::OnResult(
@@ -450,35 +506,43 @@ void RewardsServiceImpl::MaybeShowBackupNotification(uint64_t boot_stamp) {
     return;
   }
 
-  auto clear_backup_interval = [pref_service]() {
-    pref_service->SetTimeDelta(
-        prefs::kBackupNotificationInterval,
-        base::TimeDelta());
-  };
-
   // Don't display notification if a backup has already succeeded.
   if (pref_service->GetBoolean(prefs::kBackupSucceeded)) {
-    clear_backup_interval();
+    pref_service->SetTimeDelta(
+          prefs::kBackupNotificationInterval,
+          base::TimeDelta());
     return;
   }
 
+  auto callback = base::BindOnce(&RewardsServiceImpl::WalletBackupNotification,
+      AsWeakPtr(),
+      boot_stamp);
+
   // Don't display notification if user has a verified wallet.
-  for (auto& pair : GetExternalWallets()) {
-    DCHECK(pair.second);
-    switch (pair.second->status) {
-      case ledger::type::WalletStatus::VERIFIED:
-      case ledger::type::WalletStatus::DISCONNECTED_VERIFIED:
-        clear_backup_interval();
-        return;
-      default:
-        break;
-    }
+  GetUpholdWallet(std::move(callback));
+}
+
+void RewardsServiceImpl::WalletBackupNotification(
+    const uint64_t boot_stamp,
+    const ledger::type::Result result,
+    ledger::type::UpholdWalletPtr wallet) {
+  if (wallet &&
+      (wallet->status == ledger::type::WalletStatus::VERIFIED ||
+      wallet->status == ledger::type::WalletStatus::DISCONNECTED_VERIFIED)) {
+    profile_->GetPrefs()->SetTimeDelta(
+        prefs::kBackupNotificationInterval,
+        base::TimeDelta());
+    return;
   }
 
-  const base::Time boot_time = base::Time::FromDoubleT(boot_stamp);
-  const base::TimeDelta elapsed = base::Time::Now() - boot_time;
+  const auto boot_time = base::Time::FromDoubleT(boot_stamp);
+  const auto elapsed = base::Time::Now() - boot_time;
+  const auto interval = profile_->GetPrefs()->GetTimeDelta(
+      prefs::kBackupNotificationInterval);
   if (elapsed > interval) {
-    clear_backup_interval();
+    profile_->GetPrefs()->SetTimeDelta(
+          prefs::kBackupNotificationInterval,
+          base::TimeDelta());
     notification_service_->AddNotification(
         RewardsNotificationService::REWARDS_NOTIFICATION_BACKUP_WALLET,
         RewardsNotificationService::RewardsNotificationArgs(),
@@ -499,13 +563,6 @@ void RewardsServiceImpl::MaybeShowAddFundsNotification(
   }
 }
 
-void RewardsServiceImpl::OnCreateWallet(
-    CreateWalletCallback callback,
-    ledger::type::Result result) {
-  OnWalletInitialized(result);
-  std::move(callback).Run(result);
-}
-
 void RewardsServiceImpl::AddPrivateObserver(
     RewardsServicePrivateObserver* observer) {
   private_observers_.AddObserver(observer);
@@ -516,18 +573,15 @@ void RewardsServiceImpl::RemovePrivateObserver(
   private_observers_.RemoveObserver(observer);
 }
 
-void RewardsServiceImpl::CreateWallet(CreateWalletCallback callback) {
-  if (!ready_->is_signaled()) {
-    StartLedger();
-    ready_->Post(
-        FROM_HERE,
-        base::BindOnce(&huhi_rewards::RewardsService::CreateWallet,
-            AsWeakPtr(),
-            std::move(callback)));
-    return;
-  }
+void RewardsServiceImpl::OnCreateWallet(
+    CreateWalletCallback callback,
+    ledger::type::Result result) {
+  std::move(callback).Run(result);
+}
 
+void RewardsServiceImpl::CreateWallet(CreateWalletCallback callback) {
   if (!Connected()) {
+    std::move(callback).Run(ledger::type::Result::LEDGER_ERROR);
     return;
   }
 
@@ -535,87 +589,41 @@ void RewardsServiceImpl::CreateWallet(CreateWalletCallback callback) {
       AsWeakPtr(),
       std::move(callback));
 
-#if !defined(OS_ANDROID)
   bat_ledger_->CreateWallet(std::move(on_create));
-#else
-  safetynet_check::ClientAttestationCallback attest_callback =
-      base::BindOnce(&RewardsServiceImpl::CreateWalletAttestationResult,
-          AsWeakPtr(),
-          std::move(on_create));
-  safetynet_check_runner_.performSafetynetCheck("",
-      std::move(attest_callback), true);
-#endif
 }
 
-#if defined(OS_ANDROID)
-void RewardsServiceImpl::CreateWalletAttestationResult(
-    bat_ledger::mojom::BatLedger::CreateWalletCallback callback,
-    const bool token_received,
-    const std::string& result_string,
-    const bool attestation_passed) {
-  if (!Connected()) {
-    return;
-  }
-
-  if (!token_received) {
-    BLOG(0, "CreateWalletAttestationResult error: " << result_string);
-    OnWalletInitialized(ledger::type::Result::LEDGER_ERROR);
-    return;
-  }
-  if (!attestation_passed) {
-    OnWalletInitialized(ledger::type::Result::SAFETYNET_ATTESTATION_FAILED);
-    return;
-  }
-  bat_ledger_->CreateWallet(std::move(callback));
-}
-#endif
-
-void RewardsServiceImpl::GetContentSiteList(
+void RewardsServiceImpl::GetActivityInfoList(
     uint32_t start,
     uint32_t limit,
-    uint64_t min_visit_time,
-    uint64_t reconcile_stamp,
-    bool allow_non_verified,
-    uint32_t min_visits,
-    const GetContentSiteListCallback& callback) {
+    ledger::type::ActivityInfoFilterPtr filter,
+    const GetPublisherInfoListCallback& callback) {
   if (!Connected()) {
     return;
   }
-
-  auto filter = ledger::type::ActivityInfoFilter::New();
-  filter->min_duration = min_visit_time;
-  auto pair =
-      ledger::type::ActivityInfoFilterOrderPair::New("ai.percent", false);
-  filter->order_by.push_back(std::move(pair));
-  filter->reconcile_stamp = reconcile_stamp;
-  filter->excluded = ledger::type::ExcludeFilter::FILTER_ALL_EXCEPT_EXCLUDED;
-  filter->percent = 1;
-  filter->non_verified = allow_non_verified;
-  filter->min_visits = min_visits;
 
   bat_ledger_->GetActivityInfoList(
       start,
       limit,
       std::move(filter),
-      base::BindOnce(&RewardsServiceImpl::OnGetContentSiteList,
+      base::BindOnce(&RewardsServiceImpl::OnGetPublisherInfoList,
                      AsWeakPtr(),
                      callback));
 }
 
 void RewardsServiceImpl::GetExcludedList(
-    const GetContentSiteListCallback& callback) {
+    const GetPublisherInfoListCallback& callback) {
   if (!Connected()) {
     return;
   }
 
   bat_ledger_->GetExcludedList(base::BindOnce(
-      &RewardsServiceImpl::OnGetContentSiteList,
+      &RewardsServiceImpl::OnGetPublisherInfoList,
       AsWeakPtr(),
       callback));
 }
 
-void RewardsServiceImpl::OnGetContentSiteList(
-    const GetContentSiteListCallback& callback,
+void RewardsServiceImpl::OnGetPublisherInfoList(
+    const GetPublisherInfoListCallback& callback,
     ledger::type::PublisherInfoList list) {
   callback.Run(std::move(list));
 }
@@ -807,36 +815,17 @@ void RewardsServiceImpl::Shutdown() {
   RewardsService::Shutdown();
 }
 
-void RewardsServiceImpl::OnWalletInitialized(ledger::type::Result result) {
-  if (result == ledger::type::Result::WALLET_CREATED ||
-      result == ledger::type::Result::LEDGER_OK) {
-    is_wallet_initialized_ = true;
+void RewardsServiceImpl::OnLedgerInitialized(
+    StartProcessCallback callback,
+    const ledger::type::Result result) {
+  if (result == ledger::type::Result::LEDGER_OK) {
+    std::move(callback).Run(result);
+    is_ledger_initialized_ = true;
+    StartNotificationTimers();
   }
 
   if (!ready_->is_signaled()) {
     ready_->Signal();
-  }
-
-  if (is_wallet_initialized_) {
-    StartNotificationTimers(true);
-  }
-
-  if (result == ledger::type::Result::WALLET_CREATED) {
-    // Record P3A:
-    RecordWalletBalanceP3A(true, true, 0);
-#if BUILDFLAG(HUHI_ADS_ENABLED)
-    const bool ads_enabled =
-        profile_->GetPrefs()->GetBoolean(huhi_ads::prefs::kEnabled);
-    RecordAdsState(ads_enabled ? AdsP3AState::kAdsEnabled
-                               : AdsP3AState::kAdsDisabled);
-#endif
-  }
-
-  EnableGreaseLion(profile_->GetPrefs()->GetBoolean(
-      prefs::kEnabled));
-
-  for (auto& observer : observers_) {
-    observer.OnWalletInitialized(this, result);
   }
 }
 
@@ -917,10 +906,6 @@ void RewardsServiceImpl::OnLedgerStateLoaded(
   callback(data.empty() ? ledger::type::Result::NO_LEDGER_STATE
                         : ledger::type::Result::LEDGER_OK,
                         data);
-
-  bat_ledger_->GetRewardsMainEnabled(
-      base::BindOnce(&RewardsServiceImpl::StartNotificationTimers,
-        AsWeakPtr()));
 }
 
 void RewardsServiceImpl::LoadPublisherState(
@@ -1236,6 +1221,7 @@ void RewardsServiceImpl::ClaimPromotion(
     const std::string& promotion_id,
     ClaimPromotionCallback callback) {
   if (!Connected()) {
+    std::move(callback).Run(ledger::type::Result::LEDGER_ERROR, "", "", "");
     return;
   }
 
@@ -1250,6 +1236,7 @@ void RewardsServiceImpl::ClaimPromotion(
     const std::string& promotion_id,
     AttestPromotionCallback callback) {
   if (!Connected()) {
+    std::move(callback).Run(ledger::type::Result::LEDGER_ERROR, nullptr);
     return;
   }
 
@@ -1259,15 +1246,6 @@ void RewardsServiceImpl::ClaimPromotion(
       std::move(callback));
 
   bat_ledger_->ClaimPromotion(promotion_id, "", std::move(claim_callback));
-}
-
-void RewardsServiceImpl::GetWalletPassphrase(
-    const GetWalletPassphraseCallback& callback) {
-  if (!Connected()) {
-    return;
-  }
-
-  bat_ledger_->GetWalletPassphrase(callback);
 }
 
 void RewardsServiceImpl::RecoverWallet(const std::string& passPhrase) {
@@ -1318,7 +1296,7 @@ void RewardsServiceImpl::OnAttestPromotion(
   if (promotion->type == ledger::type::PromotionType::ADS) {
     auto* ads_service = huhi_ads::AdsServiceFactory::GetForProfile(profile_);
     if (ads_service) {
-      ads_service->UpdateAdRewards(/*should_reconcile*/ true);
+      ads_service->ReconcileAdRewards();
     }
   }
 
@@ -1334,38 +1312,27 @@ void RewardsServiceImpl::GetReconcileStamp(
   bat_ledger_->GetReconcileStamp(callback);
 }
 
-void RewardsServiceImpl::SetRewardsMainEnabled(bool enabled) {
-  if (enabled) {
-    StartLedger();
-
-    if (!ready_->is_signaled()) {
-      ready_->Post(
-          FROM_HERE,
-          base::Bind(&huhi_rewards::RewardsService::SetRewardsMainEnabled,
-              base::Unretained(this),
-              enabled));
-      return;
-    }
-  }
-
-  if (!Connected()) {
-    return;
-  }
-
-  bat_ledger_->SetRewardsMainEnabled(enabled);
-  TriggerOnRewardsMainEnabled(enabled);
-
-  if (!enabled) {
-    RecordRewardsDisabledForSomeMetrics();
-    StopLedger(base::DoNothing());
-  }
-}
-
-void RewardsServiceImpl::EnableGreaseLion(const bool enabled) {
+void RewardsServiceImpl::EnableGreaseLion() {
   #if BUILDFLAG(ENABLE_GREASELION)
     if (greaselion_service_) {
-      greaselion_service_->SetFeatureEnabled(greaselion::REWARDS, enabled);
-      greaselion_service_->SetFeatureEnabled(greaselion::TWITTER_TIPS, enabled);
+      greaselion_service_->SetFeatureEnabled(
+          greaselion::REWARDS,
+          true);
+      greaselion_service_->SetFeatureEnabled(
+          greaselion::TWITTER_TIPS,
+          profile_->GetPrefs()->GetBoolean(prefs::kInlineTipTwitterEnabled));
+      greaselion_service_->SetFeatureEnabled(
+          greaselion::REDDIT_TIPS,
+          profile_->GetPrefs()->GetBoolean(prefs::kInlineTipRedditEnabled));
+      greaselion_service_->SetFeatureEnabled(
+          greaselion::GITHUB_TIPS,
+          profile_->GetPrefs()->GetBoolean(prefs::kInlineTipGithubEnabled));
+      greaselion_service_->SetFeatureEnabled(
+          greaselion::AUTO_CONTRIBUTION,
+          profile_->GetPrefs()->GetBoolean(prefs::kAutoContributeEnabled));
+      greaselion_service_->SetFeatureEnabled(
+          greaselion::ADS,
+          profile_->GetPrefs()->GetBoolean(ads::prefs::kEnabled));
     }
   #endif
 }
@@ -1453,23 +1420,12 @@ void RewardsServiceImpl::Reset() {
   bat_ledger_.reset();
   bat_ledger_client_receiver_.reset();
   bat_ledger_service_.reset();
-  is_wallet_initialized_ = false;
+  is_ledger_initialized_ = false;
   ready_ = std::make_unique<base::OneShotEvent>();
   bool success =
       file_task_runner_->DeleteSoon(FROM_HERE, ledger_database_.release());
   BLOG_IF(1, !success, "Database was not released");
   BLOG(1, "Successfully reset rewards service");
-}
-
-void RewardsServiceImpl::GetRewardsMainEnabled(
-    const GetRewardsMainEnabledCallback& callback) const {
-  if (!Connected()) {
-    std::move(callback).Run(
-        profile_->GetPrefs()->GetBoolean(prefs::kEnabled));
-    return;
-  }
-
-  bat_ledger_->GetRewardsMainEnabled(callback);
 }
 
 void RewardsServiceImpl::SetBooleanState(const std::string& name, bool value) {
@@ -1683,16 +1639,39 @@ void RewardsServiceImpl::SetAutoContributeEnabled(bool enabled) {
   }
 }
 
-void RewardsServiceImpl::OnAdsEnabled(
-    bool ads_enabled) {
-  for (auto& observer : observers_)
-    observer.OnAdsEnabled(this, ads_enabled);
+bool RewardsServiceImpl::ShouldShowOnboarding() const {
+  const bool legacy_enabled = profile_->GetPrefs()->GetBoolean(prefs::kEnabled);
+
+  bool ads_enabled = false;
+  bool ads_supported = true;
+  auto* ads_service = huhi_ads::AdsServiceFactory::GetForProfile(profile_);
+  if (ads_service) {
+    ads_enabled = ads_service->IsEnabled();
+    ads_supported = ads_service->IsSupportedLocale();
+  }
+
+  return !legacy_enabled && !ads_enabled && ads_supported;
 }
 
-void RewardsServiceImpl::TriggerOnRewardsMainEnabled(
-    bool rewards_main_enabled) {
-  for (auto& observer : observers_)
-    observer.OnRewardsMainEnabled(this, rewards_main_enabled);
+void RewardsServiceImpl::SaveOnboardingResult(OnboardingResult result) {
+  PrefService* prefs = profile_->GetPrefs();
+  prefs->SetTime(prefs::kOnboarded, base::Time::Now());
+  if (result == OnboardingResult::kOptedIn) {
+    SetAutoContributeEnabled(true);
+    SetAdsEnabled(true);
+  }
+}
+
+void RewardsServiceImpl::OnAdsEnabled(bool ads_enabled) {
+  #if BUILDFLAG(ENABLE_GREASELION)
+  greaselion_service_->SetFeatureEnabled(
+      greaselion::ADS,
+      profile_->GetPrefs()->GetBoolean(ads::prefs::kEnabled));
+  #endif
+
+  for (auto& observer : observers_) {
+    observer.OnAdsEnabled(this, ads_enabled);
+  }
 }
 
 void RewardsServiceImpl::OnGetBalanceReport(
@@ -1717,18 +1696,6 @@ void RewardsServiceImpl::GetBalanceReport(
       base::BindOnce(&RewardsServiceImpl::OnGetBalanceReport,
         AsWeakPtr(),
         std::move(callback)));
-}
-
-void RewardsServiceImpl::IsWalletCreated(
-    const IsWalletCreatedCallback& callback) {
-  if (!Connected()) {
-    const auto stamp =
-        profile_->GetPrefs()->GetUint64(prefs::kCreationStamp);
-    callback.Run(stamp != 0u);
-    return;
-  }
-
-  bat_ledger_->IsWalletCreated(callback);
 }
 
 void RewardsServiceImpl::GetPublisherActivityFromUrl(
@@ -1808,7 +1775,7 @@ void RewardsServiceImpl::FetchFavIcon(
 
   auto it = current_media_fetchers_.find(url);
   if (it != current_media_fetchers_.end()) {
-    BLOG(1, "Already fetching favicon: " << url);
+    BLOG(1, "Already fetching favicon");
     return;
   }
 
@@ -1931,6 +1898,125 @@ void RewardsServiceImpl::SaveInlineMediaInfo(
                     std::move(callback)));
 }
 
+void RewardsServiceImpl::UpdateMediaDuration(
+    const uint64_t window_id,
+    const std::string& publisher_key,
+    const uint64_t duration,
+    const bool first_visit) {
+  if (!Connected()) {
+    return;
+  }
+
+  bat_ledger_->UpdateMediaDuration(
+      window_id,
+      publisher_key,
+      duration,
+      first_visit);
+}
+
+void RewardsServiceImpl::GetPublisherInfo(
+    const std::string& publisher_key,
+    GetPublisherInfoCallback callback) {
+  if (!Connected()) {
+    StartProcess(
+        base::BindOnce(
+            &RewardsServiceImpl::OnStartProcessForGetPublisherInfo,
+            AsWeakPtr(),
+            publisher_key,
+            std::move(callback)));
+    return;
+  }
+
+  bat_ledger_->GetPublisherInfo(
+      publisher_key,
+      base::BindOnce(&RewardsServiceImpl::OnPublisherInfo,
+          AsWeakPtr(),
+          std::move(callback)));
+}
+
+void RewardsServiceImpl::OnStartProcessForGetPublisherInfo(
+    const std::string& publisher_key,
+    GetPublisherInfoCallback callback,
+    const ledger::type::Result result) {
+  if (result != ledger::type::Result::LEDGER_OK) {
+    std::move(callback).Run(result, nullptr);
+    return;
+  }
+
+  GetPublisherInfo(publisher_key, std::move(callback));
+}
+
+void RewardsServiceImpl::OnPublisherInfo(
+    GetPublisherInfoCallback callback,
+    const ledger::type::Result result,
+    ledger::type::PublisherInfoPtr info) {
+  std::move(callback).Run(result, std::move(info));
+}
+
+void RewardsServiceImpl::GetPublisherPanelInfo(
+    const std::string& publisher_key,
+    GetPublisherInfoCallback callback) {
+  if (!Connected()) {
+    std::move(callback).Run(ledger::type::Result::LEDGER_ERROR, nullptr);
+    return;
+  }
+
+  bat_ledger_->GetPublisherPanelInfo(
+      publisher_key,
+      base::BindOnce(&RewardsServiceImpl::OnPublisherPanelInfo,
+          AsWeakPtr(),
+          std::move(callback)));
+}
+
+void RewardsServiceImpl::OnPublisherPanelInfo(
+    GetPublisherInfoCallback callback,
+    const ledger::type::Result result,
+    ledger::type::PublisherInfoPtr info) {
+  std::move(callback).Run(result, std::move(info));
+}
+
+void RewardsServiceImpl::SavePublisherInfo(
+    const uint64_t window_id,
+    ledger::type::PublisherInfoPtr publisher_info,
+    SavePublisherInfoCallback callback) {
+  if (!Connected()) {
+    StartProcess(
+        base::BindOnce(
+            &RewardsServiceImpl::OnStartProcessForSavePublisherInfo,
+            AsWeakPtr(),
+            window_id,
+            std::move(publisher_info),
+            std::move(callback)));
+    return;
+  }
+
+  bat_ledger_->SavePublisherInfo(
+      window_id,
+      std::move(publisher_info),
+      base::BindOnce(&RewardsServiceImpl::OnSavePublisherInfo,
+          AsWeakPtr(),
+          std::move(callback)));
+}
+
+void RewardsServiceImpl::OnStartProcessForSavePublisherInfo(
+    const uint64_t window_id,
+    ledger::type::PublisherInfoPtr publisher_info,
+    SavePublisherInfoCallback callback,
+    const ledger::type::Result result) {
+  if (result != ledger::type::Result::LEDGER_OK) {
+    std::move(callback).Run(result);
+    return;
+  }
+
+  SavePublisherInfo(window_id, std::move(publisher_info), std::move(callback));
+}
+
+void RewardsServiceImpl::OnSavePublisherInfo(
+    SavePublisherInfoCallback callback,
+    const ledger::type::Result result) {
+  std::move(callback).Run(result);
+}
+
 void RewardsServiceImpl::OnGetRecurringTips(
     GetRecurringTipsCallback callback,
     ledger::type::PublisherInfoList list) {
@@ -2023,9 +2109,7 @@ RewardsNotificationService* RewardsServiceImpl::GetNotificationService() const {
   return notification_service_.get();
 }
 
-void RewardsServiceImpl::StartNotificationTimers(bool main_enabled) {
-  if (!main_enabled) return;
-
+void RewardsServiceImpl::StartNotificationTimers() {
   // Startup timer, begins after 30-second delay.
   PrefService* pref_service = profile_->GetPrefs();
   notification_startup_timer_ = std::make_unique<base::OneShotTimer>();
@@ -2379,19 +2463,6 @@ void RewardsServiceImpl::HandleFlags(const std::string& options) {
       SetShortRetries(short_retries);
     }
 
-    if (name == "uphold-token") {
-      std::string token = base::ToLowerASCII(value);
-
-      auto uphold = ledger::type::ExternalWallet::New();
-      uphold->token = token;
-      uphold->address = "c5fd7219-6586-4fe1-b947-0cbd25040ca8";
-      uphold->status = ledger::type::WalletStatus::VERIFIED;
-      uphold->one_time_string = "";
-      uphold->user_name = "Huhi Test";
-      SaveExternalWallet(ledger::constant::kWalletUphold, std::move(uphold));
-      continue;
-    }
-
     if (name == "development") {
       ledger::type::Environment environment;
       std::string lower = base::ToLowerASCII(value);
@@ -2441,7 +2512,7 @@ void RewardsServiceImpl::OnTip(
   }
   publisher->id = publisher_key;
 
-  bat_ledger_->SavePublisherInfo(
+  bat_ledger_->SavePublisherInfoForTip(
       std::move(publisher),
       base::BindOnce(&RewardsServiceImpl::OnTipPublisherSaved,
           AsWeakPtr(),
@@ -2493,7 +2564,7 @@ void RewardsServiceImpl::PrepareLedgerEnvForTesting() {
 
   bat_ledger_service_->SetTesting();
 
-  profile_->GetPrefs()->SetInteger(prefs::kMinVisitTime, 1);
+  SetPublisherMinVisitTime(1);
   SetShortRetries(true);
 
   // this is needed because we are using huhiledger_request_util::buildURL
@@ -2515,11 +2586,6 @@ void RewardsServiceImpl::StartMonthlyContributionForTest() {
 
 void RewardsServiceImpl::CheckInsufficientFundsForTesting() {
   MaybeShowNotificationAddFunds();
-}
-
-ledger::type::TransferFeeList RewardsServiceImpl::GetTransferFeesForTesting(
-    const std::string& wallet_type) {
-  return GetTransferFees(wallet_type);
 }
 
 void RewardsServiceImpl::GetEnvironment(
@@ -2639,7 +2705,6 @@ void RewardsServiceImpl::OnInlineTipSetting(
 }
 
 void RewardsServiceImpl::GetShareURL(
-      const std::string& type,
       const std::map<std::string, std::string>& args,
       GetShareURLCallback callback) {
   if (!Connected()) {
@@ -2647,7 +2712,6 @@ void RewardsServiceImpl::GetShareURL(
   }
 
   bat_ledger_->GetShareURL(
-      type,
       base::MapToFlatMap(args),
       base::BindOnce(&RewardsServiceImpl::OnShareURL,
           AsWeakPtr(),
@@ -2777,6 +2841,7 @@ void RewardsServiceImpl::OnFetchBalance(
 
 void RewardsServiceImpl::FetchBalance(FetchBalanceCallback callback) {
   if (!Connected()) {
+    std::move(callback).Run(ledger::type::Result::LEDGER_ERROR, nullptr);
     return;
   }
 
@@ -2786,124 +2851,33 @@ void RewardsServiceImpl::FetchBalance(FetchBalanceCallback callback) {
                      std::move(callback)));
 }
 
-void RewardsServiceImpl::SaveExternalWallet(
-    const std::string& wallet_type,
-    ledger::type::ExternalWalletPtr wallet) {
-  auto* wallets =
-      profile_->GetPrefs()->GetDictionary(prefs::kExternalWallets);
+std::string RewardsServiceImpl::GetLegacyWallet() {
+  auto* dict = profile_->GetPrefs()->GetDictionary(prefs::kExternalWallets);
 
-  base::Value new_wallets(wallets->Clone());
-
-  auto* old_wallet = new_wallets.FindDictKey(wallet_type);
-  base::Value new_wallet(base::Value::Type::DICTIONARY);
-  if (old_wallet) {
-    new_wallet = old_wallet->Clone();
-  }
-
-  new_wallet.SetStringKey("token", wallet->token);
-  new_wallet.SetStringKey("address", wallet->address);
-  new_wallet.SetIntKey("status", static_cast<int>(wallet->status));
-  new_wallet.SetStringKey("one_time_string", wallet->one_time_string);
-  new_wallet.SetStringKey("user_name", wallet->user_name);
-  new_wallet.SetStringKey("verify_url", wallet->verify_url);
-  new_wallet.SetStringKey("add_url", wallet->add_url);
-  new_wallet.SetStringKey("withdraw_url", wallet->withdraw_url);
-  new_wallet.SetStringKey("account_url", wallet->account_url);
-  new_wallet.SetStringKey("login_url", wallet->login_url);
-
-  new_wallets.SetKey(wallet_type, std::move(new_wallet));
-
-  profile_->GetPrefs()->Set(prefs::kExternalWallets, new_wallets);
-}
-
-std::map<std::string, ledger::type::ExternalWalletPtr>
-RewardsServiceImpl::GetExternalWallets() {
-  std::map<std::string, ledger::type::ExternalWalletPtr> wallets;
-
-  auto* dict =
-      profile_->GetPrefs()->GetDictionary(prefs::kExternalWallets);
-
+  std::string json;
   for (const auto& it : dict->DictItems()) {
-    ledger::type::ExternalWalletPtr wallet =
-        ledger::type::ExternalWallet::New();
-
-    wallet->type = it.first;
-
-    auto* token = it.second.FindStringKey("token");
-    if (token) {
-      wallet->token = *token;
-    }
-
-    auto* address = it.second.FindStringKey("address");
-    if (address) {
-      wallet->address = *address;
-    }
-
-    auto* one_time_string = it.second.FindStringKey("one_time_string");
-    if (one_time_string) {
-      wallet->one_time_string = *one_time_string;
-    }
-
-    auto status = it.second.FindIntKey("status");
-    if (status) {
-      wallet->status = static_cast<ledger::type::WalletStatus>(*status);
-    }
-
-    auto* user_name = it.second.FindStringKey("user_name");
-    if (user_name) {
-      wallet->user_name = *user_name;
-    }
-
-    auto* verify_url = it.second.FindStringKey("verify_url");
-    if (verify_url) {
-      wallet->verify_url = *verify_url;
-    }
-
-    auto* add_url = it.second.FindStringKey("add_url");
-    if (add_url) {
-      wallet->add_url = *add_url;
-    }
-
-    auto* withdraw_url = it.second.FindStringKey("withdraw_url");
-    if (withdraw_url) {
-      wallet->withdraw_url = *withdraw_url;
-    }
-
-    auto* account_url = it.second.FindStringKey("account_url");
-    if (account_url) {
-      wallet->account_url = *account_url;
-    }
-
-    auto* login_url = it.second.FindStringKey("login_url");
-    if (login_url) {
-      wallet->login_url = *login_url;
-    }
-
-    wallets.insert(std::make_pair(it.first, std::move(wallet)));
+    base::JSONWriter::Write(std::move(it.second), &json);
   }
 
-  return wallets;
+  return json;
 }
 
-void RewardsServiceImpl::OnGetExternalWallet(
-    const std::string& wallet_type,
-    GetExternalWalletCallback callback,
+void RewardsServiceImpl::OnGetUpholdWallet(
+    GetUpholdWalletCallback callback,
     const ledger::type::Result result,
-    ledger::type::ExternalWalletPtr wallet) {
+    ledger::type::UpholdWalletPtr wallet) {
   std::move(callback).Run(result, std::move(wallet));
 }
 
-void RewardsServiceImpl::GetExternalWallet(
-    const std::string& wallet_type,
-    GetExternalWalletCallback callback) {
+void RewardsServiceImpl::GetUpholdWallet(GetUpholdWalletCallback callback) {
   if (!Connected()) {
+    std::move(callback).Run(ledger::type::Result::LEDGER_OK, nullptr);
     return;
   }
 
-  bat_ledger_->GetExternalWallet(wallet_type,
-      base::BindOnce(&RewardsServiceImpl::OnGetExternalWallet,
+  bat_ledger_->GetUpholdWallet(
+      base::BindOnce(&RewardsServiceImpl::OnGetUpholdWallet,
                      AsWeakPtr(),
-                     wallet_type,
                      std::move(callback)));
 }
 
@@ -3025,112 +2999,6 @@ void RewardsServiceImpl::ShowNotification(
       notification_args,
       "rewards_notification_general_ledger_" + type);
     callback(ledger::type::Result::LEDGER_OK);
-}
-
-void RewardsServiceImpl::SetTransferFee(
-    const std::string& wallet_type,
-    ledger::type::TransferFeePtr transfer_fee) {
-  if (!transfer_fee) {
-    return;
-  }
-
-  base::Value fee(base::Value::Type::DICTIONARY);
-  fee.SetStringKey("id", transfer_fee->id);
-  fee.SetDoubleKey("amount", transfer_fee->amount);
-
-  auto* external_wallets =
-      profile_->GetPrefs()->GetDictionary(prefs::kExternalWallets);
-
-  base::Value new_external_wallets(external_wallets->Clone());
-
-  auto* wallet = new_external_wallets.FindDictKey(wallet_type);
-  base::Value new_wallet(base::Value::Type::DICTIONARY);
-  if (wallet) {
-    new_wallet = wallet->Clone();
-  }
-
-  auto* fees = wallet->FindDictKey("transfer_fees");
-  base::Value new_fees(base::Value::Type::DICTIONARY);
-  if (fees) {
-    new_fees = fees->Clone();
-  }
-  new_fees.SetKey(transfer_fee->id, std::move(fee));
-
-  new_wallet.SetKey("transfer_fees", std::move(new_fees));
-  new_external_wallets.SetKey(wallet_type, std::move(new_wallet));
-
-  profile_->GetPrefs()->Set(
-      prefs::kExternalWallets,
-      new_external_wallets);
-}
-
-ledger::type::TransferFeeList RewardsServiceImpl::GetTransferFees(
-    const std::string& wallet_type) {
-  ledger::type::TransferFeeList fees;
-
-  auto* external_wallets =
-      profile_->GetPrefs()->GetDictionary(prefs::kExternalWallets);
-
-  auto* wallet_key = external_wallets->FindKey(wallet_type);
-
-  const base::DictionaryValue* wallet;
-  if (!wallet_key || !wallet_key->GetAsDictionary(&wallet)) {
-    return fees;
-  }
-
-  auto* fees_key = wallet->FindKey("transfer_fees");
-  const base::DictionaryValue* fee_dict;
-  if (!fees_key || !fees_key->GetAsDictionary(&fee_dict)) {
-    return fees;
-  }
-
-  for (auto& item : *fee_dict) {
-    const base::DictionaryValue* fee_dict;
-    if (!item.second || !item.second->GetAsDictionary(&fee_dict)) {
-      continue;
-    }
-
-    auto fee = ledger::type::TransferFee::New();
-
-    auto* id = fee_dict->FindKey("id");
-    if (!id || !id->is_string()) {
-      continue;
-    }
-    fee->id = id->GetString();
-
-    auto* amount = fee_dict->FindKey("amount");
-    if (!amount || !amount->is_double()) {
-      continue;
-    }
-    fee->amount = amount->GetDouble();
-
-    fees.insert(std::make_pair(fee->id, std::move(fee)));
-  }
-
-  return fees;
-}
-
-void RewardsServiceImpl::RemoveTransferFee(
-    const std::string& wallet_type,
-    const std::string& id) {
-  auto* external_wallets =
-      profile_->GetPrefs()->GetDictionary(prefs::kExternalWallets);
-
-  base::Value new_external_wallets(external_wallets->Clone());
-
-  const auto path = base::StringPrintf(
-      "%s.transfer_fees.%s",
-      wallet_type.c_str(),
-      id.c_str());
-
-  bool success = new_external_wallets.RemovePath(path);
-  if (!success) {
-    return;
-  }
-
-  profile_->GetPrefs()->Set(
-      prefs::kExternalWallets,
-      new_external_wallets);
 }
 
 bool RewardsServiceImpl::OnlyAnonWallet() {
@@ -3362,10 +3230,6 @@ void RewardsServiceImpl::PendingContributionSaved(
   }
 }
 
-bool RewardsServiceImpl::IsWalletInitialized() {
-  return is_wallet_initialized_;
-}
-
 void RewardsServiceImpl::ForTestingSetTestResponseCallback(
     GetTestResponseCallback callback) {
   test_response_callback_ = callback;
@@ -3459,11 +3323,23 @@ void RewardsServiceImpl::OnCompleteReset(
     const bool success) {
   resetting_rewards_ = false;
 
+  StartProcess(
+      base::BindOnce(
+          &RewardsServiceImpl::OnCompleteResetProcess,
+          AsWeakPtr(),
+          std::move(callback)));
+}
+
+void RewardsServiceImpl::OnCompleteResetProcess(
+    SuccessCallback callback,
+    const ledger::type::Result result) {
+  const bool success = result == ledger::type::Result::LEDGER_OK;
+
   for (auto& observer : observers_) {
     observer.OnCompleteReset(success);
   }
 
-  std::move(callback).Run(true);
+  std::move(callback).Run(success);
 }
 
 void RewardsServiceImpl::WalletDisconnected(const std::string& wallet_type) {
@@ -3512,6 +3388,123 @@ void RewardsServiceImpl::OnGetEventLogs(
     GetEventLogsCallback callback,
     ledger::type::EventLogs logs) {
   std::move(callback).Run(std::move(logs));
+}
+
+bool RewardsServiceImpl::SetEncryptedStringState(
+      const std::string& name,
+      const std::string& value) {
+  std::string encrypted_value;
+  if (!OSCrypt::EncryptString(value, &encrypted_value)) {
+    BLOG(0, "Couldn't encrypt value for " + name);
+    return false;
+  }
+
+  std::string encoded_value;
+  base::Base64Encode(encrypted_value, &encoded_value);
+
+  profile_->GetPrefs()->SetString(GetPrefPath(name), encoded_value);
+  return true;
+}
+
+std::string RewardsServiceImpl::GetEncryptedStringState(
+    const std::string& name) {
+  const std::string encoded_value =
+      profile_->GetPrefs()->GetString(GetPrefPath(name));
+
+  std::string encrypted_value;
+  if (!base::Base64Decode(encoded_value, &encrypted_value)) {
+    BLOG(0, "base64 decode failed for " + name);
+    return "";
+  }
+
+  if (encrypted_value.empty()) {
+    return "";
+  }
+
+  std::string value;
+  if (!OSCrypt::DecryptString(encrypted_value, &value)) {
+    BLOG(0, "Decrypting failed for " + name);
+    return "";
+  }
+
+  return value;
+}
+
+void RewardsServiceImpl::GetHuhiWallet(GetHuhiWalletCallback callback) {
+  if (!Connected()) {
+    std::move(callback).Run(nullptr);
+    return;
+  }
+
+  bat_ledger_->GetHuhiWallet(
+    base::BindOnce(&RewardsServiceImpl::OnGetHuhiWallet,
+        AsWeakPtr(),
+        std::move(callback)));
+}
+
+void RewardsServiceImpl::OnGetHuhiWallet(
+    GetHuhiWalletCallback callback,
+    ledger::type::HuhiWalletPtr wallet) {
+  std::move(callback).Run(std::move(wallet));
+}
+
+void RewardsServiceImpl::StartProcess(StartProcessCallback callback) {
+  StartLedger(std::move(callback));
+}
+
+void RewardsServiceImpl::GetWalletPassphrase(
+    GetWalletPassphraseCallback callback) {
+  if (!Connected()) {
+    std::move(callback).Run("");
+    return;
+  }
+
+  bat_ledger_->GetWalletPassphrase(callback);
+}
+
+void RewardsServiceImpl::SetAdsEnabled(const bool is_enabled) {
+  if (!is_enabled) {
+    auto* ads_service = huhi_ads::AdsServiceFactory::GetForProfile(profile_);
+    if (ads_service) {
+      ads_service->SetEnabled(is_enabled);
+    }
+    return;
+  }
+
+  if (!Connected()) {
+    StartProcess(
+        base::BindOnce(
+            &RewardsServiceImpl::OnStartProcessForSetAdsEnabled,
+            AsWeakPtr()));
+    return;
+  }
+
+  CreateWallet(base::BindOnce(
+      &RewardsServiceImpl::OnWalletCreatedForSetAdsEnabled,
+      AsWeakPtr()));
+}
+
+void RewardsServiceImpl::OnStartProcessForSetAdsEnabled(
+    const ledger::type::Result result) {
+  if (result != ledger::type::Result::LEDGER_OK) {
+    BLOG(0, "Ledger process was not started successfully");
+    return;
+  }
+
+  SetAdsEnabled(true);
+}
+
+void RewardsServiceImpl::OnWalletCreatedForSetAdsEnabled(
+    const ledger::type::Result result) {
+  if (result != ledger::type::Result::WALLET_CREATED) {
+    BLOG(0,  "Failed to create a wallet");
+    return;
+  }
+
+  auto* ads_service = huhi_ads::AdsServiceFactory::GetForProfile(profile_);
+  if (ads_service) {
+    ads_service->SetEnabled(true);
+  }
 }
 
 }  // namespace huhi_rewards

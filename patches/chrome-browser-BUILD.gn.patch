@@ -1,12 +1,12 @@
 diff --git a/chrome/browser/BUILD.gn b/chrome/browser/BUILD.gn
-index 98ae3acaf7cf5fbfae0e4c2e0ddb8a087e6d6e23..6e2bf378e03ad08a0e30aa38de11b19b33fa3468 100644
+index 62ddc2d8548bcac4d55bbc7283426c426fecf254..c450d8e6e0a761a38d5d1c132885034559a1ed31 100644
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -2194,6 +2194,7 @@ static_library("browser") {
-     "//ui/strings",
-     "//ui/surface",
-     "//ui/web_dialogs",
-+    "//huhi/browser:browser_process",
-   ]
+@@ -2360,6 +2360,7 @@ static_library("browser") {
+       "performance_monitor/metric_evaluator_helper_posix.h",
+     ]
+   }
++  sources += huhi_chrome_browser_sources deps += huhi_chrome_browser_deps public_deps += huhi_chrome_browser_public_deps
  
-   if (build_with_tflite_lib) {
+   if (is_android) {
+     sources += [
